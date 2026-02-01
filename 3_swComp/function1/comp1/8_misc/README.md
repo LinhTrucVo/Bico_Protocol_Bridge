@@ -1,1 +1,0 @@
-This folder contain all of the misc (note, copy paste clipboard,...) for this component in development

@@ -1,1 +1,0 @@
-This folder contain all of the tool/utility for this component in development
