@@ -1,0 +1,31 @@
+@startuml
+title SPI Master Driver - Dynamic Behaviour
+
+participant "Higher Layer" as HL
+participant "SPI Master Driver" as SMD
+participant "Vendor HAL" as HAL
+
+== Initialization ==
+HL -> SMD : SPIMaster_Init(clock, mode, bitorder)
+SMD -> HAL : HAL_SPI_Init(config)
+HAL --> SMD : OK
+SMD --> HL : SUCCESS
+
+== Full-Duplex Transaction ==
+HL -> SMD : SPIMaster_SelectSlave(cs_pin)
+SMD -> HAL : HAL_GPIO_WritePin(cs_pin, LOW)
+
+HL -> SMD : SPIMaster_Transceive(tx_data, rx_buffer, len)
+SMD -> HAL : HAL_SPI_TransmitReceive(tx_data, rx_buffer, len, timeout)
+alt Success
+    HAL --> SMD : OK + rx_data
+    SMD --> HL : SUCCESS + rx_data
+else Timeout or Error
+    HAL --> SMD : ERROR
+    SMD --> HL : ERROR
+end
+
+HL -> SMD : SPIMaster_DeselectSlave(cs_pin)
+SMD -> HAL : HAL_GPIO_WritePin(cs_pin, HIGH)
+
+@enduml

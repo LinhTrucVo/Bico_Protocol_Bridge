@@ -1,0 +1,40 @@
+@startuml
+title Deserialize (Command Parser) - Dynamic Behaviour
+
+participant "Serial Driver" as SD
+participant "Deserialize" as DES
+participant "Central App Controller" as CAC
+
+== Receive and Parse Command ==
+SD -> DES : ReceiveData("ADC:READ:CH1\r\n")
+DES -> DES : DetectCommandDelimiter("\r\n")
+DES -> DES : Tokenize("ADC:READ:CH1")
+
+alt Valid Syntax
+    DES -> DES : ParseCommandType() -> ADC_READ
+    DES -> DES : ExtractParameters() -> {channel: "CH1"}
+    DES -> DES : ValidateParameters()
+    DES -> CAC : DispatchCommand(ADC_READ, {channel: 1})
+    CAC --> DES : ACK
+else Invalid Syntax
+    DES -> DES : DetectSyntaxError()
+    DES -> CAC : ReportError(SYNTAX_ERROR, position)
+    CAC --> DES : Error_Acknowledged
+end
+
+== Complex Command Example ==
+SD -> DES : ReceiveData("CONFIG:ADC:CH2:RATE:1000:RES:12\r\n")
+DES -> DES : Tokenize() -> ["CONFIG", "ADC", "CH2", "RATE", "1000", "RES", "12"]
+DES -> DES : ParseCommandType() -> CONFIG_ADC
+DES -> DES : ExtractParameters() -> {channel: 2, rate: 1000, resolution: 12}
+DES -> DES : ValidateParameters()
+
+alt All Parameters Valid
+    DES -> CAC : DispatchCommand(CONFIG_ADC, params)
+    CAC --> DES : SUCCESS
+else Invalid Parameter
+    DES -> CAC : ReportError(INVALID_PARAM, param_name)
+    CAC --> DES : Error_Acknowledged
+end
+
+@enduml

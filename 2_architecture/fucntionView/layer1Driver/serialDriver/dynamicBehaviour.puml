@@ -1,0 +1,27 @@
+@startuml
+title Serial Driver - Dynamic Behaviour
+
+participant "Higher Layer" as HL
+participant "Serial Driver" as SD
+participant "Vendor HAL" as HAL
+
+== Initialization ==
+HL -> SD : SerialDriver_Init(baudrate, parity, stopbits)
+SD -> HAL : HAL_UART_Init(config)
+HAL --> SD : OK
+SD --> HL : SUCCESS
+
+== Transmit Data ==
+HL -> SD : SerialDriver_Transmit(data, length)
+SD -> HAL : HAL_UART_Transmit_IT(data, length)
+HAL --> SD : OK
+SD --> HL : BUSY
+
+HAL -> SD : TX_Complete_Callback()
+SD -> HL : TX_Complete_Event()
+
+== Receive Data ==
+HAL -> SD : RX_Complete_Callback(data)
+SD -> HL : RX_Data_Available(data)
+
+@enduml

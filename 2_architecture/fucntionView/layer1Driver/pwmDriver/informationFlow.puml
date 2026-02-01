@@ -1,0 +1,50 @@
+@startuml
+title PWM Driver - Information Flow
+
+
+package "Initialization Flow" {
+    component "Higher Layer" as HL1
+    component "PWM Driver" as PD1
+    component "Vendor Timer HAL" as HAL1
+    
+    HL1 -down-> PD1 : Init Request
+    PD1 -down-> HAL1 : HAL_TIM_PWM_Init()
+    HAL1 -up-> PD1 : Status
+    PD1 -up-> HL1 : Init Status
+}
+
+package "Configuration Flow" {
+    component "Higher Layer" as HL2
+    component "PWM Driver" as PD2
+    component "Vendor Timer HAL" as HAL2
+    
+    HL2 -down-> PD2 : Configure PWM\n(freq, duty)
+    PD2 -down-> HAL2 : HAL_TIM_PWM_ConfigChannel()
+    HAL2 -up-> PD2 : Status
+    PD2 -up-> HL2 : Config Status
+}
+
+package "Operation Flow" {
+    component "Higher Layer" as HL3
+    component "PWM Driver" as PD3
+    component "Vendor Timer HAL" as HAL3
+    
+    HL3 -down-> PD3 : Start PWM\n(channel)
+    PD3 -down-> HAL3 : HAL_TIM_PWM_Start()
+    HAL3 -up-> PD3 : OK
+    PD3 -up-> HL3 : PWM Started
+    
+    HL3 -down-> PD3 : Update Duty Cycle
+    PD3 -down-> HAL3 : __HAL_TIM_SET_COMPARE()
+    HAL3 -up-> PD3 : Updated
+    PD3 -up-> HL3 : Duty Updated
+    
+    HL3 -down-> PD3 : Stop PWM
+    PD3 -down-> HAL3 : HAL_TIM_PWM_Stop()
+    HAL3 -up-> PD3 : Stopped
+    PD3 -up-> HL3 : PWM Stopped
+}
+
+@enduml
+
+@enduml

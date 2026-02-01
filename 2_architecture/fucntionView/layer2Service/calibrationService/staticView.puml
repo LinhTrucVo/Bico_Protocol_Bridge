@@ -1,0 +1,22 @@
+@startuml
+
+title Calibration Service - Static View
+
+package "Calibration Service" {
+    [Load Calibration] as load
+    [Save Calibration] as save
+    [Apply Calibration] as apply
+    [Calibration Procedure] as procedure
+    [Validate Calibration] as validator
+    [Factory Defaults] as defaults
+}
+
+[NVM Driver] as nvmDriver
+[Config Service] as configService
+
+load --> nvmDriver : Read calibration
+save --> nvmDriver : Write calibration
+load ..> defaults : Fallback values
+apply ..> configService : Get channel config
+
+@enduml

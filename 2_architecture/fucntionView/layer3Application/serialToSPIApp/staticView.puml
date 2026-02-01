@@ -1,0 +1,36 @@
+@startuml
+
+title SerialToSPI App - Static View
+
+package "SerialToSPI App" {
+    [Command Handler] as cmdHandler
+    [Mode Manager] as modeMgr
+    [Master Manager] as masterMgr
+    [Slave Manager] as slaveMgr
+    [CS Manager] as csMgr
+    [Device Manager] as deviceMgr
+    [Config Manager] as configMgr
+    
+    note right of modeMgr
+        Enforces mutual exclusivity:
+        Only Master OR Slave mode
+        active at a time
+    end note
+}
+
+[SPI Master Driver] as spiMasterDriver
+[SPI Slave Driver] as spiSlaveDriver
+[GPIO Driver] as gpioDriver
+[Config Service] as configService
+
+cmdHandler --> modeMgr : Mode requests
+modeMgr --> masterMgr : Master commands
+modeMgr --> slaveMgr : Slave commands
+masterMgr --> spiMasterDriver : Master operations
+slaveMgr --> spiSlaveDriver : Slave operations
+masterMgr --> csMgr : CS control
+csMgr --> gpioDriver : CS pin operations
+masterMgr --> deviceMgr : Device tracking
+configMgr --> configService : Load/save config
+
+@enduml

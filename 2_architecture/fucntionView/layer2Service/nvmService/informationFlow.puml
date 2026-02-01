@@ -1,0 +1,46 @@
+@startuml
+title NVM Service - Information Flow
+
+package "Direct Mode - Safe Write with Integrity" {
+    component "Application" as APP1
+    component "NVM Service" as NVS1
+    component "NVM Driver" as DRV1
+    
+    APP1 -down-> NVS1 : SafeWrite(region, data)
+    NVS1 -down-> NVS1 : CalculateCRC(data)
+    NVS1 -down-> NVS1 : Append CRC to data
+    NVS1 -down-> DRV1 : NVM_Write(address, data+CRC)
+    DRV1 -up-> NVS1 : SUCCESS / ERROR
+    NVS1 -down-> DRV1 : NVM_Read (verify)
+    DRV1 -up-> NVS1 : data+CRC
+    NVS1 -down-> NVS1 : VerifyCRC
+    NVS1 -up-> APP1 : WRITE_SUCCESS / VERIFY_FAILED
+}
+
+package "File System Mode - Write" {
+    component "Application" as APP2
+    component "NVM Service" as NVS2
+    component "Vendor FS HAL" as FS2
+    
+    APP2 -down-> NVS2 : SaveData(filename, data)
+    NVS2 -down-> FS2 : fopen(filename, "w")
+    FS2 -up-> NVS2 : file handle
+    NVS2 -down-> FS2 : fwrite(data)
+    FS2 -up-> NVS2 : bytes written
+    NVS2 -down-> FS2 : fclose()
+    NVS2 -up-> APP2 : SUCCESS / ERROR
+}
+
+package "Direct Mode - Safe Read" {
+    component "Application" as APP3
+    component "NVM Service" as NVS3
+    component "NVM Driver" as DRV3
+    
+    APP3 -down-> NVS3 : SafeRead(region, buffer)
+    NVS3 -down-> DRV3 : NVM_Read(address, buffer)
+    DRV3 -up-> NVS3 : data+CRC
+    NVS3 -down-> NVS3 : VerifyCRC(data+CRC)
+    NVS3 -up-> APP3 : Data (SUCCESS) / CRC_ERROR
+}
+
+@enduml

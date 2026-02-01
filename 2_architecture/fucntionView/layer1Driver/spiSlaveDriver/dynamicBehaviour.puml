@@ -1,0 +1,30 @@
+@startuml
+title SPI Slave Driver - Dynamic Behaviour
+
+participant "Higher Layer" as HL
+participant "SPI Slave Driver" as SSD
+participant "Vendor HAL" as HAL
+
+== Initialization ==
+HL -> SSD : SPISlave_Init(mode, bitorder)
+SSD -> HAL : HAL_SPI_Slave_Init(config)
+HAL --> SSD : OK
+SSD --> HL : SUCCESS
+
+== Prepare for Transaction ==
+HL -> SSD : SPISlave_PrepareData(tx_data, rx_buffer, len)
+SSD -> HAL : HAL_SPI_TransmitReceive_IT(tx_data, rx_buffer, len)
+HAL --> SSD : OK (Ready)
+SSD --> HL : READY
+
+== Master Transaction ==
+HAL -> SSD : Transaction_Start_Callback()
+SSD -> HL : Master_Transaction_Started()
+
+HAL -> SSD : TxRx_Complete_Callback(rx_data)
+SSD -> HL : Transaction_Complete(rx_data)
+
+HL -> SSD : Prepare Next Data
+SSD -> HAL : HAL_SPI_TransmitReceive_IT(new_data, buffer, len)
+
+@enduml

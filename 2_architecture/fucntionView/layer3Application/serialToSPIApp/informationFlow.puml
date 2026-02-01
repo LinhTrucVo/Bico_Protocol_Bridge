@@ -1,0 +1,73 @@
+@startuml
+title SerialToSPI App - Information Flow
+
+
+package "Configure SPI Master Flow" {
+    component "Central Controller" as CC1
+    component "SerialToSPI App" as SPI1
+    component "SPI Master Driver" as MASTER1
+    
+    CC1 -down-> SPI1 : Config_SPI_Master\n(clock, mode, bitorder)
+    SPI1 -down-> SPI1 : Check_Current_Mode()
+    SPI1 -down-> SPI1 : Disable_Slave_If_Active()
+    SPI1 -down-> SPI1 : Set_Mode(MASTER)
+    SPI1 -down-> MASTER1 : SPIMaster_Init(clock, mode, bitorder)
+    MASTER1 -up-> SPI1 : Success
+    SPI1 -down-> SPI1 : Save_SPI_Config()
+    SPI1 -up-> CC1 : Config_Success
+}
+
+package "SPI Master Transmit Flow" {
+    component "Central Controller" as CC2
+    component "SerialToSPI App" as SPI2
+    component "SPI Master Driver" as MASTER2
+    component "GPIO Driver" as GPIO2
+    
+    CC2 -down-> SPI2 : SPI_Write(device_id, data)
+    SPI2 -down-> SPI2 : Get_CS_Pin(device_id)
+    SPI2 -down-> GPIO2 : GPIO_WritePin(cs_pin, LOW)
+    SPI2 -down-> MASTER2 : SPIMaster_Transmit(data, len)
+    MASTER2 -up-> SPI2 : Status
+    SPI2 -down-> GPIO2 : GPIO_WritePin(cs_pin, HIGH)
+    SPI2 -up-> CC2 : Write_Result
+}
+
+package "SPI Master Transceive Flow" {
+    component "Central Controller" as CC3
+    component "SerialToSPI App" as SPI3
+    component "SPI Master Driver" as MASTER3
+    component "GPIO Driver" as GPIO3
+    
+    CC3 -down-> SPI3 : SPI_TransmitReceive\n(device_id, tx_data)
+    SPI3 -down-> GPIO3 : GPIO_WritePin(cs_pin, LOW)
+    SPI3 -down-> MASTER3 : SPIMaster_Transceive\n(tx_data, rx_buffer, len)
+    MASTER3 -up-> SPI3 : rx_data + Status
+    SPI3 -down-> GPIO3 : GPIO_WritePin(cs_pin, HIGH)
+    SPI3 -up-> CC3 : RX_Data
+}
+
+package "Configure SPI Slave Flow" {
+    component "Central Controller" as CC4
+    component "SerialToSPI App" as SPI4
+    component "SPI Slave Driver" as SLAVE4
+    
+    CC4 -down-> SPI4 : Config_SPI_Slave(mode, bitorder)
+    SPI4 -down-> SPI4 : Check_Current_Mode()
+    SPI4 -down-> SPI4 : Disable_Master_If_Active()
+    SPI4 -down-> SPI4 : Set_Mode(SLAVE)
+    SPI4 -down-> SLAVE4 : SPISlave_Init(mode, bitorder)
+    SLAVE4 -up-> SPI4 : Success
+    SPI4 -down-> SPI4 : Save_Slave_Config()
+    SPI4 -up-> CC4 : Slave_Ready
+}
+
+package "SPI Slave Event Flow" {
+    component "SPI Slave Driver" as SLAVE5
+    component "SerialToSPI App" as SPI5
+    component "Central Controller" as CC5
+    
+    SLAVE5 -up-> SPI5 : Transaction_Complete\n(rx_data, tx_data)
+    SPI5 -up-> CC5 : Slave_Data_Exchanged(rx_data)
+}
+
+@enduml

@@ -1,0 +1,39 @@
+@startuml
+title Serialize (Response Formatter) - Information Flow
+
+package "Format Success Response Flow" {
+    component "Central App Controller" as CAC1
+    component "Serialize" as SER1
+    component "Serial Driver" as SD1
+    
+    CAC1 -down-> SER1 : Response{type=ADC_READ,\ndata={channel:1, value:2048}}
+    SER1 -down-> SER1 : FormatResponse()
+    SER1 -down-> SER1 : "ADC:READ:CH1:VALUE:2048"
+    SER1 -down-> SER1 : AddFraming() ->\n"ADC:READ:CH1:VALUE:2048\\r\\n"
+    SER1 -down-> SD1 : Transmit("ADC:READ:CH1:VALUE:2048\\r\\n")
+}
+
+package "Format Error Response Flow" {
+    component "Central App Controller" as CAC2
+    component "Serialize" as SER2
+    component "Serial Driver" as SD2
+    
+    CAC2 -down-> SER2 : Error{code=INVALID_PARAM,\nmessage="Invalid channel"}
+    SER2 -down-> SER2 : FormatError()
+    SER2 -down-> SER2 : "ERROR:INVALID_PARAM:Invalid channel"
+    SER2 -down-> SER2 : AddFraming() ->\n"ERROR:INVALID_PARAM:Invalid channel\\r\\n"
+    SER2 -down-> SD2 : Transmit("ERROR:INVALID_PARAM:Invalid channel\\r\\n")
+}
+
+package "Format Status Message Flow" {
+    component "Central App Controller" as CAC3
+    component "Serialize" as SER3
+    component "Serial Driver" as SD3
+    
+    CAC3 -down-> SER3 : Status{type=CONFIG_SAVED}
+    SER3 -down-> SER3 : FormatStatus()
+    SER3 -down-> SER3 : "OK:CONFIG_SAVED\\r\\n"
+    SER3 -down-> SD3 : Transmit("OK:CONFIG_SAVED\\r\\n")
+}
+
+@enduml

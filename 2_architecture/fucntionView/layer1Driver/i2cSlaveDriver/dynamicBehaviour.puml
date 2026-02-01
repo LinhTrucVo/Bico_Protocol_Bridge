@@ -1,0 +1,30 @@
+@startuml
+title I2C Slave Driver - Dynamic Behaviour
+
+participant "Higher Layer" as HL
+participant "I2C Slave Driver" as ISD
+participant "Vendor HAL" as HAL
+
+== Initialization ==
+HL -> ISD : I2CSlave_Init(slave_address)
+ISD -> HAL : HAL_I2C_Slave_Init(address)
+HAL --> ISD : OK
+ISD -> HAL : HAL_I2C_EnableListen()
+HAL --> ISD : OK
+ISD --> HL : SUCCESS
+
+== Master Write to Slave ==
+HAL -> ISD : AddrMatch_Callback(WRITE)
+ISD -> HL : Master_Write_Request()
+HAL -> ISD : SlaveRx_Callback(data)
+ISD -> HL : Data_Received(data)
+
+== Master Read from Slave ==
+HAL -> ISD : AddrMatch_Callback(READ)
+ISD -> HL : Master_Read_Request()
+HL -> ISD : Prepare_Response(data)
+ISD -> HAL : HAL_I2C_Slave_Transmit(data)
+HAL --> ISD : TX_Complete
+ISD --> HL : Response_Sent()
+
+@enduml

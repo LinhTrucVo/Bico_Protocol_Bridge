@@ -1,0 +1,34 @@
+@startuml
+
+title Serialize (Response Formatter) - Static View
+
+package "Serialize" {
+    [Response Builder] as builder
+    note right of builder
+        - Converts data structures to text format
+        - Example: {channel:1, voltage:3.25} 
+          → "ADC:CH1:VOLTAGE:3.25V"
+    end note
+    
+    [Format Handler] as format
+    note right of format
+        - Handles different output formats
+        - ASCII text, HEX strings, binary
+    end note
+    
+    [Message Framing] as framing
+    note right of framing
+        - Adds delimiters and terminators
+        - Example: "OK" → "OK\\r\\n"
+    end note
+}
+
+[Central App Controller] as controller
+[Serial Driver] as serialDriver
+
+controller --> builder : Response data structure
+builder --> format : Format conversion
+format --> framing : Apply delimiters
+framing --> serialDriver : Complete serial stream
+
+@enduml

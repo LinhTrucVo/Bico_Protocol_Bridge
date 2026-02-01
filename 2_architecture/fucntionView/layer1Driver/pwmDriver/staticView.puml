@@ -1,0 +1,23 @@
+@startuml
+
+title PWM Driver - Static View
+
+package "PWM Driver" {
+    [PWM Init] as init
+    [PWM Config] as config
+    [PWM Start] as start
+    [PWM Stop] as stop
+    [PWM Update] as update
+    [Multi-Channel Mgr] as multiCh
+}
+
+[Vendor Timer HAL] as vendorHAL
+
+init --> vendorHAL : Initialize hardware
+config --> vendorHAL : Configure parameters
+start --> vendorHAL : Start PWM
+stop --> vendorHAL : Stop PWM
+update --> vendorHAL : Update compare value
+multiCh --> vendorHAL : Channel control
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml Feature_UseCase
+
+actor User
+participant "Serial-Digital\nBridge Board" as Bridge
+participant "Digital Target\nObject" as Target
+
+== Digital Write Use Case ==
+User -> Bridge: Send serial request:\nWrite digital pin HIGH
+Bridge -> Target: Set digital output HIGH
+Bridge --> User: Serial response:\nWrite successful
+
+== Digital Read Use Case ==
+User -> Bridge: Send serial request:\nRead digital pin state
+Bridge -> Target: Read digital input
+Target --> Bridge: Return pin state (HIGH/LOW)
+Bridge --> User: Serial response:\nPin state = HIGH
+
+== PWM Control Use Case ==
+User -> Bridge: Send serial request:\nPWM config (freq: 1kHz, duty: 50%)
+Bridge -> Target: Generate PWM signal\n(1kHz, 50% duty)
+Bridge --> User: Serial response:\nPWM configured
+
+@enduml

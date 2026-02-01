@@ -1,0 +1,50 @@
+@startuml
+title ADC Driver - Information Flow
+
+package "Initialization Flow" {
+    component "Higher Layer" as HL1
+    component "ADC Driver" as AD1
+    component "Vendor ADC HAL" as HAL1
+    
+    HL1 -down-> AD1 : Init Request
+    AD1 -down-> HAL1 : HAL_ADC_Init()
+    HAL1 -up-> AD1 : Status
+    AD1 -up-> HL1 : Init Status
+}
+
+package "Configuration Flow" {
+    component "Higher Layer" as HL2
+    component "ADC Driver" as AD2
+    component "Vendor ADC HAL" as HAL2
+    
+    HL2 -down-> AD2 : Configure Channel\n(resolution, rate)
+    AD2 -down-> HAL2 : HAL_ADC_ConfigChannel()
+    HAL2 -up-> AD2 : Status
+    AD2 -up-> HL2 : Config Status
+}
+
+package "Conversion Flow" {
+    component "Higher Layer" as HL3
+    component "ADC Driver" as AD3
+    component "Vendor ADC HAL" as HAL3
+    
+    HL3 -down-> AD3 : Start Conversion (mode)
+    AD3 -down-> HAL3 : HAL_ADC_Start()
+    HAL3 -up-> AD3 : Status
+    AD3 -up-> HL3 : Started
+}
+
+package "Read Flow" {
+    component "Higher Layer" as HL4
+    component "ADC Driver" as AD4
+    component "Vendor ADC HAL" as HAL4
+    
+    HAL4 -up-> AD4 : ConvComplete_Callback()
+    AD4 -up-> HL4 : Conversion_Complete_Event()
+    HL4 -down-> AD4 : Read Value
+    AD4 -down-> HAL4 : HAL_ADC_GetValue()
+    HAL4 -up-> AD4 : Digital Value
+    AD4 -up-> HL4 : ADC Value
+}
+
+@enduml

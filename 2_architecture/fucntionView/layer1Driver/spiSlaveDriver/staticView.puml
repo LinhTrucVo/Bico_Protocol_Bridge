@@ -1,0 +1,23 @@
+@startuml
+
+title SPI Slave Driver - Static View
+
+package "SPI Slave Driver" {
+    [SPI Slave Init] as init
+    [SPI Slave Config] as config
+    [Slave TX Handler] as txHandler
+    [Slave RX Handler] as rxHandler
+    [Slave Transceive] as transceive
+    [Event Callback] as callback
+}
+
+[Vendor SPI HAL] as vendorHAL
+
+init --> vendorHAL : Initialize hardware
+config --> vendorHAL : Configure parameters
+txHandler --> vendorHAL : Slave transmit
+rxHandler --> vendorHAL : Slave receive
+transceive --> vendorHAL : Transmit-receive
+callback <-- vendorHAL : Event callbacks
+
+@enduml

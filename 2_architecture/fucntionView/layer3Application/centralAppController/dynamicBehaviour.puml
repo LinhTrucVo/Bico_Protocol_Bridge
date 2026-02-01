@@ -1,0 +1,92 @@
+@startuml
+title Central App Controller - Dynamic Behaviour
+
+participant "Main" as MAIN
+participant "Central Controller" as CAC
+participant "Analog App" as AA
+participant "Digital App" as DA
+participant "I2C App" as I2C
+participant "SPI App" as SPI
+participant "Protocol Handler" as PH
+
+== System Initialization ==
+MAIN -> CAC : CentralController_Init()
+CAC -> CAC : LoadSystemConfig()
+CAC -> AA : AnalogApp_Init()
+AA --> CAC : INIT_SUCCESS
+CAC -> DA : DigitalApp_Init()
+DA --> CAC : INIT_SUCCESS
+CAC -> I2C : I2CApp_Init()
+I2C --> CAC : INIT_SUCCESS
+CAC -> SPI : SPIApp_Init()
+SPI --> CAC : INIT_SUCCESS
+CAC -> PH : ProtocolHandler_Init()
+PH --> CAC : INIT_SUCCESS
+CAC -> CAC : SetSystemState(READY)
+CAC --> MAIN : SYSTEM_READY
+
+== Command Processing ==
+PH -> CAC : ProcessCommand(cmd_type, params)
+CAC -> CAC : ParseCommandType(cmd_type)
+
+alt ADC Command
+    CAC -> AA : ExecuteCommand(params)
+    AA --> CAC : result
+    CAC --> PH : result
+    
+else GPIO/PWM Command
+    CAC -> DA : ExecuteCommand(params)
+    DA --> CAC : result
+    CAC --> PH : result
+    
+else I2C Command
+    CAC -> I2C : ExecuteCommand(params)
+    I2C --> CAC : result
+    CAC --> PH : result
+    
+else SPI Command
+    CAC -> SPI : ExecuteCommand(params)
+    SPI --> CAC : result
+    CAC --> PH : result
+    
+else Unknown Command
+    CAC --> PH : ERROR_UNKNOWN_COMMAND
+end
+
+== Resource Management ==
+AA -> CAC : RequestResource(RESOURCE_NVM)
+CAC -> CAC : CheckResourceAvailability(RESOURCE_NVM)
+
+alt Resource Available
+    CAC -> CAC : AllocateResource(RESOURCE_NVM, AA)
+    CAC --> AA : RESOURCE_GRANTED
+    
+    ' AA uses resource
+    AA -> CAC : ReleaseResource(RESOURCE_NVM)
+    CAC -> CAC : DeallocateResource(RESOURCE_NVM)
+    CAC --> AA : RESOURCE_RELEASED
+    
+else Resource Busy
+    CAC --> AA : RESOURCE_BUSY
+end
+
+== Health Monitoring ==
+loop Every 1000ms
+    CAC -> CAC : CheckSystemHealth()
+    CAC -> AA : GetStatus()
+    AA --> CAC : HEALTHY
+    CAC -> DA : GetStatus()
+    DA --> CAC : HEALTHY
+    CAC -> I2C : GetStatus()
+    I2C --> CAC : HEALTHY
+    CAC -> SPI : GetStatus()
+    SPI --> CAC : HEALTHY
+    
+    alt All Healthy
+        CAC -> CAC : UpdateWatchdog()
+    else Module Unhealthy
+        CAC -> CAC : TriggerErrorRecovery()
+    end
+end
+
+@enduml

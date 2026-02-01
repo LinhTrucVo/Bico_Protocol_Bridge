@@ -1,0 +1,29 @@
+@startuml
+title Configuration Service - Information Flow
+
+package "System Startup Flow" {
+    component "Application" as APP1
+    component "Configuration Service" as CS1
+    component "NVM Driver" as NVM1
+    
+    APP1 -down-> CS1 : Load_Configuration()
+    CS1 -down-> NVM1 : NVM_Read(config_addr)
+    NVM1 -up-> CS1 : Config Data (Valid or Invalid)
+    CS1 -down-> CS1 : Validate / Load_Defaults()
+    CS1 -up-> APP1 : Config Loaded / Default Config
+}
+
+package "Configuration Update Flow" {
+    component "Application" as APP2
+    component "Configuration Service" as CS2
+    component "NVM Driver" as NVM2
+    
+    APP2 -down-> CS2 : Update_Config(config_data)
+    CS2 -down-> CS2 : Validate_Parameters()
+    CS2 -down-> CS2 : Update_Config()
+    CS2 -down-> NVM2 : NVM_Write(config_addr, data)
+    NVM2 -up-> CS2 : Success / Error
+    CS2 -up-> APP2 : Config_Updated / Validation_Error
+}
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+
+title SPI Master Driver - Static View
+
+package "SPI Master Driver" {
+    [SPI Master Init] as init
+    [SPI Config] as config
+    [SPI Transmit] as transmit
+    [SPI Receive] as receive
+    [SPI Transceive] as transceive
+    [CS Control] as csControl
+}
+
+[Vendor SPI HAL] as vendorHAL
+
+init --> vendorHAL : Initialize hardware
+config --> vendorHAL : Configure parameters
+transmit --> vendorHAL : Master transmit
+receive --> vendorHAL : Master receive
+transceive --> vendorHAL : Transmit-receive
+csControl --> vendorHAL : GPIO control
+
+@enduml

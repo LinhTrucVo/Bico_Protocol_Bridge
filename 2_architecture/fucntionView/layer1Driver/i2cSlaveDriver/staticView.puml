@@ -1,0 +1,23 @@
+@startuml
+
+title I2C Slave Driver - Static View
+
+package "I2C Slave Driver" {
+    [I2C Slave Init] as init
+    [I2C Slave Config] as config
+    [Listen Mode] as listen
+    [Slave TX Handler] as txHandler
+    [Slave RX Handler] as rxHandler
+    [Event Callback] as callback
+}
+
+[Vendor I2C HAL] as vendorHAL
+
+init --> vendorHAL : Initialize hardware
+config --> vendorHAL : Set slave address
+listen --> vendorHAL : Enable slave mode
+txHandler --> vendorHAL : Slave transmit
+rxHandler --> vendorHAL : Slave receive
+callback <-- vendorHAL : Event callbacks
+
+@enduml

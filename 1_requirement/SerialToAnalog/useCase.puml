@@ -1,0 +1,20 @@
+@startuml Feature_UseCase
+
+actor User
+participant "Serial-Analog Bridge Board" as Bridge
+participant "Analog Target Object" as Target
+
+User -> Bridge: Send serial request\n(configure parameters)
+Bridge -> Bridge: Save configuration
+
+User -> Bridge: Send serial request\n(read analog value)
+Bridge -> Target: Read analog signal
+Target --> Bridge: Analog value
+Bridge --> User: Serial response\n(analog read value)
+
+note right of User
+  User reads analog values
+  via simple serial commands
+end note
+
+@enduml

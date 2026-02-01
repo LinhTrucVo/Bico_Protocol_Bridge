@@ -1,0 +1,35 @@
+@startuml
+
+title SerialToI2C App - Static View
+
+package "SerialToI2C App" {
+    [Command Handler] as cmdHandler
+    [Mode Manager] as modeMgr
+    [Master Manager] as masterMgr
+    [Slave Manager] as slaveMgr
+    [Device Manager] as deviceMgr
+    [Error Handler] as errorHandler
+    [Config Manager] as configMgr
+    
+    note right of modeMgr
+        Enforces mutual exclusivity:
+        Only Master OR Slave mode
+        active at a time
+    end note
+}
+
+[I2C Master Driver] as i2cMasterDriver
+[I2C Slave Driver] as i2cSlaveDriver
+[Config Service] as configService
+
+cmdHandler --> modeMgr : Mode requests
+modeMgr --> masterMgr : Master commands
+modeMgr --> slaveMgr : Slave commands
+masterMgr --> i2cMasterDriver : Master operations
+slaveMgr --> i2cSlaveDriver : Slave operations
+masterMgr --> deviceMgr : Device tracking
+errorHandler <-- i2cMasterDriver : Error events
+errorHandler <-- i2cSlaveDriver : Error events
+configMgr --> configService : Load/save config
+
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+
+title SerialToDigital App - Static View
+
+package "SerialToDigital App" {
+    [Command Handler] as cmdHandler
+    [GPIO Manager] as gpioMgr
+    [PWM Manager] as pwmMgr
+    [Pin Mode Manager] as pinModeMgr
+    [Config Manager] as configMgr
+}
+
+[GPIO Driver] as gpioDriver
+[PWM Driver] as pwmDriver
+[Config Service] as configService
+[NVM Service] as nvmService
+
+cmdHandler --> gpioMgr : GPIO commands
+cmdHandler --> pwmMgr : PWM commands
+gpioMgr --> pinModeMgr : Configure modes
+gpioMgr --> gpioDriver : Digital operations
+pwmMgr --> pwmDriver : PWM operations
+configMgr --> configService : Load/save config
+configMgr --> nvmService : Persist status
+
+@enduml

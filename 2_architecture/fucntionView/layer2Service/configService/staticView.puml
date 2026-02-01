@@ -1,0 +1,20 @@
+@startuml
+
+title Configuration Service - Static View
+
+package "Configuration Service" {
+    [Config Loader] as load
+    [Config Saver] as save
+    [Config Validator] as validator
+    [Config Parser] as parser
+    [Default Config] as defaults
+    [Version Manager] as version
+}
+
+[NVM Driver] as nvmDriver
+
+load --> nvmDriver : Read from NVM
+save --> nvmDriver : Write to NVM
+defaults ..> load : Fallback values
+
+@enduml

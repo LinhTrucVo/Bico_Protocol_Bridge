@@ -1,0 +1,82 @@
+@startuml
+title SerialToAnalog App - Dynamic Behaviour
+
+participant "Central Controller" as CC
+participant "Analog App" as AA
+participant "ADC Driver" as ADC
+participant "Calibration" as CAL
+participant "Data Conversion" as DC
+participant "Config Service" as CFG
+
+== Initialization ==
+CC -> AA : AnalogApp_Init()
+AA -> CFG : LoadConfiguration(ANALOG_CONFIG)
+CFG --> AA : config_data
+AA -> AA : InitializeChannels(config_data)
+loop For each configured channel
+    AA -> ADC : ADC_ConfigChannel(ch, resolution, rate)
+    ADC --> AA : SUCCESS
+end
+AA --> CC : INIT_SUCCESS
+
+== Configure ADC Channel ==
+CC -> AA : ConfigureADCChannel(ch=1, rate=1000Hz, res=12bit)
+AA -> ADC : ADC_ConfigChannel(ch=1, resolution=12, mode=CONTINUOUS)
+ADC --> AA : SUCCESS
+AA -> AA : UpdateChannelConfig(ch=1, rate=1000)
+AA -> CFG : SaveConfiguration(channel_config)
+CFG --> AA : SAVED
+AA --> CC : CONFIG_SUCCESS
+
+== Read Single ADC Value ==
+CC -> AA : ReadADC(channel=1)
+AA -> ADC : ADC_StartSingle(ch=1)
+ADC -> ADC : Perform conversion
+ADC -> AA : ConversionComplete_Callback(raw_adc=2048)
+AA -> CAL : ApplyCalibration(ch=1, raw_adc=2048)
+CAL --> AA : calibrated_adc=2050
+AA -> DC : ConvertADCToVoltage(ch=1, adc=2050)
+DC --> AA : voltage=3.28V
+AA --> CC : ADC_Result{ch=1, voltage=3.28, raw=2048}
+
+== Continuous Sampling with Averaging ==
+CC -> AA : StartContinuous(ch=1, avg_samples=16)
+AA -> AA : SetAveragingMode(ch=1, samples=16)
+AA -> ADC : ADC_StartContinuous(ch=1)
+
+loop Continuous sampling
+    ADC -> AA : ConversionComplete_Callback(raw_value)
+    AA -> AA : AddToAveragingBuffer(ch=1, raw_value)
+    
+    alt Buffer Full (16 samples)
+        AA -> AA : CalculateAverage()
+        AA -> CAL : ApplyCalibration(ch=1, avg_value)
+        CAL --> AA : calibrated_value
+        AA -> DC : ConvertToVoltage(ch=1, calibrated_value)
+        DC --> AA : voltage
+        AA -> CC : NewSample_Event(ch=1, voltage)
+    end
+end
+
+CC -> AA : StopContinuous(ch=1)
+AA -> ADC : ADC_Stop(ch=1)
+
+== Threshold Monitoring ==
+CC -> AA : SetThreshold(ch=1, min=1.0V, max=4.0V)
+AA -> AA : ConfigureThreshold(ch=1, min, max)
+
+loop Monitoring
+    AA -> ADC : ADC_ReadValue(ch=1)
+    ADC --> AA : raw_value
+    AA -> CAL : ApplyCalibration(ch=1, raw_value)
+    CAL --> AA : calibrated
+    AA -> DC : ConvertToVoltage(ch=1, calibrated)
+    DC --> AA : voltage
+    AA -> AA : CheckThreshold(voltage, min=1.0, max=4.0)
+    
+    alt Threshold Exceeded
+        AA -> CC : ThresholdAlert(ch=1, voltage, threshold_type)
+    end
+end
+
+@enduml

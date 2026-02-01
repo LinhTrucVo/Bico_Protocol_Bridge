@@ -1,0 +1,23 @@
+@startuml
+
+title NVM Driver - Static View
+
+package "NVM Driver" {
+    [NVM Init] as init
+    [NVM Write] as write
+    [NVM Read] as read
+    [NVM Erase] as erase
+    [Write Protect] as protect
+    [Error Handler] as error
+}
+
+[Vendor Flash/EEPROM HAL] as vendorHAL
+
+init --> vendorHAL : Initialize hardware
+write --> vendorHAL : Program memory
+read --> vendorHAL : Read memory
+erase --> vendorHAL : Erase sector
+protect --> vendorHAL : Protection control
+error <-- vendorHAL : Error callbacks
+
+@enduml

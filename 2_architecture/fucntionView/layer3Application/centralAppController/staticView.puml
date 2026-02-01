@@ -1,0 +1,35 @@
+@startuml
+
+title Central App Controller - Static View
+
+package "Central App Controller" {
+    [System Initializer] as init
+    [Command Router] as router
+    [Resource Arbiter] as arbiter
+    [Module Coordinator] as coordinator
+    [State Manager] as stateMgr
+    [Health Monitor] as watchdog
+}
+
+[SerialToAnalog App] as analogApp
+[SerialToDigital App] as digitalApp
+[SerialToI2C App] as i2cApp
+[SerialToSPI App] as spiApp
+
+[Deserialize] as deserialize
+[Serialize] as serialize
+[Config Service] as configService
+
+deserialize -[#orange]-> router : Parsed commands
+router -[#blue]-> analogApp : Analog commands
+router -[#blue]-> digitalApp : Digital commands
+router -[#blue]-> i2cApp : I2C commands
+router -[#blue]-> spiApp : SPI commands
+router -[#orange]-> serialize : Format responses
+init -[#green]-> analogApp : Initialize
+init -[#green]-> digitalApp : Initialize
+init -[#green]-> i2cApp : Initialize
+init -[#green]-> spiApp : Initialize
+configService -[#purple]-> stateMgr : System config
+
+@enduml

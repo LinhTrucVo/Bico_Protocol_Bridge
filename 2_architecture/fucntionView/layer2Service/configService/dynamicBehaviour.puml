@@ -1,0 +1,46 @@
+@startuml
+title Configuration Service - Dynamic Behaviour
+
+participant "Application" as APP
+participant "Config Service" as CS
+participant "NVM Driver" as NVM
+
+== System Initialization ==
+APP -> CS : ConfigService_Init()
+CS -> NVM : NVM_Init()
+NVM --> CS : OK
+CS -> CS : LoadConfiguration()
+CS -> NVM : NVM_Read(CONFIG_ADDRESS, buffer, size)
+alt Configuration Valid
+    NVM --> CS : config_data
+    CS -> CS : ValidateConfig(data)
+    CS --> APP : CONFIG_LOADED
+else Configuration Invalid or Empty
+    CS -> CS : LoadDefaults()
+    CS --> APP : DEFAULT_CONFIG_LOADED
+end
+
+== Save Configuration ==
+APP -> CS : ConfigService_Save(config)
+CS -> CS : ValidateConfig(config)
+alt Valid Configuration
+    CS -> NVM : NVM_Write(CONFIG_ADDRESS, config, size)
+    NVM --> CS : SUCCESS
+    CS --> APP : CONFIG_SAVED
+else Invalid Configuration
+    CS --> APP : VALIDATION_ERROR
+end
+
+== Update Parameter ==
+APP -> CS : ConfigService_UpdateParam(param_id, value)
+CS -> CS : ValidateParameter(param_id, value)
+alt Valid
+    CS -> CS : UpdateInternalConfig(param_id, value)
+    CS -> NVM : NVM_Write(param_addr, value, size)
+    NVM --> CS : SUCCESS
+    CS --> APP : PARAM_UPDATED
+else Invalid
+    CS --> APP : INVALID_PARAM
+end
+
+@enduml

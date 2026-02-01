@@ -1,0 +1,41 @@
+@startuml
+title ADC Driver - Dynamic Behaviour
+
+participant "Higher Layer" as HL
+participant "ADC Driver" as AD
+participant "Vendor HAL" as HAL
+
+== Initialization ==
+HL -> AD : ADC_Init()
+AD -> HAL : HAL_ADC_Init(config)
+HAL --> AD : OK
+AD --> HL : SUCCESS
+
+== Configure Channel ==
+HL -> AD : ADC_ConfigChannel(ch, resolution, rate)
+AD -> HAL : HAL_ADC_ConfigChannel(config)
+HAL --> AD : OK
+AD --> HL : SUCCESS
+
+== Single Conversion ==
+HL -> AD : ADC_StartSingle(channel)
+AD -> HAL : HAL_ADC_Start(channel)
+HAL -> AD : ConvComplete_Callback()
+AD -> HL : Conversion_Complete()
+HL -> AD : ADC_ReadValue(channel)
+AD -> HAL : HAL_ADC_GetValue(channel)
+HAL --> AD : digital_value
+AD --> HL : digital_value
+
+== Continuous Conversion ==
+HL -> AD : ADC_StartContinuous(channels)
+AD -> HAL : HAL_ADC_Start_DMA(channels, buffer)
+loop For each sample
+    HAL -> AD : ConvComplete_Callback()
+    AD -> HL : New_Sample_Available()
+end
+
+HL -> AD : ADC_Stop()
+AD -> HAL : HAL_ADC_Stop_DMA()
+
+@enduml

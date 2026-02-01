@@ -1,0 +1,34 @@
+@startuml
+title GPIO Driver - Dynamic Behaviour
+
+participant "Higher Layer" as HL
+participant "GPIO Driver" as GD
+participant "Vendor HAL" as HAL
+
+== Initialization ==
+HL -> GD : GPIO_Init(pin, mode, pull)
+GD -> HAL : HAL_GPIO_Init(pin, config)
+HAL --> GD : OK
+GD --> HL : SUCCESS
+
+== Write Operation ==
+HL -> GD : GPIO_WritePin(pin, HIGH)
+GD -> HAL : HAL_GPIO_WritePin(pin, GPIO_PIN_SET)
+HAL --> GD : OK
+GD --> HL : SUCCESS
+
+== Read Operation ==
+HL -> GD : GPIO_ReadPin(pin)
+GD -> HAL : HAL_GPIO_ReadPin(pin)
+HAL --> GD : pin_state
+GD --> HL : pin_state
+
+== Interrupt Mode ==
+HL -> GD : GPIO_EnableInterrupt(pin, edge)
+GD -> HAL : HAL_GPIO_EXTI_Config(pin, edge)
+HAL --> GD : OK
+
+HAL -> GD : HAL_GPIO_EXTI_Callback(pin)
+GD -> HL : GPIO_Interrupt_Event(pin)
+
+@enduml

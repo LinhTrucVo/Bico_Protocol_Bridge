@@ -1,0 +1,33 @@
+@startuml
+title SPI Master Driver - Information Flow
+
+
+package "Initialization Flow" {
+    component "Higher Layer" as HL1
+    component "SPI Master Driver" as SMD1
+    component "Vendor SPI HAL" as HAL1
+    
+    HL1 -down-> SMD1 : Init Request\n(clock, mode)
+    SMD1 -down-> HAL1 : HAL_SPI_Init()
+    HAL1 -up-> SMD1 : Status
+    SMD1 -up-> HL1 : Init Status
+}
+
+package "Transceive Flow" {
+    component "Higher Layer" as HL2
+    component "SPI Master Driver" as SMD2
+    component "Vendor SPI HAL" as HAL2
+    
+    HL2 -down-> SMD2 : Select Slave (CS)
+    SMD2 -down-> HAL2 : GPIO_WritePin(CS, LOW)
+    
+    HL2 -down-> SMD2 : Transceive(tx_data)
+    SMD2 -down-> HAL2 : HAL_SPI_TransmitReceive()
+    HAL2 -up-> SMD2 : rx_data + Status
+    SMD2 -up-> HL2 : rx_data
+    
+    HL2 -down-> SMD2 : Deselect Slave
+    SMD2 -down-> HAL2 : GPIO_WritePin(CS, HIGH)
+}
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+
+title I2C Master Driver - Static View
+
+package "I2C Master Driver" {
+    [I2C Master Init] as init
+    [I2C Config] as config
+    [I2C Write] as write
+    [I2C Read] as read
+    [I2C Scan] as scan
+    [I2C Error Handler] as error
+}
+
+[Vendor I2C HAL] as vendorHAL
+
+init --> vendorHAL : Initialize hardware
+config --> vendorHAL : Configure parameters
+write --> vendorHAL : Master transmit
+read --> vendorHAL : Master receive
+scan --> vendorHAL : Probe addresses
+error --> vendorHAL : Error callbacks
+
+@enduml

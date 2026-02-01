@@ -1,0 +1,42 @@
+@startuml
+title Data Conversion Service - Information Flow
+
+
+package "ADC to Engineering Units Flow" {
+    component "Application" as APP1
+    component "Data Conversion Service" as DCS1
+    component "Calibration Service" as CAL1
+    component "Config Service" as CFG1
+    
+    APP1 -down-> DCS1 : Convert_ADC_To_Engineering\n(channel, raw_value)
+    DCS1 -down-> CAL1 : ApplyCalibration\n(channel, raw_value)
+    CAL1 -up-> DCS1 : calibrated_value
+    DCS1 -down-> CFG1 : Get_Voltage_Range(channel)
+    CFG1 -up-> DCS1 : voltage_range
+    DCS1 -down-> DCS1 : voltage = (calibrated / resolution)\n* voltage_range
+    DCS1 -up-> APP1 : voltage
+}
+
+package "Format Conversion Flow" {
+    component "Application" as APP2
+    component "Data Conversion Service" as DCS2
+    
+    APP2 -down-> DCS2 : Convert_To_ASCII(binary_data)
+    DCS2 -down-> DCS2 : Format conversion
+    DCS2 -up-> APP2 : ascii_string
+    
+    APP2 -down-> DCS2 : Convert_To_Hex(binary_data)
+    DCS2 -down-> DCS2 : Binary to hex string
+    DCS2 -up-> APP2 : hex_string
+}
+
+package "Scaling Flow" {
+    component "Application" as APP3
+    component "Data Conversion Service" as DCS3
+    
+    APP3 -down-> DCS3 : Apply_Scaling\n(value, scale_factor, offset)
+    DCS3 -down-> DCS3 : scaled_value =\n(value * scale) + offset
+    DCS3 -up-> APP3 : scaled_value
+}
+
+@enduml

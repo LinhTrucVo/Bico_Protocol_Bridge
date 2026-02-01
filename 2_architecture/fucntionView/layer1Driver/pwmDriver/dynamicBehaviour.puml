@@ -1,0 +1,38 @@
+@startuml
+title PWM Driver - Dynamic Behaviour
+
+participant "Higher Layer" as HL
+participant "PWM Driver" as PD
+participant "Vendor HAL" as HAL
+
+== Initialization ==
+HL -> PD : PWM_Init(timer, channel)
+PD -> HAL : HAL_TIM_PWM_Init(timer)
+HAL --> PD : OK
+PD --> HL : SUCCESS
+
+== Configure PWM ==
+HL -> PD : PWM_Config(channel, freq, duty)
+PD -> HAL : HAL_TIM_PWM_ConfigChannel(channel, config)
+HAL --> PD : OK
+PD --> HL : SUCCESS
+
+== Start PWM Generation ==
+HL -> PD : PWM_Start(channel)
+PD -> HAL : HAL_TIM_PWM_Start(timer, channel)
+HAL --> PD : OK
+PD --> HL : PWM_ACTIVE
+
+== Update Duty Cycle (Runtime) ==
+HL -> PD : PWM_SetDuty(channel, new_duty)
+PD -> HAL : __HAL_TIM_SET_COMPARE(timer, channel, compare_value)
+HAL --> PD : Updated
+PD --> HL : SUCCESS
+
+== Stop PWM Generation ==
+HL -> PD : PWM_Stop(channel)
+PD -> HAL : HAL_TIM_PWM_Stop(timer, channel)
+HAL --> PD : OK
+PD --> HL : PWM_STOPPED
+
+@enduml

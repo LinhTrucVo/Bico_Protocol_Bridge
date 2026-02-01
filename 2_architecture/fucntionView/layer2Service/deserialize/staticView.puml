@@ -1,0 +1,41 @@
+@startuml
+
+title Deserialize (Command Parser) - Static View
+
+package "Deserialize" {
+    [Command Parser] as parser
+    note right of parser
+        - Parses serial stream to data structures
+        - Example: "ADC:READ:CH1\\r\\n" 
+          → {type:ADC_READ, channel:1}
+    end note
+    
+    [Tokenizer] as tokenizer
+    note right of tokenizer
+        - Splits stream into tokens
+        - Handles delimiters
+    end note
+    
+    [Syntax Validator] as validator
+    note right of validator
+        - Validates command syntax
+        - Checks parameter ranges
+    end note
+    
+    [Parameter Extractor] as extractor
+    note right of extractor
+        - Extracts typed parameters
+        - Converts strings to values
+    end note
+}
+
+[Serial Driver] as serialDriver
+[Central App Controller] as controller
+
+serialDriver --> tokenizer : Raw serial stream
+tokenizer --> parser : Tokens
+parser --> validator : Syntax check
+validator --> extractor : Extract parameters
+extractor --> controller : Parsed data structure
+
+@enduml

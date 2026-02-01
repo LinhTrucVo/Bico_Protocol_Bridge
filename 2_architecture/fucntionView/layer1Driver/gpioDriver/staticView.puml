@@ -1,0 +1,22 @@
+@startuml
+title GPIO Driver - Static View
+
+package "GPIO Driver" {
+    [GPIO Init] as init
+    [GPIO Config] as config
+    [GPIO Write] as write
+    [GPIO Read] as read
+    [GPIO Toggle] as toggle
+    [GPIO Interrupt] as interrupt
+}
+
+[Vendor GPIO HAL] as vendorHAL
+
+init --> vendorHAL : Initialize hardware
+config --> vendorHAL : Configure parameters
+write --> vendorHAL : Write pin
+read --> vendorHAL : Read pin
+toggle --> vendorHAL : Toggle pin
+interrupt <-- vendorHAL : Interrupt callback
+
+@enduml

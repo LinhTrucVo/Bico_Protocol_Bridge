@@ -1,0 +1,23 @@
+@startuml
+
+title ADC Driver - Static View
+
+package "ADC Driver" {
+    [ADC Init] as init
+    [ADC Config] as config
+    [ADC Start] as start
+    [ADC Read] as read
+    [ADC Stop] as stop
+    [Conversion Callback] as callback
+}
+
+[Vendor ADC HAL] as vendorHAL
+
+init --> vendorHAL : Initialize hardware
+config --> vendorHAL : Configure parameters
+start --> vendorHAL : Start conversion
+read --> vendorHAL : Get value
+stop --> vendorHAL : Stop conversion
+callback <-- vendorHAL : Conversion complete
+
+@enduml

@@ -1,0 +1,51 @@
+@startuml
+title Central App Controller - Information Flow
+
+package "System Startup Flow" {
+    component "Central App Controller" as CAC1
+    component "SerialToAnalog App" as AA1
+    component "SerialToDigital App" as DA1
+    component "SerialToI2C App" as I2C1
+    component "SerialToSPI App" as SPI1
+    
+    CAC1 -down-> CAC1 : System_Init()
+    CAC1 -down-> AA1 : Init()
+    AA1 -up-> CAC1 : Ready
+    CAC1 -down-> DA1 : Init()
+    DA1 -up-> CAC1 : Ready
+    CAC1 -down-> I2C1 : Init()
+    I2C1 -up-> CAC1 : Ready
+    CAC1 -down-> SPI1 : Init()
+    SPI1 -up-> CAC1 : Ready
+}
+
+package "Command Routing Flow" {
+    component "Deserialize" as DES2
+    component "Central App Controller" as CAC2
+    component "SerialToAnalog App" as AA2
+    component "SerialToI2C App" as I2C2
+    component "Serialize" as SER2
+    
+    DES2 -down-> CAC2 : Route_Command(ADC_READ, params)
+    CAC2 -down-> CAC2 : Identify target module
+    CAC2 -down-> AA2 : Execute(ADC_READ, params)
+    AA2 -up-> CAC2 : Result
+    CAC2 -down-> SER2 : FormatResponse(Result)
+    
+    DES2 -down-> CAC2 : Route_Command(I2C_WRITE, params)
+    CAC2 -down-> CAC2 : Identify target module
+    CAC2 -down-> I2C2 : Execute(I2C_WRITE, params)
+    I2C2 -up-> CAC2 : Result
+    CAC2 -down-> SER2 : FormatResponse(Result)
+}
+
+package "Resource Arbitration Flow" {
+    component "SerialToAnalog App" as AA3
+    component "Central App Controller" as CAC3
+    
+    AA3 -down-> CAC3 : Request_Resource(NVM)
+    CAC3 -down-> CAC3 : Check_Availability(NVM)
+    CAC3 -up-> AA3 : Grant_Access(NVM) / Resource_Busy
+}
+
+@enduml

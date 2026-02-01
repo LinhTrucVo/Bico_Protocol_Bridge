@@ -1,0 +1,21 @@
+@startuml
+
+title Serial Driver - Static View
+
+package "Serial Driver" {
+    [Serial Init] as init
+    [Serial Config] as config
+    [Serial Transmit] as tx
+    [Serial Receive] as rx
+    [Serial ISR Handler] as isr
+}
+
+[Vendor UART HAL] as vendorHAL
+
+init --> vendorHAL : Initialize hardware
+config --> vendorHAL : Configure parameters
+tx --> vendorHAL : Transmit data
+rx --> vendorHAL : Receive data
+isr --> vendorHAL : Register callbacks
+
+@enduml

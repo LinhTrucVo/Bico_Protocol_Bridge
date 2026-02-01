@@ -1,0 +1,28 @@
+@startuml
+
+title SerialToAnalog App - Static View
+
+package "SerialToAnalog App" {
+    [Command Handler] as cmdHandler
+    [Channel Manager] as channelMgr
+    [Sampling Controller] as samplingCtrl
+    [Averaging Engine] as averaging
+    [Threshold Monitor] as thresholdMon
+    [Config Manager] as configMgr
+}
+
+[ADC Driver] as adcDriver
+[Calibration Service] as calibrationService
+[Data Conversion Service] as dataConversion
+[Config Service] as configService
+
+cmdHandler --> channelMgr : Channel commands
+channelMgr --> adcDriver : ADC operations
+samplingCtrl --> adcDriver : Start/stop sampling
+averaging --> adcDriver : Read samples
+channelMgr --> calibrationService : Apply calibration
+channelMgr --> dataConversion : Convert values
+thresholdMon --> channelMgr : Monitor values
+configMgr --> configService : Load/save config
+
+@enduml

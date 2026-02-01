@@ -1,0 +1,40 @@
+@startuml
+title Data Conversion Service - Dynamic Behaviour
+
+participant "Application" as APP
+participant "Data Conversion" as DCS
+participant "Calibration" as CAL
+participant "Config" as CFG
+
+== ADC to Voltage Conversion ==
+APP -> DCS : ConvertADCToVoltage(channel, raw_adc)
+DCS -> CAL : ApplyCalibration(channel, raw_adc)
+CAL --> DCS : calibrated_adc
+DCS -> CFG : GetADCResolution(channel)
+CFG --> DCS : resolution_bits
+DCS -> CFG : GetVoltageRange(channel)
+CFG --> DCS : v_range (e.g., 3.3V)
+DCS -> DCS : max_value = (1 << resolution_bits) - 1
+DCS -> DCS : voltage = (calibrated_adc / max_value) * v_range
+DCS --> APP : voltage
+
+== Temperature Conversion (Example) ==
+APP -> DCS : ConvertToTemperature(channel, raw_adc)
+DCS -> DCS : voltage = ConvertADCToVoltage(channel, raw_adc)
+DCS -> CFG : GetSensorType(channel)
+CFG --> DCS : sensor_type (e.g., "NTC_10K")
+DCS -> DCS : Apply sensor-specific formula
+DCS -> DCS : temperature = Calculate(voltage, sensor_params)
+DCS --> APP : temperature_celsius
+
+== Binary to ASCII ==
+APP -> DCS : ConvertBinaryToASCII(data, length)
+DCS -> DCS : For each byte: convert to ASCII representation
+DCS --> APP : ascii_string
+
+== Hex String Conversion ==
+APP -> DCS : ConvertToHexString(data, length)
+DCS -> DCS : For each byte: convert to hex characters
+DCS --> APP : hex_string (e.g., "A5 3F 12")
+
+@enduml

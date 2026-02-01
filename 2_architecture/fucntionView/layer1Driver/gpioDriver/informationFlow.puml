@@ -1,0 +1,47 @@
+@startuml
+title GPIO Driver - Information Flow
+
+
+package "Initialization Flow" {
+    component "Higher Layer" as HL1
+    component "GPIO Driver" as GD1
+    component "Vendor GPIO HAL" as HAL1
+    
+    HL1 -down-> GD1 : Init Pin\n(pin, mode, pull)
+    GD1 -down-> HAL1 : HAL_GPIO_Init()
+    HAL1 -up-> GD1 : Status
+    GD1 -up-> HL1 : Init Status
+}
+
+package "Write Flow" {
+    component "Higher Layer" as HL2
+    component "GPIO Driver" as GD2
+    component "Vendor GPIO HAL" as HAL2
+    
+    HL2 -down-> GD2 : Write Pin (pin, state)
+    GD2 -down-> HAL2 : HAL_GPIO_WritePin()
+    HAL2 -up-> GD2 : OK
+    GD2 -up-> HL2 : Success
+}
+
+package "Read Flow" {
+    component "Higher Layer" as HL3
+    component "GPIO Driver" as GD3
+    component "Vendor GPIO HAL" as HAL3
+    
+    HL3 -down-> GD3 : Read Pin (pin)
+    GD3 -down-> HAL3 : HAL_GPIO_ReadPin()
+    HAL3 -up-> GD3 : Pin State
+    GD3 -up-> HL3 : Pin State
+}
+
+package "Interrupt Flow" {
+    component "Higher Layer" as HL4
+    component "GPIO Driver" as GD4
+    component "Vendor GPIO HAL" as HAL4
+    
+    HAL4 -up-> GD4 : EXTI_Callback(pin)
+    GD4 -up-> HL4 : Interrupt_Event(pin)
+}
+
+@enduml

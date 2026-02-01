@@ -1,0 +1,17 @@
+@startuml
+title Deserialize (Command Parser) - Information Flow
+
+package "Command Parsing Flow" {
+    component "Serial Driver" as SD1
+    component "Deserialize" as DES1
+    component "Central App Controller" as CAC1
+    
+    SD1 -down-> DES1 : RX_Data("I2C:WRITE:0x50:0x10:0xAA\\r\\n")
+    DES1 -down-> DES1 : Tokenize command string
+    DES1 -down-> DES1 : Parse command type
+    DES1 -down-> DES1 : Extract parameters
+    DES1 -down-> DES1 : Validate syntax
+    DES1 -down-> CAC1 : Parsed_Command{type=I2C_WRITE,\naddr=0x50, params...} / Parse_Error
+}
+
+@enduml

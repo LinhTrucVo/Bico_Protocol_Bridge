@@ -1,0 +1,34 @@
+@startuml
+title SPI Slave Driver - Information Flow
+
+
+package "Initialization Flow" {
+    component "Higher Layer" as HL1
+    component "SPI Slave Driver" as SSD1
+    component "Vendor SPI HAL" as HAL1
+    
+    HL1 -down-> SSD1 : Init Request
+    SSD1 -down-> HAL1 : HAL_SPI_Slave_Init()
+    HAL1 -up-> SSD1 : Status
+    SSD1 -up-> HL1 : Init Status
+}
+
+package "Transaction Flow" {
+    component "Higher Layer" as HL2
+    component "SPI Slave Driver" as SSD2
+    component "Vendor SPI HAL" as HAL2
+    
+    HL2 -down-> SSD2 : Prepare TX Data
+    SSD2 -down-> HAL2 : HAL_SPI_Slave_Transceive()
+    
+    HAL2 -up-> SSD2 : CS Asserted\n(Master Select)
+    SSD2 -up-> HL2 : Master Transaction Start
+    
+    HAL2 -up-> SSD2 : RX Complete Callback\n(data)
+    SSD2 -up-> HL2 : Data Received
+    
+    HAL2 -up-> SSD2 : TX Complete Callback
+    SSD2 -up-> HL2 : Response Sent
+}
+
+@enduml

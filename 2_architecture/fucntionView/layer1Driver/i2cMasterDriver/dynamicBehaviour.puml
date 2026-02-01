@@ -1,0 +1,36 @@
+@startuml
+title I2C Master Driver - Dynamic Behaviour
+
+participant "Higher Layer" as HL
+participant "I2C Master Driver" as IMD
+participant "Vendor HAL" as HAL
+
+== Initialization ==
+HL -> IMD : I2CMaster_Init(clock_speed)
+IMD -> HAL : HAL_I2C_Init(config)
+HAL --> IMD : OK
+IMD --> HL : SUCCESS
+
+== Write Transaction ==
+HL -> IMD : I2CMaster_Write(addr, data, len)
+IMD -> HAL : HAL_I2C_Master_Transmit(addr, data, len, timeout)
+alt Success
+    HAL --> IMD : ACK
+    IMD --> HL : SUCCESS
+else NACK or Error
+    HAL --> IMD : NACK/ERROR
+    IMD --> HL : ERROR
+end
+
+== Read Transaction ==
+HL -> IMD : I2CMaster_Read(addr, len)
+IMD -> HAL : HAL_I2C_Master_Receive(addr, buffer, len, timeout)
+alt Success
+    HAL --> IMD : Data + ACK
+    IMD --> HL : Data + SUCCESS
+else NACK or Error
+    HAL --> IMD : NACK/ERROR
+    IMD --> HL : ERROR
+end
+
+@enduml

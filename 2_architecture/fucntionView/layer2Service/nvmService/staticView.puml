@@ -1,0 +1,34 @@
+@startuml
+
+title NVM Service - Static View
+
+package "NVM Service" {
+    [Safe Write] as safeWrite
+    [Safe Read] as safeRead
+    [Integrity Checker] as integrity
+    [Memory Layout Manager] as layout
+    [Wear Leveling] as wearLevel
+    [Version Manager] as version
+    [File System Wrapper] as fsWrapper
+}
+
+[NVM Driver] as nvmDriver
+[Vendor File System HAL] as vendorFS
+
+note right of fsWrapper
+  Optional: Wraps vendor
+  file system APIs
+  (LittleFS, FatFS, etc.)
+end note
+
+safeWrite --> integrity : Calculate CRC (Direct Mode)
+safeWrite --> nvmDriver : Write data + CRC (Direct Mode)
+safeWrite --> fsWrapper : File Write (FS Mode)
+fsWrapper --> vendorFS : FS API calls
+safeRead --> nvmDriver : Read data + CRC (Direct Mode)
+safeRead --> fsWrapper : File Read (FS Mode)
+safeRead --> integrity : Verify CRC (Direct Mode)
+layout --> nvmDriver : Address mapping
+wearLevel --> layout : Select write location
+
+@enduml

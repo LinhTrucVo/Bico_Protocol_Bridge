@@ -1,0 +1,47 @@
+@startuml
+title I2C Slave Driver - Information Flow
+
+
+package "Initialization Flow" {
+    component "Higher Layer" as HL1
+    component "I2C Slave Driver" as ISD1
+    component "Vendor I2C HAL" as HAL1
+    
+    HL1 -down-> ISD1 : Init Request\n(slave_addr)
+    ISD1 -down-> HAL1 : HAL_I2C_Slave_Init()
+    HAL1 -up-> ISD1 : Status
+    ISD1 -up-> HL1 : Init Status
+}
+
+package "Listen Mode Flow" {
+    component "Higher Layer" as HL2
+    component "I2C Slave Driver" as ISD2
+    component "Vendor I2C HAL" as HAL2
+    
+    HL2 -down-> ISD2 : Enable Listen Mode
+    ISD2 -down-> HAL2 : HAL_I2C_EnableListen()
+    HAL2 -up-> ISD2 : Address Match\nCallback
+    ISD2 -up-> HL2 : Master Request Event
+}
+
+package "Receive Flow" {
+    component "Higher Layer" as HL3
+    component "I2C Slave Driver" as ISD3
+    component "Vendor I2C HAL" as HAL3
+    
+    HAL3 -up-> ISD3 : Slave RX Callback\n(data)
+    ISD3 -up-> HL3 : Data Received
+}
+
+package "Transmit Flow" {
+    component "Higher Layer" as HL4
+    component "I2C Slave Driver" as ISD4
+    component "Vendor I2C HAL" as HAL4
+    
+    HL4 -down-> ISD4 : Prepare TX Data
+    ISD4 -down-> HAL4 : HAL_I2C_Slave_Transmit()
+    HAL4 -up-> ISD4 : TX Complete
+    ISD4 -up-> HL4 : TX Status
+}
+
+@enduml

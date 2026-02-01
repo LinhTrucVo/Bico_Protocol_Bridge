@@ -1,0 +1,75 @@
+@startuml
+title SerialToI2C App - Information Flow
+
+
+package "Configure I2C Master Flow" {
+    component "Central Controller" as CC1
+    component "SerialToI2C App" as I2C1
+    component "I2C Master Driver" as MASTER1
+    
+    CC1 -down-> I2C1 : Config_I2C_Master(clock_speed)
+    I2C1 -down-> I2C1 : Check_Current_Mode()
+    I2C1 -down-> I2C1 : Disable_Slave_If_Active()
+    I2C1 -down-> I2C1 : Set_Mode(MASTER)
+    I2C1 -down-> MASTER1 : I2CMaster_Init(clock_speed)
+    MASTER1 -up-> I2C1 : Success
+    I2C1 -down-> I2C1 : Save_I2C_Config()
+    I2C1 -up-> CC1 : Config_Success
+}
+
+package "I2C Master Write Flow" {
+    component "Central Controller" as CC2
+    component "SerialToI2C App" as I2C2
+    component "I2C Master Driver" as MASTER2
+    
+    CC2 -down-> I2C2 : I2C_Write(slave_addr, data)
+    I2C2 -down-> MASTER2 : I2CMaster_Write(addr, data, len)
+    MASTER2 -up-> I2C2 : ACK/NACK
+    I2C2 -up-> CC2 : Write_Result
+}
+
+package "I2C Master Read Flow" {
+    component "Central Controller" as CC3
+    component "SerialToI2C App" as I2C3
+    component "I2C Master Driver" as MASTER3
+    
+    CC3 -down-> I2C3 : I2C_Read(slave_addr, length)
+    I2C3 -down-> MASTER3 : I2CMaster_Read(addr, buffer, len)
+    MASTER3 -up-> I2C3 : Data + Status
+    I2C3 -up-> CC3 : Read_Data
+}
+
+package "Configure I2C Slave Flow" {
+    component "Central Controller" as CC4
+    component "SerialToI2C App" as I2C4
+    component "I2C Slave Driver" as SLAVE4
+    
+    CC4 -down-> I2C4 : Config_I2C_Slave(slave_addr)
+    I2C4 -down-> I2C4 : Check_Current_Mode()
+    I2C4 -down-> I2C4 : Disable_Master_If_Active()
+    I2C4 -down-> I2C4 : Set_Mode(SLAVE)
+    I2C4 -down-> SLAVE4 : I2CSlave_Init(addr)
+    SLAVE4 -up-> I2C4 : Success
+    I2C4 -down-> SLAVE4 : I2CSlave_EnableListen()
+    I2C4 -down-> I2C4 : Save_Slave_Config()
+    I2C4 -up-> CC4 : Slave_Ready
+}
+
+package "I2C Slave Event Flow" {
+    component "I2C Slave Driver" as SLAVE5
+    component "SerialToI2C App" as I2C5
+    component "Central Controller" as CC5
+    
+    SLAVE5 -up-> I2C5 : Master_Write_Request(data)
+    I2C5 -down-> I2C5 : Process_Received_Data(data)
+    I2C5 -up-> CC5 : Slave_Data_Received(data)
+    
+    SLAVE5 -up-> I2C5 : Master_Read_Request()
+    I2C5 -up-> CC5 : Prepare_Slave_Response()
+    CC5 -down-> I2C5 : Send_Response(data)
+    I2C5 -down-> SLAVE5 : Transmit_Response(data)
+}
+
+@enduml
+
+@enduml

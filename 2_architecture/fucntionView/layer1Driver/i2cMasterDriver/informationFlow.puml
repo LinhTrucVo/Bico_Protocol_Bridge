@@ -1,0 +1,38 @@
+@startuml
+title I2C Master Driver - Information Flow
+
+
+package "Initialization Flow" {
+    component "Higher Layer" as HL1
+    component "I2C Master Driver" as IMD1
+    component "Vendor I2C HAL" as HAL1
+    
+    HL1 -down-> IMD1 : Init Request\n(clock speed)
+    IMD1 -down-> HAL1 : HAL_I2C_Init()
+    HAL1 -up-> IMD1 : Status
+    IMD1 -up-> HL1 : Init Status
+}
+
+package "Write Flow" {
+    component "Higher Layer" as HL2
+    component "I2C Master Driver" as IMD2
+    component "Vendor I2C HAL" as HAL2
+    
+    HL2 -down-> IMD2 : Write(slave_addr, data)
+    IMD2 -down-> HAL2 : HAL_I2C_Master_Transmit()
+    HAL2 -up-> IMD2 : Status (ACK/NACK)
+    IMD2 -up-> HL2 : Write Status
+}
+
+package "Read Flow" {
+    component "Higher Layer" as HL3
+    component "I2C Master Driver" as IMD3
+    component "Vendor I2C HAL" as HAL3
+    
+    HL3 -down-> IMD3 : Read(slave_addr, size)
+    IMD3 -down-> HAL3 : HAL_I2C_Master_Receive()
+    HAL3 -up-> IMD3 : Data + Status
+    IMD3 -up-> HL3 : Read Data
+}
+
+@enduml

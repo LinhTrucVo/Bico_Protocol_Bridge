@@ -1,0 +1,91 @@
+@startuml
+title NVM Service - Dynamic Behaviour
+
+participant "Application" as APP
+participant "NVM Service" as NVS
+participant "NVM Driver" as DRV
+
+== Initialization ==
+APP -> NVS : NVMService_Init()
+NVS -> NVS : InitializeMemoryLayout()
+NVS -> NVS : ScanMemoryRegions()
+NVS -> DRV : NVM_Init()
+DRV --> NVS : OK
+NVS --> APP : INIT_SUCCESS
+
+== Safe Write with CRC ==
+APP -> NVS : NVMService_SafeWrite(region_id, data, length)
+NVS -> NVS : GetRegionAddress(region_id)
+NVS -> NVS : CalculateCRC32(data, length)
+NVS -> NVS : AppendCRC(data, crc)
+
+alt Space Available
+    NVS -> DRV : NVM_Write(address, data+crc, length+4)
+    DRV --> NVS : WRITE_SUCCESS
+    
+    ' Verify write
+    NVS -> DRV : NVM_Read(address, verify_buffer, length+4)
+    DRV --> NVS : read_data
+    NVS -> NVS : VerifyCRC(read_data)
+    
+    alt Verification Success
+        NVS --> APP : SUCCESS
+    else Verification Failed
+        NVS -> NVS : LogError(WRITE_VERIFY_FAILED)
+        NVS --> APP : VERIFY_ERROR
+    end
+    
+else No Space
+    NVS --> APP : MEMORY_FULL
+end
+
+== Safe Read with CRC ==
+APP -> NVS : NVMService_SafeRead(region_id, buffer, length)
+NVS -> NVS : GetRegionAddress(region_id)
+NVS -> DRV : NVM_Read(address, temp_buffer, length+4)
+DRV --> NVS : data+crc
+
+NVS -> NVS : ExtractCRC(data)
+NVS -> NVS : CalculateCRC32(data, length)
+NVS -> NVS : CompareCRC(calculated, stored)
+
+alt CRC Match
+    NVS -> NVS : CopyDataToBuffer(buffer, data)
+    NVS --> APP : data + SUCCESS
+else CRC Mismatch
+    NVS -> NVS : LogError(DATA_CORRUPTED)
+    NVS --> APP : CRC_ERROR
+end
+
+== Erase Region ==
+APP -> NVS : NVMService_EraseRegion(region_id)
+NVS -> NVS : GetRegionInfo(region_id)
+NVS -> DRV : NVM_Erase(sector)
+DRV --> NVS : SUCCESS
+NVS --> APP : ERASE_SUCCESS
+
+== File System Mode - Write File ==
+APP -> NVS : NVMService_WriteFile(filename, data, length)
+NVS -> NVS : Check if FS mode enabled
+alt File System Available
+    NVS -> NVS : Open file (fopen)
+    NVS -> NVS : Write data (fwrite)
+    NVS -> NVS : Close file (fclose)
+    NVS --> APP : SUCCESS
+else FS Not Available
+    NVS --> APP : FS_NOT_SUPPORTED
+end
+
+== File System Mode - Read File ==
+APP -> NVS : NVMService_ReadFile(filename, buffer, length)
+NVS -> NVS : Check if FS mode enabled
+alt File System Available
+    NVS -> NVS : Open file (fopen)
+    NVS -> NVS : Read data (fread)
+    NVS -> NVS : Close file (fclose)
+    NVS --> APP : data + SUCCESS
+else FS Not Available
+    NVS --> APP : FS_NOT_SUPPORTED
+end
+
+@enduml

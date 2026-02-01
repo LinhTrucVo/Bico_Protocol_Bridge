@@ -1,0 +1,40 @@
+@startuml
+title Serial Driver - Information Flow
+
+
+package "Initialization Flow" {
+    component "Higher Layer" as HL1
+    component "Serial Driver" as SD1
+    component "Vendor UART HAL" as HAL1
+    
+    HL1 -down-> SD1 : Init Request
+    SD1 -down-> HAL1 : HAL_UART_Init()
+    HAL1 -up-> SD1 : Status
+    SD1 -up-> HL1 : Init Status
+}
+
+package "Transmit Flow" {
+    component "Higher Layer" as HL2
+    component "Serial Driver" as SD2
+    component "Vendor UART HAL" as HAL2
+    
+    HL2 -down-> SD2 : TX Data
+    SD2 -down-> HAL2 : HAL_UART_Transmit()
+    HAL2 -up-> SD2 : TX Complete
+    SD2 -up-> HL2 : TX Status
+}
+
+package "Receive Flow" {
+    component "Higher Layer" as HL3
+    component "Serial Driver" as SD3
+    component "Vendor UART HAL" as HAL3
+    
+    HAL3 -up-> SD3 : RX Interrupt
+    SD3 -up-> HL3 : RX Data Available
+    HL3 -down-> SD3 : Read Data
+    SD3 -down-> HAL3 : Get RX Data
+    HAL3 -up-> SD3 : RX Data
+    SD3 -up-> HL3 : RX Data
+}
+
+@enduml

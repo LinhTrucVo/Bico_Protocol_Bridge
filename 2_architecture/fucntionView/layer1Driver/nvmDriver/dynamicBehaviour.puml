@@ -1,0 +1,50 @@
+@startuml
+title NVM Driver - Dynamic Behaviour
+
+participant "Higher Layer" as HL
+participant "NVM Driver" as ND
+participant "Vendor HAL" as HAL
+
+== Initialization ==
+HL -> ND : NVM_Init()
+ND -> HAL : HAL_FLASH_Init()
+HAL --> ND : OK
+ND --> HL : SUCCESS
+
+== Write Operation ==
+HL -> ND : NVM_Write(address, data, length)
+ND -> HAL : HAL_FLASH_Unlock()
+HAL --> ND : OK
+
+ND -> HAL : HAL_FLASH_Program(address, data, length)
+alt Success
+    HAL --> ND : OK
+    ND -> HAL : HAL_FLASH_Lock()
+    ND --> HL : SUCCESS
+else Error
+    HAL --> ND : ERROR
+    ND -> HAL : HAL_FLASH_Lock()
+    ND --> HL : ERROR
+end
+
+== Read Operation ==
+HL -> ND : NVM_Read(address, buffer, length)
+ND -> HAL : memcpy from flash address
+HAL --> ND : data
+ND --> HL : data + SUCCESS
+
+== Erase Operation ==
+HL -> ND : NVM_Erase(sector)
+ND -> HAL : HAL_FLASH_Unlock()
+ND -> HAL : HAL_FLASHEx_Erase(sector)
+alt Success
+    HAL --> ND : OK
+    ND -> HAL : HAL_FLASH_Lock()
+    ND --> HL : SUCCESS
+else Error
+    HAL --> ND : ERROR
+    ND -> HAL : HAL_FLASH_Lock()
+    ND --> HL : ERROR
+end
+
+@enduml

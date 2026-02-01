@@ -1,0 +1,44 @@
+@startuml
+title Calibration Service - Information Flow
+
+
+package "System Startup Flow" {
+    component "Application" as APP1
+    component "Calibration Service" as CAL1
+    component "NVM Driver" as NVM1
+    
+    APP1 -down-> CAL1 : Load_Calibration()
+    CAL1 -down-> NVM1 : NVM_Read(cal_addr)
+    
+    alt Calibration Valid
+        NVM1 -up-> CAL1 : Calibration Data
+        CAL1 -up-> APP1 : Calibration Loaded
+    else Invalid
+        CAL1 -down-> CAL1 : Load_Factory_Defaults()
+        CAL1 -up-> APP1 : Factory Calibration
+    end
+}
+
+package "Apply Calibration Flow" {
+    component "Application" as APP2
+    component "Calibration Service" as CAL2
+    
+    APP2 -down-> CAL2 : Apply_Calibration\n(channel, raw_value)
+    CAL2 -down-> CAL2 : corrected =\n(raw - offset) * gain
+    CAL2 -up-> APP2 : corrected_value
+}
+
+package "Perform Calibration Flow" {
+    component "Application" as APP3
+    component "Calibration Service" as CAL3
+    component "NVM Driver" as NVM3
+    
+    APP3 -down-> CAL3 : Start_Calibration\n(channel, type)
+    CAL3 -down-> CAL3 : Execute_Calibration_Procedure()
+    CAL3 -down-> CAL3 : Calculate_Offset_Gain()
+    CAL3 -down-> NVM3 : NVM_Write(cal_addr, cal_data)
+    NVM3 -up-> CAL3 : Success
+    CAL3 -up-> APP3 : Calibration_Complete
+}
+
+@enduml
