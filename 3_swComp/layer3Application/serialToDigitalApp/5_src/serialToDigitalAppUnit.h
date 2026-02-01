@@ -1,0 +1,6 @@
+﻿#ifndef SERIAL_TO_DIGITAL_APPUNIT_H
+#define SERIAL_TO_DIGITAL_APPUNIT_H
+
+#include <stdint.h>
+
+#endif /* SERIAL_TO_DIGITAL_APPUNIT_H */

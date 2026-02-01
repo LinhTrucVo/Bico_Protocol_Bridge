@@ -1,0 +1,6 @@
+﻿#ifndef DATA_CONVERSION_SERVICECFG_H
+#define DATA_CONVERSION_SERVICECFG_H
+
+// Configuration parameters
+
+#endif /* DATA_CONVERSION_SERVICECFG_H */

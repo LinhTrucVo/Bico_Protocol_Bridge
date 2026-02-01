@@ -1,0 +1,6 @@
+#ifndef I2CMASTERDRIVERUNIT_H
+#define I2CMASTERDRIVERUNIT_H
+
+#include <stdint.h>
+
+#endif /* I2CMASTERDRIVERUNIT_H */

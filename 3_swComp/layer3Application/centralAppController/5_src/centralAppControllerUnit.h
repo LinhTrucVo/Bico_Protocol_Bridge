@@ -1,0 +1,6 @@
+﻿#ifndef CENTRAL_APP_CONTROLLERUNIT_H
+#define CENTRAL_APP_CONTROLLERUNIT_H
+
+#include <stdint.h>
+
+#endif /* CENTRAL_APP_CONTROLLERUNIT_H */

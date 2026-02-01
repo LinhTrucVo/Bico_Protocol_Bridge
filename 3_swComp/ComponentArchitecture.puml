@@ -1,0 +1,115 @@
+@startuml Component_Architecture
+
+!define LAYER1_COLOR #E8F5E9
+!define LAYER2_COLOR #E3F2FD
+!define LAYER3_COLOR #FFF3E0
+
+title Bico Protocol Bridge - Component Architecture
+
+package "Layer 3 - Applications" LAYER3_COLOR {
+    [centralAppController] as central
+    [serialToAnalogApp] as s2a
+    [serialToDigitalApp] as s2d
+    [serialToI2CApp] as s2i2c
+    [serialToSPIApp] as s2spi
+}
+
+package "Layer 2 - Services" LAYER2_COLOR {
+    [calibrationService] as cal
+    [configService] as cfg
+    [dataConversionService] as conv
+    [deserialize] as deser
+    [serialize] as ser
+    [nvmService] as nvms
+}
+
+package "Layer 1 - Hardware Drivers" LAYER1_COLOR {
+    [adcDriver] as adc
+    [gpioDriver] as gpio
+    [serialDriver] as uart
+    [i2cMasterDriver] as i2cm
+    [i2cSlaveDriver] as i2cs
+    [spiMasterDriver] as spim
+    [spiSlaveDriver] as spis
+    [pwmDriver] as pwm
+    [nvmDriver] as nvm
+}
+
+package "Hardware" #FFE0E0 {
+    [MCU Peripherals] as hw
+}
+
+' Layer 3 to Layer 2 dependencies
+central --> deser
+central --> ser
+central --> cfg
+
+s2a --> deser
+s2a --> ser
+s2a --> conv
+s2a --> cal
+
+s2d --> deser
+s2d --> ser
+
+s2i2c --> deser
+s2i2c --> ser
+
+s2spi --> deser
+s2spi --> ser
+
+' Layer 2 to Layer 1 dependencies
+cal --> adc
+cfg --> nvms
+deser --> uart
+ser --> uart
+nvms --> nvm
+conv --> adc
+
+' Layer 1 to Hardware dependencies
+adc --> hw
+gpio --> hw
+uart --> hw
+i2cm --> hw
+i2cs --> hw
+spim --> hw
+spis --> hw
+pwm --> hw
+nvm --> hw
+
+note right of s2a
+  Serial to Analog Application
+  - Receives serial commands
+  - Controls analog outputs
+  - Uses PWM/DAC for output
+end note
+
+note right of s2i2c
+  Serial to I2C Bridge
+  - Forwards serial commands
+  - Controls I2C devices
+  - Protocol translation
+end note
+
+note bottom of Layer1_COLOR
+  HAL Abstraction Layer
+  - Vendor-specific code (TODO)
+  - Hardware initialization
+  - Peripheral control
+end note
+
+note bottom of Layer2_COLOR
+  Business Logic Layer
+  - Data processing
+  - Protocol handling
+  - Service management
+end note
+
+note bottom of Layer3_COLOR
+  Application Layer
+  - Main control logic
+  - Feature implementation
+  - State management
+end note
+
+@enduml

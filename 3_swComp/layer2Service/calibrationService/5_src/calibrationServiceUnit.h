@@ -1,0 +1,6 @@
+﻿#ifndef CALIBRATION_SERVICEUNIT_H
+#define CALIBRATION_SERVICEUNIT_H
+
+#include <stdint.h>
+
+#endif /* CALIBRATION_SERVICEUNIT_H */

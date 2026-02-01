@@ -1,0 +1,6 @@
+﻿#ifndef DATA_CONVERSION_SERVICEUNIT_H
+#define DATA_CONVERSION_SERVICEUNIT_H
+
+#include <stdint.h>
+
+#endif /* DATA_CONVERSION_SERVICEUNIT_H */
