@@ -1,0 +1,5 @@
+@startuml serialToAnalogAppStateMachine
+[*] --> Idle
+Idle --> Active : Enable
+Active --> Idle : Disable
+@enduml

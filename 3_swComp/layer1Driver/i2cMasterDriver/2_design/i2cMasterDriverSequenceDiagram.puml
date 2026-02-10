@@ -1,0 +1,6 @@
+@startuml i2cMasterDriverSequenceDiagram
+actor Client
+participant I2cMasterDriver
+Client -> I2cMasterDriver : WriteRead()
+I2cMasterDriver --> Client : Status
+@enduml

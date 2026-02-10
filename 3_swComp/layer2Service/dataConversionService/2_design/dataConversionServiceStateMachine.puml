@@ -1,0 +1,5 @@
+@startuml dataConversionServiceStateMachine
+[*] --> Idle
+Idle --> Converting : Convert
+Converting --> Idle : Done
+@enduml

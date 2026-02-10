@@ -1,0 +1,6 @@
+@startuml serialToDigitalAppSequenceDiagram
+actor Host
+participant SerialToDigitalApp
+Host -> SerialToDigitalApp : SetPin()
+SerialToDigitalApp --> Host : Status
+@enduml

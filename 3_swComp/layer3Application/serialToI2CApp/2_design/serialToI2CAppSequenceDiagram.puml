@@ -1,0 +1,6 @@
+@startuml serialToI2CAppSequenceDiagram
+actor Host
+participant SerialToI2CApp
+Host -> SerialToI2CApp : I2CWriteRead()
+SerialToI2CApp --> Host : Status
+@enduml

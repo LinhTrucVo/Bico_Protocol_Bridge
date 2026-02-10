@@ -1,0 +1,3 @@
+@startuml i2cMasterDriverStaticStructure
+class I2cMasterDriver
+@enduml

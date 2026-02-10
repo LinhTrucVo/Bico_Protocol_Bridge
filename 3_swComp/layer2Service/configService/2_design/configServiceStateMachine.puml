@@ -1,0 +1,5 @@
+@startuml configServiceStateMachine
+[*] --> Idle
+Idle --> Ready : Init
+Ready --> Idle : DeInit
+@enduml

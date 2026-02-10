@@ -1,5 +1,5 @@
-// ADC Driver Unit Implementation
-// This file contains the implementation of the ADC driver
+// This file is used to define the public interface of the component unit.
+// It contains public macros, private variables, and function definitions.
 
 //============================================================================
 // Dependencies
@@ -11,17 +11,18 @@
 //============================================================================
 // Local Macros
 //============================================================================
-#define ADC_STATE_UNINITIALIZED  0
-#define ADC_STATE_READY          1
-#define ADC_STATE_BUSY           2
 
 //============================================================================
 // Local Types
 //============================================================================
 typedef struct
 {
-    uint8_t state;
+    bool initialized;
+    bool busy;
+    AdcDriver_Config_t config;
+    bool channelEnabled[ADC_MAX_CHANNELS];
     uint16_t lastValue[ADC_MAX_CHANNELS];
+    AdcDriver_ConversionCallback_t callback;
 } AdcDriver_Context_t;
 
 //============================================================================
@@ -32,95 +33,209 @@ static AdcDriver_Context_t adcContext = {0};
 //============================================================================
 // Local Function Prototypes
 //============================================================================
-static bool AdcDriver_IsValidChannel(AdcDriver_Channel_t channel);
+static bool AdcDriverUnit_IsValidChannel(AdcDriver_Channel_t channel);
 
 //============================================================================
 // Public Function Implementations
 //============================================================================
 
-/**
- * @brief Initialize the ADC driver
- */
-AdcDriver_Status_t AdcDriver_Init(void)
+AdcDriver_Status_t AdcDriverUnit_Init(const AdcDriver_Config_t *pConfig)
 {
-    AdcDriver_Status_t status = ADC_STATUS_OK;
-    
+    if (pConfig == NULL)
+    {
+        return ADC_STATUS_INVALID_PARAM;
+    }
+
     // TODO: Add vendor-specific HAL initialization here
-    // Example: HAL_ADC_Init(&hadc1);
-    
-    // Initialize context
-    adcContext.state = ADC_STATE_READY;
+
+    adcContext.config = *pConfig;
+    adcContext.initialized = true;
+    adcContext.busy = false;
     for (uint8_t i = 0; i < ADC_MAX_CHANNELS; i++)
     {
+        adcContext.channelEnabled[i] = false;
         adcContext.lastValue[i] = 0;
     }
-    
-    return status;
+    adcContext.callback = NULL;
+
+    return ADC_STATUS_OK;
 }
 
-/**
- * @brief Start ADC conversion on specified channel
- */
-AdcDriver_Status_t AdcDriver_StartConversion(AdcDriver_Channel_t channel)
+AdcDriver_Status_t AdcDriverUnit_ConfigureChannel(AdcDriver_Channel_t channel, bool enable)
 {
-    AdcDriver_Status_t status = ADC_STATUS_ERROR;
-    
-    if (adcContext.state != ADC_STATE_READY)
+    if (!adcContext.initialized)
+    {
+        return ADC_STATUS_NOT_INITIALIZED;
+    }
+    if (!AdcDriverUnit_IsValidChannel(channel))
+    {
+        return ADC_STATUS_INVALID_PARAM;
+    }
+
+    // TODO: Configure channel in vendor HAL
+    adcContext.channelEnabled[channel] = enable;
+
+    return ADC_STATUS_OK;
+}
+
+AdcDriver_Status_t AdcDriverUnit_SetResolution(AdcDriver_Resolution_t resolution)
+{
+    if (!adcContext.initialized)
+    {
+        return ADC_STATUS_NOT_INITIALIZED;
+    }
+
+    adcContext.config.resolution = resolution;
+    return ADC_STATUS_OK;
+}
+
+AdcDriver_Status_t AdcDriverUnit_SetVoltageReference(AdcDriver_VoltageRef_t voltageRef)
+{
+    if (!adcContext.initialized)
+    {
+        return ADC_STATUS_NOT_INITIALIZED;
+    }
+
+    adcContext.config.voltageReference = voltageRef;
+    return ADC_STATUS_OK;
+}
+
+AdcDriver_Status_t AdcDriverUnit_SetSamplingFrequency(uint32_t frequency)
+{
+    if (!adcContext.initialized)
+    {
+        return ADC_STATUS_NOT_INITIALIZED;
+    }
+    if (frequency == 0)
+    {
+        return ADC_STATUS_INVALID_PARAM;
+    }
+
+    adcContext.config.samplingFrequency = frequency;
+    return ADC_STATUS_OK;
+}
+
+AdcDriver_Status_t AdcDriverUnit_StartConversion(AdcDriver_Channel_t channel)
+{
+    if (!adcContext.initialized)
+    {
+        return ADC_STATUS_NOT_INITIALIZED;
+    }
+    if (!AdcDriverUnit_IsValidChannel(channel) || !adcContext.channelEnabled[channel])
+    {
+        return ADC_STATUS_INVALID_PARAM;
+    }
+    if (adcContext.busy)
     {
         return ADC_STATUS_BUSY;
     }
-    
-    if (!AdcDriver_IsValidChannel(channel))
+
+    // TODO: Start conversion in vendor HAL
+    adcContext.busy = true;
+    adcContext.lastValue[channel] = 0;
+
+    if (adcContext.config.enableInterrupt && adcContext.callback != NULL)
     {
-        return ADC_STATUS_ERROR;
+        adcContext.callback(channel, adcContext.lastValue[channel]);
     }
-    
-    // TODO: Add vendor-specific HAL conversion start here
-    // Example: HAL_ADC_Start(&hadc1);
-    
-    adcContext.state = ADC_STATE_BUSY;
-    status = ADC_STATUS_OK;
-    
-    return status;
+
+    adcContext.busy = false;
+    return ADC_STATUS_OK;
 }
 
-/**
- * @brief Read ADC conversion result
- */
-AdcDriver_Status_t AdcDriver_ReadValue(AdcDriver_Channel_t channel, uint16_t *pValue)
+AdcDriver_Status_t AdcDriverUnit_StopConversion(void)
 {
-    AdcDriver_Status_t status = ADC_STATUS_ERROR;
-    
-    if (pValue == NULL)
+    if (!adcContext.initialized)
     {
-        return ADC_STATUS_ERROR;
+        return ADC_STATUS_NOT_INITIALIZED;
     }
-    
-    if (!AdcDriver_IsValidChannel(channel))
-    {
-        return ADC_STATUS_ERROR;
-    }
-    
-    // TODO: Add vendor-specific HAL read here
-    // Example: *pValue = HAL_ADC_GetValue(&hadc1);
-    
-    *pValue = adcContext.lastValue[channel];
-    adcContext.state = ADC_STATE_READY;
-    status = ADC_STATUS_OK;
-    
-    return status;
+
+    // TODO: Stop conversion in vendor HAL
+    adcContext.busy = false;
+    return ADC_STATUS_OK;
 }
 
-/**
- * @brief Deinitialize the ADC driver
- */
-AdcDriver_Status_t AdcDriver_DeInit(void)
+AdcDriver_Status_t AdcDriverUnit_ReadValue(AdcDriver_Channel_t channel, uint16_t *pValue)
+{
+    if (!adcContext.initialized)
+    {
+        return ADC_STATUS_NOT_INITIALIZED;
+    }
+    if (pValue == NULL || !AdcDriverUnit_IsValidChannel(channel))
+    {
+        return ADC_STATUS_INVALID_PARAM;
+    }
+
+    *pValue = adcContext.lastValue[channel];
+    return ADC_STATUS_OK;
+}
+
+AdcDriver_Status_t AdcDriverUnit_IsConversionComplete(AdcDriver_Channel_t channel, bool *pComplete)
+{
+    if (!adcContext.initialized)
+    {
+        return ADC_STATUS_NOT_INITIALIZED;
+    }
+    if (pComplete == NULL || !AdcDriverUnit_IsValidChannel(channel))
+    {
+        return ADC_STATUS_INVALID_PARAM;
+    }
+
+    *pComplete = !adcContext.busy;
+    return ADC_STATUS_OK;
+}
+
+AdcDriver_Status_t AdcDriverUnit_RegisterCallback(AdcDriver_ConversionCallback_t callback)
+{
+    if (!adcContext.initialized)
+    {
+        return ADC_STATUS_NOT_INITIALIZED;
+    }
+
+    adcContext.callback = callback;
+    return ADC_STATUS_OK;
+}
+
+AdcDriver_Status_t AdcDriverUnit_Calibrate(void)
+{
+    if (!adcContext.initialized)
+    {
+        return ADC_STATUS_NOT_INITIALIZED;
+    }
+
+    // TODO: Perform vendor-specific calibration
+    return ADC_STATUS_OK;
+}
+
+AdcDriver_Status_t AdcDriverUnit_GetStatus(AdcDriver_Status_t *pStatus)
+{
+    if (pStatus == NULL)
+    {
+        return ADC_STATUS_INVALID_PARAM;
+    }
+
+    if (!adcContext.initialized)
+    {
+        *pStatus = ADC_STATUS_NOT_INITIALIZED;
+    }
+    else if (adcContext.busy)
+    {
+        *pStatus = ADC_STATUS_BUSY;
+    }
+    else
+    {
+        *pStatus = ADC_STATUS_OK;
+    }
+
+    return ADC_STATUS_OK;
+}
+
+AdcDriver_Status_t AdcDriverUnit_DeInit(void)
 {
     // TODO: Add vendor-specific HAL deinitialization here
-    // Example: HAL_ADC_DeInit(&hadc1);
-    
-    adcContext.state = ADC_STATE_UNINITIALIZED;
-    
+    adcContext.initialized = false;
+    adcContext.busy = false;
+    adcContext.callback = NULL;
     return ADC_STATUS_OK;
 }
 
@@ -128,10 +243,7 @@ AdcDriver_Status_t AdcDriver_DeInit(void)
 // Local Function Implementations
 //============================================================================
 
-/**
- * @brief Validate if channel is valid
- */
-static bool AdcDriver_IsValidChannel(AdcDriver_Channel_t channel)
+static bool AdcDriverUnit_IsValidChannel(AdcDriver_Channel_t channel)
 {
     return (channel < ADC_MAX_CHANNELS);
 }

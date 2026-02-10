@@ -1,6 +1,10 @@
-﻿#ifndef NVM_SERVICECFG_H
-#define NVM_SERVICECFG_H
+﻿#ifndef NVM_SERVICE_CFG_H
+#define NVM_SERVICE_CFG_H
 
-// Configuration parameters
+//============================================================================
+// Configuration Macros
+//============================================================================
+#define NVM_SERVICE_CFG_MAX_BLOB_SIZE      512
+#define NVM_SERVICE_CFG_MAX_KEYS           6
 
-#endif /* NVM_SERVICECFG_H */
+#endif /* NVM_SERVICE_CFG_H */

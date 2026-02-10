@@ -1,0 +1,6 @@
+@startuml i2cSlaveDriverSequenceDiagram
+actor Client
+participant I2cSlaveDriver
+Client -> I2cSlaveDriver : Exchange()
+I2cSlaveDriver --> Client : Status
+@enduml

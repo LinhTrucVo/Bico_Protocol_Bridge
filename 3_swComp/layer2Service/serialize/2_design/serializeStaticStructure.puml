@@ -1,0 +1,3 @@
+@startuml serializeStaticStructure
+class Serialize
+@enduml

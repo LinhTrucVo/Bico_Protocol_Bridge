@@ -1,0 +1,6 @@
+@startuml spiSlaveDriverSequenceDiagram
+actor Client
+participant SpiSlaveDriver
+Client -> SpiSlaveDriver : Exchange()
+SpiSlaveDriver --> Client : Status
+@enduml

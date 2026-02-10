@@ -1,6 +1,16 @@
-﻿#ifndef CENTRAL_APP_CONTROLLERUNIT_H
+#ifndef CENTRAL_APP_CONTROLLERUNIT_H
 #define CENTRAL_APP_CONTROLLERUNIT_H
-
 #include <stdint.h>
-
-#endif /* CENTRAL_APP_CONTROLLERUNIT_H */
+#include "centralAppControllerCfg.h"
+typedef enum CentralAppController_Status_t CentralAppController_Status_t;
+typedef enum CentralAppController_State_t CentralAppController_State_t;
+typedef struct CentralAppController_Frame_t CentralAppController_Frame_t;
+typedef struct CentralAppController_OutFrame_t CentralAppController_OutFrame_t;
+typedef void (*CentralAppController_ErrorCallback_t)(uint8_t errorCode);
+CentralAppController_Status_t CentralAppControllerUnit_Init(void);
+CentralAppController_Status_t CentralAppControllerUnit_DeInit(void);
+CentralAppController_Status_t CentralAppControllerUnit_Run(void);
+CentralAppController_Status_t CentralAppControllerUnit_GetState(CentralAppController_State_t *pState);
+CentralAppController_Status_t CentralAppControllerUnit_ProcessFrame(const CentralAppController_Frame_t *pInFrame, CentralAppController_OutFrame_t *pOutFrame, uint16_t *pOutLength);
+CentralAppController_Status_t CentralAppControllerUnit_RegisterErrorCallback(CentralAppController_ErrorCallback_t callback);
+#endif

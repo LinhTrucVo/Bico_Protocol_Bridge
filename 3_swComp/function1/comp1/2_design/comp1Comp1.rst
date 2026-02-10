@@ -11,11 +11,7 @@ Static structure
 
 .. What file this unit contains, e.g., data structures, global variables, constants, etc.
 
-..  uml::
-
-    @startuml
-    
-    @enduml
+..  uml:: comp1StaticStructure.puml
 
 
 #################################

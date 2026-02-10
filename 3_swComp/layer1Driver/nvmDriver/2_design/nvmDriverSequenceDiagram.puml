@@ -1,0 +1,6 @@
+@startuml nvmDriverSequenceDiagram
+actor Client
+participant NvmDriver
+Client -> NvmDriver : Write()
+NvmDriver --> Client : Status
+@enduml

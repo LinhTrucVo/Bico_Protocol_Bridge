@@ -2,6 +2,7 @@
 title Calibration Service - Dynamic Behaviour
 
 participant "Application" as APP
+participant "ADC Driver" as ADC
 participant "Calibration Service" as CAL
 participant "NVM Driver" as NVM
 
@@ -18,6 +19,8 @@ else Invalid or Empty
 end
 
 == Apply Calibration to ADC Value ==
+APP -> ADC : Read_ADC(channel)
+ADC --> APP : raw_adc_value
 APP -> CAL : ApplyCalibration(channel, raw_adc_value)
 CAL -> CAL : Get offset and gain for channel
 CAL -> CAL : calibrated_value = (raw_adc_value - offset) * gain

@@ -1,0 +1,6 @@
+@startuml spiMasterDriverSequenceDiagram
+actor Client
+participant SpiMasterDriver
+Client -> SpiMasterDriver : Transfer()
+SpiMasterDriver --> Client : Status
+@enduml

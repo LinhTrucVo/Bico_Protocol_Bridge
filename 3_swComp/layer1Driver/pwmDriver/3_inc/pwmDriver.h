@@ -1,16 +1,13 @@
-﻿// PwmDriver - Public Interface
+// This file is used to include the public interface of the component units.
+// It contains public macros, types, variables, and function prototypes of Units in this component.
+
 #ifndef PWMDRIVER_H
 #define PWMDRIVER_H
-#include <stdint.h>
-#include <stdbool.h>
+
+//============================================================================
+// Dependencies, Component configuration, and Unit headers
+//============================================================================
 #include "pwmDriverCfg.h"
 #include "pwmDriverUnit.h"
-typedef enum
-{
-    PWM_STATUS_OK = 0,
-    PWM_STATUS_ERROR,
-    PWM_STATUS_BUSY
-} PwmDriver_Status_t;
-PwmDriver_Status_t PwmDriver_Init(void);
-PwmDriver_Status_t PwmDriver_DeInit(void);
+
 #endif /* PWMDRIVER_H */

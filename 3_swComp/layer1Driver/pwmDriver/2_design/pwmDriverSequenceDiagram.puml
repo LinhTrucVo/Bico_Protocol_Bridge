@@ -1,0 +1,6 @@
+@startuml pwmDriverSequenceDiagram
+actor Client
+participant PwmDriver
+Client -> PwmDriver : SetDuty()
+PwmDriver --> Client : Status
+@enduml

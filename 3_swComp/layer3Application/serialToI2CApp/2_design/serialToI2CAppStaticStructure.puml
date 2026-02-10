@@ -1,0 +1,3 @@
+@startuml serialToI2CAppStaticStructure
+class SerialToI2CApp
+@enduml

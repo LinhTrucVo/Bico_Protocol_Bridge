@@ -1,0 +1,5 @@
+@startuml spiMasterDriverStateMachine
+[*] --> Idle
+Idle --> Active : Init
+Active --> Idle : DeInit
+@enduml

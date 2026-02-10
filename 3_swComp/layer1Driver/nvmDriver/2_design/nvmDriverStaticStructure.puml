@@ -1,0 +1,3 @@
+@startuml nvmDriverStaticStructure
+class NvmDriver
+@enduml

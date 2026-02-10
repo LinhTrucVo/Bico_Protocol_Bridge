@@ -11,12 +11,14 @@ package "Calibration Service" {
     [Factory Defaults] as defaults
 }
 
+[ADC Driver] as adcDriver
 [NVM Driver] as nvmDriver
 [Config Service] as configService
 
 load --> nvmDriver : Read calibration
 save --> nvmDriver : Write calibration
 load ..> defaults : Fallback values
+apply <-- adcDriver : raw_adc_value
 apply ..> configService : Get channel config
 
 @enduml

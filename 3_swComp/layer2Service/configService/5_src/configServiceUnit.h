@@ -1,6 +1,30 @@
-﻿#ifndef CONFIG_SERVICEUNIT_H
+#ifndef CONFIG_SERVICEUNIT_H
 #define CONFIG_SERVICEUNIT_H
-
 #include <stdint.h>
-
-#endif /* CONFIG_SERVICEUNIT_H */
+#include "configServiceCfg.h"
+typedef enum ConfigService_Status_t ConfigService_Status_t;
+typedef struct ConfigService_SerialConfig_t ConfigService_SerialConfig_t;
+typedef struct ConfigService_AnalogChannelConfig_t ConfigService_AnalogChannelConfig_t;
+typedef struct ConfigService_DigitalPinConfig_t ConfigService_DigitalPinConfig_t;
+typedef struct ConfigService_PwmConfig_t ConfigService_PwmConfig_t;
+typedef struct ConfigService_I2cConfig_t ConfigService_I2cConfig_t;
+typedef struct ConfigService_SpiConfig_t ConfigService_SpiConfig_t;
+ConfigService_Status_t ConfigServiceUnit_Init(void);
+ConfigService_Status_t ConfigServiceUnit_DeInit(void);
+ConfigService_Status_t ConfigServiceUnit_SetSerialConfig(const ConfigService_SerialConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_GetSerialConfig(ConfigService_SerialConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_SetAnalogChannelConfig(uint8_t channelId, const ConfigService_AnalogChannelConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_GetAnalogChannelConfig(uint8_t channelId, ConfigService_AnalogChannelConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_SetDigitalPinConfig(uint8_t pinId, const ConfigService_DigitalPinConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_GetDigitalPinConfig(uint8_t pinId, ConfigService_DigitalPinConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_SetPwmConfig(uint8_t channelId, const ConfigService_PwmConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_GetPwmConfig(uint8_t channelId, ConfigService_PwmConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_SetI2cConfig(const ConfigService_I2cConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_GetI2cConfig(ConfigService_I2cConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_SetSpiConfig(const ConfigService_SpiConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_GetSpiConfig(ConfigService_SpiConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_ValidateAnalogChannelConfig(const ConfigService_AnalogChannelConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_ValidatePwmConfig(const ConfigService_PwmConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_ValidateI2cConfig(const ConfigService_I2cConfig_t *pConfig);
+ConfigService_Status_t ConfigServiceUnit_ValidateSpiConfig(const ConfigService_SpiConfig_t *pConfig);
+#endif

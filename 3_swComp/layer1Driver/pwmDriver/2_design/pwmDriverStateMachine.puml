@@ -1,0 +1,5 @@
+@startuml pwmDriverStateMachine
+[*] --> Idle
+Idle --> Active : Init
+Active --> Idle : DeInit
+@enduml

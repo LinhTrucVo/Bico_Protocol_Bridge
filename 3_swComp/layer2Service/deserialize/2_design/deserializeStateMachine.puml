@@ -1,0 +1,6 @@
+@startuml deserializeStateMachine
+[*] --> Idle
+Idle --> Receiving : Append
+Receiving --> Parsed : Complete
+Parsed --> Idle : Reset
+@enduml

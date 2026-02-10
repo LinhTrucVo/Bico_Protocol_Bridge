@@ -1,0 +1,6 @@
+@startuml serialDriverSequenceDiagram
+actor Client
+participant SerialDriver
+Client -> SerialDriver : Send(data)
+SerialDriver --> Client : Status
+@enduml

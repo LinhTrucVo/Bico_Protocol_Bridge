@@ -1,16 +1,13 @@
-﻿// SpiSlaveDriver - Public Interface
+// This file is used to include the public interface of the component units.
+// It contains public macros, types, variables, and function prototypes of Units in this component.
+
 #ifndef SPI_SLAVEDRIVER_H
 #define SPI_SLAVEDRIVER_H
-#include <stdint.h>
-#include <stdbool.h>
+
+//============================================================================
+// Dependencies, Component configuration, and Unit headers
+//============================================================================
 #include "spiSlaveDriverCfg.h"
 #include "spiSlaveDriverUnit.h"
-typedef enum
-{
-    SPI_SLAVE_STATUS_OK = 0,
-    SPI_SLAVE_STATUS_ERROR,
-    SPI_SLAVE_STATUS_BUSY
-} SpiSlaveDriver_Status_t;
-SpiSlaveDriver_Status_t SpiSlaveDriver_Init(void);
-SpiSlaveDriver_Status_t SpiSlaveDriver_DeInit(void);
+
 #endif /* SPI_SLAVEDRIVER_H */

@@ -1,0 +1,6 @@
+@startuml nvmServiceSequenceDiagram
+actor Client
+participant NvmService
+Client -> NvmService : Store(record)
+NvmService --> Client : Status
+@enduml

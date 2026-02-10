@@ -1,0 +1,6 @@
+@startuml serialToSPIAppSequenceDiagram
+actor Host
+participant SerialToSPIApp
+Host -> SerialToSPIApp : SpiTransfer()
+SerialToSPIApp --> Host : Status
+@enduml

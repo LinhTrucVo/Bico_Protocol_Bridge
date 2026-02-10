@@ -1,0 +1,3 @@
+@startuml i2cSlaveDriverStaticStructure
+class I2cSlaveDriver
+@enduml

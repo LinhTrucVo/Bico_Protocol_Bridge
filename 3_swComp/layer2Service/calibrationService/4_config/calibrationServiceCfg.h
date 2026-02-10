@@ -1,6 +1,11 @@
-﻿#ifndef CALIBRATION_SERVICECFG_H
-#define CALIBRATION_SERVICECFG_H
+﻿#ifndef CALIBRATION_SERVICE_CFG_H
+#define CALIBRATION_SERVICE_CFG_H
 
-// Configuration parameters
+//============================================================================
+// Configuration Macros
+//============================================================================
+#define CALIBRATION_CFG_MAX_CHANNELS     8
+#define CALIBRATION_CFG_DEFAULT_GAIN     1.0f
+#define CALIBRATION_CFG_DEFAULT_OFFSET   0.0f
 
-#endif /* CALIBRATION_SERVICECFG_H */
+#endif /* CALIBRATION_SERVICE_CFG_H */

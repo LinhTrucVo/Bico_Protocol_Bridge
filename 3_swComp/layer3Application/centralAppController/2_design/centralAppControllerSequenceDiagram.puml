@@ -1,0 +1,6 @@
+@startuml centralAppControllerSequenceDiagram
+actor Host
+participant CentralAppController
+Host -> CentralAppController : Request
+CentralAppController --> Host : Response
+@enduml

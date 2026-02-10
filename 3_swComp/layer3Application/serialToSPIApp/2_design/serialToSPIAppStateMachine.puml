@@ -1,0 +1,5 @@
+@startuml serialToSPIAppStateMachine
+[*] --> Idle
+Idle --> Active : Enable
+Active --> Idle : Disable
+@enduml

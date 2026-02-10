@@ -1,0 +1,3 @@
+@startuml centralAppControllerStaticStructure
+class CentralAppController
+@enduml

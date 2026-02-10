@@ -1,22 +1,13 @@
-﻿// Deserialize - Public Interface
+// This file is used to include the public interface of the component units.
+// It contains public macros, types, variables, and function prototypes of Units in this component.
 
 #ifndef DESERIALIZE_H
 #define DESERIALIZE_H
 
-#include <stdint.h>
-#include <stdbool.h>
+//============================================================================
+// Dependencies, Component configuration, and Unit headers
+//============================================================================
 #include "deserializeCfg.h"
 #include "deserializeUnit.h"
-
-typedef enum
-{
-    DESERIALIZE_STATUS_OK = 0,
-    DESERIALIZE_STATUS_ERROR,
-    DESERIALIZE_STATUS_BUSY
-} Deserialize_Status_t;
-
-Deserialize_Status_t Deserialize_Init(void);
-Deserialize_Status_t Deserialize_Process(void);
-Deserialize_Status_t Deserialize_DeInit(void);
 
 #endif /* DESERIALIZE_H */

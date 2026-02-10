@@ -1,0 +1,6 @@
+@startuml serializeSequenceDiagram
+actor Client
+participant Serialize
+Client -> Serialize : Build(response)
+Serialize --> Client : Frame
+@enduml

@@ -1,0 +1,3 @@
+@startuml serialToSPIAppStaticStructure
+class SerialToSPIApp
+@enduml

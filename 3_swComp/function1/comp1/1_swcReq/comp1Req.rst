@@ -12,5 +12,6 @@ Input validation
 Requirements for component
 **************************
 
-.. Requirements specific of this component.
-.. Verification criterias 
+Req-comp1-001: Requirement description
+    Verification: Describe the verification criteria for this requirement.
+

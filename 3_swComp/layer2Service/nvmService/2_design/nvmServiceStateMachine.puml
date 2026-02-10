@@ -1,0 +1,5 @@
+@startuml nvmServiceStateMachine
+[*] --> Idle
+Idle --> Busy : Store/Load
+Busy --> Idle : Done
+@enduml

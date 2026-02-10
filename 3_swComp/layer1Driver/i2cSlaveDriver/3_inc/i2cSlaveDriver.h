@@ -1,16 +1,13 @@
-﻿// I2cSlaveDriver - Public Interface
+// This file is used to include the public interface of the component units.
+// It contains public macros, types, variables, and function prototypes of Units in this component.
+
 #ifndef I2C_SLAVEDRIVER_H
 #define I2C_SLAVEDRIVER_H
-#include <stdint.h>
-#include <stdbool.h>
+
+//============================================================================
+// Dependencies, Component configuration, and Unit headers
+//============================================================================
 #include "i2cSlaveDriverCfg.h"
 #include "i2cSlaveDriverUnit.h"
-typedef enum
-{
-    I2C_SLAVE_STATUS_OK = 0,
-    I2C_SLAVE_STATUS_ERROR,
-    I2C_SLAVE_STATUS_BUSY
-} I2cSlaveDriver_Status_t;
-I2cSlaveDriver_Status_t I2cSlaveDriver_Init(void);
-I2cSlaveDriver_Status_t I2cSlaveDriver_DeInit(void);
+
 #endif /* I2C_SLAVEDRIVER_H */

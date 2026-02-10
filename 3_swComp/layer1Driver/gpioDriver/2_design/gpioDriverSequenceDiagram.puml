@@ -1,0 +1,6 @@
+@startuml gpioDriverSequenceDiagram
+actor Client
+participant GpioDriver
+Client -> GpioDriver : WritePin()
+GpioDriver --> Client : Status
+@enduml

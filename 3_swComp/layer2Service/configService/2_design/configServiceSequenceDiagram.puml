@@ -1,0 +1,6 @@
+@startuml configServiceSequenceDiagram
+actor Client
+participant ConfigService
+Client -> ConfigService : Set(key,value)
+ConfigService --> Client : Status
+@enduml

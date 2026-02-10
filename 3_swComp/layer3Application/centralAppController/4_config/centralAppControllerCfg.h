@@ -1,6 +1,10 @@
-﻿#ifndef CENTRAL_APP_CONTROLLERCFG_H
-#define CENTRAL_APP_CONTROLLERCFG_H
+﻿#ifndef CENTRAL_APP_CONTROLLER_CFG_H
+#define CENTRAL_APP_CONTROLLER_CFG_H
 
-// Configuration parameters for CentralAppController
+//============================================================================
+// Configuration Macros
+//============================================================================
+#define CENTRAL_APP_CFG_MAX_FRAME_SIZE      256
+#define CENTRAL_APP_CFG_RESPONSE_TIMEOUT_MS 10
 
-#endif /* CENTRAL_APP_CONTROLLERCFG_H */
+#endif /* CENTRAL_APP_CONTROLLER_CFG_H */

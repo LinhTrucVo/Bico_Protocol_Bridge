@@ -1,0 +1,5 @@
+@startuml nvmDriverStateMachine
+[*] --> Idle
+Idle --> Active : Init
+Active --> Idle : DeInit
+@enduml

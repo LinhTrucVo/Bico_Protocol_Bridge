@@ -1,0 +1,6 @@
+@startuml adcDriverSequenceDiagram
+actor Client
+participant AdcDriver
+Client -> AdcDriver : StartConversion()
+AdcDriver --> Client : Result
+@enduml

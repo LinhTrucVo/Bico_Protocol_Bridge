@@ -1,0 +1,3 @@
+@startuml serialDriverStaticStructure
+class SerialDriver
+@enduml

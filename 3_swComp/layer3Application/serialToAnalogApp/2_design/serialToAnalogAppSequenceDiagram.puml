@@ -1,0 +1,6 @@
+@startuml serialToAnalogAppSequenceDiagram
+actor Host
+participant SerialToAnalogApp
+Host -> SerialToAnalogApp : SetOutput()
+SerialToAnalogApp --> Host : Status
+@enduml

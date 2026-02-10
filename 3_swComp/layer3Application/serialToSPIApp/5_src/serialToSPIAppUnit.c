@@ -1,56 +1,40 @@
 ﻿// SerialToSPIApp Implementation
 
 #include "serialToSPIApp.h"
+#include "serialToSPIAppCfg.h"
 
 typedef struct
 {
-    uint8_t initialized;
+    bool initialized;
     SerialToSPIApp_State_t currentState;
+    SerialToSPIApp_Config_t config;
 } SerialToSPIApp_Context_t;
 
 static SerialToSPIApp_Context_t context = {0};
 
 SerialToSPIApp_Status_t SerialToSPIApp_Init(void)
 {
-    // TODO: Implement application initialization logic here
-    // Initialize drivers, services, and set up application state
-    
-    context.initialized = 1;
+    context.initialized = true;
     context.currentState = SerialToSPIApp_STATE_IDLE;
-    
+    context.config.clockSpeed = SERIAL_TO_SPI_CFG_DEFAULT_SPEED;
+    context.config.mode = SERIAL_TO_SPI_MODE_0;
+    context.config.bitOrder = SERIAL_TO_SPI_BITORDER_MSB_FIRST;
+    return SERIAL_TO_SPI_APP_STATUS_OK;
+}
+
+SerialToSPIApp_Status_t SerialToSPIApp_DeInit(void)
+{
+    context.initialized = false;
+    context.currentState = SerialToSPIApp_STATE_IDLE;
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }
 
 SerialToSPIApp_Status_t SerialToSPIApp_Run(void)
 {
-    // TODO: Implement main application logic here
-    // Process incoming data, manage state transitions
-    
     if (!context.initialized)
     {
-        return SERIAL_TO_SPI_APP_STATUS_ERROR;
+        return SERIAL_TO_SPI_APP_STATUS_NOT_INITIALIZED;
     }
-    
-    // Application state machine logic
-    switch (context.currentState)
-    {
-        case SerialToSPIApp_STATE_IDLE:
-            // Handle idle state
-            break;
-            
-        case SerialToSPIApp_STATE_PROCESSING:
-            // Handle processing state
-            break;
-            
-        case SerialToSPIApp_STATE_ERROR:
-            // Handle error state
-            break;
-            
-        default:
-            context.currentState = SerialToSPIApp_STATE_ERROR;
-            break;
-    }
-    
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }
 
@@ -58,19 +42,56 @@ SerialToSPIApp_Status_t SerialToSPIApp_GetState(SerialToSPIApp_State_t *pState)
 {
     if (pState == NULL)
     {
-        return SERIAL_TO_SPI_APP_STATUS_ERROR;
+        return SERIAL_TO_SPI_APP_STATUS_INVALID_PARAM;
     }
-    
     *pState = context.currentState;
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }
 
-SerialToSPIApp_Status_t SerialToSPIApp_DeInit(void)
+SerialToSPIApp_Status_t SerialToSPIApp_Configure(const SerialToSPIApp_Config_t *pConfig)
 {
-    // TODO: Implement application deinitialization logic here
-    
-    context.initialized = 0;
-    context.currentState = SerialToSPIApp_STATE_IDLE;
-    
+    if (pConfig == NULL)
+    {
+        return SERIAL_TO_SPI_APP_STATUS_INVALID_PARAM;
+    }
+    context.config = *pConfig;
+    return SERIAL_TO_SPI_APP_STATUS_OK;
+}
+
+SerialToSPIApp_Status_t SerialToSPIApp_GetConfig(SerialToSPIApp_Config_t *pConfig)
+{
+    if (pConfig == NULL)
+    {
+        return SERIAL_TO_SPI_APP_STATUS_INVALID_PARAM;
+    }
+    *pConfig = context.config;
+    return SERIAL_TO_SPI_APP_STATUS_OK;
+}
+
+SerialToSPIApp_Status_t SerialToSPIApp_Transfer(const SerialToSPIApp_Transfer_t *pTransfer)
+{
+    if (pTransfer == NULL || pTransfer->length == 0 || pTransfer->length > SERIAL_TO_SPI_CFG_MAX_TRANSFER)
+    {
+        return SERIAL_TO_SPI_APP_STATUS_INVALID_PARAM;
+    }
+    if (pTransfer->pRxData != NULL)
+    {
+        for (uint16_t i = 0; i < pTransfer->length; i++)
+        {
+            pTransfer->pRxData[i] = 0;
+        }
+    }
+    return SERIAL_TO_SPI_APP_STATUS_OK;
+}
+
+SerialToSPIApp_Status_t SerialToSPIApp_SaveConfig(void)
+{
+    // TODO: Persist configuration using NvmService
+    return SERIAL_TO_SPI_APP_STATUS_OK;
+}
+
+SerialToSPIApp_Status_t SerialToSPIApp_LoadConfig(void)
+{
+    // TODO: Load configuration using NvmService
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }

@@ -1,5 +1,4 @@
 // ADC Driver Test Cases
-// This file contains unit tests for the ADC driver component
 
 #include <gtest/gtest.h>
 
@@ -7,43 +6,45 @@ extern "C" {
 #include "adcDriver.h"
 }
 
-class AdcDriverTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-        // Setup code before each test
-    }
-
-    void TearDown() override {
-        // Cleanup code after each test
-    }
-};
-
-TEST_F(AdcDriverTest, InitSuccess) {
-    AdcDriver_Status_t status = AdcDriver_Init();
-    EXPECT_EQ(ADC_STATUS_OK, status);
+TEST(AdcDriverTest, InitAndConfigureChannel) {
+    AdcDriver_Config_t cfg = {
+        ADC_RESOLUTION_12BIT,
+        ADC_VREF_3V3,
+        ADC_MODE_SINGLE,
+        1000,
+        false,
+        false
+    };
+    EXPECT_EQ(ADC_STATUS_OK, AdcDriver_Init(&cfg));
+    EXPECT_EQ(ADC_STATUS_OK, AdcDriver_ConfigureChannel(ADC_CHANNEL_0, true));
 }
 
-TEST_F(AdcDriverTest, StartConversionValidChannel) {
-    AdcDriver_Init();
-    AdcDriver_Status_t status = AdcDriver_StartConversion(ADC_CHANNEL_0);
-    EXPECT_EQ(ADC_STATUS_OK, status);
-}
-
-TEST_F(AdcDriverTest, ReadValueValidChannel) {
+TEST(AdcDriverTest, StartReadStop) {
+    AdcDriver_Config_t cfg = {
+        ADC_RESOLUTION_12BIT,
+        ADC_VREF_3V3,
+        ADC_MODE_SINGLE,
+        1000,
+        false,
+        false
+    };
     uint16_t value = 0;
-    AdcDriver_Init();
-    AdcDriver_Status_t status = AdcDriver_ReadValue(ADC_CHANNEL_0, &value);
-    EXPECT_EQ(ADC_STATUS_OK, status);
+    EXPECT_EQ(ADC_STATUS_OK, AdcDriver_Init(&cfg));
+    EXPECT_EQ(ADC_STATUS_OK, AdcDriver_ConfigureChannel(ADC_CHANNEL_0, true));
+    EXPECT_EQ(ADC_STATUS_OK, AdcDriver_StartConversion(ADC_CHANNEL_0));
+    EXPECT_EQ(ADC_STATUS_OK, AdcDriver_ReadValue(ADC_CHANNEL_0, &value));
+    EXPECT_EQ(ADC_STATUS_OK, AdcDriver_StopConversion());
 }
 
-TEST_F(AdcDriverTest, ReadValueNullPointer) {
-    AdcDriver_Init();
-    AdcDriver_Status_t status = AdcDriver_ReadValue(ADC_CHANNEL_0, NULL);
-    EXPECT_EQ(ADC_STATUS_ERROR, status);
-}
-
-TEST_F(AdcDriverTest, DeInitSuccess) {
-    AdcDriver_Init();
-    AdcDriver_Status_t status = AdcDriver_DeInit();
-    EXPECT_EQ(ADC_STATUS_OK, status);
+TEST(AdcDriverTest, NullPointerReadFails) {
+    AdcDriver_Config_t cfg = {
+        ADC_RESOLUTION_12BIT,
+        ADC_VREF_3V3,
+        ADC_MODE_SINGLE,
+        1000,
+        false,
+        false
+    };
+    EXPECT_EQ(ADC_STATUS_OK, AdcDriver_Init(&cfg));
+    EXPECT_EQ(ADC_STATUS_INVALID_PARAM, AdcDriver_ReadValue(ADC_CHANNEL_0, NULL));
 }

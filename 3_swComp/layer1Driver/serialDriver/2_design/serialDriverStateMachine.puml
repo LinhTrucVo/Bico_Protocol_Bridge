@@ -1,0 +1,5 @@
+@startuml serialDriverStateMachine
+[*] --> Idle
+Idle --> Active : Init
+Active --> Idle : DeInit
+@enduml

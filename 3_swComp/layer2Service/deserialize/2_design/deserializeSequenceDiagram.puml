@@ -1,0 +1,6 @@
+@startuml deserializeSequenceDiagram
+actor Transport
+participant Deserialize
+Transport -> Deserialize : PushBytes()
+Deserialize --> Transport : Request
+@enduml

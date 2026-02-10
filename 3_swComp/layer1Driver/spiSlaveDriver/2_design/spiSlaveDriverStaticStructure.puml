@@ -1,0 +1,3 @@
+@startuml spiSlaveDriverStaticStructure
+class SpiSlaveDriver
+@enduml

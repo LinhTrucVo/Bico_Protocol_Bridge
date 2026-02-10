@@ -1,0 +1,6 @@
+@startuml calibrationServiceSequenceDiagram
+actor Client
+participant CalibrationService
+Client -> CalibrationService : Apply(input)
+CalibrationService --> Client : output
+@enduml

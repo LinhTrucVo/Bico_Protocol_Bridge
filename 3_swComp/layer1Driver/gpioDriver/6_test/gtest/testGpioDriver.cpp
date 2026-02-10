@@ -6,19 +6,29 @@ extern "C" {
 #include "gpioDriver.h"
 }
 
-class GpioDriverTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-        GpioDriver_Init();
-    }
-};
-
-TEST_F(GpioDriverTest, InitSuccess) {
-    GpioDriver_Status_t status = GpioDriver_Init();
-    EXPECT_EQ(GPIO_STATUS_OK, status);
+TEST(GpioDriverTest, InitAndConfigurePin) {
+    GpioDriver_PinConfig_t cfg = {
+        GPIO_MODE_OUTPUT,
+        GPIO_PULL_NONE,
+        GPIO_SPEED_LOW,
+        GPIO_STATE_LOW
+    };
+    EXPECT_EQ(GPIO_STATUS_OK, GpioDriver_Init());
+    EXPECT_EQ(GPIO_STATUS_OK, GpioDriver_ConfigurePin(0, &cfg));
 }
 
-TEST_F(GpioDriverTest, WritePinSuccess) {
-    GpioDriver_Status_t status = GpioDriver_WritePin(0, GPIO_STATE_HIGH);
-    EXPECT_EQ(GPIO_STATUS_OK, status);
+TEST(GpioDriverTest, WriteReadTogglePin) {
+    GpioDriver_PinConfig_t cfg = {
+        GPIO_MODE_OUTPUT,
+        GPIO_PULL_NONE,
+        GPIO_SPEED_LOW,
+        GPIO_STATE_LOW
+    };
+    GpioDriver_State_t state = GPIO_STATE_LOW;
+    GpioDriver_Init();
+    GpioDriver_ConfigurePin(0, &cfg);
+    EXPECT_EQ(GPIO_STATUS_OK, GpioDriver_WritePin(0, GPIO_STATE_HIGH));
+    EXPECT_EQ(GPIO_STATUS_OK, GpioDriver_ReadPin(0, &state));
+    EXPECT_EQ(GPIO_STATE_HIGH, state);
+    EXPECT_EQ(GPIO_STATUS_OK, GpioDriver_TogglePin(0));
 }

@@ -1,22 +1,13 @@
-﻿// ConfigService - Public Interface
+// This file is used to include the public interface of the component units.
+// It contains public macros, types, variables, and function prototypes of Units in this component.
 
 #ifndef CONFIG_SERVICE_H
 #define CONFIG_SERVICE_H
 
-#include <stdint.h>
-#include <stdbool.h>
+//============================================================================
+// Dependencies, Component configuration, and Unit headers
+//============================================================================
 #include "configServiceCfg.h"
 #include "configServiceUnit.h"
-
-typedef enum
-{
-    CONFIG_SERVICE_STATUS_OK = 0,
-    CONFIG_SERVICE_STATUS_ERROR,
-    CONFIG_SERVICE_STATUS_BUSY
-} ConfigService_Status_t;
-
-ConfigService_Status_t ConfigService_Init(void);
-ConfigService_Status_t ConfigService_Process(void);
-ConfigService_Status_t ConfigService_DeInit(void);
 
 #endif /* CONFIG_SERVICE_H */

@@ -1,0 +1,5 @@
+@startuml serializeStateMachine
+[*] --> Idle
+Idle --> Building : Build
+Building --> Idle : Done
+@enduml

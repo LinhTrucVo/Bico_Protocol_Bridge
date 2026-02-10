@@ -1,23 +1,51 @@
-.. ADC Driver Component Design
+#################################
+What is this component about?
+#################################
 
-Component Overview
-******************
+The ADC Driver abstracts ADC configuration and sampling operations.
 
-The ADC Driver component provides hardware abstraction for ADC operations.
-It manages ADC initialization, channel configuration, conversion start, and result reading.
 
-Component Architecture
-**********************
+#################################
+Static structure
+#################################
 
-The component consists of:
-- adcDriver.h: Public interface
-- adcDriverUnit.c: Implementation
-- adcDriverCfg.h: Configuration parameters
+..  uml:: adcDriverStaticStructure.puml
 
-Design Decisions
+
+#################################
+Dynamic behaviour
+#################################
+
+* State machine diagram
+..  uml:: adcDriverStateMachine.puml
+
+* Sequence diagram
+..  uml:: adcDriverSequenceDiagram.puml
+
+
+#################################
+Design chooices
+#################################
+Description:
+************
+Provide a thin HAL wrapper for ADC access and configuration.
+
+Assumptions and influencing factors:
+************************************
+* Vendor HAL is used for register access.
+
+Solutions list:
+***************
+Solution 1 - HAL wrapper
+Wrap vendor HAL APIs.
+
+Solution 2 - Direct register access
+Implement register operations per platform.
+
+Solution evaluation:
+********************
+HAL wrapper improves portability and reduces platform-specific code.
+
+Final solution:
 ****************
-
-- The driver uses a state machine to track initialization and conversion states
-- Channel validation is performed before all operations
-- The driver maintains a context structure for runtime state management
-- Vendor-specific HAL calls are marked with TODO for later implementation
+Solution 1 selected for portability.

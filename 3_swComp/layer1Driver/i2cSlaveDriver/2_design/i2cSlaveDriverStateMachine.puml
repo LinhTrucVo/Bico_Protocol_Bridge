@@ -1,0 +1,5 @@
+@startuml i2cSlaveDriverStateMachine
+[*] --> Idle
+Idle --> Active : Init
+Active --> Idle : DeInit
+@enduml
