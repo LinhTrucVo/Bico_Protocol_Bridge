@@ -154,9 +154,7 @@ All driver components contain TODO comments indicating where vendor-specific HAL
 ### ⚠️ TODO - Service Logic Implementation
 Service layer components have placeholder implementations. Business logic needs to be implemented:
 
-- Calibration algorithms
 - Configuration management logic
-- Data conversion formulas
 - Serialization/deserialization protocols
 - NVM service high-level operations
 

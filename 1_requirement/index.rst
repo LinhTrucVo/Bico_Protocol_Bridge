@@ -1,5 +1,5 @@
-SW Feature Requirement Template
-#################################
+SW Feature Requirement
+######################
 
 This list out the software feature requirements for the project.
 

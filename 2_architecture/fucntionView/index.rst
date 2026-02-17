@@ -1,5 +1,5 @@
-SW Function Architecture Template
-#################################
+SW Function Architecture
+########################
 
 This document describes the software function architecture for the Bico Protocol Bridge project.
 
@@ -17,7 +17,7 @@ The system is organized into a three-layer architecture, each with distinct resp
   Mid-level services that provide business logic and data processing. This layer includes:
   
   - **Protocol Services**: Command parsing (Serialize) and response formatting (Deserialize)
-  - **Data Services**: Configuration management, calibration, and data conversion between formats
+  - **Data Services**: Configuration management
   - **Storage Services**: High-level NVM operations with integrity checking and wear leveling
 
 **Layer 3: Application Layer**
@@ -78,9 +78,7 @@ Layer 2: Service Layer
 ..  toctree::
     :maxdepth: 1
 
-    layer2_service/calibrationService/index.rst
     layer2_service/configService/index.rst
-    layer2_service/dataConversionService/index.rst
     layer2_service/deserialize/index.rst
     layer2_service/nvmService/index.rst
     layer2_service/serialize/index.rst

@@ -12,17 +12,18 @@ package "SerialToAnalog App" {
 }
 
 [ADC Driver] as adcDriver
-[Calibration Service] as calibrationService
-[Data Conversion Service] as dataConversion
 [Config Service] as configService
 
 cmdHandler --> channelMgr : Channel commands
 channelMgr --> adcDriver : ADC operations
 samplingCtrl --> adcDriver : Start/stop sampling
 averaging --> adcDriver : Read samples
-channelMgr --> calibrationService : Apply calibration
-channelMgr --> dataConversion : Convert values
 thresholdMon --> channelMgr : Monitor values
 configMgr --> configService : Load/save config
+
+note right of channelMgr
+  Works with raw ADC values only
+  No calibration or conversion service dependencies
+end note
 
 @enduml

@@ -19,17 +19,16 @@ package "Read Analog Value Flow" {
     component "Central Controller" as CC2
     component "SerialToAnalog App" as AA2
     component "ADC Driver" as ADC2
-    component "Calibration Service" as CAL2
-    component "Data Conversion" as DC2
     
     CC2 -down-> AA2 : Read_ADC(channel)
     AA2 -down-> ADC2 : ADC_StartSingle(channel)
     ADC2 -up-> AA2 : Conversion_Complete(raw_value)
-    AA2 -down-> CAL2 : ApplyCalibration(channel, raw_value)
-    CAL2 -up-> AA2 : calibrated_value
-    AA2 -down-> DC2 : ConvertToVoltage(channel, calibrated_value)
-    DC2 -up-> AA2 : voltage
-    AA2 -up-> CC2 : ADC_Reading{channel, voltage, raw_value}
+    AA2 -up-> CC2 : ADC_Reading{channel, raw_value}
+    
+    note right of AA2
+      Returns raw ADC values only
+      No calibration or conversion
+    end note
 }
 
 package "Threshold Alert Flow" {
@@ -39,12 +38,16 @@ package "Threshold Alert Flow" {
     
     AA3 -down-> AA3 : Periodic_Threshold_Check()
     AA3 -down-> ADC3 : ADC_ReadValue(channel)
-    ADC3 -up-> AA3 : value
-    AA3 -down-> AA3 : Compare_To_Threshold(value)
+    ADC3 -up-> AA3 : raw_value
+    AA3 -down-> AA3 : Compare_To_Threshold(raw_value)
     
     alt Threshold Exceeded
-        AA3 -up-> CC3 : Threshold_Alert(channel, value, threshold)
+        AA3 -up-> CC3 : Threshold_Alert(channel, raw_value, threshold)
     end
+    
+    note right of AA3
+      Thresholds in raw ADC counts
+    end note
 }
 
 @enduml

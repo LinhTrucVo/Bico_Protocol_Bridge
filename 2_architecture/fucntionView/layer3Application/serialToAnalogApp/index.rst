@@ -8,16 +8,16 @@ This application implements the Serial to Analog functionality, managing ADC ope
 Description
 ***********
 The SerialToAnalog App provides complete analog input functionality including 
-ADC channel management, sampling control, calibration, threshold monitoring, and data conversion. 
+ADC channel management, sampling control, and threshold monitoring using raw ADC values. 
 It implements the requirements from the SerialToAnalog feature specification.
 
 Key responsibilities:
 - Manage ADC channel configuration and operation
 - Control sampling rates (1 Hz - 10 kHz)
-- Apply calibration and data conversion
-- Implement threshold monitoring and alerts
+- Work with raw ADC data only (no calibration or conversion)
+- Implement threshold monitoring using raw ADC counts
 - Support multiple analog channels
-- Implement data averaging
+- Implement data averaging on raw values
 - Persist analog configuration in NVM
 
 Static view

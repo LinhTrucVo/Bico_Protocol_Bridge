@@ -3,7 +3,7 @@ What is this component about?
 #################################
 
 The SerialToAnalog App implements the Serial-to-Analog feature for multi-channel ADC operation.
-It manages configuration, sampling control, calibration, conversion, and threshold monitoring.
+It manages configuration, sampling control, and threshold monitoring using raw ADC values.
 
 
 #################################
@@ -49,14 +49,10 @@ Dynamic behaviour
     actor Host
     participant SerialToAnalog
     participant ADC
-    participant Calibration
-    participant Convert
     participant Serialize
     Host -> SerialToAnalog : Command
     SerialToAnalog -> ADC : Start/Read
-    SerialToAnalog -> Calibration : Apply
-    SerialToAnalog -> Convert : Convert
-    SerialToAnalog -> Serialize : BuildFrame
+    SerialToAnalog -> Serialize : BuildFrame(raw_value)
     SerialToAnalog --> Host : Response
     @enduml
 

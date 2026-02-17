@@ -120,10 +120,9 @@ All driver components have TODO markers for vendor-specific HAL code:
 
 #### Layer 2 Services  
 Service logic placeholders need implementation:
-- Calibration algorithms
 - Configuration management
-- Data conversion formulas
 - Protocol serialization/deserialization
+- NVM operations
 
 **Action Required**: Implement business logic
 

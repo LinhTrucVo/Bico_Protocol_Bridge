@@ -1,9 +1,9 @@
-﻿.. Descrive about the Serial To Analog App component requirements
+﻿.. Describe about the Serial To Analog App component requirements
 Overall requirements
 ********************
 
 The Serial To Analog Application shall provide seamless analog signal monitoring through serial interface.
-It shall support multi-channel ADC operations with configuration, calibration, averaging, and threshold monitoring.
+It shall support multi-channel ADC operations with configuration, averaging, and threshold monitoring using raw ADC values.
 All configurations shall persist in non-volatile memory across power cycles.
 
 Input validation
@@ -13,9 +13,7 @@ Input validation
 - ADC channel numbers shall be validated (0-7, configurable via ADC_MAX_CHANNELS)
 - Sampling rates shall be validated (1 Hz - 10 kHz)
 - Resolution values shall be validated (8-bit, 10-bit, 12-bit, 16-bit)
-- Voltage reference shall be validated (0-3.3V, 0-5V, 0-10V)
-- Calibration parameters shall be validated (offset: ±10%, gain: 0.5-2.0)
-- Threshold values shall be validated (within configured voltage range)
+- Threshold values shall be validated (within ADC resolution range)
 
 Requirements for component
 **************************
@@ -32,9 +30,9 @@ Req-serialToAnalogApp-003: Configurable Resolution
    The application shall support 8-bit, 10-bit, 12-bit, and 16-bit resolution.
    Verification: Test all resolution modes and verify ADC output precision.
 
-Req-serialToAnalogApp-004: Voltage Range Configuration
-   The application shall support selectable reference voltages: 0-3.3V, 0-5V, 0-10V.
-   Verification: Configure each voltage range and verify measured values.
+Req-serialToAnalogApp-004: ADC Resolution Configuration
+   The application shall support 8-bit, 10-bit, 12-bit, and 16-bit resolution.
+   Verification: Test all resolution modes and verify ADC output precision.
 
 Req-serialToAnalogApp-005: Channel Enable/Disable
    The application shall allow individual channel enable/disable control.
@@ -48,26 +46,22 @@ Req-serialToAnalogApp-007: Trigger Modes
    The application shall support continuous, on-demand, and threshold-based triggering.
    Verification: Test each trigger mode and verify correct data acquisition behavior.
 
-Req-serialToAnalogApp-008: Calibration Support
-   The application shall support offset and gain calibration per channel.
-   Verification: Apply calibration and verify measurement accuracy improvement.
-
-Req-serialToAnalogApp-009: Threshold Monitoring
-   The application shall support configurable min/max alarm thresholds per channel.
+Req-serialToAnalogApp-008: Threshold Monitoring
+   The application shall support configurable min/max alarm thresholds per channel using raw ADC counts.
    Verification: Configure thresholds and verify alert generation when exceeded.
 
-Req-serialToAnalogApp-010: Configuration Persistence
+Req-serialToAnalogApp-009: Configuration Persistence
    All analog configuration shall persist in NVM across power cycles.
    Verification: Configure parameters, power cycle, and verify settings retained.
 
-Req-serialToAnalogApp-011: Command Response Time
+Req-serialToAnalogApp-010: Command Response Time
    The application shall respond to configuration commands within 10 ms.
    Verification: Measure command response latency using oscilloscope.
 
-Req-serialToAnalogApp-012: Data Format Options
-   The application shall support raw ADC values and scaled engineering units.
-   Verification: Request both formats and verify correct data representation.
+Req-serialToAnalogApp-011: Raw Data Format
+   The application shall return raw ADC values without conversion to physical units.
+   Verification: Request data and verify raw ADC count values are returned.
 
-Req-serialToAnalogApp-013: Serial Command Interface
+Req-serialToAnalogApp-012: Serial Command Interface
    The application shall parse and execute serial commands for configuration and data request.
    Verification: Send commands via serial interface and verify correct parsing and execution.

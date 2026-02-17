@@ -23,8 +23,9 @@ end note
 
 note right of benefit3
   Configurable resolution,
-  sampling rate, and voltage range
-  to match sensor requirements
+  sampling rate to match
+  sensor requirements
+  Raw ADC data for direct processing
 end note
 
 note right of benefit4
