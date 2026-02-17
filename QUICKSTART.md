@@ -2,7 +2,7 @@
 
 ## Component Creation Summary
 
-✅ **20 Software Components Created**
+✅ **18 Software Components Created**
 
 ### Component Layers
 
@@ -12,10 +12,9 @@
 - spiMasterDriver, spiSlaveDriver  
 - pwmDriver, nvmDriver
 
-#### Layer 2 - Services (6)
-- calibrationService, configService
-- dataConversionService
-- deserialize, serialize, nvmService
+#### Layer 2 - Services (4)
+- configService, deserialize
+- serialize, nvmService
 
 #### Layer 3 - Applications (5)
 - centralAppController

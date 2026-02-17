@@ -6,14 +6,16 @@ package "Serialize" {
     [Response Builder] as builder
     note right of builder
         - Converts data structures to text format
-        - Example: {channel:1, voltage:3.25} 
-          → "ADC:CH1:VOLTAGE:3.25V"
+        - Example: {channel:1, value:2048} 
+          → "ADC:CH1:VALUE:2048"
+        - Serializes raw data without conversion
     end note
     
     [Format Handler] as format
     note right of format
         - Handles different output formats
         - ASCII text, HEX strings, binary
+        - No physical unit conversion
     end note
     
     [Message Framing] as framing
@@ -26,8 +28,8 @@ package "Serialize" {
 [Central App Controller] as controller
 [Serial Driver] as serialDriver
 
-controller --> builder : Response data structure
-builder --> format : Format conversion
+controller --> builder : Raw data structure
+builder --> format : Format serialization
 format --> framing : Apply delimiters
 framing --> serialDriver : Complete serial stream
 

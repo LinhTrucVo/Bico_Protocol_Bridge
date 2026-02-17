@@ -15,7 +15,7 @@ This document guides the comprehensive implementation of all components based on
 - ReadChannel(channelId) -> returns calibrated + averaged value
 - TriggerSampling(channelId)
 - SaveConfiguration() -> persist to NVM
-**Dependencies**: AdcDriver, SerialDriver, CalibrationService, DataConversionService, Serialize, Deserialize, NvmService
+**Dependencies**: AdcDriver, SerialDriver, Serialize, Deserialize, NvmService
 
 ### SerialToDigitalApp  
 **Requirements**: Digital I/O control, PWM generation
@@ -70,21 +70,6 @@ This document guides the comprehensive implementation of all components based on
 - ExtractParameters(command) -> returns parameter array
 - ValidateCommand(command) -> returns validation result
 
-### CalibrationService
-**Purpose**: Apply calibration to ADC readings
-**Key Functions**:
-- ApplyCalibration(rawValue, offset, gain) -> returns calibrated value
-- PerformTwoPointCalibration(raw1, ref1, raw2, ref2) -> returns offset & gain
-- SaveCalibration(channelId, offset, gain)
-- LoadCalibration(channelId) -> returns offset & gain
-
-### DataConversionService
-**Purpose**: Convert ADC values to engineering units
-**Key Functions**:
-- ConvertToVoltage(adcValue, resolution, vref) -> returns voltage
-- ConvertToEngineering(voltage, scaleFactor, offset) -> returns engineering value
-- ScaleValue(rawValue, minRaw, maxRaw, minEng, maxEng) -> returns scaled value
-
 ### ConfigService
 **Purpose**: Validate and manage configuration parameters
 **Key Functions**:
@@ -134,7 +119,7 @@ All Layer 1 drivers have complete interfaces defined but implementation logic ma
 
 ## Implementation Priority
 
-1. ✅ Component structure created (20 components)
+1. ✅ Component structure created (18 components)
 2. ✅ Test infrastructure with fake/mock/stub (all components)
 3. ✅ Requirements documentation templates (all components)
 4. 🔄 Detailed requirements from 1_requirement (IN PROGRESS)
@@ -145,12 +130,12 @@ All Layer 1 drivers have complete interfaces defined but implementation logic ma
 
 ## Next Steps
 
-Due to the extensive scope (20 components × 11 files each = 220+ files to implement comprehensively), 
+Due to the extensive scope (18 components × 11 files each = 198+ files to implement comprehensively), 
 the implementation will be done incrementally focusing on:
 
 1. Most critical path: SerialToAnalog (most detailed requirements)
 2. Remaining Layer 3 apps: SerialToDigital, SerialToI2C, SerialToSPI
-3. Layer 2 services: Serialize, Deserialize, Calibration, DataConversion, Config, NVM
+3. Layer 2 services: Serialize, Deserialize, Config, NVM
 4. Layer 1 driver interfaces (keep logic empty as requested)
 
 The structure, templates, build system, and test infrastructure are complete and ready for detailed implementation.

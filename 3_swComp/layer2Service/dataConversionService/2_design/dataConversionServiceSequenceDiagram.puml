@@ -1,6 +1,0 @@
-@startuml dataConversionServiceSequenceDiagram
-actor Client
-participant DataConversionService
-Client -> DataConversionService : RawToEng(raw)
-DataConversionService --> Client : eng
-@enduml

@@ -1,3 +1,0 @@
-@startuml dataConversionServiceStaticStructure
-class DataConversionService
-@enduml

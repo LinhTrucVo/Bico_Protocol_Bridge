@@ -24,9 +24,7 @@ add_subdirectory(3_swComp/layer1Driver/spiSlaveDriver)
 #============================================================================
 # Layer 2 - Services
 #============================================================================
-add_subdirectory(3_swComp/layer2Service/calibrationService)
 add_subdirectory(3_swComp/layer2Service/configService)
-add_subdirectory(3_swComp/layer2Service/dataConversionService)
 add_subdirectory(3_swComp/layer2Service/deserialize)
 add_subdirectory(3_swComp/layer2Service/nvmService)
 add_subdirectory(3_swComp/layer2Service/serialize)

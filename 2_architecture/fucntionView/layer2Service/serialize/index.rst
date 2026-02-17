@@ -7,17 +7,18 @@ This function converts internal data structures into serial stream format for tr
 
 Description
 ***********
-The Serialize function (response formatter) takes structured data objects 
+The Serialize function (response formatter) takes structured raw data objects 
 from the application layer and converts them into serial stream format for transmission. 
 It handles different output formats and ensures proper message framing.
 
 Key responsibilities:
-- Convert internal data structures to serial stream format
-- Format response data for serial output
+- Convert internal raw data structures to serial stream format
+- Format raw data (ADC values, digital states, etc.) for serial output
 - Apply message framing and delimiters
 - Support multiple output formats (ASCII, HEX, binary)
 - Handle error response formatting
 - Generate status messages for transmission
+- No physical unit conversion (e.g., no voltage/current calculations)
 
 Static view
 ***********

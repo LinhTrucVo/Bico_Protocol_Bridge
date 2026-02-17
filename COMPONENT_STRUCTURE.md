@@ -55,32 +55,22 @@ Located in: `3_swComp/layer1Driver/`
 ### Layer 2 - Services (Business Logic)
 Located in: `3_swComp/layer2Service/`
 
-1. **calibrationService** - Sensor Calibration Service
-   - Calibration data management
-   - Calibration algorithms
-   - Offset and gain correction
-
-2. **configService** - Configuration Service
+1. **configService** - Configuration Service
    - System configuration management
    - Parameter storage and retrieval
    - Configuration validation
 
-3. **dataConversionService** - Data Conversion Service
-   - Unit conversions
-   - Data format transformations
-   - Scaling operations
-
-4. **deserialize** - Deserialization Service
+2. **deserialize** - Deserialization Service
    - Binary data parsing
    - Protocol frame decoding
    - Data extraction from serial streams
 
-5. **nvmService** - NVM Service
+3. **nvmService** - NVM Service
    - High-level NVM operations
    - Configuration persistence
    - Data integrity checks
 
-6. **serialize** - Serialization Service
+4. **serialize** - Serialization Service
    - Data packaging
    - Protocol frame encoding
    - Serial stream preparation

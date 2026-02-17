@@ -1,5 +1,0 @@
-@startuml calibrationServiceStateMachine
-[*] --> Idle
-Idle --> Active : Enable
-Active --> Idle : Disable
-@enduml

@@ -47,8 +47,8 @@ The project follows a 3-layer architecture:
 - I2C Master/Slave, SPI Master/Slave drivers
 - **Status**: Prototype created, vendor HAL code needed
 
-### Layer 2: Services (6 Components)
-- Calibration, Configuration, Data Conversion services
+### Layer 2: Services (4 Components)
+- Configuration service
 - Serialization/Deserialization services
 - NVM Service
 - **Status**: Prototype created, business logic needed
@@ -101,7 +101,7 @@ Each component follows a standardized structure:
 ## 📊 Implementation Status
 
 ### ✅ Completed (As of 2026-02-01)
-- [x] 20 software components created
+- [x] 18 software components created
 - [x] Build system configured (CMake)
 - [x] Test infrastructure setup (GTest)
 - [x] Component interfaces defined
@@ -176,11 +176,11 @@ Run specific component test:
 
 ## 📦 Component Count
 
-- **Total Components**: 20
+- **Total Components**: 18
 - **Layer 1 (Drivers)**: 9 components
-- **Layer 2 (Services)**: 6 components
+- **Layer 2 (Services)**: 4 components
 - **Layer 3 (Applications)**: 5 components
-- **Total Files**: ~220 files
+- **Total Files**: ~198 files
 
 ## 🎨 Coding Standards
 

@@ -3,24 +3,20 @@ title Serialize (Response Formatter) - Dynamic Behaviour
 
 participant "Central App Controller" as CAC
 participant "Serialize" as SER
-participant "Data Converter" as DC
 participant "Serial Driver" as SD
 
 == Format ADC Read Response ==
-CAC -> SER : FormatResponse(ADC_READ_RESPONSE, {channel:1, voltage:3.25})
+CAC -> SER : FormatResponse(ADC_READ_RESPONSE, {channel:1, value:2048})
 SER -> SER : DetermineFormat() -> ASCII
-SER -> DC : ConvertFloatToString(3.25)
-DC --> SER : "3.25"
 SER -> SER : BuildResponseString()
-SER -> SER : response = "ADC:CH1:VOLTAGE:3.25V"
+SER -> SER : response = "ADC:CH1:VALUE:2048"
 SER -> SER : AddDelimiters(response)
-SER -> SD : Transmit("ADC:CH1:VOLTAGE:3.25V\\r\\n")
+SER -> SD : Transmit("ADC:CH1:VALUE:2048\\r\\n")
 
 == Format I2C Read Response (Hex Format) ==
 CAC -> SER : FormatResponse(I2C_READ_RESPONSE, {addr:0x50, data:[0xAA, 0xBB, 0xCC]})
 SER -> SER : DetermineFormat() -> HEX
-SER -> DC : ConvertBytesToHex([0xAA, 0xBB, 0xCC])
-DC --> SER : "AA BB CC"
+SER -> SER : ConvertBytesToHex([0xAA, 0xBB, 0xCC])
 SER -> SER : response = "I2C:READ:0x50:DATA:AA BB CC"
 SER -> SER : AddDelimiters(response)
 SER -> SD : Transmit("I2C:READ:0x50:DATA:AA BB CC\\r\\n")
