@@ -12,23 +12,45 @@
 #include "serialDriverCfg.h"
 
 //============================================================================
+// Configuration Macros
+//============================================================================
+#define SERIAL_CFG_DEFAULT_BAUDRATE     115200
+#define SERIAL_CFG_DEFAULT_PARITY       0
+#define SERIAL_CFG_DEFAULT_STOPBITS     1
+#define SERIAL_CFG_DEFAULT_DATABITS     8
+#define SERIAL_CFG_TIMEOUT_MS           1000
+#define SERIAL_CFG_MAX_BUFFER_SIZE      256
+#define SERIAL_MAX_BUFFER_SIZE          256
+
+//============================================================================
+// Status Enums
+//============================================================================
+#define SERIAL_STATUS_OK               SERIALDRIVERSTATUS_OK
+#define SERIAL_STATUS_ERROR            SERIALDRIVERSTATUS_ERROR
+#define SERIAL_STATUS_BUSY             SERIALDRIVERSTATUS_BUSY
+#define SERIAL_STATUS_TIMEOUT          SERIALDRIVERSTATUS_TIMEOUT
+#define SERIAL_STATUS_PARITY_ERROR     SERIALDRIVERSTATUS_PARITY_ERROR
+#define SERIAL_STATUS_FRAMING_ERROR    SERIALDRIVERSTATUS_FRAMING_ERROR
+#define SERIAL_STATUS_OVERRUN_ERROR    SERIALDRIVERSTATUS_OVERRUN_ERROR
+#define SERIAL_STATUS_BUFFER_FULL      SERIALDRIVERSTATUS_BUFFER_FULL
+
+//============================================================================
 // Public Macros
 //============================================================================
-#define SERIAL_MAX_BUFFER_SIZE    256
 
 //============================================================================
 // Public Types
 //============================================================================
 typedef enum
 {
-    SERIAL_STATUS_OK = 0,
-    SERIAL_STATUS_ERROR,
-    SERIAL_STATUS_BUSY,
-    SERIAL_STATUS_TIMEOUT,
-    SERIAL_STATUS_PARITY_ERROR,
-    SERIAL_STATUS_FRAMING_ERROR,
-    SERIAL_STATUS_OVERRUN_ERROR,
-    SERIAL_STATUS_BUFFER_FULL
+    SERIALDRIVERSTATUS_OK = 0,
+    SERIALDRIVERSTATUS_ERROR,
+    SERIALDRIVERSTATUS_BUSY,
+    SERIALDRIVERSTATUS_TIMEOUT,
+    SERIALDRIVERSTATUS_PARITY_ERROR,
+    SERIALDRIVERSTATUS_FRAMING_ERROR,
+    SERIALDRIVERSTATUS_OVERRUN_ERROR,
+    SERIALDRIVERSTATUS_BUFFER_FULL
 } SerialDriver_Status_t;
 
 typedef enum

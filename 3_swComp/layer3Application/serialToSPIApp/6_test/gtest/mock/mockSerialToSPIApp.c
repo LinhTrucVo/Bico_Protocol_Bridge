@@ -6,7 +6,7 @@
 #include "mockSerialToSPIApp.h"
 
 // Include the .c file to get access to static variables and functions
-#include "serialToSPIAppUnit.c"
+#include "../../../5_src/serialToSPIAppUnit.c"
 
 //============================================================================
 // Mock function definitions

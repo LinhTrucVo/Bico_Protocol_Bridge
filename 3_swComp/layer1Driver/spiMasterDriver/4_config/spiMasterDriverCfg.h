@@ -2,11 +2,9 @@
 #define SPI_MASTERDRIVERCFG_H
 
 //============================================================================
-// Configuration Macros
+// Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define SPI_MASTER_CFG_DEFAULT_SPEED    1000000
-#define SPI_MASTER_CFG_DEFAULT_MODE     0
-#define SPI_MASTER_CFG_DEFAULT_BITORDER 0
-#define SPI_MASTER_CFG_MAX_TRANSFER     1024
+#define SPI_MASTER_CFG_ENABLE_DMA        true
+#define SPI_MASTER_CFG_ENABLE_CALLBACKS  true
 
 #endif /* SPI_MASTERDRIVERCFG_H */

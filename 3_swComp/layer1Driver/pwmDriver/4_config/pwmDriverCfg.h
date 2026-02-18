@@ -2,10 +2,9 @@
 #define PWMDRIVERCFG_H
 
 //============================================================================
-// Configuration Macros
+// Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define PWM_CFG_MAX_CHANNELS        8
-#define PWM_CFG_DEFAULT_FREQ_HZ     1000
-#define PWM_CFG_DEFAULT_DUTY        5000
+#define PWM_CFG_ENABLE_DMA               true
+#define PWM_CFG_ENABLE_DEAD_TIME         true
 
 #endif /* PWMDRIVERCFG_H */

@@ -6,7 +6,7 @@
 #include "mockCentralAppController.h"
 
 // Include the .c file to get access to static variables and functions
-#include "centralAppControllerUnit.c"
+#include "../../../5_src/centralAppControllerUnit.c"
 
 //============================================================================
 // Mock function definitions

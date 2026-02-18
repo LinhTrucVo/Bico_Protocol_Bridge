@@ -10,7 +10,7 @@ typedef struct
 
 static PwmDriver_Context_t context = {0};
 
-PwmDriver_Status_t PwmDriver_Init(void)
+PwmDriver_Status_t PwmDriverUnit_Init(void)
 {
     // TODO: Add vendor-specific HAL initialization here
     context.initialized = true;
@@ -27,7 +27,7 @@ PwmDriver_Status_t PwmDriver_Init(void)
     return PWM_STATUS_OK;
 }
 
-PwmDriver_Status_t PwmDriver_ConfigureChannel(PwmDriver_Channel_t channel, const PwmDriver_ChannelConfig_t *pConfig)
+PwmDriver_Status_t PwmDriverUnit_ConfigureChannel(PwmDriver_Channel_t channel, const PwmDriver_ChannelConfig_t *pConfig)
 {
     if (!context.initialized)
     {
@@ -42,7 +42,7 @@ PwmDriver_Status_t PwmDriver_ConfigureChannel(PwmDriver_Channel_t channel, const
     return PWM_STATUS_OK;
 }
 
-PwmDriver_Status_t PwmDriver_SetFrequency(PwmDriver_Channel_t channel, uint32_t frequency)
+PwmDriver_Status_t PwmDriverUnit_SetFrequency(PwmDriver_Channel_t channel, uint32_t frequency)
 {
     if (!context.initialized)
     {
@@ -57,7 +57,7 @@ PwmDriver_Status_t PwmDriver_SetFrequency(PwmDriver_Channel_t channel, uint32_t 
     return PWM_STATUS_OK;
 }
 
-PwmDriver_Status_t PwmDriver_SetDutyCycle(PwmDriver_Channel_t channel, uint16_t dutyCycle)
+PwmDriver_Status_t PwmDriverUnit_SetDutyCycle(PwmDriver_Channel_t channel, uint16_t dutyCycle)
 {
     if (!context.initialized)
     {
@@ -72,7 +72,7 @@ PwmDriver_Status_t PwmDriver_SetDutyCycle(PwmDriver_Channel_t channel, uint16_t 
     return PWM_STATUS_OK;
 }
 
-PwmDriver_Status_t PwmDriver_SetPolarity(PwmDriver_Channel_t channel, PwmDriver_Polarity_t polarity)
+PwmDriver_Status_t PwmDriverUnit_SetPolarity(PwmDriver_Channel_t channel, PwmDriver_Polarity_t polarity)
 {
     if (!context.initialized)
     {
@@ -87,7 +87,7 @@ PwmDriver_Status_t PwmDriver_SetPolarity(PwmDriver_Channel_t channel, PwmDriver_
     return PWM_STATUS_OK;
 }
 
-PwmDriver_Status_t PwmDriver_StartChannel(PwmDriver_Channel_t channel)
+PwmDriver_Status_t PwmDriverUnit_StartChannel(PwmDriver_Channel_t channel)
 {
     if (!context.initialized)
     {
@@ -103,7 +103,7 @@ PwmDriver_Status_t PwmDriver_StartChannel(PwmDriver_Channel_t channel)
     return PWM_STATUS_OK;
 }
 
-PwmDriver_Status_t PwmDriver_StopChannel(PwmDriver_Channel_t channel)
+PwmDriver_Status_t PwmDriverUnit_StopChannel(PwmDriver_Channel_t channel)
 {
     if (!context.initialized)
     {
@@ -119,7 +119,7 @@ PwmDriver_Status_t PwmDriver_StopChannel(PwmDriver_Channel_t channel)
     return PWM_STATUS_OK;
 }
 
-PwmDriver_Status_t PwmDriver_GetConfiguration(PwmDriver_Channel_t channel, PwmDriver_ChannelConfig_t *pConfig)
+PwmDriver_Status_t PwmDriverUnit_GetConfiguration(PwmDriver_Channel_t channel, PwmDriver_ChannelConfig_t *pConfig)
 {
     if (!context.initialized)
     {
@@ -134,7 +134,7 @@ PwmDriver_Status_t PwmDriver_GetConfiguration(PwmDriver_Channel_t channel, PwmDr
     return PWM_STATUS_OK;
 }
 
-PwmDriver_Status_t PwmDriver_IsChannelRunning(PwmDriver_Channel_t channel, bool *pIsRunning)
+PwmDriver_Status_t PwmDriverUnit_IsChannelRunning(PwmDriver_Channel_t channel, bool *pIsRunning)
 {
     if (!context.initialized)
     {
@@ -149,7 +149,7 @@ PwmDriver_Status_t PwmDriver_IsChannelRunning(PwmDriver_Channel_t channel, bool 
     return PWM_STATUS_OK;
 }
 
-PwmDriver_Status_t PwmDriver_DeInit(void)
+PwmDriver_Status_t PwmDriverUnit_DeInit(void)
 {
     // TODO: Add vendor-specific HAL deinitialization here
     context.initialized = false;

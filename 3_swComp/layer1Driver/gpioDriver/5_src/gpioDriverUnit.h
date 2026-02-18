@@ -12,9 +12,25 @@
 #include "gpioDriverCfg.h"
 
 //============================================================================
+// Configuration Macros
+//============================================================================
+#define GPIO_CFG_MAX_PINS            32
+#define GPIO_CFG_DEFAULT_MODE        GPIO_MODE_INPUT
+#define GPIO_CFG_DEFAULT_PULL        GPIO_PULL_NONE
+#define GPIO_CFG_DEFAULT_SPEED       GPIO_SPEED_LOW
+#define GPIO_CFG_DEFAULT_IO_CAPABILITY GPIO_IO_DRIVE_CAP_LV0
+#define GPIO_MAX_PINS                32
+
+//============================================================================
+// Status Enums
+//============================================================================
+#define GPIO_STATUS_OK               GPIOSTATUS_OK
+#define GPIO_STATUS_ERROR            GPIOSTATUS_ERROR
+#define GPIO_STATUS_INVALID_PIN      GPIOSTATUS_INVALID_PIN
+
+//============================================================================
 // Public Macros
 //============================================================================
-#define GPIO_MAX_PINS            32
 
 //============================================================================
 // Public Types

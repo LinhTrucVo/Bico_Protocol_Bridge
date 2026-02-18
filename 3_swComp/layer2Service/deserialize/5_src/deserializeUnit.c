@@ -1,5 +1,6 @@
 ﻿// Deserialize Implementation
 
+#include <stddef.h>
 #include "deserialize.h"
 #include "deserializeCfg.h"
 
@@ -54,19 +55,19 @@ static Deserialize_Command_t Deserialize_MapCommand(uint8_t commandId)
     }
 }
 
-Deserialize_Status_t Deserialize_Init(void)
+Deserialize_Status_t DeserializeUnit_Init(void)
 {
     context.initialized = true;
     return DESERIALIZE_STATUS_OK;
 }
 
-Deserialize_Status_t Deserialize_DeInit(void)
+Deserialize_Status_t DeserializeUnit_DeInit(void)
 {
     context.initialized = false;
     return DESERIALIZE_STATUS_OK;
 }
 
-Deserialize_Status_t Deserialize_ValidateFrame(const Deserialize_Frame_t *pFrame)
+Deserialize_Status_t DeserializeUnit_ValidateFrame(const Deserialize_Frame_t *pFrame)
 {
     if (pFrame == NULL || pFrame->pFrame == NULL)
     {
@@ -96,7 +97,7 @@ Deserialize_Status_t Deserialize_ValidateFrame(const Deserialize_Frame_t *pFrame
     return DESERIALIZE_STATUS_OK;
 }
 
-Deserialize_Status_t Deserialize_ParseFrame(const Deserialize_Frame_t *pFrame, Deserialize_Request_t *pRequest)
+Deserialize_Status_t DeserializeUnit_ParseFrame(const Deserialize_Frame_t *pFrame, Deserialize_Request_t *pRequest)
 {
     if (!context.initialized)
     {
@@ -107,7 +108,7 @@ Deserialize_Status_t Deserialize_ParseFrame(const Deserialize_Frame_t *pFrame, D
         return DESERIALIZE_STATUS_INVALID_PARAM;
     }
 
-    Deserialize_Status_t status = Deserialize_ValidateFrame(pFrame);
+    Deserialize_Status_t status = DeserializeUnit_ValidateFrame(pFrame);
     if (status != DESERIALIZE_STATUS_OK)
     {
         return status;
@@ -127,7 +128,7 @@ Deserialize_Status_t Deserialize_ParseFrame(const Deserialize_Frame_t *pFrame, D
     return DESERIALIZE_STATUS_OK;
 }
 
-Deserialize_Status_t Deserialize_ComputeCrc(const uint8_t *pData, uint16_t length, uint16_t *pCrc)
+Deserialize_Status_t DeserializeUnit_ComputeCrc(const uint8_t *pData, uint16_t length, uint16_t *pCrc)
 {
     if (pData == NULL || pCrc == NULL)
     {

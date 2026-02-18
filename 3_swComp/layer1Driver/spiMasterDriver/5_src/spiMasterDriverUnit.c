@@ -111,10 +111,10 @@ SpiMasterDriver_Status_t SpiMasterDriverUnit_TransmitReceive(const uint8_t *pTxD
 SpiMasterDriver_Status_t SpiMasterDriverUnit_TransmitWithTimeout(const uint8_t *pData, uint16_t length, uint32_t timeoutMs)
 {
     (void)timeoutMs;
-    return SpiMasterDriver_Transmit(pData, length);
+    return SpiMasterDriverUnit_Transmit(pData, length);
 }
 
-SpiMasterDriver_Status_t SpiMasterDriver_IsBusy(bool *pIsBusy)
+SpiMasterDriver_Status_t SpiMasterDriverUnit_IsBusy(bool *pIsBusy)
 {
     if (pIsBusy == NULL)
     {

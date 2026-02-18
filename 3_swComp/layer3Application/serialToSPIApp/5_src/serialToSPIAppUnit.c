@@ -1,5 +1,6 @@
 ﻿// SerialToSPIApp Implementation
 
+#include <stddef.h>
 #include "serialToSPIApp.h"
 #include "serialToSPIAppCfg.h"
 
@@ -93,5 +94,14 @@ SerialToSPIApp_Status_t SerialToSPIApp_SaveConfig(void)
 SerialToSPIApp_Status_t SerialToSPIApp_LoadConfig(void)
 {
     // TODO: Load configuration using NvmService
+    return SERIAL_TO_SPI_APP_STATUS_OK;
+}
+
+SerialToSPIApp_Status_t SerialToSPIApp_ProcessFrame(const uint8_t *pFrame, uint16_t frameLength, uint8_t *pResponse, uint16_t *pResponseLength)
+{
+    (void)pFrame;
+    (void)frameLength;
+    (void)pResponse;
+    (void)pResponseLength;
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }

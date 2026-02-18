@@ -16,7 +16,7 @@ typedef struct
 
 static ConfigService_Context_t context = {0};
 
-ConfigService_Status_t ConfigService_Init(void)
+ConfigService_Status_t ConfigServiceUnit_Init(void)
 {
     context.initialized = true;
     context.serialCfg.baudrate = 115200;
@@ -58,13 +58,13 @@ ConfigService_Status_t ConfigService_Init(void)
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_DeInit(void)
+ConfigService_Status_t ConfigServiceUnit_DeInit(void)
 {
     context.initialized = false;
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_SetSerialConfig(const ConfigService_SerialConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_SetSerialConfig(const ConfigService_SerialConfig_t *pConfig)
 {
     if (!context.initialized)
     {
@@ -78,7 +78,7 @@ ConfigService_Status_t ConfigService_SetSerialConfig(const ConfigService_SerialC
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_GetSerialConfig(ConfigService_SerialConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_GetSerialConfig(ConfigService_SerialConfig_t *pConfig)
 {
     if (!context.initialized)
     {
@@ -92,7 +92,7 @@ ConfigService_Status_t ConfigService_GetSerialConfig(ConfigService_SerialConfig_
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_SetAnalogChannelConfig(uint8_t channelId, const ConfigService_AnalogChannelConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_SetAnalogChannelConfig(uint8_t channelId, const ConfigService_AnalogChannelConfig_t *pConfig)
 {
     if (channelId >= CONFIG_SERVICE_CFG_MAX_CHANNELS || pConfig == NULL)
     {
@@ -102,7 +102,7 @@ ConfigService_Status_t ConfigService_SetAnalogChannelConfig(uint8_t channelId, c
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_GetAnalogChannelConfig(uint8_t channelId, ConfigService_AnalogChannelConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_GetAnalogChannelConfig(uint8_t channelId, ConfigService_AnalogChannelConfig_t *pConfig)
 {
     if (channelId >= CONFIG_SERVICE_CFG_MAX_CHANNELS || pConfig == NULL)
     {
@@ -112,7 +112,7 @@ ConfigService_Status_t ConfigService_GetAnalogChannelConfig(uint8_t channelId, C
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_SetDigitalPinConfig(uint8_t pinId, const ConfigService_DigitalPinConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_SetDigitalPinConfig(uint8_t pinId, const ConfigService_DigitalPinConfig_t *pConfig)
 {
     if (pinId >= CONFIG_SERVICE_CFG_MAX_PINS || pConfig == NULL)
     {
@@ -122,7 +122,7 @@ ConfigService_Status_t ConfigService_SetDigitalPinConfig(uint8_t pinId, const Co
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_GetDigitalPinConfig(uint8_t pinId, ConfigService_DigitalPinConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_GetDigitalPinConfig(uint8_t pinId, ConfigService_DigitalPinConfig_t *pConfig)
 {
     if (pinId >= CONFIG_SERVICE_CFG_MAX_PINS || pConfig == NULL)
     {
@@ -132,7 +132,7 @@ ConfigService_Status_t ConfigService_GetDigitalPinConfig(uint8_t pinId, ConfigSe
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_SetPwmConfig(uint8_t channelId, const ConfigService_PwmConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_SetPwmConfig(uint8_t channelId, const ConfigService_PwmConfig_t *pConfig)
 {
     if (channelId >= CONFIG_SERVICE_CFG_MAX_CHANNELS || pConfig == NULL)
     {
@@ -142,7 +142,7 @@ ConfigService_Status_t ConfigService_SetPwmConfig(uint8_t channelId, const Confi
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_GetPwmConfig(uint8_t channelId, ConfigService_PwmConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_GetPwmConfig(uint8_t channelId, ConfigService_PwmConfig_t *pConfig)
 {
     if (channelId >= CONFIG_SERVICE_CFG_MAX_CHANNELS || pConfig == NULL)
     {
@@ -152,7 +152,7 @@ ConfigService_Status_t ConfigService_GetPwmConfig(uint8_t channelId, ConfigServi
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_SetI2cConfig(const ConfigService_I2cConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_SetI2cConfig(const ConfigService_I2cConfig_t *pConfig)
 {
     if (pConfig == NULL)
     {
@@ -162,7 +162,7 @@ ConfigService_Status_t ConfigService_SetI2cConfig(const ConfigService_I2cConfig_
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_GetI2cConfig(ConfigService_I2cConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_GetI2cConfig(ConfigService_I2cConfig_t *pConfig)
 {
     if (pConfig == NULL)
     {
@@ -172,7 +172,7 @@ ConfigService_Status_t ConfigService_GetI2cConfig(ConfigService_I2cConfig_t *pCo
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_SetSpiConfig(const ConfigService_SpiConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_SetSpiConfig(const ConfigService_SpiConfig_t *pConfig)
 {
     if (pConfig == NULL)
     {
@@ -182,7 +182,7 @@ ConfigService_Status_t ConfigService_SetSpiConfig(const ConfigService_SpiConfig_
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_GetSpiConfig(ConfigService_SpiConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_GetSpiConfig(ConfigService_SpiConfig_t *pConfig)
 {
     if (pConfig == NULL)
     {
@@ -192,7 +192,7 @@ ConfigService_Status_t ConfigService_GetSpiConfig(ConfigService_SpiConfig_t *pCo
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_ValidateAnalogChannelConfig(const ConfigService_AnalogChannelConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_ValidateAnalogChannelConfig(const ConfigService_AnalogChannelConfig_t *pConfig)
 {
     if (pConfig == NULL)
     {
@@ -205,7 +205,7 @@ ConfigService_Status_t ConfigService_ValidateAnalogChannelConfig(const ConfigSer
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_ValidatePwmConfig(const ConfigService_PwmConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_ValidatePwmConfig(const ConfigService_PwmConfig_t *pConfig)
 {
     if (pConfig == NULL)
     {
@@ -222,7 +222,7 @@ ConfigService_Status_t ConfigService_ValidatePwmConfig(const ConfigService_PwmCo
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_ValidateI2cConfig(const ConfigService_I2cConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_ValidateI2cConfig(const ConfigService_I2cConfig_t *pConfig)
 {
     if (pConfig == NULL)
     {
@@ -231,7 +231,7 @@ ConfigService_Status_t ConfigService_ValidateI2cConfig(const ConfigService_I2cCo
     return CONFIG_SERVICE_STATUS_OK;
 }
 
-ConfigService_Status_t ConfigService_ValidateSpiConfig(const ConfigService_SpiConfig_t *pConfig)
+ConfigService_Status_t ConfigServiceUnit_ValidateSpiConfig(const ConfigService_SpiConfig_t *pConfig)
 {
     if (pConfig == NULL)
     {

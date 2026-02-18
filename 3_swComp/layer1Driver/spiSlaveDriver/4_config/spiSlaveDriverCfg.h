@@ -2,10 +2,9 @@
 #define SPI_SLAVEDRIVERCFG_H
 
 //============================================================================
-// Configuration Macros
+// Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define SPI_SLAVE_CFG_DEFAULT_MODE     0
-#define SPI_SLAVE_CFG_DEFAULT_BITORDER 0
-#define SPI_SLAVE_CFG_MAX_BUFFER       512
+#define SPI_SLAVE_CFG_ENABLE_DMA         true
+#define SPI_SLAVE_CFG_ENABLE_CALLBACKS   true
 
 #endif /* SPI_SLAVEDRIVERCFG_H */

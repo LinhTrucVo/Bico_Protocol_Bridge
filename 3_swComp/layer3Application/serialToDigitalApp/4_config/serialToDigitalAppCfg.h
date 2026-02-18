@@ -2,11 +2,9 @@
 #define SERIAL_TO_DIGITAL_APPCFG_H
 
 //============================================================================
-// Configuration Macros
+// Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define SERIAL_TO_DIGITAL_CFG_MAX_PINS        32
-#define SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH      8
-#define SERIAL_TO_DIGITAL_CFG_DEFAULT_PWM_HZ  1000
-#define SERIAL_TO_DIGITAL_CFG_DEFAULT_DUTY    5000
+#define SERIAL_TO_DIGITAL_CFG_ENABLE_PWM    true
+#define SERIAL_TO_DIGITAL_CFG_ENABLE_GPIO   true
 
 #endif /* SERIAL_TO_DIGITAL_APPCFG_H */

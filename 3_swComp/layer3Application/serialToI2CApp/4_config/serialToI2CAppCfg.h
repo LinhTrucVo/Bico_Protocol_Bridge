@@ -2,10 +2,9 @@
 #define SERIAL_TO_I2C_APPCFG_H
 
 //============================================================================
-// Configuration Macros
+// Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define SERIAL_TO_I2C_CFG_DEFAULT_SPEED    100000
-#define SERIAL_TO_I2C_CFG_DEFAULT_TIMEOUT  100
-#define SERIAL_TO_I2C_CFG_MAX_TRANSFER     256
+#define SERIAL_TO_I2C_CFG_ENABLE_MASTER      true
+#define SERIAL_TO_I2C_CFG_ENABLE_SLAVE       false
 
 #endif /* SERIAL_TO_I2C_APPCFG_H */

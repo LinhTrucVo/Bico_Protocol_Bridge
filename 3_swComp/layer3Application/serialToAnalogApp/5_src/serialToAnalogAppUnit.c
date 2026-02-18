@@ -1,5 +1,6 @@
 ﻿// SerialToAnalogApp Implementation
 
+#include <stddef.h>
 #include "serialToAnalogApp.h"
 #include "serialToAnalogAppCfg.h"
 
@@ -133,5 +134,14 @@ SerialToAnalogApp_Status_t SerialToAnalogApp_SaveConfig(void)
 SerialToAnalogApp_Status_t SerialToAnalogApp_LoadConfig(void)
 {
     // TODO: Load configuration using NvmService
+    return SERIAL_TO_ANALOG_APP_STATUS_OK;
+}
+
+SerialToAnalogApp_Status_t SerialToAnalogApp_ProcessFrame(const uint8_t *pFrame, uint16_t frameLength, uint8_t *pResponse, uint16_t *pResponseLength)
+{
+    (void)pFrame;
+    (void)frameLength;
+    (void)pResponse;
+    (void)pResponseLength;
     return SERIAL_TO_ANALOG_APP_STATUS_OK;
 }

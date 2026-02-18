@@ -2,11 +2,9 @@
 #define SERIALIZECFG_H
 
 //============================================================================
-// Configuration Macros
+// Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define SERIALIZE_CFG_MAX_FRAME_SIZE      256
-#define SERIALIZE_CFG_MAX_PAYLOAD_SIZE    224
-#define SERIALIZE_CFG_CRC_POLY            0x1021
-#define SERIALIZE_CFG_CRC_INIT            0xFFFF
+#define SERIALIZE_CFG_ENABLE_CRC_GENERATION true
+#define SERIALIZE_CFG_ENABLE_FRAME_FORMATTING true
 
 #endif /* SERIALIZECFG_H */

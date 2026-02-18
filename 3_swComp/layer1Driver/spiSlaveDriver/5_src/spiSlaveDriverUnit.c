@@ -17,7 +17,7 @@ typedef struct
 
 static SpiSlaveDriver_Context_t context = {0};
 
-SpiSlaveDriver_Status_t SpiSlaveDriver_Init(const SpiSlaveDriver_Config_t *pConfig)
+SpiSlaveDriver_Status_t SpiSlaveDriverUnit_Init(const SpiSlaveDriver_Config_t *pConfig)
 {
     if (pConfig == NULL)
     {
@@ -38,7 +38,7 @@ SpiSlaveDriver_Status_t SpiSlaveDriver_Init(const SpiSlaveDriver_Config_t *pConf
     return SPI_SLAVE_STATUS_OK;
 }
 
-SpiSlaveDriver_Status_t SpiSlaveDriver_SetTxBuffer(const uint8_t *pData, uint16_t length)
+SpiSlaveDriver_Status_t SpiSlaveDriverUnit_SetTxBuffer(const uint8_t *pData, uint16_t length)
 {
     if (!context.initialized)
     {
@@ -53,7 +53,7 @@ SpiSlaveDriver_Status_t SpiSlaveDriver_SetTxBuffer(const uint8_t *pData, uint16_
     return SPI_SLAVE_STATUS_OK;
 }
 
-SpiSlaveDriver_Status_t SpiSlaveDriver_SetRxBuffer(uint8_t *pData, uint16_t maxLength)
+SpiSlaveDriver_Status_t SpiSlaveDriverUnit_SetRxBuffer(uint8_t *pData, uint16_t maxLength)
 {
     if (!context.initialized)
     {
@@ -69,7 +69,7 @@ SpiSlaveDriver_Status_t SpiSlaveDriver_SetRxBuffer(uint8_t *pData, uint16_t maxL
     return SPI_SLAVE_STATUS_OK;
 }
 
-SpiSlaveDriver_Status_t SpiSlaveDriver_GetRxLength(uint16_t *pLength)
+SpiSlaveDriver_Status_t SpiSlaveDriverUnit_GetRxLength(uint16_t *pLength)
 {
     if (pLength == NULL)
     {
@@ -79,7 +79,7 @@ SpiSlaveDriver_Status_t SpiSlaveDriver_GetRxLength(uint16_t *pLength)
     return SPI_SLAVE_STATUS_OK;
 }
 
-SpiSlaveDriver_Status_t SpiSlaveDriver_IsSelected(bool *pIsSelected)
+SpiSlaveDriver_Status_t SpiSlaveDriverUnit_IsSelected(bool *pIsSelected)
 {
     if (pIsSelected == NULL)
     {
@@ -89,7 +89,7 @@ SpiSlaveDriver_Status_t SpiSlaveDriver_IsSelected(bool *pIsSelected)
     return SPI_SLAVE_STATUS_OK;
 }
 
-SpiSlaveDriver_Status_t SpiSlaveDriver_RegisterRxCallback(SpiSlaveDriver_RxCallback_t callback)
+SpiSlaveDriver_Status_t SpiSlaveDriverUnit_RegisterRxCallback(SpiSlaveDriver_RxCallback_t callback)
 {
     if (!context.initialized)
     {
@@ -99,7 +99,7 @@ SpiSlaveDriver_Status_t SpiSlaveDriver_RegisterRxCallback(SpiSlaveDriver_RxCallb
     return SPI_SLAVE_STATUS_OK;
 }
 
-SpiSlaveDriver_Status_t SpiSlaveDriver_RegisterTxCallback(SpiSlaveDriver_TxCallback_t callback)
+SpiSlaveDriver_Status_t SpiSlaveDriverUnit_RegisterTxCallback(SpiSlaveDriver_TxCallback_t callback)
 {
     if (!context.initialized)
     {
@@ -109,7 +109,7 @@ SpiSlaveDriver_Status_t SpiSlaveDriver_RegisterTxCallback(SpiSlaveDriver_TxCallb
     return SPI_SLAVE_STATUS_OK;
 }
 
-SpiSlaveDriver_Status_t SpiSlaveDriver_DeInit(void)
+SpiSlaveDriver_Status_t SpiSlaveDriverUnit_DeInit(void)
 {
     // TODO: Add vendor-specific HAL deinitialization here
     context.initialized = false;

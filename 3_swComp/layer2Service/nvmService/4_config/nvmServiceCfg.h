@@ -2,9 +2,9 @@
 #define NVM_SERVICE_CFG_H
 
 //============================================================================
-// Configuration Macros
+// Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define NVM_SERVICE_CFG_MAX_BLOB_SIZE      512
-#define NVM_SERVICE_CFG_MAX_KEYS           6
+#define NVM_SERVICE_CFG_ENABLE_COMPRESSION   true
+#define NVM_SERVICE_CFG_ENABLE_ENCRYPTION    true
 
 #endif /* NVM_SERVICE_CFG_H */

@@ -1,15 +1,15 @@
 // GPIO Driver Configuration
+// This file contains feature enable/disable flags for the GPIO driver
 
 #ifndef GPIODRIVERCFG_H
 #define GPIODRIVERCFG_H
 
 //============================================================================
-// Configuration Macros
+// Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define GPIO_CFG_MAX_PINS            32
-#define GPIO_CFG_DEFAULT_MODE        GPIO_MODE_INPUT
-#define GPIO_CFG_DEFAULT_PULL        GPIO_PULL_NONE
-#define GPIO_CFG_DEFAULT_SPEED       GPIO_SPEED_LOW
-#define GPIO_CFG_DEFAULT_IO_CAPABILITY GPIO_IO_DRIVE_CAP_LV0
+#define GPIO_CFG_ENABLE_INTERRUPTS       true
+#define GPIO_CFG_ENABLE_CALLBACKS        true
+#define GPIO_STATUS_INVALID_MODE     GPIOSTATUS_INVALID_MODE
+#define GPIO_STATUS_NOT_INITIALIZED  GPIOSTATUS_NOT_INITIALIZED
 
 #endif /* GPIODRIVERCFG_H */

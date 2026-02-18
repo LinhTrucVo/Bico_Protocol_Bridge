@@ -9,9 +9,29 @@
 #include "nvmDriverCfg.h"
 
 //============================================================================
+// Configuration Macros
+//============================================================================
+#define NVM_CFG_TOTAL_SIZE              4096
+
+//============================================================================
 // Type Definitions
 //============================================================================
-typedef struct NvmDriver_Config_t NvmDriver_Config_t;
+typedef enum
+{
+    NVM_TYPE_FLASH,
+    NVM_TYPE_EEPROM,
+    NVM_TYPE_SRAM
+} NvmDriver_Type_t;
+
+typedef struct
+{
+    NvmDriver_Type_t type;
+    uint32_t baseAddress;
+    uint32_t totalSize;
+    uint32_t pageSize;
+    uint32_t sectorSize;
+    bool enableWriteProtection;
+} NvmDriver_Config_t;
 
 typedef enum
 {
@@ -25,6 +45,19 @@ typedef enum
     NVMDRIVER_TIMEOUT,
     NVMDRIVER_NOT_INITIALIZED
 } NvmDriver_Status_t;
+
+//============================================================================
+// Status Enum Mappings
+//============================================================================
+#define NVM_STATUS_OK                   NVMDRIVER_OK
+#define NVM_STATUS_ERROR                NVMDRIVER_ERROR
+#define NVM_STATUS_BUSY                 NVMDRIVER_BUSY
+#define NVM_STATUS_INVALID_ADDRESS      NVMDRIVER_INVALID_ADDRESS
+#define NVM_STATUS_INVALID_LENGTH       NVMDRIVER_INVALID_LENGTH
+#define NVM_STATUS_WRITE_PROTECTED      NVMDRIVER_WRITE_PROTECTED
+#define NVM_STATUS_VERIFY_FAILED        NVMDRIVER_VERIFY_FAILED
+#define NVM_STATUS_TIMEOUT              NVMDRIVER_TIMEOUT
+#define NVM_STATUS_NOT_INITIALIZED      NVMDRIVER_NOT_INITIALIZED
 
 typedef uint32_t NvmDriver_Address_t;
 typedef void (*NvmDriver_OperationCallback_t)(NvmDriver_Status_t status);

@@ -1,9 +1,10 @@
 #ifndef I2CMASTERDRIVERCFG_H
 #define I2CMASTERDRIVERCFG_H
 
-#define I2C_MASTER_CFG_CLOCK_SPEED    100000  // 100kHz
-#define I2C_MASTER_CFG_ADDRESS_MODE   0       // 0=7bit
-#define I2C_MASTER_CFG_TIMEOUT_MS     1000
-#define I2C_MASTER_CFG_MAX_TRANSFER   256
+//============================================================================
+// Configuration - Feature Enable/Disable Flags
+//============================================================================
+#define I2C_MASTER_CFG_ENABLE_DMA        true
+#define I2C_MASTER_CFG_ENABLE_TIMEOUT    true
 
 #endif /* I2CMASTERDRIVERCFG_H */

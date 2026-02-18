@@ -12,21 +12,38 @@
 #include "i2cSlaveDriverCfg.h"
 
 //============================================================================
+// Configuration Macros
+//============================================================================
+#define I2C_SLAVE_CFG_ADDRESS         0x10
+#define I2C_SLAVE_CFG_ADDRESS_MODE    0   // 0=7bit
+#define I2C_SLAVE_CFG_MAX_BUFFER      256
+#define I2C_SLAVE_MAX_BUFFER_SIZE     256
+
+//============================================================================
+// Status Enums
+//============================================================================
+#define I2C_SLAVE_STATUS_OK             I2CSLAVEDRIVERSTATUS_OK
+#define I2C_SLAVE_STATUS_ERROR          I2CSLAVEDRIVERSTATUS_ERROR
+#define I2C_SLAVE_STATUS_BUSY           I2CSLAVEDRIVERSTATUS_BUSY
+#define I2C_SLAVE_STATUS_BUFFER_OVERFLOW I2CSLAVEDRIVERSTATUS_BUFFER_OVERFLOW
+#define I2C_SLAVE_STATUS_BUS_ERROR      I2CSLAVEDRIVERSTATUS_BUS_ERROR
+#define I2C_SLAVE_STATUS_NOT_INITIALIZED I2CSLAVEDRIVERSTATUS_NOT_INITIALIZED
+
+//============================================================================
 // Public Macros
 //============================================================================
-#define I2C_SLAVE_MAX_BUFFER_SIZE    256
 
 //============================================================================
 // Public Types
 //============================================================================
 typedef enum
 {
-    I2C_SLAVE_STATUS_OK = 0,
-    I2C_SLAVE_STATUS_ERROR,
-    I2C_SLAVE_STATUS_BUSY,
-    I2C_SLAVE_STATUS_BUFFER_OVERFLOW,
-    I2C_SLAVE_STATUS_BUS_ERROR,
-    I2C_SLAVE_STATUS_NOT_INITIALIZED
+    I2CSLAVEDRIVERSTATUS_OK = 0,
+    I2CSLAVEDRIVERSTATUS_ERROR,
+    I2CSLAVEDRIVERSTATUS_BUSY,
+    I2CSLAVEDRIVERSTATUS_BUFFER_OVERFLOW,
+    I2CSLAVEDRIVERSTATUS_BUS_ERROR,
+    I2CSLAVEDRIVERSTATUS_NOT_INITIALIZED
 } I2cSlaveDriver_Status_t;
 
 typedef enum
@@ -49,10 +66,6 @@ typedef struct
 typedef void (*I2cSlaveDriver_RxCallback_t)(const uint8_t *pData, uint16_t length);
 typedef void (*I2cSlaveDriver_TxCallback_t)(uint8_t *pData, uint16_t *pLength);
 typedef void (*I2cSlaveDriver_AddressMatchCallback_t)(I2cSlaveDriver_Address_t address);
-
-//============================================================================
-// Public Variables
-//============================================================================
 
 //============================================================================
 // Public Functions

@@ -13,8 +13,14 @@ target_include_directories(testCentralAppController
     ${CMAKE_CURRENT_SOURCE_DIR}/mock
     ${CMAKE_CURRENT_SOURCE_DIR}/stub
     ${CMAKE_CURRENT_SOURCE_DIR}/../../3_inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../5_src  
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../5_src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../4_config
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer2Service/deserialize/3_inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer2Service/deserialize/5_src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer2Service/deserialize/4_config
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer2Service/serialize/3_inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer2Service/serialize/5_src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer2Service/serialize/4_config
 )
 
 # # Link with Google Test and FFF

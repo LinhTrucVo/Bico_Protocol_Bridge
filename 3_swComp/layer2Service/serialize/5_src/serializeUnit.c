@@ -1,5 +1,6 @@
 ﻿// Serialize Implementation
 
+#include <stddef.h>
 #include "serialize.h"
 #include "serializeCfg.h"
 
@@ -34,19 +35,19 @@ static uint16_t Serialize_ComputeCrc16(const uint8_t *pData, uint16_t length)
     return crc;
 }
 
-Serialize_Status_t Serialize_Init(void)
+Serialize_Status_t SerializeUnit_Init(void)
 {
     context.initialized = true;
     return SERIALIZE_STATUS_OK;
 }
 
-Serialize_Status_t Serialize_DeInit(void)
+Serialize_Status_t SerializeUnit_DeInit(void)
 {
     context.initialized = false;
     return SERIALIZE_STATUS_OK;
 }
 
-Serialize_Status_t Serialize_BuildFrame(const Serialize_Message_t *pMessage, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
+Serialize_Status_t SerializeUnit_BuildFrame(const Serialize_Message_t *pMessage, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
 {
     if (!context.initialized)
     {
@@ -87,7 +88,7 @@ Serialize_Status_t Serialize_BuildFrame(const Serialize_Message_t *pMessage, Ser
     return SERIALIZE_STATUS_OK;
 }
 
-Serialize_Status_t Serialize_BuildError(uint8_t commandId, uint8_t sequenceId, Serialize_ErrorCode_t errorCode, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
+Serialize_Status_t SerializeUnit_BuildError(uint8_t commandId, uint8_t sequenceId, Serialize_ErrorCode_t errorCode, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
 {
     uint8_t payload[1] = { (uint8_t)errorCode };
     Serialize_Message_t msg = {
@@ -95,10 +96,10 @@ Serialize_Status_t Serialize_BuildError(uint8_t commandId, uint8_t sequenceId, S
         .pPayload = payload,
         .payloadLength = 1
     };
-    return Serialize_BuildFrame(&msg, pOutBuffer, pFrameLength);
+    return SerializeUnit_BuildFrame(&msg, pOutBuffer, pFrameLength);
 }
 
-Serialize_Status_t Serialize_BuildAnalogSamples(uint8_t channelId, const uint16_t *pSamples, uint16_t sampleCount, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
+Serialize_Status_t SerializeUnit_BuildAnalogSamples(uint8_t channelId, const uint16_t *pSamples, uint16_t sampleCount, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
 {
     if (pSamples == NULL || sampleCount == 0)
     {
@@ -125,10 +126,10 @@ Serialize_Status_t Serialize_BuildAnalogSamples(uint8_t channelId, const uint16_
         .pPayload = payload,
         .payloadLength = payloadLen
     };
-    return Serialize_BuildFrame(&msg, pOutBuffer, pFrameLength);
+    return SerializeUnit_BuildFrame(&msg, pOutBuffer, pFrameLength);
 }
 
-Serialize_Status_t Serialize_BuildDigitalRead(uint8_t pinId, uint8_t state, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
+Serialize_Status_t SerializeUnit_BuildDigitalRead(uint8_t pinId, uint8_t state, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
 {
     uint8_t payload[2] = { pinId, state };
     Serialize_Message_t msg = {
@@ -136,10 +137,10 @@ Serialize_Status_t Serialize_BuildDigitalRead(uint8_t pinId, uint8_t state, Seri
         .pPayload = payload,
         .payloadLength = 2
     };
-    return Serialize_BuildFrame(&msg, pOutBuffer, pFrameLength);
+    return SerializeUnit_BuildFrame(&msg, pOutBuffer, pFrameLength);
 }
 
-Serialize_Status_t Serialize_BuildI2CRead(uint8_t address, const uint8_t *pData, uint16_t length, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
+Serialize_Status_t SerializeUnit_BuildI2CRead(uint8_t address, const uint8_t *pData, uint16_t length, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
 {
     if (pData == NULL || length == 0)
     {
@@ -163,10 +164,10 @@ Serialize_Status_t Serialize_BuildI2CRead(uint8_t address, const uint8_t *pData,
         .pPayload = payload,
         .payloadLength = (uint16_t)(length + 2U)
     };
-    return Serialize_BuildFrame(&msg, pOutBuffer, pFrameLength);
+    return SerializeUnit_BuildFrame(&msg, pOutBuffer, pFrameLength);
 }
 
-Serialize_Status_t Serialize_BuildSPITransfer(const uint8_t *pTxData, const uint8_t *pRxData, uint16_t length, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
+Serialize_Status_t SerializeUnit_BuildSPITransfer(const uint8_t *pTxData, const uint8_t *pRxData, uint16_t length, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength)
 {
     if (length == 0 || length > SERIALIZE_CFG_MAX_PAYLOAD_SIZE - 2U)
     {
@@ -186,10 +187,10 @@ Serialize_Status_t Serialize_BuildSPITransfer(const uint8_t *pTxData, const uint
         .pPayload = payload,
         .payloadLength = (uint16_t)(length + 2U)
     };
-    return Serialize_BuildFrame(&msg, pOutBuffer, pFrameLength);
+    return SerializeUnit_BuildFrame(&msg, pOutBuffer, pFrameLength);
 }
 
-Serialize_Status_t Serialize_ComputeCrc(const uint8_t *pData, uint16_t length, uint16_t *pCrc)
+Serialize_Status_t SerializeUnit_ComputeCrc(const uint8_t *pData, uint16_t length, uint16_t *pCrc)
 {
     if (pData == NULL || pCrc == NULL)
     {

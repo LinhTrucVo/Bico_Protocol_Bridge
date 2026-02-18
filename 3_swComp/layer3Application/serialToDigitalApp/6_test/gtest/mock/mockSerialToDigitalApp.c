@@ -6,7 +6,7 @@
 #include "mockSerialToDigitalApp.h"
 
 // Include the .c file to get access to static variables and functions
-#include "serialToDigitalAppUnit.c"
+#include "../../../5_src/serialToDigitalAppUnit.c"
 
 //============================================================================
 // Mock function definitions

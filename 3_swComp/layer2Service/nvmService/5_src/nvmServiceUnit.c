@@ -40,7 +40,7 @@ static uint32_t NvmService_CalcCrc(const uint8_t *pData, uint16_t length)
     return crc;
 }
 
-NvmService_Status_t NvmService_Init(void)
+NvmService_Status_t NvmServiceUnit_Init(void)
 {
     context.initialized = true;
     for (uint8_t i = 0; i < NVM_SERVICE_CFG_MAX_KEYS; i++)
@@ -52,7 +52,7 @@ NvmService_Status_t NvmService_Init(void)
     return NVM_SERVICE_STATUS_OK;
 }
 
-NvmService_Status_t NvmService_DeInit(void)
+NvmService_Status_t NvmServiceUnit_DeInit(void)
 {
     context.initialized = false;
     return NVM_SERVICE_STATUS_OK;
@@ -63,24 +63,24 @@ static bool NvmService_IsKeyValid(NvmService_Key_t key)
     return ((uint8_t)key < NVM_SERVICE_CFG_MAX_KEYS);
 }
 
-NvmService_Status_t NvmService_Save(const NvmService_Blob_t *pBlob)
+NvmService_Status_t NvmServiceUnit_Save(const NvmService_Blob_t *pBlob)
 {
     if (!context.initialized)
     {
         return NVM_SERVICE_STATUS_NOT_INITIALIZED;
     }
-    if (pBlob == NULL || pBlob->pData == NULL || pBlob->length == 0)
+    if (pBlob == NULL || pBlob->pData == NULL || pBlob->dataLength == 0)
     {
         return NVM_SERVICE_STATUS_INVALID_PARAM;
     }
-    if (!NvmService_IsKeyValid(pBlob->key) || pBlob->length > NVM_SERVICE_CFG_MAX_BLOB_SIZE)
+    if (!NvmService_IsKeyValid(pBlob->key) || pBlob->dataLength > NVM_SERVICE_CFG_MAX_BLOB_SIZE)
     {
         return NVM_SERVICE_STATUS_INVALID_PARAM;
     }
 
     NvmService_Record_t *rec = &context.records[pBlob->key];
-    rec->length = pBlob->length;
-    for (uint16_t i = 0; i < pBlob->length; i++)
+    rec->length = pBlob->dataLength;
+    for (uint16_t i = 0; i < pBlob->dataLength; i++)
     {
         rec->data[i] = pBlob->pData[i];
     }
@@ -89,7 +89,7 @@ NvmService_Status_t NvmService_Save(const NvmService_Blob_t *pBlob)
     return NVM_SERVICE_STATUS_OK;
 }
 
-NvmService_Status_t NvmService_Load(NvmService_Key_t key, uint8_t *pData, uint16_t maxLength, uint16_t *pOutLength)
+NvmService_Status_t NvmServiceUnit_Load(NvmService_Key_t key, uint8_t *pData, uint16_t maxLength, uint16_t *pOutLength)
 {
     if (!context.initialized)
     {
@@ -128,7 +128,7 @@ NvmService_Status_t NvmService_Load(NvmService_Key_t key, uint8_t *pData, uint16
     return NVM_SERVICE_STATUS_OK;
 }
 
-NvmService_Status_t NvmService_Erase(NvmService_Key_t key)
+NvmService_Status_t NvmServiceUnit_Erase(NvmService_Key_t key)
 {
     if (!context.initialized)
     {
@@ -145,7 +145,7 @@ NvmService_Status_t NvmService_Erase(NvmService_Key_t key)
     return NVM_SERVICE_STATUS_OK;
 }
 
-NvmService_Status_t NvmService_EraseAll(void)
+NvmService_Status_t NvmServiceUnit_EraseAll(void)
 {
     if (!context.initialized)
     {
@@ -160,7 +160,7 @@ NvmService_Status_t NvmService_EraseAll(void)
     return NVM_SERVICE_STATUS_OK;
 }
 
-NvmService_Status_t NvmService_Exists(NvmService_Key_t key, bool *pExists)
+NvmService_Status_t NvmServiceUnit_Exists(NvmService_Key_t key, bool *pExists)
 {
     if (pExists == NULL)
     {
@@ -174,7 +174,7 @@ NvmService_Status_t NvmService_Exists(NvmService_Key_t key, bool *pExists)
     return NVM_SERVICE_STATUS_OK;
 }
 
-NvmService_Status_t NvmService_ComputeCrc(const uint8_t *pData, uint16_t length, uint32_t *pCrc)
+NvmService_Status_t NvmServiceUnit_ComputeCrc(const uint8_t *pData, uint16_t length, uint32_t *pCrc)
 {
     if (pData == NULL || pCrc == NULL)
     {

@@ -1,5 +1,7 @@
 ﻿// CentralAppController Implementation
 
+#include <stddef.h>
+#include <stdbool.h>
 #include "centralAppController.h"
 #include "deserialize.h"
 #include "serialize.h"
@@ -18,7 +20,7 @@ CentralAppController_Status_t CentralAppController_Init(void)
     context.initialized = true;
     context.currentState = CentralAppController_STATE_IDLE;
     context.errorCallback = NULL;
-    (void)Deserialize_Init();
+    (void)DeserializeUnit_Init();
     (void)Serialize_Init();
     return CENTRAL_APP_CONTROLLER_STATUS_OK;
 }
@@ -56,10 +58,10 @@ CentralAppController_Status_t CentralAppController_ProcessFrame(const CentralApp
     context.currentState = CentralAppController_STATE_PROCESSING;
     Deserialize_Request_t request = {0};
     Deserialize_Frame_t frame = { pInFrame->pFrame, pInFrame->frameLength };
-    Deserialize_Status_t dstatus = Deserialize_ParseFrame(&frame, &request);
+    Deserialize_Status_t dstatus = DeserializeUnit_ParseFrame(&frame, &request);
     if (dstatus != DESERIALIZE_STATUS_OK)
     {
-        Serialize_Buffer_t outBuf = { pOutFrame->pFrame, pOutFrame->maxLength };
+        Serialize_Buffer_t outBuf = { pOutFrame->pFrame, pOutFrame->frameLength };
         (void)Serialize_BuildError(request.commandId, request.sequenceId, SERIALIZE_ERROR_INVALID_CMD, &outBuf, pOutLength);
         context.currentState = CentralAppController_STATE_ERROR;
         if (context.errorCallback != NULL)
@@ -75,7 +77,7 @@ CentralAppController_Status_t CentralAppController_ProcessFrame(const CentralApp
         .pPayload = NULL,
         .payloadLength = 0
     };
-    Serialize_Buffer_t outBuf = { pOutFrame->pFrame, pOutFrame->maxLength };
+    Serialize_Buffer_t outBuf = { pOutFrame->pFrame, pOutFrame->frameLength };
     (void)Serialize_BuildFrame(&response, &outBuf, pOutLength);
 
     context.currentState = CentralAppController_STATE_IDLE;

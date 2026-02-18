@@ -26,7 +26,7 @@ static bool NvmDriver_IsAddressValid(NvmDriver_Address_t address, uint32_t lengt
     return true;
 }
 
-NvmDriver_Status_t NvmDriver_Init(const NvmDriver_Config_t *pConfig)
+NvmDriver_Status_t NvmDriverUnit_Init(const NvmDriver_Config_t *pConfig)
 {
     if (pConfig == NULL)
     {
@@ -41,7 +41,7 @@ NvmDriver_Status_t NvmDriver_Init(const NvmDriver_Config_t *pConfig)
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_Read(NvmDriver_Address_t address, uint8_t *pData, uint32_t length)
+NvmDriver_Status_t NvmDriverUnit_Read(NvmDriver_Address_t address, uint8_t *pData, uint32_t length)
 {
     if (!context.initialized)
     {
@@ -64,7 +64,7 @@ NvmDriver_Status_t NvmDriver_Read(NvmDriver_Address_t address, uint8_t *pData, u
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_Write(NvmDriver_Address_t address, const uint8_t *pData, uint32_t length)
+NvmDriver_Status_t NvmDriverUnit_Write(NvmDriver_Address_t address, const uint8_t *pData, uint32_t length)
 {
     if (!context.initialized)
     {
@@ -95,7 +95,7 @@ NvmDriver_Status_t NvmDriver_Write(NvmDriver_Address_t address, const uint8_t *p
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_ErasePage(NvmDriver_Address_t address)
+NvmDriver_Status_t NvmDriverUnit_ErasePage(NvmDriver_Address_t address)
 {
     if (!context.initialized)
     {
@@ -114,7 +114,7 @@ NvmDriver_Status_t NvmDriver_ErasePage(NvmDriver_Address_t address)
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_EraseSector(NvmDriver_Address_t address)
+NvmDriver_Status_t NvmDriverUnit_EraseSector(NvmDriver_Address_t address)
 {
     if (!context.initialized)
     {
@@ -133,7 +133,7 @@ NvmDriver_Status_t NvmDriver_EraseSector(NvmDriver_Address_t address)
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_EraseChip(void)
+NvmDriver_Status_t NvmDriverUnit_EraseChip(void)
 {
     if (!context.initialized)
     {
@@ -146,17 +146,17 @@ NvmDriver_Status_t NvmDriver_EraseChip(void)
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_WriteWithErase(NvmDriver_Address_t address, const uint8_t *pData, uint32_t length)
+NvmDriver_Status_t NvmDriverUnit_WriteWithErase(NvmDriver_Address_t address, const uint8_t *pData, uint32_t length)
 {
-    NvmDriver_Status_t status = NvmDriver_ErasePage(address);
+    NvmDriver_Status_t status = NvmDriverUnit_ErasePage(address);
     if (status != NVM_STATUS_OK)
     {
         return status;
     }
-    return NvmDriver_Write(address, pData, length);
+    return NvmDriverUnit_Write(address, pData, length);
 }
 
-NvmDriver_Status_t NvmDriver_Verify(NvmDriver_Address_t address, const uint8_t *pData, uint32_t length, bool *pIsValid)
+NvmDriver_Status_t NvmDriverUnit_Verify(NvmDriver_Address_t address, const uint8_t *pData, uint32_t length, bool *pIsValid)
 {
     if (pIsValid == NULL || pData == NULL)
     {
@@ -180,7 +180,7 @@ NvmDriver_Status_t NvmDriver_Verify(NvmDriver_Address_t address, const uint8_t *
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_CalculateCrc(NvmDriver_Address_t address, uint32_t length, uint32_t *pCrc)
+NvmDriver_Status_t NvmDriverUnit_CalculateCrc(NvmDriver_Address_t address, uint32_t length, uint32_t *pCrc)
 {
     if (pCrc == NULL)
     {
@@ -212,7 +212,7 @@ NvmDriver_Status_t NvmDriver_CalculateCrc(NvmDriver_Address_t address, uint32_t 
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_IsBusy(bool *pIsBusy)
+NvmDriver_Status_t NvmDriverUnit_IsBusy(bool *pIsBusy)
 {
     if (pIsBusy == NULL)
     {
@@ -222,7 +222,7 @@ NvmDriver_Status_t NvmDriver_IsBusy(bool *pIsBusy)
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_GetInfo(NvmDriver_Config_t *pConfig)
+NvmDriver_Status_t NvmDriverUnit_GetInfo(NvmDriver_Config_t *pConfig)
 {
     if (pConfig == NULL)
     {
@@ -232,25 +232,25 @@ NvmDriver_Status_t NvmDriver_GetInfo(NvmDriver_Config_t *pConfig)
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_EnableWriteProtection(void)
+NvmDriver_Status_t NvmDriverUnit_EnableWriteProtection(void)
 {
     context.writeProtected = true;
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_DisableWriteProtection(void)
+NvmDriver_Status_t NvmDriverUnit_DisableWriteProtection(void)
 {
     context.writeProtected = false;
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_RegisterCallback(NvmDriver_OperationCallback_t callback)
+NvmDriver_Status_t NvmDriverUnit_RegisterCallback(NvmDriver_OperationCallback_t callback)
 {
     context.callback = callback;
     return NVM_STATUS_OK;
 }
 
-NvmDriver_Status_t NvmDriver_DeInit(void)
+NvmDriver_Status_t NvmDriverUnit_DeInit(void)
 {
     // TODO: Add vendor-specific HAL deinitialization here
     context.initialized = false;

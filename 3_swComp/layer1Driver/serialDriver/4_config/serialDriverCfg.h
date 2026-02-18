@@ -1,11 +1,11 @@
 #ifndef SERIALDRIVERCFG_H
 #define SERIALDRIVERCFG_H
 
-#define SERIAL_CFG_DEFAULT_BAUDRATE     115200
-#define SERIAL_CFG_DEFAULT_PARITY       0
-#define SERIAL_CFG_DEFAULT_STOPBITS     1
-#define SERIAL_CFG_DEFAULT_DATABITS     8
-#define SERIAL_CFG_TIMEOUT_MS           1000
-#define SERIAL_CFG_MAX_BUFFER_SIZE      256
+//============================================================================
+// Configuration - Feature Enable/Disable Flags
+//============================================================================
+#define SERIAL_CFG_ENABLE_DMA            true
+#define SERIAL_CFG_ENABLE_CALLBACKS      true
+#define SERIAL_CFG_ENABLE_FLOW_CONTROL   true
 
 #endif /* SERIALDRIVERCFG_H */

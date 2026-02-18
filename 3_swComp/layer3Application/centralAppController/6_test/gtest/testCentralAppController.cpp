@@ -62,8 +62,8 @@ TEST_F(CentralAppController, CentralAppController_ProcessFrame_ValidFrame_Return
     inFrame[2] = 0x00;
     inFrame[3] = 0x00;
     inFrame[4] = 0x00;
-    Deserialize_Init();
-    Deserialize_ComputeCrc(inFrame, 5, &crc);
+    DeserializeUnit_Init();
+    DeserializeUnit_ComputeCrc(inFrame, 5, &crc);
     inFrame[5] = (uint8_t)(crc & 0xFFU);
     inFrame[6] = (uint8_t)((crc >> 8U) & 0xFFU);
 
