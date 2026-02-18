@@ -18,8 +18,8 @@ gpio -> ctx : pinConfig[5].mode = OUTPUT
 ctx --> gpio : OK
 gpio --> Client : GPIO_STATUS_OK
 
-Client -> gpio : SetIOCapability(pin=5, GPIO_IO_OPEN_DRAIN)
-gpio -> ctx : pinConfig[5].ioCapability = OPEN_DRAIN
+Client -> gpio : SetIOCapability(pin=5, GPIO_IO_DRIVE_CAP_LV4)
+gpio -> ctx : pinConfig[5].ioCapability = DRIVE_CAP_LV4
 ctx --> gpio : OK
 gpio --> Client : GPIO_STATUS_OK
 

@@ -110,7 +110,7 @@ TEST_F(GpioDriver, GpioDriver_SetIOCapability_ValidPin_ReturnsOK)
     call_GpioDriverUnit_Init();
     
     // Act
-    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(0, GPIO_IO_OPEN_DRAIN);
+    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(0, GPIO_IO_DRIVE_CAP_LV4);
     
     // Assert
     EXPECT_EQ(GPIO_STATUS_OK, status);
@@ -122,7 +122,7 @@ TEST_F(GpioDriver, GpioDriver_SetIOCapability_InvalidPin_ReturnsInvalid)
     call_GpioDriverUnit_Init();
     
     // Act
-    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(GPIO_MAX_PINS, GPIO_IO_OPEN_DRAIN);
+    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(GPIO_MAX_PINS, GPIO_IO_DRIVE_CAP_LV4);
     
     // Assert
     EXPECT_EQ(GPIO_STATUS_INVALID_PIN, status);
@@ -134,7 +134,7 @@ TEST_F(GpioDriver, GpioDriver_SetIOCapability_NotInitialized_ReturnsNotInit)
     // No Init call
     
     // Act
-    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(0, GPIO_IO_HIGH_CURRENT);
+    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(0, GPIO_IO_DRIVE_CAP_LV7);
     
     // Assert
     EXPECT_EQ(GPIO_STATUS_NOT_INITIALIZED, status);

@@ -66,10 +66,14 @@ typedef enum
 
 typedef enum
 {
-    GPIO_IO_STANDARD = 0,
-    GPIO_IO_OPEN_DRAIN,
-    GPIO_IO_OPEN_SOURCE,
-    GPIO_IO_HIGH_CURRENT
+    GPIO_IO_DRIVE_CAP_LV0 = 0,  // Lowest drive capacity
+    GPIO_IO_DRIVE_CAP_LV1,       // Low drive capacity
+    GPIO_IO_DRIVE_CAP_LV2,       // Low-medium drive capacity
+    GPIO_IO_DRIVE_CAP_LV3,       // Medium-low drive capacity
+    GPIO_IO_DRIVE_CAP_LV4,       // Medium-high drive capacity
+    GPIO_IO_DRIVE_CAP_LV5,       // High drive capacity
+    GPIO_IO_DRIVE_CAP_LV6,       // Very high drive capacity
+    GPIO_IO_DRIVE_CAP_LV7        // Highest drive capacity
 } GpioDriver_IOCapability_t;
 
 typedef uint8_t GpioDriver_Pin_t;
