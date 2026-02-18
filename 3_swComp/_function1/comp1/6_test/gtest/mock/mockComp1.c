@@ -1,3 +1,4 @@
+// This file defines the FFF for functions and MOCK functions for Comp1 testing
 
 //============================================================================
 // Dependencies
@@ -14,13 +15,13 @@
 // Required for FFF
 DEFINE_FFF_GLOBALS;
 
-DEFINE_FAKE_VOID_FUNC(dummyFunction01);
+// DEFINE_FAKE_VOID_FUNC(dummyFunction01);
 
-DEFINE_FAKE_VALUE_FUNC(int, dummyFunction02, int);
+DEFINE_FAKE_VALUE_FUNC(int, Comp2Unit2PublicFunction, int);
 
-DEFINE_FAKE_VALUE_FUNC_VARARG(int, dummyFunction03, int, int, ...);
+// DEFINE_FAKE_VALUE_FUNC_VARARG(int, dummyFunction03, int, int, ...);
 
-DEFINE_FAKE_VALUE_FUNC(int, dummyFunction04, int);
+// DEFINE_FAKE_VALUE_FUNC(int, dummyFunction04, int);
 
 //============================================================================
 // Static variable getter function definitions
@@ -35,7 +36,7 @@ uint8_t get_COMP1UNIT1_ARRAYSIZE(void)
 // Static function wrapper definitions
 //============================================================================
 
-uint32_t call_Comp1Unit1PublicFunction(void)
+int call_Comp1Unit1PublicFunction(int input)
 {
-    return Comp1Unit1PublicFunction();
+    return Comp1Unit1PublicFunction(input);
 }

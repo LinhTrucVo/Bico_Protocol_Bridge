@@ -27,7 +27,6 @@ package "Read Analog Value Flow" {
     
     note right of AA2
       Returns raw ADC values only
-      No calibration or conversion
     end note
 }
 

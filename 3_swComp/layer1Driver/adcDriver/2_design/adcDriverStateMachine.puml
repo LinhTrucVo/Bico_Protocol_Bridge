@@ -1,5 +1,14 @@
 @startuml adcDriverStateMachine
-[*] --> Idle
-Idle --> Active : Init
-Active --> Idle : DeInit
+' This is a state machine diagram for the ADC Driver component, illustrating its states and transitions based on events and conditions.
+
+[*] --> Uninitialized
+Uninitialized --> Initialized : Init(config)
+Initialized --> ChannelConfigured : ConfigureChannel(ch, res, freq)
+ChannelConfigured --> Sampling : StartConversion(ch)
+Sampling --> SampleReady : ConversionComplete
+SampleReady --> Sampling : ContinueSampling
+Sampling --> ChannelConfigured : StopConversion(ch)
+ChannelConfigured --> Initialized : DisableChannel(ch)
+Initialized --> Uninitialized : DeInit()
+
 @enduml

@@ -1,4 +1,4 @@
 @startuml Component_Structure_Diagram
-
+' This is a static structure diagram for the comp1 component, showing its internal file structure and relationships.
 
 @enduml

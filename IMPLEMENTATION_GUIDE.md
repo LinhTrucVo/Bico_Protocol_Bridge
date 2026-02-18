@@ -8,11 +8,11 @@ This document guides the comprehensive implementation of all components based on
 ## Layer 3 Applications - Implementation Details
 
 ### SerialToAnalogApp
-**Requirements**: Multi-channel ADC (8 channels), 1Hz-10kHz sampling, calibration, averaging, threshold monitoring
+**Requirements**: Multi-channel ADC (8 channels), 1Hz-10kHz sampling, averaging, threshold monitoring
 **Key Functions**: 
 - ConfigureChannel(channelId, samplingRate, resolution, voltageRange)
 - EnableChannel(channelId)
-- ReadChannel(channelId) -> returns calibrated + averaged value
+- ReadChannel(channelId) -> returns averaged value
 - TriggerSampling(channelId)
 - SaveConfiguration() -> persist to NVM
 **Dependencies**: AdcDriver, SerialDriver, Serialize, Deserialize, NvmService

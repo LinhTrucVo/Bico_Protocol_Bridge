@@ -14,7 +14,7 @@ It implements the requirements from the SerialToAnalog feature specification.
 Key responsibilities:
 - Manage ADC channel configuration and operation
 - Control sampling rates (1 Hz - 10 kHz)
-- Work with raw ADC data only (no calibration or conversion)
+- Work with raw ADC data only
 - Implement threshold monitoring using raw ADC counts
 - Support multiple analog channels
 - Implement data averaging on raw values

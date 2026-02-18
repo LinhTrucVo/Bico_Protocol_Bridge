@@ -4,6 +4,7 @@
 //============================================================================
 // Dependencies
 //============================================================================
+#include <string.h>
 #include "adcDriver.h"
 #include "adcDriverCfg.h"
 #include "adcDriverUnit.h"
@@ -196,17 +197,6 @@ AdcDriver_Status_t AdcDriverUnit_RegisterCallback(AdcDriver_ConversionCallback_t
     return ADC_STATUS_OK;
 }
 
-AdcDriver_Status_t AdcDriverUnit_Calibrate(void)
-{
-    if (!adcContext.initialized)
-    {
-        return ADC_STATUS_NOT_INITIALIZED;
-    }
-
-    // TODO: Perform vendor-specific calibration
-    return ADC_STATUS_OK;
-}
-
 AdcDriver_Status_t AdcDriverUnit_GetStatus(AdcDriver_Status_t *pStatus)
 {
     if (pStatus == NULL)
@@ -233,9 +223,7 @@ AdcDriver_Status_t AdcDriverUnit_GetStatus(AdcDriver_Status_t *pStatus)
 AdcDriver_Status_t AdcDriverUnit_DeInit(void)
 {
     // TODO: Add vendor-specific HAL deinitialization here
-    adcContext.initialized = false;
-    adcContext.busy = false;
-    adcContext.callback = NULL;
+    memset_s(&adcContext, sizeof(adcContext), 0, sizeof(adcContext));
     return ADC_STATUS_OK;
 }
 

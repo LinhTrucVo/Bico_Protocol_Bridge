@@ -2,7 +2,7 @@
 What is this component about?
 #################################
 
-The NVM Service provides key-based storage for configuration and calibration data.
+The NVM Service provides key-based storage for configuration data.
 It wraps the NVM driver with CRC-protected storage for higher-level modules.
 
 

@@ -1,6 +1,29 @@
 @startuml adcDriverSequenceDiagram
+' This is a sequence diagram for the ADC Driver component, showing interactions with client components and hardware.
+
 actor Client
-participant AdcDriver
-Client -> AdcDriver : StartConversion()
-AdcDriver --> Client : Result
+participant "ADC Driver" as adc
+participant "HAL Layer" as hal
+
+Client -> adc : Init(config)
+adc -> hal : HAL_Init()
+hal --> adc : OK
+adc --> Client : OK
+
+Client -> adc : ConfigureChannel(ch=1, res=12bit, freq=1000Hz)
+adc -> hal : HAL_ConfigChannel()
+hal --> adc : OK
+adc --> Client : OK
+
+Client -> adc : StartConversion(ch=1)
+adc -> hal : HAL_StartConversion()
+hal --> adc : OK
+adc --> Client : OK
+
+hal -> adc : ConversionComplete_ISR()
+adc -> adc : Update_Sample_Buffer()
+
+Client -> adc : ReadValue(ch=1)
+adc --> Client : raw_value=2048
+
 @enduml

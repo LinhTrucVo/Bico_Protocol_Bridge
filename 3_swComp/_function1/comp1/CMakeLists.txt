@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.21.0)
 
-# Simple Calculator Library
 add_library(comp1 STATIC
     5_src/comp1Unit1.c
 )

@@ -1,4 +1,4 @@
 @startuml Component_StateMachine_Diagram
-
+' This is a state machine diagram for the comp1 component, illustrating its states and transitions based on events and conditions.
 
 @enduml

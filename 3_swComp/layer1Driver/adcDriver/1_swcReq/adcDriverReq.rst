@@ -8,8 +8,7 @@ The component shall support multiple channels, selectable resolution, and sampli
 Input validation
 ****************
 
-The component shall validate channel IDs, configuration pointers, and parameter ranges.
-The component shall reject unsupported resolutions and invalid sampling frequencies.
+The component shall validate channel IDs, configuration pointers, parameter ranges, supported resolutions, and sampling frequencies. Invalid parameters shall be rejected.
 
 Requirements for component
 **************************
@@ -31,6 +30,4 @@ Req-adcDriver-005: The component shall allow configuration of sampling frequency
 
 Req-adcDriver-006: The component shall provide conversion-complete status and callback support.
    Verification: IsConversionComplete and callback are invoked on completion.
-
-Req-adcDriver-007: The component shall provide calibration operation support.
-   Verification: Calibrate returns OK when calibration completes.
+   

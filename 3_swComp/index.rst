@@ -161,7 +161,6 @@ The system works with raw hardware values:
 - ADC: Raw counts (0-255, 0-4095, etc.)
 - GPIO: Digital states (0/1)
 - I2C/SPI: Raw byte streams
-- No physical unit conversion or calibration in firmware
 
 Build System
 ************

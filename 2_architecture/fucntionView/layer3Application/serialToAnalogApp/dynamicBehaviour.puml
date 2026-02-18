@@ -67,7 +67,6 @@ end
 
 note right of AA
   Works with raw ADC values only
-  No calibration or physical unit conversion
   Thresholds in raw ADC counts (0-4095 for 12-bit)
 end note
 

@@ -8,19 +8,21 @@
 // Unit under test
 extern "C"
 {
-#include "mock_simple_calculator.h"
+#include "mockComp1.h"
 }
 
 //------------------------------------------------------------------------------
 // Test Fixture Class
 //------------------------------------------------------------------------------
-class SimpleCalculatorTest : public ::testing::Test 
+class Comp1 : public ::testing::Test 
 {
 protected:
     void SetUp() override 
     {
         // Reset all fake functions before each test
+        RESET_FAKE(Comp2Unit2PublicFunction);
         FFF_RESET_HISTORY();
+
     }
 
     void TearDown() override 
@@ -30,125 +32,33 @@ protected:
 };
 
 //------------------------------------------------------------------------------
-// Test Cases for add() function
+// Test Cases for Comp1Unit1PublicFunction_Test1 function, input 1, get return 2
 //------------------------------------------------------------------------------
-TEST_F(SimpleCalculatorTest, Add_PositiveNumbers_ReturnsCorrectSum)
+TEST_F(Comp1, Comp1Unit1PublicFunction_Test1)
 {
     // Arrange
-    int a = 5;
-    int b = 3;
-    int expected = 8;
+    int input = 1;
+    int output = 0;
+    int expected = 2;
 
     // Act
-    int result = add(a, b);
-
+    output = call_Comp1Unit1PublicFunction(input);
     // Assert
-    EXPECT_EQ(result, expected);
-}
-
-TEST_F(SimpleCalculatorTest, Add_MixedNumbers_ReturnsCorrectSum)
-{
-    // Arrange
-    int a = 10;
-    int b = -3;
-    int expected = 7;
-
-    // Act
-    int result = add(a, b);
-
-    // Assert
-    EXPECT_EQ(result, expected);
+    EXPECT_EQ(output, expected);
 }
 
 //------------------------------------------------------------------------------
-// Test Cases for subtract() function
+// Test Cases for Comp1Unit1PublicFunction_Test2 function, input 2, get return 3
 //------------------------------------------------------------------------------
-TEST_F(SimpleCalculatorTest, Subtract_PositiveNumbers_ReturnsCorrectDifference)
+TEST_F(Comp1, Comp1Unit1PublicFunction_Test2)
 {
     // Arrange
-    int a = 10;
-    int b = 3;
-    int expected = 7;
+    int input = 2;
+    int output = 0;
+    int expected = 3;
 
     // Act
-    int result = subtract(a, b);
-
+    output = call_Comp1Unit1PublicFunction(input);
     // Assert
-    EXPECT_EQ(result, expected);
-}
-
-TEST_F(SimpleCalculatorTest, Subtract_ResultNegative_ReturnsCorrectDifference)
-{
-    // Arrange
-    int a = 3;
-    int b = 10;
-    int expected = -7;
-
-    // Act
-    int result = subtract(a, b);
-
-    // Assert
-    EXPECT_EQ(result, expected);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for multiply() function
-//------------------------------------------------------------------------------
-TEST_F(SimpleCalculatorTest, Multiply_PositiveNumbers_ReturnsCorrectProduct)
-{
-    // Arrange
-    int a = 4;
-    int b = 5;
-    int expected = 20;
-
-    // Act
-    int result = multiply(a, b);
-
-    // Assert
-    EXPECT_EQ(result, expected);
-}
-
-TEST_F(SimpleCalculatorTest, Multiply_WithZero_ReturnsZero)
-{
-    // Arrange
-    int a = 5;
-    int b = 0;
-    int expected = 0;
-
-    // Act
-    int result = multiply(a, b);
-
-    // Assert
-    EXPECT_EQ(result, expected);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for divide() function
-//------------------------------------------------------------------------------
-TEST_F(SimpleCalculatorTest, Divide_PositiveNumbers_ReturnsCorrectQuotient)
-{
-    // Arrange
-    int a = 20;
-    int b = 4;
-    int expected = 1;
-
-    // Act
-    int result = divide(a, b);
-
-    // Assert
-    EXPECT_EQ(result, expected);
-}
-
-TEST_F(SimpleCalculatorTest, Divide_ByZero_ReturnsZero)
-{
-    // Arrange
-    int a = 10;
-    int b = 0;
-    int expected = 0;  // Based on implementation that returns 0 for division by zero
-
-    // Act
-    int result = divide(a, b);
-
-    // Assert
-    EXPECT_EQ(result, expected);
+    EXPECT_EQ(output, expected);
 }

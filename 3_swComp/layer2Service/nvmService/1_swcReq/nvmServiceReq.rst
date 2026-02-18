@@ -2,7 +2,7 @@
 Overall requirements
 ********************
 
-The NVM Service shall provide key-based storage for configuration and calibration data.
+The NVM Service shall provide key-based storage for configuration data.
 The component shall protect data integrity using CRC.
 
 Input validation

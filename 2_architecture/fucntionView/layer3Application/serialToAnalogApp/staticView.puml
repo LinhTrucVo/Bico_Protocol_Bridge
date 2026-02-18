@@ -23,7 +23,6 @@ configMgr --> configService : Load/save config
 
 note right of channelMgr
   Works with raw ADC values only
-  No calibration or conversion service dependencies
 end note
 
 @enduml

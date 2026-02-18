@@ -8,6 +8,7 @@
 #include "comp1.h"
 #include "comp1Cfg.h"
 #include "comp1Unit1.h"
+#include "comp2.h"
 
 
 //============================================================================
@@ -59,7 +60,9 @@ uint8_t Comp1_PublicVariable = 0;  //!< Public variable definition
 @endrst
 */
 //----------------------------------------------------------------------------
-void Comp1Unit1PublicFunction(void)
+int Comp1Unit1PublicFunction(int input)
 {
     // Implementation of the public function.
+    Comp2Unit2PublicFunction();
+    return input + 1; // Dummy implementation
 }

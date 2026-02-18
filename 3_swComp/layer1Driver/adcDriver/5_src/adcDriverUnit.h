@@ -14,9 +14,10 @@
 //============================================================================
 // Public Macros
 //============================================================================
-#define ADC_MAX_CHANNELS         8
-#define ADC_RESOLUTION_BITS      12
-#define ADC_MAX_VALUE            ((1U << ADC_RESOLUTION_BITS) - 1)
+#define ADC_MAX_CHANNELS            8
+#define ADC_RESOLUTION_BITS         12
+#define ADC_MAX_VALUE               ((1U << ADC_RESOLUTION_BITS) - 1)
+#define ADC_DEFAULT_SAMPLE_HZ       1000
 
 //============================================================================
 // Public Types
@@ -95,7 +96,6 @@ AdcDriver_Status_t AdcDriverUnit_StopConversion(void);
 AdcDriver_Status_t AdcDriverUnit_ReadValue(AdcDriver_Channel_t channel, uint16_t *pValue);
 AdcDriver_Status_t AdcDriverUnit_IsConversionComplete(AdcDriver_Channel_t channel, bool *pComplete);
 AdcDriver_Status_t AdcDriverUnit_RegisterCallback(AdcDriver_ConversionCallback_t callback);
-AdcDriver_Status_t AdcDriverUnit_Calibrate(void);
 AdcDriver_Status_t AdcDriverUnit_GetStatus(AdcDriver_Status_t *pStatus);
 AdcDriver_Status_t AdcDriverUnit_DeInit(void);
 

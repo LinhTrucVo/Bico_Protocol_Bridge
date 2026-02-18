@@ -1,4 +1,4 @@
 @startuml Component_Sequence_Diagram
-
+' This is a sequence diagram for the comp1 component, showing interactions with other components.
 
 @enduml
