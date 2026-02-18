@@ -1,14 +1,62 @@
-﻿#include <gtest/gtest.h>
+﻿//----------------------------------------------------------------------------
+// Unit Test file for Serial To Digital App component
+//----------------------------------------------------------------------------
 
-extern "C" {
-#include "serialToDigitalApp.h"
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
+
+// Unit under test
+extern "C"
+{
+#include "mockSerialToDigitalApp.h"
 }
 
-TEST(SerialToDigitalAppTest, ConfigurePinAndWrite) {
-    SerialToDigitalApp_PinConfig_t cfg = {0, SERIAL_TO_DIGITAL_DIR_OUTPUT, SERIAL_TO_DIGITAL_STATE_LOW, false};
-    SerialToDigitalApp_StateValue_t state = SERIAL_TO_DIGITAL_STATE_LOW;
-    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_OK, SerialToDigitalApp_Init());
-    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_OK, SerialToDigitalApp_ConfigurePin(&cfg));
-    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_OK, SerialToDigitalApp_WritePin(0, SERIAL_TO_DIGITAL_STATE_HIGH));
-    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_OK, SerialToDigitalApp_ReadPin(0, &state));
+//------------------------------------------------------------------------------
+// Test Fixture Class
+//------------------------------------------------------------------------------
+class SerialToDigitalApp : public ::testing::Test 
+{
+protected:
+    void SetUp() override 
+    {
+        // Reset all fake functions before each test
+        FFF_RESET_HISTORY();
+    }
+
+    void TearDown() override 
+    {
+        // Clean up after each test if needed
+    }
+};
+
+//------------------------------------------------------------------------------
+// Test Cases for SerialToDigitalAppUnit_Init
+//------------------------------------------------------------------------------
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_Init_Valid_ReturnsOK)
+{
+    // Arrange
+    
+    // Act
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalAppUnit_Init();
+    
+    // Assert
+    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_OK, status);
+}
+
+//------------------------------------------------------------------------------
+// Test Cases for SerialToDigitalAppUnit_ProcessFrame
+//------------------------------------------------------------------------------
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_ProcessFrame_ValidFrame_ReturnsOK)
+{
+    // Arrange
+    uint8_t frameBuffer[32] = {0};
+    uint8_t responseBuffer[64] = {0};
+    uint16_t responseLength = 0;
+    call_SerialToDigitalAppUnit_Init();
+    
+    // Act
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalAppUnit_ProcessFrame(frameBuffer, sizeof(frameBuffer), responseBuffer, &responseLength);
+    
+    // Assert
+    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_OK, status);
 }

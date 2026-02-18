@@ -1,11 +1,29 @@
-﻿// Mock implementation header for SerialToI2CApp testing
-// This file provides mock implementations for dependency injection
+﻿// This file declares the FFF for functions and MOCK functions for SerialToI2CApp testing
 
 #ifndef MOCKSERIALTOI2CAPP_H
 #define MOCKSERIALTOI2CAPP_H
 
-#include <stdint.h>
+//============================================================================
+// Dependencies
+//============================================================================
+#include "fff.h"
 
-// Add mock function declarations here as needed for testing
+#include "serialToI2CApp.h"
+#include "serialToI2CAppUnit.h"
+
+//============================================================================
+// Mock function declarations
+//============================================================================
+// Declare fake functions for external dependencies if any
+// DECLARE_FAKE_VALUE_FUNC(int, ExternalFunction, int);
+
+//============================================================================
+// Static function wrapper declarations
+//============================================================================
+
+SerialToI2CApp_Status_t call_SerialToI2CAppUnit_Init(void);
+SerialToI2CApp_Status_t call_SerialToI2CAppUnit_DeInit(void);
+SerialToI2CApp_Status_t call_SerialToI2CAppUnit_Run(void);
+SerialToI2CApp_Status_t call_SerialToI2CAppUnit_ProcessFrame(const uint8_t *pFrame, uint16_t frameLength, uint8_t *pResponse, uint16_t *pResponseLength);
 
 #endif /* MOCKSERIALTOI2CAPP_H */

@@ -1,11 +1,55 @@
-﻿#include <gtest/gtest.h>
+﻿//----------------------------------------------------------------------------
+// Unit Test file for Central App Controller component
+//----------------------------------------------------------------------------
 
-extern "C" {
-#include "centralAppController.h"
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
+
+// Unit under test
+extern "C"
+{
+#include "mockCentralAppController.h"
 #include "deserialize.h"
 }
 
-TEST(CentralAppControllerTest, ProcessFrame) {
+//------------------------------------------------------------------------------
+// Test Fixture Class
+//------------------------------------------------------------------------------
+class CentralAppController : public ::testing::Test 
+{
+protected:
+    void SetUp() override 
+    {
+        // Reset all fake functions before each test
+        FFF_RESET_HISTORY();
+    }
+
+    void TearDown() override 
+    {
+        // Clean up after each test if needed
+    }
+};
+
+//------------------------------------------------------------------------------
+// Test Cases for CentralAppControllerUnit_Init
+//------------------------------------------------------------------------------
+TEST_F(CentralAppController, CentralAppController_Init_Valid_ReturnsOK)
+{
+    // Arrange
+    
+    // Act
+    CentralAppController_Status_t status = call_CentralAppControllerUnit_Init();
+    
+    // Assert
+    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+}
+
+//------------------------------------------------------------------------------
+// Test Cases for CentralAppControllerUnit_ProcessFrame
+//------------------------------------------------------------------------------
+TEST_F(CentralAppController, CentralAppController_ProcessFrame_ValidFrame_ReturnsOK)
+{
+    // Arrange
     uint8_t inFrame[8] = {0};
     uint8_t outFrame[64] = {0};
     uint16_t outLen = 0;
@@ -23,14 +67,29 @@ TEST(CentralAppControllerTest, ProcessFrame) {
     inFrame[5] = (uint8_t)(crc & 0xFFU);
     inFrame[6] = (uint8_t)((crc >> 8U) & 0xFFU);
 
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, CentralAppController_Init());
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, CentralAppController_ProcessFrame(&in, &out, &outLen));
+    call_CentralAppControllerUnit_Init();
+    
+    // Act
+    CentralAppController_Status_t status = call_CentralAppControllerUnit_ProcessFrame(&in, &out, &outLen);
+    
+    // Assert
+    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_GT(outLen, 0U);
 }
 
-TEST(CentralAppControllerTest, GetStateSuccess) {
+//------------------------------------------------------------------------------
+// Test Cases for CentralAppControllerUnit_GetState
+//------------------------------------------------------------------------------
+TEST_F(CentralAppController, CentralAppController_GetState_AfterInit_ReturnsIdleState)
+{
+    // Arrange
     CentralAppController_State_t state;
-    CentralAppController_Init();
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, CentralAppController_GetState(&state));
+    call_CentralAppControllerUnit_Init();
+    
+    // Act
+    CentralAppController_Status_t status = call_CentralAppControllerUnit_GetState(&state);
+    
+    // Assert
+    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_EQ(CentralAppController_STATE_IDLE, state);
 }

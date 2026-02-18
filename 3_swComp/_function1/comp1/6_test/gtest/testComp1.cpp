@@ -9,6 +9,7 @@
 extern "C"
 {
 #include "mockComp1.h"
+#include "fakecomp1.h"
 }
 
 //------------------------------------------------------------------------------
@@ -40,9 +41,11 @@ TEST_F(Comp1, Comp1Unit1PublicFunction_Test1)
     int input = 1;
     int output = 0;
     int expected = 2;
+    Comp2Unit2PublicFunction_fake.custom_fake = Comp2Unit2PublicFunction_fake;
 
     // Act
     output = call_Comp1Unit1PublicFunction(input);
+
     // Assert
     EXPECT_EQ(output, expected);
 }
@@ -56,6 +59,7 @@ TEST_F(Comp1, Comp1Unit1PublicFunction_Test2)
     int input = 2;
     int output = 0;
     int expected = 3;
+    Comp2Unit2PublicFunction_fake.custom_fake = Comp2Unit2PublicFunction_fake;
 
     // Act
     output = call_Comp1Unit1PublicFunction(input);

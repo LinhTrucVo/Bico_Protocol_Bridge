@@ -1,11 +1,29 @@
-﻿// Mock implementation header for SerialToAnalogApp testing
-// This file provides mock implementations for dependency injection
+﻿// This file declares the FFF for functions and MOCK functions for SerialToAnalogApp testing
 
 #ifndef MOCKSERIALTOANALOGAPP_H
 #define MOCKSERIALTOANALOGAPP_H
 
-#include <stdint.h>
+//============================================================================
+// Dependencies
+//============================================================================
+#include "fff.h"
 
-// Add mock function declarations here as needed for testing
+#include "serialToAnalogApp.h"
+#include "serialToAnalogAppUnit.h"
+
+//============================================================================
+// Mock function declarations
+//============================================================================
+// Declare fake functions for external dependencies if any
+// DECLARE_FAKE_VALUE_FUNC(int, ExternalFunction, int);
+
+//============================================================================
+// Static function wrapper declarations
+//============================================================================
+
+SerialToAnalogApp_Status_t call_SerialToAnalogAppUnit_Init(void);
+SerialToAnalogApp_Status_t call_SerialToAnalogAppUnit_DeInit(void);
+SerialToAnalogApp_Status_t call_SerialToAnalogAppUnit_Run(void);
+SerialToAnalogApp_Status_t call_SerialToAnalogAppUnit_ProcessFrame(const uint8_t *pFrame, uint16_t frameLength, uint8_t *pResponse, uint16_t *pResponseLength);
 
 #endif /* MOCKSERIALTOANALOGAPP_H */
