@@ -3,8 +3,10 @@
 
 // This file is used to define the configuration parameters
 // for the component. It contains configuration macros and types.
+// The values defined here can be modified to enable or disable 
+// specific features/function.
 
-#define COMP1_CFG_PARAM1    VALUE1   //!< Configuration parameter 1
-#define COMP1_CFG_PARAM2    VALUE2   //!< Configuration parameter 2
+#define COMP1_CFG_ENABLE_FUNC_A     true   
+#define COMP1_CFG_ENABLE_FUNC_B     false
 
 #endif /* COMP1CFG_H */
