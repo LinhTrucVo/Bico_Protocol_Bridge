@@ -28,7 +28,6 @@ AdcDriver_Status_t call_AdcDriverUnit_StopConversion(void);
 AdcDriver_Status_t call_AdcDriverUnit_ReadValue(AdcDriver_Channel_t channel, uint16_t *pValue);
 AdcDriver_Status_t call_AdcDriverUnit_IsConversionComplete(AdcDriver_Channel_t channel, bool *pComplete);
 AdcDriver_Status_t call_AdcDriverUnit_RegisterCallback(AdcDriver_ConversionCallback_t callback);
-AdcDriver_Status_t call_AdcDriverUnit_Calibrate(void);
 AdcDriver_Status_t call_AdcDriverUnit_GetStatus(AdcDriver_Status_t *pStatus);
 AdcDriver_Status_t call_AdcDriverUnit_DeInit(void);
 

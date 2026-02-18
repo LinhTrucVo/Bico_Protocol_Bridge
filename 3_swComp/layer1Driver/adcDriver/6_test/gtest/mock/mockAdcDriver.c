@@ -56,11 +56,6 @@ AdcDriver_Status_t call_AdcDriverUnit_RegisterCallback(AdcDriver_ConversionCallb
     return AdcDriverUnit_RegisterCallback(callback);
 }
 
-AdcDriver_Status_t call_AdcDriverUnit_Calibrate(void)
-{
-    return AdcDriverUnit_Calibrate();
-}
-
 AdcDriver_Status_t call_AdcDriverUnit_GetStatus(AdcDriver_Status_t *pStatus)
 {
     return AdcDriverUnit_GetStatus(pStatus);
