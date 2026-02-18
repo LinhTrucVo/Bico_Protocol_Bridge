@@ -2,7 +2,7 @@
 #define COMP1CFG_H
 
 // This file is used to define the configuration parameters
-// for the component. It contains configuration macros and types.
+// for the component. It contains configuration macros which are used with #if.
 // The values defined here can be modified to enable or disable 
 // specific features/function.
 
