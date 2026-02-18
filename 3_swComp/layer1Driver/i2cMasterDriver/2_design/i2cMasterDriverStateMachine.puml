@@ -1,5 +1,30 @@
 @startuml i2cMasterDriverStateMachine
-[*] --> Idle
-Idle --> Active : Init
-Active --> Idle : DeInit
+state Uninitialized
+state Initialized
+state Busy
+
+[*] --> Uninitialized
+
+Uninitialized --> Initialized : Init(config)
+Initialized --> Uninitialized : DeInit()
+
+Initialized --> Initialized : SetSpeed()
+
+Initialized --> Busy : Write() / Read()
+Initialized --> Busy : WriteRead()
+Initialized --> Busy : WriteRegister()
+Initialized --> Busy : ReadRegister()
+Initialized --> Busy : ScanBus()
+
+Busy --> Initialized : Operation complete
+Busy --> Initialized : Timeout
+
+Initialized --> Initialized : IsBusy()
+Initialized --> Initialized : RegisterCallback()
+
+note right of Busy
+  busy = true
+  Callback invoked when done
+  Can timeout if configured
+end note
 @enduml

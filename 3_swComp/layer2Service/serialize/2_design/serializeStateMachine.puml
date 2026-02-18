@@ -1,5 +1,24 @@
 @startuml serializeStateMachine
-[*] --> Idle
-Idle --> Building : Build
-Building --> Idle : Done
+state Uninitialized
+state Initialized
+
+[*] --> Uninitialized
+
+Uninitialized --> Initialized : Init()
+
+Initialized --> Uninitialized : DeInit()
+
+Initialized --> Initialized : BuildFrame()
+Initialized --> Initialized : BuildError()
+Initialized --> Initialized : BuildAnalogSamples()
+Initialized --> Initialized : BuildDigitalRead()
+Initialized --> Initialized : BuildI2CRead()
+Initialized --> Initialized : BuildSPITransfer()
+Initialized --> Initialized : ComputeCrc()
+
+note right of Initialized
+  Any serialization function
+  can be called multiple times
+  No state change during serialization
+end note
 @enduml

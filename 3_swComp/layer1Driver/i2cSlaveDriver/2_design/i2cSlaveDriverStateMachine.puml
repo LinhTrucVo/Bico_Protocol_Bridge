@@ -1,5 +1,31 @@
 @startuml i2cSlaveDriverStateMachine
-[*] --> Idle
-Idle --> Active : Init
-Active --> Idle : DeInit
+state Uninitialized
+state Initialized
+state AddressMatched
+state ReceivingData
+state TransmittingData
+
+[*] --> Uninitialized
+
+Uninitialized --> Initialized : Init(config)
+Initialized --> Uninitialized : DeInit()
+
+Initialized --> Initialized : SetAddress()
+Initialized --> Initialized : SetRxBuffer()
+Initialized --> Initialized : SetTxBuffer()
+Initialized --> Initialized : IsAddressed()
+Initialized --> Initialized : RegisterCallback()
+
+Initialized --> AddressMatched : Master addresses this slave
+
+AddressMatched --> ReceivingData : Master sends data
+AddressMatched --> TransmittingData : Master requests data
+
+ReceivingData --> Initialized : Reception complete
+TransmittingData --> Initialized : Transmission complete
+
+note right of AddressMatched
+  Address match detected
+  Callback invoked
+end note
 @enduml

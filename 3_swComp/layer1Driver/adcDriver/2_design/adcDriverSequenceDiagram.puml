@@ -1,29 +1,43 @@
 @startuml adcDriverSequenceDiagram
-' This is a sequence diagram for the ADC Driver component, showing interactions with client components and hardware.
-
 actor Client
-participant "ADC Driver" as adc
-participant "HAL Layer" as hal
+participant "adcDriver" as adc
+participant "Context" as ctx
 
-Client -> adc : Init(config)
-adc -> hal : HAL_Init()
-hal --> adc : OK
-adc --> Client : OK
+Client -> adc : Init(pConfig)
+adc -> ctx : Initialize context\ncopy config
+ctx --> adc : initialized=true, busy=false
+adc --> Client : ADC_STATUS_OK
 
-Client -> adc : ConfigureChannel(ch=1, res=12bit, freq=1000Hz)
-adc -> hal : HAL_ConfigChannel()
-hal --> adc : OK
-adc --> Client : OK
+Client -> adc : ConfigureChannel(ch=0, enable=true)
+adc -> ctx : channelEnabled[0] = true
+ctx --> adc : OK
+adc --> Client : ADC_STATUS_OK
 
-Client -> adc : StartConversion(ch=1)
-adc -> hal : HAL_StartConversion()
-hal --> adc : OK
-adc --> Client : OK
+Client -> adc : SetResolution(ADC_RESOLUTION_12BIT)
+adc -> ctx : config.resolution = 12BIT
+ctx --> adc : OK
+adc --> Client : ADC_STATUS_OK
 
-hal -> adc : ConversionComplete_ISR()
-adc -> adc : Update_Sample_Buffer()
+Client -> adc : StartConversion(ch=0)
+adc -> adc : Validate channel enabled
+adc -> ctx : busy = true\nlastValue[0] = 0
+ctx --> adc : Conversion started
+adc -> adc : If callback registered:\nInvoke callback()
+adc -> ctx : busy = false
+adc --> Client : ADC_STATUS_OK
 
-Client -> adc : ReadValue(ch=1)
-adc --> Client : raw_value=2048
+Client -> adc : ReadValue(ch=0)
+adc -> ctx : Get lastValue[0]
+ctx --> adc : value=0
+adc --> Client : ADC_STATUS_OK + value
 
+Client -> adc : IsConversionComplete(ch=0)
+adc -> ctx : Get !busy flag
+ctx --> adc : complete=true
+adc --> Client : ADC_STATUS_OK + complete
+
+Client -> adc : DeInit()
+adc -> ctx : Clear all context
+ctx --> adc : OK
+adc --> Client : ADC_STATUS_OK
 @enduml

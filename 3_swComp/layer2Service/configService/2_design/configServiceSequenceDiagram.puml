@@ -1,6 +1,41 @@
 @startuml configServiceSequenceDiagram
 actor Client
-participant ConfigService
-Client -> ConfigService : Set(key,value)
-ConfigService --> Client : Status
+participant "configService" as cfg
+participant "Context" as ctx
+
+Client -> cfg : Init()
+cfg -> ctx : initialized = true
+cfg -> ctx : serialCfg.baudrate = 115200
+cfg -> ctx : analogCfg[] init
+cfg -> ctx : pwmCfg[] init
+ctx --> cfg : OK
+cfg --> Client : CONFIG_SERVICE_STATUS_OK
+
+Client -> cfg : SetSerialConfig(pConfig)
+cfg -> cfg : Validate pConfig != NULL
+cfg -> ctx : serialCfg = *pConfig
+ctx --> cfg : OK
+cfg --> Client : CONFIG_SERVICE_STATUS_OK
+
+Client -> cfg : GetSerialConfig(pConfig)
+cfg -> cfg : Validate pConfig != NULL
+cfg -> ctx : Read serialCfg
+ctx --> cfg : serialCfg
+cfg --> Client : CONFIG_SERVICE_STATUS_OK + serial config
+
+Client -> cfg : SetAnalogChannelConfig(channelId, pConfig)
+cfg -> cfg : Validate channelId < MAX_CHANNELS
+cfg -> cfg : Validate pConfig != NULL
+cfg -> ctx : analogCfg[channelId] = *pConfig
+ctx --> cfg : OK
+cfg --> Client : CONFIG_SERVICE_STATUS_OK
+
+Client -> cfg : ValidateAnalogChannelConfig(pConfig)
+cfg -> cfg : Check resolutionBits, vRef, thresholds
+cfg --> Client : CONFIG_SERVICE_STATUS_OK or ERROR
+
+Client -> cfg : DeInit()
+cfg -> ctx : initialized = false
+ctx --> cfg : OK
+cfg --> Client : CONFIG_SERVICE_STATUS_OK
 @enduml

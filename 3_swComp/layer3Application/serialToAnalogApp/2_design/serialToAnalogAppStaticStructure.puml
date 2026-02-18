@@ -1,3 +1,33 @@
 @startuml serialToAnalogAppStaticStructure
-class SerialToAnalogApp
+skinparam backgroundColor #FEFEFE
+
+package "serialToAnalogApp" {
+    interface ISerialToAnalogApp {
+        + Init()
+        + DeInit()
+        + Run()
+        + ProcessFrame(frame, frameLength, response)
+    }
+
+    class SerialToAnalogApp_Context_t {
+        - initialized: bool
+        - enabled: bool
+        - channelConfig[8]: ChannelConfig_t
+    }
+
+    class ChannelConfig_t {
+        - channelId: uint8_t
+        - enabled: bool
+        - resolution: Resolution_t
+        - range: Range_t
+    }
+
+    ISerialToAnalogApp --> SerialToAnalogApp_Context_t : manages\n(static instance)
+    SerialToAnalogApp_Context_t *-- ChannelConfig_t : contains [8]
+}
+
+note right of SerialToAnalogApp_Context_t
+    Raw data handling - no conversion
+    Tracks channel configurations
+end note
 @enduml

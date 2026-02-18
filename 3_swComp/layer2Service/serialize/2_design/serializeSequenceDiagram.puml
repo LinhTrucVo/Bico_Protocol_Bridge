@@ -1,6 +1,31 @@
 @startuml serializeSequenceDiagram
 actor Client
-participant Serialize
-Client -> Serialize : Build(response)
-Serialize --> Client : Frame
+participant "serialize" as ser
+participant "Context" as ctx
+
+Client -> ser : Init()
+ser -> ctx : initialized = true
+ctx --> ser : OK
+ser --> Client : SERIALIZE_STATUS_OK
+
+Client -> ser : BuildFrame(message, buffer)
+ser -> ser : Copy header fields
+ser -> ser : Copy payload bytes
+ser -> ser : ComputeCrc16()
+ser --> Client : SERIALIZE_STATUS_OK + frameLength
+
+Client -> ser : BuildError(cmdId, seqId, errorCode)
+ser -> ser : Create error message
+ser -> ser : BuildFrame()
+ser --> Client : SERIALIZE_STATUS_OK + frameLength
+
+Client -> ser : BuildAnalogSamples(channelId, samples)
+ser -> ser : Format analog data
+ser -> ser : BuildFrame()
+ser --> Client : SERIALIZE_STATUS_OK + frameLength
+
+Client -> ser : DeInit()
+ser -> ctx : initialized = false
+ctx --> ser : OK
+ser --> Client : SERIALIZE_STATUS_OK
 @enduml

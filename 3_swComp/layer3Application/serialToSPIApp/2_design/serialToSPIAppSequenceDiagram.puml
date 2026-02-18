@@ -1,6 +1,23 @@
 @startuml serialToSPIAppSequenceDiagram
-actor Host
-participant SerialToSPIApp
-Host -> SerialToSPIApp : SpiTransfer()
-SerialToSPIApp --> Host : Status
+actor Client
+participant "serialToSPIApp" as app
+participant "Context" as ctx
+
+Client -> app : Init()
+app -> ctx : Initialize SPI config
+ctx --> app : OK
+app --> Client : OK
+
+Client -> app : Run()
+app -> ctx : Set running = true
+ctx --> app : OK
+app --> Client : OK
+
+Client -> app : ProcessFrame(serialCmd)
+app -> app : Deserialize SPI command
+app -> app : Call spiMasterDriver\nfor SPI transfer
+app -> ctx : Store transfer result
+ctx --> app : OK
+app -> app : Serialize SPI response
+app --> Client : response + frameLength
 @enduml

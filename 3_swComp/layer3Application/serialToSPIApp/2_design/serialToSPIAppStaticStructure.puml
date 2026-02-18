@@ -1,3 +1,32 @@
 @startuml serialToSPIAppStaticStructure
-class SerialToSPIApp
+skinparam backgroundColor #FEFEFE
+
+package "serialToSPIApp" {
+    interface ISerialToSPIApp {
+        + Init()
+        + DeInit()
+        + Run()
+        + ProcessFrame(frame, frameLength, response)
+    }
+
+    class SerialToSPIApp_Context_t {
+        - initialized: bool
+        - enabled: bool
+        - config: Config_t
+    }
+
+    class SerialToSPIApp_Config_t {
+        - clockSpeed: uint32_t
+        - mode: SpiMode_t
+        - bitOrder: BitOrder_t
+    }
+
+    ISerialToSPIApp --> SerialToSPIApp_Context_t : manages\n(static instance)
+    SerialToSPIApp_Context_t *-- SerialToSPIApp_Config_t : contains
+}
+
+note right of SerialToSPIApp_Context_t
+    SPI protocol conversion
+    Uses spiMasterDriver
+end note
 @enduml

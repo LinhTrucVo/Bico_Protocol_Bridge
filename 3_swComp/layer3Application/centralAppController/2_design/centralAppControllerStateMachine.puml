@@ -1,5 +1,27 @@
 @startuml centralAppControllerStateMachine
-[*] --> Idle
-Idle --> Running : Start
-Running --> Idle : Stop
+state Uninitialized
+state Initialized
+state Running
+state ErrorState
+
+[*] --> Uninitialized
+
+Uninitialized --> Initialized : Init()
+
+Initialized --> Running : Run()
+
+Running --> Running : ProcessFrame()
+
+Running --> ErrorState : Error encountered
+ErrorState --> ErrorState : OnError()
+
+Running --> Initialized : Stop()
+ErrorState --> Initialized : Stop()
+
+Initialized --> Uninitialized : DeInit()
+
+note right of Running
+  Central controller actively
+  dispatching frames to protocol handlers
+end note
 @enduml

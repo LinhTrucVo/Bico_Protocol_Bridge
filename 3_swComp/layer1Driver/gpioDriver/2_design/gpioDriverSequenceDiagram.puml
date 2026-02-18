@@ -1,6 +1,48 @@
 @startuml gpioDriverSequenceDiagram
 actor Client
-participant GpioDriver
-Client -> GpioDriver : WritePin()
-GpioDriver --> Client : Status
+participant "gpioDriver" as gpio
+participant "Context" as ctx
+
+Client -> gpio : Init()
+gpio -> ctx : Initialize all pins\nSet default config
+ctx --> gpio : initialized=true
+gpio --> Client : GPIO_STATUS_OK
+
+Client -> gpio : ConfigurePin(pin=5, config)
+gpio -> ctx : pinConfig[5] = config\npinState[5] = initialState
+ctx --> gpio : OK
+gpio --> Client : GPIO_STATUS_OK
+
+Client -> gpio : SetMode(pin=5, GPIO_MODE_OUTPUT)
+gpio -> ctx : pinConfig[5].mode = OUTPUT
+ctx --> gpio : OK
+gpio --> Client : GPIO_STATUS_OK
+
+Client -> gpio : WritePin(pin=5, GPIO_STATE_HIGH)
+gpio -> ctx : pinState[5] = HIGH
+ctx --> gpio : OK
+gpio --> Client : GPIO_STATUS_OK
+
+Client -> gpio : ReadPin(pin=5)
+gpio -> ctx : Get pinState[5]
+ctx --> gpio : state=HIGH
+gpio --> Client : GPIO_STATUS_OK + HIGH
+
+Client -> gpio : TogglePin(pin=5)
+gpio -> ctx : pinState[5] = (LOW ? HIGH : LOW)
+ctx --> gpio : state=LOW
+gpio --> Client : GPIO_STATUS_OK
+
+Client -> gpio : EnableInterrupt(pin=5, RISING, callback)
+gpio -> ctx : irqCallback[5] = callback
+ctx --> gpio : OK
+gpio --> Client : GPIO_STATUS_OK
+
+note over gpio : HW ISR triggers\non pin state change
+gpio -> gpio : ISR executes\nirqCallback[5]()
+
+Client -> gpio : DisableInterrupt(pin=5)
+gpio -> ctx : irqCallback[5] = NULL
+ctx --> gpio : OK
+gpio --> Client : GPIO_STATUS_OK
 @enduml

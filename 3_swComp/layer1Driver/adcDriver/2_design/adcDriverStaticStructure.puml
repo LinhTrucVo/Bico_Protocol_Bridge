@@ -1,15 +1,51 @@
 @startuml adcDriverStaticStructure
-' This is a static structure diagram for the ADC Driver component, showing its internal file structure and relationships.
+skinparam backgroundColor #FEFEFE
 
-package "ADC Driver" {
-    [adcDriver.h] as header
-    [adcDriverCfg.h] as config
-    [adcDriverUnit.c] as impl
-    [HAL Interface] as hal
+package "adcDriver" {
+    interface IAdcDriver {
+        + Init(config)
+        + ConfigureChannel(channel, enable)
+        + SetResolution(resolution)
+        + SetVoltageReference(voltageRef)
+        + SetSamplingFrequency(frequency)
+        + StartConversion(channel)
+        + StopConversion()
+        + ReadValue(channel)
+        + IsConversionComplete(channel)
+        + RegisterCallback(callback)
+        + GetStatus()
+        + DeInit()
+    }
+
+    class AdcDriver_Context_t {
+        - initialized: bool
+        - busy: bool
+        - config: AdcDriver_Config_t
+        - channelEnabled[8]: bool
+        - lastValue[8]: uint16_t
+        - callback: ConversionCallback
+    }
+
+    class AdcDriver_Config_t {
+        - resolution: Resolution_t
+        - voltageReference: VoltageRef_t
+        - conversionMode: ConversionMode_t
+        - samplingFrequency: uint32_t
+        - enableDMA: bool
+        - enableInterrupt: bool
+    }
+
+    IAdcDriver --> AdcDriver_Context_t : manages\n(static instance)
+    AdcDriver_Context_t *-- AdcDriver_Config_t : contains
+    AdcDriver_Context_t --> "0..1" "ConversionCallback" : registers
 }
 
-header --> config : includes
-header --> impl : declares
-impl --> hal : uses
-
+note right of AdcDriver_Context_t
+    Static context variable
+    Tracks initialization state
+    Stores conversion state (busy)
+    Maintains channel configuration
+    Caches last read values
+    Stores callback pointer
+end note
 @enduml

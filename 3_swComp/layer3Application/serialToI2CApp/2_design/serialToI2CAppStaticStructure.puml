@@ -1,3 +1,32 @@
 @startuml serialToI2CAppStaticStructure
-class SerialToI2CApp
+skinparam backgroundColor #FEFEFE
+
+package "serialToI2CApp" {
+    interface ISerialToI2CApp {
+        + Init()
+        + DeInit()
+        + Run()
+        + ProcessFrame(frame, frameLength, response)
+    }
+
+    class SerialToI2CApp_Context_t {
+        - initialized: bool
+        - enabled: bool
+        - config: Config_t
+    }
+
+    class SerialToI2CApp_Config_t {
+        - clockSpeed: uint32_t
+        - addressMode: AddressMode_t
+        - timeout: uint32_t
+    }
+
+    ISerialToI2CApp --> SerialToI2CApp_Context_t : manages\n(static instance)
+    SerialToI2CApp_Context_t *-- SerialToI2CApp_Config_t : contains
+}
+
+note right of SerialToI2CApp_Context_t
+    I2C protocol conversion
+    Uses i2cMasterDriver
+end note
 @enduml

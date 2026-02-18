@@ -1,5 +1,23 @@
 @startuml serialToAnalogAppStateMachine
-[*] --> Idle
-Idle --> Active : Enable
-Active --> Idle : Disable
+state Uninitialized
+state Initialized
+state Running
+
+[*] --> Uninitialized
+
+Uninitialized --> Initialized : Init()
+
+Initialized --> Running : Run()
+
+Running --> Running : ProcessFrame()
+
+Running --> Initialized : Stop()
+
+Initialized --> Uninitialized : DeInit()
+
+note right of Running
+  Application actively processing
+  serial commands and generating
+  analog outputs
+end note
 @enduml

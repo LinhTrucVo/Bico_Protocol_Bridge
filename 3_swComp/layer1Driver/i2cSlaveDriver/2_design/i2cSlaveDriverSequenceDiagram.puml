@@ -1,6 +1,42 @@
 @startuml i2cSlaveDriverSequenceDiagram
-actor Client
-participant I2cSlaveDriver
-Client -> I2cSlaveDriver : Exchange()
-I2cSlaveDriver --> Client : Status
+actor "Master" as master
+participant "i2cSlave" as slave
+participant "Context" as ctx
+actor "App" as app
+
+app -> slave : Init(config)
+slave -> ctx : Initialize, copy config
+ctx --> slave : initialized=true
+slave --> app : I2C_SLAVE_STATUS_OK
+
+app -> slave : SetRxBuffer(rxBuf, 256)
+slave -> ctx : pRxBuffer = rxBuf
+ctx --> slave : OK
+slave --> app : I2C_SLAVE_STATUS_OK
+
+app -> slave : SetTxBuffer(txBuf, 10)
+slave -> ctx : pTxBuffer = txBuf
+ctx --> slave : OK
+slave --> app : I2C_SLAVE_STATUS_OK
+
+master -> slave : Address match ISR
+slave -> ctx : Invoke addressCallback
+ctx --> slave : Callback returns
+slave -> ctx : Transition state
+
+master -> slave : Send data (Write)
+slave -> ctx : rxLength += bytes
+ctx --> slave : Data buffered
+slave -> slave : If rxCallback: invoke
+
+master -> slave : Request data (Read)
+slave -> ctx : Get pTxBuffer, txLength
+ctx --> slave : Data retrieved
+slave -> master : Send txBuf data
+slave -> slave : If txCallback: invoke
+
+app -> slave : GetRxLength()
+slave -> ctx : Get rxLength
+ctx --> slave : length value
+slave --> app : I2C_SLAVE_STATUS_OK + length
 @enduml

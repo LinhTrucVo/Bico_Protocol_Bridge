@@ -1,6 +1,38 @@
 @startuml deserializeSequenceDiagram
 actor Transport
-participant Deserialize
-Transport -> Deserialize : PushBytes()
-Deserialize --> Transport : Request
+participant "deserialize" as des
+participant "Context" as ctx
+
+Transport -> des : Init()
+des -> ctx : initialized = true
+ctx --> des : OK
+des --> Transport : DESERIALIZE_STATUS_OK
+
+Transport -> des : ValidateFrame(pFrame)
+des -> des : Check frameLength >= MIN_SIZE
+des -> des : Parse header and length fields
+des -> des : ComputeCrc16() on frame data
+des -> des : Compare computed vs stored CRC
+des --> Transport : DESERIALIZE_STATUS_OK or ERROR
+
+Transport -> des : ParseFrame(pFrame, pRequest)
+des -> des : Call ValidateFrame(pFrame)
+des -> des : Extract commandId from frame[0]
+des -> des : Extract sequenceId from frame[1]
+des -> des : Map commandId to Deserialize_Command_t
+des -> des : Extract payload from frame[5..] to pRequest
+des --> Transport : DESERIALIZE_STATUS_OK + request
+
+Transport -> des : ComputeCrc(pData, length, pCrc)
+des -> des : CRC16 algorithm on pData
+des --> Transport : DESERIALIZE_STATUS_OK + CRC value
+
+Transport -> des : GetCommandName(command, pName)
+des -> des : Map command enum to string
+des --> Transport : DESERIALIZE_STATUS_OK + name string
+
+Transport -> des : DeInit()
+des -> ctx : initialized = false
+ctx --> des : OK
+des --> Transport : DESERIALIZE_STATUS_OK
 @enduml

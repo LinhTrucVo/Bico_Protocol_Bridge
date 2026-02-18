@@ -1,6 +1,27 @@
 @startuml serialToAnalogAppSequenceDiagram
-actor Host
-participant SerialToAnalogApp
-Host -> SerialToAnalogApp : SetOutput()
-SerialToAnalogApp --> Host : Status
+actor Client
+participant "serialToAnalogApp" as app
+participant "Context" as ctx
+
+Client -> app : Init()
+app -> ctx : Initialize channels
+ctx --> app : OK
+app --> Client : OK
+
+Client -> app : Run()
+app -> ctx : Set running = true
+ctx --> app : OK
+app --> Client : OK
+
+Client -> app : ProcessFrame(serialData)
+app -> app : Deserialize command
+app -> app : Get raw analog value
+app -> app : Serialize response
+app --> Client : response + frameLength
+
+Client -> app : ProcessFrame(serialData)
+app -> app : Parse channel config
+app -> ctx : Update channelConfig
+ctx --> app : OK
+app --> Client : response + frameLength
 @enduml

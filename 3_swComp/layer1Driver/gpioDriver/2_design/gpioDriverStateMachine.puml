@@ -1,5 +1,25 @@
 @startuml gpioDriverStateMachine
-[*] --> Idle
-Idle --> Active : Init
-Active --> Idle : DeInit
+state Uninitialized
+state Initialized
+state InterruptConfigured
+
+[*] --> Uninitialized
+
+Uninitialized --> Initialized : Init()\n[Initialize all pins]
+
+Initialized --> Uninitialized : DeInit()\n[Clear all configs]
+
+Initialized --> Initialized : ConfigurePin()\nSetMode()\nSetPull()\nSetSpeed()\nWritePin()\nReadPin()\nTogglePin()
+
+Initialized --> InterruptConfigured : EnableInterrupt()\n[Register callback]
+
+InterruptConfigured --> Initialized : DisableInterrupt()\n[Clear callback]
+
+InterruptConfigured --> InterruptConfigured : WritePin()\nReadPin()\nTogglePin()\n[State changes trigger ISR]
+
+note right of InterruptConfigured
+  Pin with interrupt enabled
+  Can execute callback on edge
+  Still supports standard I/O
+end note
 @enduml

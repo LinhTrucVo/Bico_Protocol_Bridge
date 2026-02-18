@@ -1,6 +1,24 @@
 @startuml serialToDigitalAppSequenceDiagram
-actor Host
-participant SerialToDigitalApp
-Host -> SerialToDigitalApp : SetPin()
-SerialToDigitalApp --> Host : Status
+actor Client
+participant "serialToDigitalApp" as app
+participant "Context" as ctx
+
+Client -> app : Init()
+app -> ctx : Initialize pins
+ctx --> app : OK
+app --> Client : OK
+
+Client -> app : Run()
+app -> ctx : Set running = true
+ctx --> app : OK
+app --> Client : OK
+
+Client -> app : ProcessFrame(serialCmd)
+app -> app : Deserialize serial command
+app -> ctx : Update pinConfig
+ctx --> app : OK
+app -> app : Serialize response
+app --> Client : response + frameLength
+
+note over app : Pin state is reflected\nin response data
 @enduml

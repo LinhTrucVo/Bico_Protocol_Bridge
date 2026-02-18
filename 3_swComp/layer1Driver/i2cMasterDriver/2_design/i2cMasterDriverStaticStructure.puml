@@ -1,3 +1,47 @@
 @startuml i2cMasterDriverStaticStructure
-class I2cMasterDriver
+skinparam backgroundColor #FEFEFE
+
+package "i2cMasterDriver" {
+    interface II2cMasterDriver {
+        + Init(config)
+        + SetSpeed(speed)
+        + Write(address, data, length)
+        + WriteWithTimeout(address, data, length, timeout)
+        + Read(address, data, length)
+        + ReadWithTimeout(address, data, length, timeout)
+        + WriteRead(address, writeData, readData)
+        + WriteRegister(address, regAddr, data)
+        + ReadRegister(address, regAddr, data)
+        + ScanBus()
+        + IsBusy()
+        + RegisterCallback(callback)
+        + DeInit()
+    }
+
+    class I2cMasterDriver_Context_t {
+        - initialized: bool
+        - busy: bool
+        - config: I2cMasterDriver_Config_t
+        - callback: I2cMasterDriver_Callback_t
+    }
+
+    class I2cMasterDriver_Config_t {
+        - speed: Speed_t
+        - addressMode: AddressMode_t
+        - enableDMA: bool
+        - enableInterrupt: bool
+        - timeoutMs: uint32_t
+    }
+
+    II2cMasterDriver --> I2cMasterDriver_Context_t : manages
+    I2cMasterDriver_Context_t *-- I2cMasterDriver_Config_t : contains
+    I2cMasterDriver_Context_t --> "0..1" "Callback" : registers
+}
+
+note right of I2cMasterDriver_Context_t
+    Static context variable
+    Tracks initialization and busy state
+    Stores I2C speed and mode
+    Registers completion callback
+end note
 @enduml

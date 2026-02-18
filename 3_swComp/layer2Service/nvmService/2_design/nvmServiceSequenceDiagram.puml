@@ -1,6 +1,55 @@
 @startuml nvmServiceSequenceDiagram
 actor Client
-participant NvmService
-Client -> NvmService : Store(record)
-NvmService --> Client : Status
+participant "nvmService" as nvm
+participant "Context" as ctx
+
+Client -> nvm : Init()
+nvm -> ctx : initialized = true
+nvm -> ctx : Clear all records[i].valid = false
+ctx --> nvm : OK
+nvm --> Client : NVM_SERVICE_STATUS_OK
+
+Client -> nvm : Save(pBlob)
+nvm -> nvm : Validate pBlob != NULL
+nvm -> nvm : Validate key < MAX_KEYS
+nvm -> nvm : Validate length > 0 and <= MAX_SIZE
+nvm -> ctx : records[key].length = length
+nvm -> ctx : Copy pBlob->pData to records[key].data[]
+nvm -> nvm : CalcCrc() on copied data
+nvm -> ctx : records[key].crc = computed_crc
+nvm -> ctx : records[key].valid = true
+ctx --> nvm : OK
+nvm --> Client : NVM_SERVICE_STATUS_OK
+
+Client -> nvm : Load(key, pData, maxLength, pOutLength)
+nvm -> nvm : Validate key < MAX_KEYS
+nvm -> ctx : Check records[key].valid == true
+nvm -> nvm : CalcCrc() on stored data
+nvm -> nvm : Verify computed_crc == stored_crc
+nvm -> ctx : Copy records[key].data[] to pData
+nvm -> nvm : Set pOutLength = records[key].length
+ctx --> nvm : OK
+nvm --> Client : NVM_SERVICE_STATUS_OK + data length
+
+Client -> nvm : Exists(key, pExists)
+nvm -> ctx : Read records[key].valid
+nvm --> Client : NVM_SERVICE_STATUS_OK + existence flag
+
+Client -> nvm : Erase(key)
+nvm -> nvm : Validate key < MAX_KEYS
+nvm -> ctx : records[key].valid = false
+nvm -> ctx : records[key].length = 0
+nvm -> ctx : records[key].crc = 0
+ctx --> nvm : OK
+nvm --> Client : NVM_SERVICE_STATUS_OK
+
+Client -> nvm : EraseAll()
+nvm -> ctx : Clear all records[i]
+ctx --> nvm : OK
+nvm --> Client : NVM_SERVICE_STATUS_OK
+
+Client -> nvm : DeInit()
+nvm -> ctx : initialized = false
+ctx --> nvm : OK
+nvm --> Client : NVM_SERVICE_STATUS_OK
 @enduml

@@ -1,6 +1,25 @@
 @startuml centralAppControllerSequenceDiagram
-actor Host
-participant CentralAppController
-Host -> CentralAppController : Request
-CentralAppController --> Host : Response
+actor Client
+participant "centralAppController" as ctrl
+participant "Context" as ctx
+
+Client -> ctrl : Init()
+ctrl -> ctx : Initialize state
+ctx --> ctrl : OK
+ctrl --> Client : OK
+
+Client -> ctrl : Run()
+ctrl -> ctx : Set running = true
+ctx --> ctrl : OK
+ctrl --> Client : OK
+
+Client -> ctrl : ProcessFrame(inFrame, outFrame)
+ctrl -> ctrl : Deserialize frame
+ctrl -> ctrl : Dispatch to protocol handler
+ctrl -> ctx : Update state if needed
+ctrl -> ctrl : Build response
+ctrl -> ctrl : Serialize response
+ctrl --> Client : OK + responseLength
+
+note over ctrl : Error triggers\nerror callback
 @enduml

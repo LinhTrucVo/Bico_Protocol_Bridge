@@ -1,3 +1,35 @@
 @startuml centralAppControllerStaticStructure
-class CentralAppController
+skinparam backgroundColor #FEFEFE
+
+package "centralAppController" {
+    interface ICentralAppController {
+        + Init()
+        + DeInit()
+        + Run()
+        + GetState()
+        + ProcessFrame(inFrame, outFrame)
+        + RegisterErrorCallback(callback)
+    }
+
+    class CentralAppController_Context_t {
+        - initialized: bool
+        - state: State_t
+        - errorCallback: ErrorCallback_t
+        - frameBuffer: Frame_t
+    }
+
+    class CentralAppController_Frame_t {
+        - pData: uint8_t[]
+        - length: uint16_t
+    }
+
+    ICentralAppController --> CentralAppController_Context_t : manages\n(static instance)
+    CentralAppController_Context_t --> CentralAppController_Frame_t : processes
+    CentralAppController_Context_t --> "0..1" "ErrorCallback" : registers
+}
+
+note right of CentralAppController_Context_t
+    Central coordinator for protocol conversion
+    Manages system state and frame processing
+end note
 @enduml

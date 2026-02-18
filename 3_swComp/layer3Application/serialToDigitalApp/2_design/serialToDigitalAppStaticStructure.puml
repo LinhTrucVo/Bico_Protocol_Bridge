@@ -1,3 +1,33 @@
 @startuml serialToDigitalAppStaticStructure
-class SerialToDigitalApp
+skinparam backgroundColor #FEFEFE
+
+package "serialToDigitalApp" {
+    interface ISerialToDigitalApp {
+        + Init()
+        + DeInit()
+        + Run()
+        + ProcessFrame(frame, frameLength, response)
+    }
+
+    class SerialToDigitalApp_Context_t {
+        - initialized: bool
+        - enabled: bool
+        - pinConfig[]: PinConfig_t
+    }
+
+    class PinConfig_t {
+        - pinId: uint8_t
+        - direction: Direction_t
+        - state: State_t
+        - enabled: bool
+    }
+
+    ISerialToDigitalApp --> SerialToDigitalApp_Context_t : manages\n(static instance)
+    SerialToDigitalApp_Context_t *-- PinConfig_t : contains
+}
+
+note right of SerialToDigitalApp_Context_t
+    Manages digital pin states
+    Processes serial commands to control pins
+end note
 @enduml

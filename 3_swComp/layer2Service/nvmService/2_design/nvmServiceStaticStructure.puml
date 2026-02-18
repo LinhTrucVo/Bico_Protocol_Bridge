@@ -1,3 +1,50 @@
 @startuml nvmServiceStaticStructure
-class NvmService
+skinparam backgroundColor #FEFEFE
+
+package "nvmService" {
+    interface INvmService {
+        + Init()
+        + DeInit()
+        + Save(pBlob)
+        + Load(key, pData, maxLength, pOutLength)
+        + Erase(key)
+        + EraseAll()
+        + Exists(key, pExists)
+        + ComputeCrc(pData, length, pCrc)
+    }
+
+    class NvmService_Context_t {
+        - initialized: bool
+        - records[]: NvmService_Record_t
+    }
+
+    class NvmService_Record_t {
+        - valid: bool
+        - length: uint16_t
+        - crc: uint32_t
+        - data[]: uint8_t
+    }
+
+    class NvmService_Blob_t {
+        - key: NvmService_Key_t
+        - pData: uint8_t[]
+        - length: uint16_t
+    }
+
+    class NvmService_Key_t {
+        (enum for storage keys)
+    }
+
+    INvmService --> NvmService_Context_t : manages\n(static instance)
+    INvmService --> NvmService_Record_t : manages array
+    INvmService --> NvmService_Blob_t : processes
+    INvmService --> NvmService_Key_t : indexes
+}
+
+note right of NvmService_Record_t
+    In-memory NVM storage
+    Each record has CRC32 validation
+    Records indexed by key
+    Support for multiple data blobs
+end note
 @enduml

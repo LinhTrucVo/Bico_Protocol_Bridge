@@ -1,3 +1,78 @@
 @startuml configServiceStaticStructure
-class ConfigService
+skinparam backgroundColor #FEFEFE
+
+package "configService" {
+    interface IConfigService {
+        + Init()
+        + DeInit()
+        + SetSerialConfig(pConfig)
+        + GetSerialConfig(pConfig)
+        + SetAnalogChannelConfig(channelId, pConfig)
+        + GetAnalogChannelConfig(channelId, pConfig)
+        + SetDigitalPinConfig(pinId, pConfig)
+        + GetDigitalPinConfig(pinId, pConfig)
+        + SetPwmConfig(channelId, pConfig)
+        + GetPwmConfig(channelId, pConfig)
+        + SetI2cConfig(pConfig)
+        + GetI2cConfig(pConfig)
+        + SetSpiConfig(pConfig)
+        + GetSpiConfig(pConfig)
+        + ValidateAnalogChannelConfig(pConfig)
+        + ValidatePwmConfig(pConfig)
+        + ValidateI2cConfig(pConfig)
+        + ValidateSpiConfig(pConfig)
+    }
+
+    class ConfigService_Context_t {
+        - initialized: bool
+        - serialCfg: SerialConfig_t
+        - analogCfg[]: AnalogChannelConfig_t
+        - digitalCfg[]: DigitalPinConfig_t
+        - pwmCfg[]: PwmConfig_t
+        - i2cCfg: I2cConfig_t
+        - spiCfg: SpiConfig_t
+    }
+
+    class SerialConfig_t {
+        - baudrate: uint32_t
+        - dataBits: uint8_t
+        - stopBits: uint8_t
+        - parity: uint8_t
+    }
+
+    class AnalogChannelConfig_t {
+        - channelId: uint8_t
+        - resolutionBits: uint8_t
+        - vRef: float
+        - samplingFrequency: uint16_t
+        - averageSamples: uint8_t
+        - thresholdHigh: float
+        - thresholdLow: float
+        - thresholdEnable: bool
+    }
+
+    class DigitalPinConfig_t {
+        - pinId: uint8_t
+        - direction: uint8_t
+        - initialState: uint8_t
+    }
+
+    class PwmConfig_t {
+        - channelId: uint8_t
+        - frequency: uint16_t
+        - dutyCycle: uint16_t
+    }
+
+    IConfigService --> ConfigService_Context_t : manages\n(static instance)
+    IConfigService --> SerialConfig_t : configures
+    IConfigService --> AnalogChannelConfig_t : manages
+    IConfigService --> DigitalPinConfig_t : manages
+    IConfigService --> PwmConfig_t : manages
+}
+
+note right of ConfigService_Context_t
+    Central configuration storage
+    Arrays for multiple channels/pins
+    Per-protocol configuration state
+end note
 @enduml

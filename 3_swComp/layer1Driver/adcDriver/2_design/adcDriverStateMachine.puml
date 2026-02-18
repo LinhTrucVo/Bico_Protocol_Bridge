@@ -1,14 +1,27 @@
 @startuml adcDriverStateMachine
-' This is a state machine diagram for the ADC Driver component, illustrating its states and transitions based on events and conditions.
+state Uninitialized
+state Initialized
+state Running
 
 [*] --> Uninitialized
-Uninitialized --> Initialized : Init(config)
-Initialized --> ChannelConfigured : ConfigureChannel(ch, res, freq)
-ChannelConfigured --> Sampling : StartConversion(ch)
-Sampling --> SampleReady : ConversionComplete
-SampleReady --> Sampling : ContinueSampling
-Sampling --> ChannelConfigured : StopConversion(ch)
-ChannelConfigured --> Initialized : DisableChannel(ch)
+
+Uninitialized --> Initialized : Init(config)\n[pConfig != NULL]
 Initialized --> Uninitialized : DeInit()
 
+Initialized --> Initialized : ConfigureChannel()\nSetResolution()\nSetVoltageReference()\nSetSamplingFrequency()
+
+Initialized --> Running : StartConversion()\n[channel enabled && !busy]
+
+Running --> Running : Register callback during\nconversion execution
+
+Running --> Initialized : StopConversion()\n[clears busy flag]
+
+Initialized --> Initialized : ReadValue()\nIsConversionComplete()\nGetStatus()\nRegisterCallback()\n[no state change]
+
+note right of Running
+  busy flag = true
+  LastValue[channel] updated
+  Callback invoked if registered
+  Returns to Initialized after
+end note
 @enduml

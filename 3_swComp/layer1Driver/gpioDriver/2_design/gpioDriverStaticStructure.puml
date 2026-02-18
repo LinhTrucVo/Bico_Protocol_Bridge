@@ -1,3 +1,45 @@
 @startuml gpioDriverStaticStructure
-class GpioDriver
+skinparam backgroundColor #FEFEFE
+
+package "gpioDriver" {
+    interface IGpioDriver {
+        + Init()
+        + ConfigurePin(pin, config)
+        + SetMode(pin, mode)
+        + SetPull(pin, pull)
+        + SetSpeed(pin, speed)
+        + WritePin(pin, state)
+        + ReadPin(pin)
+        + TogglePin(pin)
+        + EnableInterrupt(pin, edge, callback)
+        + DisableInterrupt(pin)
+        + DeInit()
+    }
+
+    class GpioDriver_Context_t {
+        - initialized: bool
+        - pinConfig[32]: GpioDriver_PinConfig_t
+        - pinState[32]: GpioDriver_State_t
+        - irqCallback[32]: InterruptCallback
+    }
+
+    class GpioDriver_PinConfig_t {
+        - mode: Mode_t
+        - pull: Pull_t
+        - speed: Speed_t
+        - initialState: State_t
+    }
+
+    IGpioDriver --> GpioDriver_Context_t : manages\n(static instance)
+    GpioDriver_Context_t *-- GpioDriver_PinConfig_t : contains [32]
+    GpioDriver_Context_t --> "0..32" "InterruptCallback" : registers
+}
+
+note right of GpioDriver_Context_t
+    Static context variable
+    Tracks initialization state
+    Stores config per pin (32 max)
+    Maintains pin states
+    Stores interrupt callbacks
+end note
 @enduml

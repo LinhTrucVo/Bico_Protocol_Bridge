@@ -1,3 +1,44 @@
 @startuml i2cSlaveDriverStaticStructure
-class I2cSlaveDriver
+skinparam backgroundColor #FEFEFE
+
+package "i2cSlaveDriver" {
+    interface II2cSlaveDriver {
+        + Init(config)
+        + SetAddress(address)
+        + GetAddress()
+        + SetTxBuffer(data, length)
+        + SetRxBuffer(data, maxLength)
+        + GetRxLength()
+        + IsAddressed()
+        + RegisterRxCallback()
+        + RegisterTxCallback()
+        + RegisterAddressMatchCallback()
+        + DeInit()
+    }
+
+    class I2cSlaveDriver_Context_t {
+        - initialized: bool
+        - config: I2cSlaveDriver_Config_t
+        - pRxBuffer: uint8_t*
+        - rxMaxLength: uint16_t
+        - rxLength: uint16_t
+        - pTxBuffer: uint8_t*
+        - txLength: uint16_t
+        - rxCallback: RxCallback
+        - txCallback: TxCallback
+        - addressCallback: AddressCallback
+    }
+
+    II2cSlaveDriver --> I2cSlaveDriver_Context_t : manages
+    I2cSlaveDriver_Context_t --> "1" "RxBuffer" : stores
+    I2cSlaveDriver_Context_t --> "1" "TxBuffer" : stores
+    I2cSlaveDriver_Context_t --> "0..3" "Callbacks" : registers
+}
+
+note right of I2cSlaveDriver_Context_t
+    Static context variable
+    Manages Rx/Tx buffers
+    Tracks address match state
+    Multiple callbacks for events
+end note
 @enduml

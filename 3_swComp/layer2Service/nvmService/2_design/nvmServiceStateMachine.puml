@@ -1,5 +1,24 @@
 @startuml nvmServiceStateMachine
-[*] --> Idle
-Idle --> Busy : Store/Load
-Busy --> Idle : Done
+state Uninitialized
+state Initialized
+
+[*] --> Uninitialized
+
+Uninitialized --> Initialized : Init()
+
+Initialized --> Uninitialized : DeInit()
+
+Initialized --> Initialized : Save(pBlob)
+Initialized --> Initialized : Load(key, pData, maxLength)
+Initialized --> Initialized : Erase(key)
+Initialized --> Initialized : EraseAll()
+Initialized --> Initialized : Exists(key)
+Initialized --> Initialized : ComputeCrc(pData, length)
+
+note right of Initialized
+    Non-Volatile Memory Service
+    All operations require initialization
+    Multiple concurrent operations supported
+    CRC validation on load operations
+end note
 @enduml

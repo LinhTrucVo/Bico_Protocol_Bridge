@@ -1,6 +1,33 @@
 @startuml i2cMasterDriverSequenceDiagram
 actor Client
-participant I2cMasterDriver
-Client -> I2cMasterDriver : WriteRead()
-I2cMasterDriver --> Client : Status
+participant "i2cMasterDriver" as i2c
+participant "Context" as ctx
+
+Client -> i2c : Init(config)
+i2c -> ctx : Copy config
+ctx --> i2c : initialized=true, busy=false
+i2c --> Client : I2C_MASTER_STATUS_OK
+
+Client -> i2c : SetSpeed(I2C_SPEED_FAST)
+i2c -> ctx : config.speed = FAST
+ctx --> i2c : OK
+i2c --> Client : I2C_MASTER_STATUS_OK
+
+Client -> i2c : Write(0x50, data[], 10)
+i2c -> i2c : Validate initialized
+i2c -> ctx : busy = true
+ctx --> i2c : Processing
+i2c -> i2c : Invoke callback if set
+i2c -> ctx : busy = false
+i2c --> Client : I2C_MASTER_STATUS_OK
+
+Client -> i2c : ReadRegister(0x50, 0x01, data[], 1)
+i2c -> i2c : Write address+register
+i2c -> i2c : Read response
+i2c --> Client : I2C_MASTER_STATUS_OK + data
+
+Client -> i2c : IsBusy()
+i2c -> ctx : Get busy flag
+ctx --> i2c : false
+i2c --> Client : I2C_MASTER_STATUS_OK + !busy
 @enduml

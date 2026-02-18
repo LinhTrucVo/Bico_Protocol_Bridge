@@ -1,6 +1,23 @@
 @startuml deserializeStateMachine
-[*] --> Idle
-Idle --> Receiving : Append
-Receiving --> Parsed : Complete
-Parsed --> Idle : Reset
+state Uninitialized
+state Initialized
+
+[*] --> Uninitialized
+
+Uninitialized --> Initialized : Init()
+
+Initialized --> Uninitialized : DeInit()
+
+Initialized --> Initialized : ValidateFrame()
+Initialized --> Initialized : ParseFrame()
+Initialized --> Initialized : ComputeCrc()
+Initialized --> Initialized : GetCommandName()
+
+note right of Initialized
+    Frame parsing workflow:
+    1. ValidateFrame() checks structure and CRC
+    2. ParseFrame() extracts command and payload
+    3. Supports multiple parsing calls
+    4. Stateless operation
+end note
 @enduml

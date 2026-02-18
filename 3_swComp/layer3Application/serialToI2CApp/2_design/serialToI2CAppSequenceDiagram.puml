@@ -1,6 +1,23 @@
 @startuml serialToI2CAppSequenceDiagram
-actor Host
-participant SerialToI2CApp
-Host -> SerialToI2CApp : I2CWriteRead()
-SerialToI2CApp --> Host : Status
+actor Client
+participant "serialToI2CApp" as app
+participant "Context" as ctx
+
+Client -> app : Init()
+app -> ctx : Initialize I2C config
+ctx --> app : OK
+app --> Client : OK
+
+Client -> app : Run()
+app -> ctx : Set running = true
+ctx --> app : OK
+app --> Client : OK
+
+Client -> app : ProcessFrame(serialCmd)
+app -> app : Deserialize I2C command
+app -> app : Call i2cMasterDriver\nfor I2C transaction
+app -> ctx : Update transaction result
+ctx --> app : OK
+app -> app : Serialize I2C response
+app --> Client : response + frameLength
 @enduml

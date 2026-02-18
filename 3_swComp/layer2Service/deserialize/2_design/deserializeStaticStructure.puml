@@ -1,3 +1,61 @@
 @startuml deserializeStaticStructure
-class Deserialize
+skinparam backgroundColor #FEFEFE
+
+package "deserialize" {
+    interface IDeserialize {
+        + Init()
+        + DeInit()
+        + ValidateFrame(pFrame)
+        + ParseFrame(pFrame, pRequest)
+        + ComputeCrc(pData, length, pCrc)
+        + GetCommandName(command, pName)
+    }
+
+    class Deserialize_Context_t {
+        - initialized: bool
+    }
+
+    class Deserialize_Frame_t {
+        - pFrame: uint8_t[]
+        - frameLength: uint16_t
+    }
+
+    class Deserialize_Request_t {
+        - commandId: uint8_t
+        - sequenceId: uint8_t
+        - command: Deserialize_Command_t
+        - pPayload: uint8_t[]
+        - payloadLength: uint16_t
+    }
+
+    class Deserialize_Command_t {
+        ADC_CONFIG = 0x01
+        ADC_READ = 0x02
+        DIGITAL_WRITE = 0x03
+        DIGITAL_READ = 0x04
+        PWM_CONFIG = 0x05
+        PWM_START = 0x06
+        PWM_STOP = 0x07
+        I2C_WRITE = 0x08
+        I2C_READ = 0x09
+        SPI_TRANSFER = 0x0A
+        CONFIG_SAVE = 0x0B
+        CONFIG_LOAD = 0x0C
+    }
+
+    IDeserialize --> Deserialize_Context_t : manages\n(static instance)
+    IDeserialize --> Deserialize_Frame_t : validates
+    IDeserialize --> Deserialize_Request_t : produces
+    IDeserialize --> Deserialize_Command_t : maps
+}
+
+note right of Deserialize_Frame_t
+    Frame format:
+    [0] = commandId
+    [1] = sequenceId
+    [2] = reserved
+    [3-4] = payloadLength (LE)
+    [5..] = payload
+    [...] = CRC16
+end note
 @enduml

@@ -1,5 +1,35 @@
 @startuml configServiceStateMachine
-[*] --> Idle
-Idle --> Ready : Init
-Ready --> Idle : DeInit
+@startuml configServiceStateMachine
+state Uninitialized
+state Initialized
+
+[*] --> Uninitialized
+
+Uninitialized --> Initialized : Init()
+
+Initialized --> Uninitialized : DeInit()
+
+Initialized --> Initialized : SetSerialConfig()
+Initialized --> Initialized : GetSerialConfig()
+Initialized --> Initialized : SetAnalogChannelConfig()
+Initialized --> Initialized : GetAnalogChannelConfig()
+Initialized --> Initialized : SetDigitalPinConfig()
+Initialized --> Initialized : GetDigitalPinConfig()
+Initialized --> Initialized : SetPwmConfig()
+Initialized --> Initialized : GetPwmConfig()
+Initialized --> Initialized : SetI2cConfig()
+Initialized --> Initialized : GetI2cConfig()
+Initialized --> Initialized : SetSpiConfig()
+Initialized --> Initialized : GetSpiConfig()
+Initialized --> Initialized : ValidateAnalogChannelConfig()
+Initialized --> Initialized : ValidatePwmConfig()
+Initialized --> Initialized : ValidateI2cConfig()
+Initialized --> Initialized : ValidateSpiConfig()
+
+note right of Initialized
+    Any configuration operation
+    can be called multiple times
+    No state change during operations
+end note
+@enduml
 @enduml

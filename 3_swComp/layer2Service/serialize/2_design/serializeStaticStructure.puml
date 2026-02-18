@@ -1,3 +1,35 @@
 @startuml serializeStaticStructure
-class Serialize
+skinparam backgroundColor #FEFEFE
+
+package "serialize" {
+    interface ISerialize {
+        + Init()
+        + BuildFrame(message, buffer)
+        + BuildError(commandId, seqId, errorCode)
+        + BuildAnalogSamples(channelId, samples)
+        + BuildDigitalRead(pinId, state)
+        + BuildI2CRead(address, data, length)
+        + BuildSPITransfer(txData, rxData, length)
+        + ComputeCrc(data, length)
+        + DeInit()
+    }
+
+    class Serialize_Context_t {
+        - initialized: bool
+    }
+
+    class Serialize_Message_t {
+        - header: Message_Header_t
+        - pPayload: uint8_t[]
+        - payloadLength: uint16_t
+    }
+
+    ISerialize --> Serialize_Context_t : manages\n(static instance)
+    ISerialize --> Serialize_Message_t : processes
+}
+
+note right of Serialize_Context_t
+    Simple context tracking
+    initialization state
+end note
 @enduml
