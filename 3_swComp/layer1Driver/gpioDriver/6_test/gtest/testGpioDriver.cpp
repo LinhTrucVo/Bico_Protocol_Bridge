@@ -101,6 +101,46 @@ TEST_F(GpioDriver, GpioDriver_ReadPin_ValidPin_ReturnsOK)
 }
 
 //------------------------------------------------------------------------------
+// Test Cases for GpioDriverUnit_SetIOCapability
+//------------------------------------------------------------------------------
+TEST_F(GpioDriver, GpioDriver_SetIOCapability_ValidPin_ReturnsOK)
+{
+    // Arrange
+    // Init is required before calling SetIOCapability
+    call_GpioDriverUnit_Init();
+    
+    // Act
+    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(0, GPIO_IO_OPEN_DRAIN);
+    
+    // Assert
+    EXPECT_EQ(GPIO_STATUS_OK, status);
+}
+
+TEST_F(GpioDriver, GpioDriver_SetIOCapability_InvalidPin_ReturnsInvalid)
+{
+    // Arrange
+    call_GpioDriverUnit_Init();
+    
+    // Act
+    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(GPIO_MAX_PINS, GPIO_IO_OPEN_DRAIN);
+    
+    // Assert
+    EXPECT_EQ(GPIO_STATUS_INVALID_PIN, status);
+}
+
+TEST_F(GpioDriver, GpioDriver_SetIOCapability_NotInitialized_ReturnsNotInit)
+{
+    // Arrange
+    // No Init call
+    
+    // Act
+    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(0, GPIO_IO_HIGH_CURRENT);
+    
+    // Assert
+    EXPECT_EQ(GPIO_STATUS_NOT_INITIALIZED, status);
+}
+
+//------------------------------------------------------------------------------
 // Test Cases for GpioDriverUnit_DeInit
 //------------------------------------------------------------------------------
 TEST_F(GpioDriver, GpioDriver_DeInit_ValidState_ReturnsOK)

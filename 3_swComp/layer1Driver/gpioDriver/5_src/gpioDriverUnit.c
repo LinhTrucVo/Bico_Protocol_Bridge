@@ -47,6 +47,7 @@ GpioDriver_Status_t GpioDriverUnit_Init(void)
         gpioContext.pinConfig[i].pull = GPIO_CFG_DEFAULT_PULL;
         gpioContext.pinConfig[i].speed = GPIO_CFG_DEFAULT_SPEED;
         gpioContext.pinConfig[i].initialState = GPIO_STATE_LOW;
+        gpioContext.pinConfig[i].ioCapability = GPIO_CFG_DEFAULT_IO_CAPABILITY;
         gpioContext.pinState[i] = GPIO_STATE_LOW;
         gpioContext.irqCallback[i] = NULL;
     }
@@ -67,6 +68,9 @@ GpioDriver_Status_t GpioDriverUnit_ConfigurePin(GpioDriver_Pin_t pin, const Gpio
     // TODO: Add vendor-specific HAL pin configuration here
     gpioContext.pinConfig[pin] = *pConfig;
     gpioContext.pinState[pin] = pConfig->initialState;
+    if (pConfig->ioCapability == 0) {
+        gpioContext.pinConfig[pin].ioCapability = GPIO_CFG_DEFAULT_IO_CAPABILITY;
+    }
     return GPIO_STATUS_OK;
 }
 
@@ -112,6 +116,22 @@ GpioDriver_Status_t GpioDriverUnit_SetSpeed(GpioDriver_Pin_t pin, GpioDriver_Spe
     }
 
     gpioContext.pinConfig[pin].speed = speed;
+    return GPIO_STATUS_OK;
+}
+
+GpioDriver_Status_t GpioDriverUnit_SetIOCapability(GpioDriver_Pin_t pin, GpioDriver_IOCapability_t capability)
+{
+    if (!gpioContext.initialized)
+    {
+        return GPIO_STATUS_NOT_INITIALIZED;
+    }
+    if (!GpioDriverUnit_IsValidPin(pin))
+    {
+        return GPIO_STATUS_INVALID_PIN;
+    }
+
+    // TODO: Add vendor-specific HAL IO capability configuration here
+    gpioContext.pinConfig[pin].ioCapability = capability;
     return GPIO_STATUS_OK;
 }
 

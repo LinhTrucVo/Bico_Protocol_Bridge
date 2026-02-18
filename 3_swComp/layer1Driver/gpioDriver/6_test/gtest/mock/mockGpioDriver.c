@@ -46,6 +46,11 @@ GpioDriver_Status_t call_GpioDriverUnit_SetSpeed(GpioDriver_Pin_t pin, GpioDrive
     return GpioDriverUnit_SetSpeed(pin, speed);
 }
 
+GpioDriver_Status_t call_GpioDriverUnit_SetIOCapability(GpioDriver_Pin_t pin, GpioDriver_IOCapability_t capability)
+{
+    return GpioDriverUnit_SetIOCapability(pin, capability);
+}
+
 GpioDriver_Status_t call_GpioDriverUnit_WritePin(GpioDriver_Pin_t pin, GpioDriver_State_t state)
 {
     return GpioDriverUnit_WritePin(pin, state);

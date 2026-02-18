@@ -26,6 +26,7 @@ GpioDriver_Status_t call_GpioDriverUnit_ConfigurePin(GpioDriver_Pin_t pin, const
 GpioDriver_Status_t call_GpioDriverUnit_SetMode(GpioDriver_Pin_t pin, GpioDriver_Mode_t mode);
 GpioDriver_Status_t call_GpioDriverUnit_SetPull(GpioDriver_Pin_t pin, GpioDriver_Pull_t pull);
 GpioDriver_Status_t call_GpioDriverUnit_SetSpeed(GpioDriver_Pin_t pin, GpioDriver_Speed_t speed);
+GpioDriver_Status_t call_GpioDriverUnit_SetIOCapability(GpioDriver_Pin_t pin, GpioDriver_IOCapability_t capability);
 GpioDriver_Status_t call_GpioDriverUnit_WritePin(GpioDriver_Pin_t pin, GpioDriver_State_t state);
 GpioDriver_Status_t call_GpioDriverUnit_ReadPin(GpioDriver_Pin_t pin, GpioDriver_State_t *pState);
 GpioDriver_Status_t call_GpioDriverUnit_TogglePin(GpioDriver_Pin_t pin);

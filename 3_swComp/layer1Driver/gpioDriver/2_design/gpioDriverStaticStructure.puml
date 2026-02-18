@@ -8,6 +8,7 @@ package "gpioDriver" {
         + SetMode(pin, mode)
         + SetPull(pin, pull)
         + SetSpeed(pin, speed)
+        + SetIOCapability(pin, capability)
         + WritePin(pin, state)
         + ReadPin(pin)
         + TogglePin(pin)
@@ -28,6 +29,7 @@ package "gpioDriver" {
         - pull: Pull_t
         - speed: Speed_t
         - initialState: State_t
+        - ioCapability: IOCapability_t
     }
 
     IGpioDriver --> GpioDriver_Context_t : manages\n(static instance)

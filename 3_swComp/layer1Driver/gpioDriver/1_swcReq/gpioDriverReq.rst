@@ -31,3 +31,6 @@ Req-gpioDriver-005: The component shall enable and disable GPIO interrupts.
 
 Req-gpioDriver-006: The component shall return INVALID_PIN for invalid pin IDs.
    Verification: APIs return INVALID_PIN for out-of-range pins.
+
+Req-gpioDriver-007: The component shall set IO capability (standard, open-drain, open-source, high-current) for a GPIO pin.
+   Verification: SetIOCapability applies the requested IO capability configuration for valid pins.

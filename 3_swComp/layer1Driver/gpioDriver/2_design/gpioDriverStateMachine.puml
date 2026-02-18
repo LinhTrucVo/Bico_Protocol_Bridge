@@ -9,7 +9,7 @@ Uninitialized --> Initialized : Init()\n[Initialize all pins]
 
 Initialized --> Uninitialized : DeInit()\n[Clear all configs]
 
-Initialized --> Initialized : ConfigurePin()\nSetMode()\nSetPull()\nSetSpeed()\nWritePin()\nReadPin()\nTogglePin()
+Initialized --> Initialized : ConfigurePin()\nSetMode()\nSetPull()\nSetSpeed()\nSetIOCapability()\nWritePin()\nReadPin()\nTogglePin()
 
 Initialized --> InterruptConfigured : EnableInterrupt()\n[Register callback]
 

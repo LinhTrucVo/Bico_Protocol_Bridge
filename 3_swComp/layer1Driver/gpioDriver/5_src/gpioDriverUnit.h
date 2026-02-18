@@ -64,6 +64,14 @@ typedef enum
     GPIO_INTERRUPT_BOTH
 } GpioDriver_InterruptEdge_t;
 
+typedef enum
+{
+    GPIO_IO_STANDARD = 0,
+    GPIO_IO_OPEN_DRAIN,
+    GPIO_IO_OPEN_SOURCE,
+    GPIO_IO_HIGH_CURRENT
+} GpioDriver_IOCapability_t;
+
 typedef uint8_t GpioDriver_Pin_t;
 
 typedef struct
@@ -72,6 +80,7 @@ typedef struct
     GpioDriver_Pull_t pull;
     GpioDriver_Speed_t speed;
     GpioDriver_State_t initialState;
+    GpioDriver_IOCapability_t ioCapability;
 } GpioDriver_PinConfig_t;
 
 typedef void (*GpioDriver_InterruptCallback_t)(GpioDriver_Pin_t pin);
@@ -88,6 +97,7 @@ GpioDriver_Status_t GpioDriverUnit_ConfigurePin(GpioDriver_Pin_t pin, const Gpio
 GpioDriver_Status_t GpioDriverUnit_SetMode(GpioDriver_Pin_t pin, GpioDriver_Mode_t mode);
 GpioDriver_Status_t GpioDriverUnit_SetPull(GpioDriver_Pin_t pin, GpioDriver_Pull_t pull);
 GpioDriver_Status_t GpioDriverUnit_SetSpeed(GpioDriver_Pin_t pin, GpioDriver_Speed_t speed);
+GpioDriver_Status_t GpioDriverUnit_SetIOCapability(GpioDriver_Pin_t pin, GpioDriver_IOCapability_t capability);
 GpioDriver_Status_t GpioDriverUnit_WritePin(GpioDriver_Pin_t pin, GpioDriver_State_t state);
 GpioDriver_Status_t GpioDriverUnit_ReadPin(GpioDriver_Pin_t pin, GpioDriver_State_t *pState);
 GpioDriver_Status_t GpioDriverUnit_TogglePin(GpioDriver_Pin_t pin);
