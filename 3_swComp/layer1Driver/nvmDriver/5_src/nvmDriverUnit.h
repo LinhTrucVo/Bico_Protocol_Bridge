@@ -9,10 +9,23 @@
 #include "nvmDriverCfg.h"
 
 //============================================================================
-// Forward declarations (types defined in nvmDriver.h)
+// Type Definitions
 //============================================================================
 typedef struct NvmDriver_Config_t NvmDriver_Config_t;
-typedef enum NvmDriver_Status_t NvmDriver_Status_t;
+
+typedef enum
+{
+    NVMDRIVER_OK,
+    NVMDRIVER_ERROR,
+    NVMDRIVER_BUSY,
+    NVMDRIVER_INVALID_ADDRESS,
+    NVMDRIVER_INVALID_LENGTH,
+    NVMDRIVER_WRITE_PROTECTED,
+    NVMDRIVER_VERIFY_FAILED,
+    NVMDRIVER_TIMEOUT,
+    NVMDRIVER_NOT_INITIALIZED
+} NvmDriver_Status_t;
+
 typedef uint32_t NvmDriver_Address_t;
 typedef void (*NvmDriver_OperationCallback_t)(NvmDriver_Status_t status);
 
