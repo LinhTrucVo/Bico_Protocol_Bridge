@@ -13,12 +13,33 @@ The system is organized into a three-layer architecture, each with distinct resp
   for hardware peripherals (UART, I2C, SPI, ADC, GPIO, PWM, NVM) without exposing vendor-specific implementations.
   Drivers handle hardware initialization, configuration, and basic operations.
 
+..  toctree::
+    :maxdepth: 1
+
+    layer1Driver/adcDriver/index.rst
+    layer1Driver/gpioDriver/index.rst
+    layer1Driver/i2cMasterDriver/index.rst
+    layer1Driver/i2cSlaveDriver/index.rst
+    layer1Driver/nvmDriver/index.rst
+    layer1Driver/pwmDriver/index.rst
+    layer1Driver/serialDriver/index.rst
+    layer1Driver/spiMasterDriver/index.rst
+    layer1Driver/spiSlaveDriver/index.rst
+
 **Layer 2: Service Layer**
   Mid-level services that provide business logic and data processing. This layer includes:
   
   - **Protocol Services**: Command parsing (Serialize) and response formatting (Deserialize)
   - **Data Services**: Configuration management
   - **Storage Services**: High-level NVM operations with integrity checking and wear leveling
+
+..  toctree::
+    :maxdepth: 1
+
+    layer2Service/configService/index.rst
+    layer2Service/deserialize/index.rst
+    layer2Service/nvmService/index.rst
+    layer2Service/serialize/index.rst
 
 **Layer 3: Application Layer**
   High-level application modules that implement the system features. The Central App Controller coordinates 
@@ -28,6 +49,16 @@ The system is organized into a three-layer architecture, each with distinct resp
   - SerialToDigital: GPIO control and PWM generation
   - SerialToI2C: I2C master/slave bridge operations
   - SerialToSPI: SPI master/slave bridge operations
+
+..  toctree::
+    :maxdepth: 1
+
+    layer3Application/centralAppController/index.rst
+    layer3Application/serialToAnalogApp/index.rst
+    layer3Application/serialToDigitalApp/index.rst
+    layer3Application/serialToI2CApp/index.rst
+    layer3Application/serialToSPIApp/index.rst
+
 
 Information Flow
 ****************
@@ -55,42 +86,3 @@ Design Principles
 - **Modularity**: Functions can be developed, tested, and maintained independently
 - **Scalability**: New features can be added by creating new application modules
 - **Reusability**: Services and drivers can be shared across multiple applications
-
-Layer 1: Driver Layer
-**********************
-
-..  toctree::
-    :maxdepth: 1
-
-    layer1_driver/adcDriver/index.rst
-    layer1_driver/gpioDriver/index.rst
-    layer1_driver/i2cMasterDriver/index.rst
-    layer1_driver/i2cSlaveDriver/index.rst
-    layer1_driver/nvmDriver/index.rst
-    layer1_driver/pwmDriver/index.rst
-    layer1_driver/serialDriver/index.rst
-    layer1_driver/spiMasterDriver/index.rst
-    layer1_driver/spiSlaveDriver/index.rst
-
-Layer 2: Service Layer
-**********************
-
-..  toctree::
-    :maxdepth: 1
-
-    layer2_service/configService/index.rst
-    layer2_service/deserialize/index.rst
-    layer2_service/nvmService/index.rst
-    layer2_service/serialize/index.rst
-
-Layer 3: Application Layer
-***************************
-
-..  toctree::
-    :maxdepth: 1
-
-    layer3_application/centralAppController/index.rst
-    layer3_application/serialToAnalogApp/index.rst
-    layer3_application/serialToDigitalApp/index.rst
-    layer3_application/serialToI2CApp/index.rst
-    layer3_application/serialToSPIApp/index.rst
