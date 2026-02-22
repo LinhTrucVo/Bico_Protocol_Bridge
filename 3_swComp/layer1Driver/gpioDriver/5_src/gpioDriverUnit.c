@@ -37,8 +37,13 @@ static bool GpioDriverUnit_IsValidPin(GpioDriver_Pin_t pin);
 // Public Function Implementations
 //============================================================================
 
-GpioDriver_Status_t GpioDriverUnit_Init(void)
+GpioDriver_Status_t GpioDriverUnit_Init(const GpioDriver_Config_t *pConfig)
 {
+    if (pConfig == NULL)
+    {
+        return GPIO_STATUS_INVALID_PIN;
+    }
+
     // TODO: Add vendor-specific HAL initialization here
     gpioContext.initialized = true;
     for (uint8_t i = 0; i < GPIO_MAX_PINS; i++)

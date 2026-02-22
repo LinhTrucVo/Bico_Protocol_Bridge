@@ -32,7 +32,7 @@ extern uint8_t Comp1_PublicVariable;
 //============================================================================
 // Public Functions
 //============================================================================
-void Comp1Unit1PublicFunction(void);
+int Comp1Unit1PublicFunction(int input);
 
 
 #endif /* COMP1UNIT1_H */

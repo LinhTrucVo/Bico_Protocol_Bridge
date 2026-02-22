@@ -10,8 +10,13 @@ typedef struct
 
 static PwmDriver_Context_t context = {0};
 
-PwmDriver_Status_t PwmDriverUnit_Init(void)
+PwmDriver_Status_t PwmDriverUnit_Init(const PwmDriver_Config_t *pConfig)
 {
+    if (pConfig == NULL)
+    {
+        return PWM_STATUS_ERROR;
+    }
+
     // TODO: Add vendor-specific HAL initialization here
     context.initialized = true;
     for (uint8_t i = 0; i < PWM_MAX_CHANNELS; i++)
@@ -20,7 +25,8 @@ PwmDriver_Status_t PwmDriverUnit_Init(void)
         context.channelConfig[i].dutyCycle = PWM_CFG_DEFAULT_DUTY;
         context.channelConfig[i].polarity = PWM_POLARITY_NORMAL;
         context.channelConfig[i].alignment = PWM_ALIGNMENT_EDGE;
-        context.channelConfig[i].enableDeadTime = false;
+        context.channelConfig[i].dmaEnabled = pConfig->enableDma;
+        context.channelConfig[i].enableDeadTime = pConfig->enableDeadTime;
         context.channelConfig[i].deadTimeNs = 0;
         context.channelRunning[i] = false;
     }
