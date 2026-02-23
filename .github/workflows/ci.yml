@@ -22,7 +22,7 @@ jobs:
             -v ${{ github.workspace }}/bico_gtest_docker:/workspaces/bico_gtest_docker \
             -v ${{ github.workspace }}:/workspaces/bico_gtest_docker/project_under_test \
             bico_gtest \
-            bash -c "/workspaces/bico_gtest_docker/tool/coverage.sh")
+            bash -c "sudo /workspaces/bico_gtest_docker/tool/coverage.sh")
           docker start -a "$CONTAINER_ID"
           docker cp "$CONTAINER_ID":/workspaces/bico_gtest_docker/_build ./ut_result
           docker rm "$CONTAINER_ID"
