@@ -19,6 +19,7 @@ jobs:
       - name: Run unit tests and copy results
         run: |
           CONTAINER_ID=$(docker create \
+            -v ${{ github.workspace }}/bico_gtest_docker:/workspaces/bico_gtest_docker \
             -v ${{ github.workspace }}:/workspaces/bico_gtest_docker/project_under_test \
             bico_gtest \
             bash -c "/workspaces/bico_gtest_docker/tool/coverage.sh")
@@ -47,6 +48,7 @@ jobs:
       - name: Run sphinx-build in container
         run: |
           CONTAINER_ID=$(docker create \
+            -v ${{ github.workspace }}/bico_rst_docker:/workspaces/bico_rst_docker \
             -v ${{ github.workspace }}:/workspaces/bico_rst_docker/project_doc \
             bico_rst \
             bash -c "cd /workspaces/bico_rst_docker/project_doc && sphinx-build -b html . /workspaces/bico_rst_docker/_build")
