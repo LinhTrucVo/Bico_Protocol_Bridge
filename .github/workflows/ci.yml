@@ -51,7 +51,7 @@ jobs:
             -v ${{ github.workspace }}/bico_rst_docker:/workspaces/bico_rst_docker \
             -v ${{ github.workspace }}:/workspaces/bico_rst_docker/project_doc \
             bico_rst \
-            bash -c "cd /workspaces/bico_rst_docker/project_doc && sphinx-build -b html . /workspaces/bico_rst_docker/_build")
+            bash -c "cd /workspaces/bico_rst_docker/project_doc && sudo sphinx-build -b html . /workspaces/bico_rst_docker/_build")
           docker start -a "$CONTAINER_ID"
           docker cp "$CONTAINER_ID":/workspaces/bico_rst_docker/_build ./doc_gen_artifact
           docker rm "$CONTAINER_ID"
