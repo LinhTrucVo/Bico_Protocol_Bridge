@@ -21,9 +21,9 @@ DEFINE_FFF_GLOBALS;
 // Static function wrapper definitions
 //============================================================================
 
-PwmDriver_Status_t call_PwmDriverUnit_Init(void)
+PwmDriver_Status_t call_PwmDriverUnit_Init(const PwmDriver_Config_t *pConfig)
 {
-    return PwmDriverUnit_Init();
+    return PwmDriverUnit_Init(pConfig);
 }
 
 PwmDriver_Status_t call_PwmDriverUnit_ConfigureChannel(PwmDriver_Channel_t channel, const PwmDriver_ChannelConfig_t *pConfig)

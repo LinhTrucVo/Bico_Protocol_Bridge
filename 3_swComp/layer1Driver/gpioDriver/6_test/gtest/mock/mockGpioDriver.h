@@ -21,7 +21,7 @@
 // Static function wrapper declarations
 //============================================================================
 
-GpioDriver_Status_t call_GpioDriverUnit_Init(void);
+GpioDriver_Status_t call_GpioDriverUnit_Init(const GpioDriver_Config_t *pConfig);
 GpioDriver_Status_t call_GpioDriverUnit_ConfigurePin(GpioDriver_Pin_t pin, const GpioDriver_PinConfig_t *pConfig);
 GpioDriver_Status_t call_GpioDriverUnit_SetMode(GpioDriver_Pin_t pin, GpioDriver_Mode_t mode);
 GpioDriver_Status_t call_GpioDriverUnit_SetPull(GpioDriver_Pin_t pin, GpioDriver_Pull_t pull);

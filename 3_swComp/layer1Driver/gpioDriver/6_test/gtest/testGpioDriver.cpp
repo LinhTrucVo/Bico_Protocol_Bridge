@@ -35,10 +35,10 @@ protected:
 TEST_F(GpioDriver, GpioDriver_Init_ValidConfig_ReturnsOK)
 {
     // Arrange
-    // ... setup code ...
+    GpioDriver_Config_t config = {false, false};
     
     // Act
-    GpioDriver_Status_t status = call_GpioDriverUnit_Init();
+    GpioDriver_Status_t status = call_GpioDriverUnit_Init(&config);
     
     // Assert
     EXPECT_EQ(GPIO_STATUS_OK, status);
@@ -106,8 +106,8 @@ TEST_F(GpioDriver, GpioDriver_ReadPin_ValidPin_ReturnsOK)
 TEST_F(GpioDriver, GpioDriver_SetIOCapability_ValidPin_ReturnsOK)
 {
     // Arrange
-    // Init is required before calling SetIOCapability
-    call_GpioDriverUnit_Init();
+    GpioDriver_Config_t config = {false, false};
+    call_GpioDriverUnit_Init(&config);
     
     // Act
     GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(0, GPIO_IO_DRIVE_CAP_LV4);
@@ -119,7 +119,8 @@ TEST_F(GpioDriver, GpioDriver_SetIOCapability_ValidPin_ReturnsOK)
 TEST_F(GpioDriver, GpioDriver_SetIOCapability_InvalidPin_ReturnsInvalid)
 {
     // Arrange
-    call_GpioDriverUnit_Init();
+    GpioDriver_Config_t config = {false, false};
+    call_GpioDriverUnit_Init(&config);
     
     // Act
     GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(GPIO_MAX_PINS, GPIO_IO_DRIVE_CAP_LV4);

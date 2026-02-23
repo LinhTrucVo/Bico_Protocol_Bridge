@@ -35,8 +35,10 @@ protected:
 TEST_F(PwmDriver, PwmDriver_Init_ValidConfig_ReturnsOK)
 {
     // Arrange
+    PwmDriver_Config_t config = {false, false};
+    
     // Act
-    PwmDriver_Status_t status = call_PwmDriverUnit_Init();
+    PwmDriver_Status_t status = call_PwmDriverUnit_Init(&config);
     
     // Assert
     EXPECT_EQ(PWM_STATUS_OK, status);
@@ -48,6 +50,7 @@ TEST_F(PwmDriver, PwmDriver_Init_ValidConfig_ReturnsOK)
 TEST_F(PwmDriver, PwmDriver_ConfigureChannel_ValidChannel_ReturnsOK)
 {
     // Arrange
+    PwmDriver_Config_t config = {false, false};
     PwmDriver_ChannelConfig_t cfg = {
         1000,
         5000,
@@ -56,7 +59,7 @@ TEST_F(PwmDriver, PwmDriver_ConfigureChannel_ValidChannel_ReturnsOK)
         false,
         0
     };
-    call_PwmDriverUnit_Init();
+    call_PwmDriverUnit_Init(&config);
     
     // Act
     PwmDriver_Status_t status = call_PwmDriverUnit_ConfigureChannel(PWM_CHANNEL_0, &cfg);
@@ -71,6 +74,7 @@ TEST_F(PwmDriver, PwmDriver_ConfigureChannel_ValidChannel_ReturnsOK)
 TEST_F(PwmDriver, PwmDriver_StartChannel_ValidChannel_ReturnsOK)
 {
     // Arrange
+    PwmDriver_Config_t config = {false, false};
     PwmDriver_ChannelConfig_t cfg = {
         1000,
         5000,
@@ -79,7 +83,7 @@ TEST_F(PwmDriver, PwmDriver_StartChannel_ValidChannel_ReturnsOK)
         false,
         0
     };
-    call_PwmDriverUnit_Init();
+    call_PwmDriverUnit_Init(&config);
     call_PwmDriverUnit_ConfigureChannel(PWM_CHANNEL_0, &cfg);
     
     // Act

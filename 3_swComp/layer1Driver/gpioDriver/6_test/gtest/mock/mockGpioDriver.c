@@ -21,9 +21,9 @@ DEFINE_FFF_GLOBALS;
 // Static function wrapper definitions
 //============================================================================
 
-GpioDriver_Status_t call_GpioDriverUnit_Init(void)
+GpioDriver_Status_t call_GpioDriverUnit_Init(const GpioDriver_Config_t *pConfig)
 {
-    return GpioDriverUnit_Init();
+    return GpioDriverUnit_Init(pConfig);
 }
 
 GpioDriver_Status_t call_GpioDriverUnit_ConfigurePin(GpioDriver_Pin_t pin, const GpioDriver_PinConfig_t *pConfig)

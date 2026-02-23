@@ -21,7 +21,7 @@
 // Static function wrapper declarations
 //============================================================================
 
-PwmDriver_Status_t call_PwmDriverUnit_Init(void);
+PwmDriver_Status_t call_PwmDriverUnit_Init(const PwmDriver_Config_t *pConfig);
 PwmDriver_Status_t call_PwmDriverUnit_ConfigureChannel(PwmDriver_Channel_t channel, const PwmDriver_ChannelConfig_t *pConfig);
 PwmDriver_Status_t call_PwmDriverUnit_SetFrequency(PwmDriver_Channel_t channel, uint32_t frequency);
 PwmDriver_Status_t call_PwmDriverUnit_SetDutyCycle(PwmDriver_Channel_t channel, uint16_t dutyCycle);
