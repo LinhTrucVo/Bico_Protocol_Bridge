@@ -1,40 +1,52 @@
-@startuml
-title Deserialize (Command Parser) - Dynamic Behaviour
+﻿@startuml
+title Deserialize (UDS Request Parser) - Dynamic Behaviour
 
 participant "Serial Driver" as SD
 participant "Deserialize" as DES
 participant "Central App Controller" as CAC
 
-== Receive and Parse Command ==
-SD -> DES : ReceiveData("ADC:READ:CH1\r\n")
-DES -> DES : DetectCommandDelimiter("\r\n")
-DES -> DES : Tokenize("ADC:READ:CH1")
-
-alt Valid Syntax
-    DES -> DES : ParseCommandType() -> ADC_READ
-    DES -> DES : ExtractParameters() -> {channel: "CH1"}
-    DES -> DES : ValidateParameters()
-    DES -> CAC : DispatchCommand(ADC_READ, {channel: 1})
+== SID 0x22 ReadDataByIdentifier ==
+SD -> DES : ReceiveFrame([0x22, 0x10, 0x01])
+DES -> DES : ExtractSID() -> 0x22
+DES -> DES : DecodeDID() -> 0x1001
+alt Valid frame (length >= 3)
+    DES -> CAC : Dispatch(UDS_Request{sid=0x22, did=0x1001})
     CAC --> DES : ACK
-else Invalid Syntax
-    DES -> DES : DetectSyntaxError()
-    DES -> CAC : ReportError(SYNTAX_ERROR, position)
+else Malformed frame (length < 3)
+    DES -> CAC : ReportError(requestSID=0x22, nrc=0x13)
     CAC --> DES : Error_Acknowledged
 end
 
-== Complex Command Example ==
-SD -> DES : ReceiveData("CONFIG:ADC:CH2:RATE:1000:RES:12\r\n")
-DES -> DES : Tokenize() -> ["CONFIG", "ADC", "CH2", "RATE", "1000", "RES", "12"]
-DES -> DES : ParseCommandType() -> CONFIG_ADC
-DES -> DES : ExtractParameters() -> {channel: 2, rate: 1000, resolution: 12}
-DES -> DES : ValidateParameters()
-
-alt All Parameters Valid
-    DES -> CAC : DispatchCommand(CONFIG_ADC, params)
-    CAC --> DES : SUCCESS
-else Invalid Parameter
-    DES -> CAC : ReportError(INVALID_PARAM, param_name)
+== SID 0x2E WriteDataByIdentifier ==
+SD -> DES : ReceiveFrame([0x2E, 0x10, 0x01, 0x04, 0x00])
+DES -> DES : ExtractSID() -> 0x2E
+DES -> DES : DecodeDID() -> 0x1001
+DES -> DES : ExtractPayload() -> [0x04, 0x00]
+alt Valid frame (length > 3)
+    DES -> CAC : Dispatch(UDS_Request{sid=0x2E, did=0x1001, data=[0x04,0x00]})
+    CAC --> DES : ACK
+else Malformed frame (no data after DID)
+    DES -> CAC : ReportError(requestSID=0x2E, nrc=0x13)
     CAC --> DES : Error_Acknowledged
 end
+
+== SID 0x31 RoutineControl ==
+SD -> DES : ReceiveFrame([0x31, 0x01, 0x02, 0x00])
+DES -> DES : ExtractSID() -> 0x31
+DES -> DES : DecodeRoutineControlType() -> 0x01 (startRoutine)
+DES -> DES : DecodeRoutineID() -> 0x0200
+alt Valid frame (length >= 4)
+    DES -> CAC : Dispatch(UDS_Request{sid=0x31, routineControlType=0x01, routineID=0x0200})
+    CAC --> DES : ACK
+else Malformed frame
+    DES -> CAC : ReportError(requestSID=0x31, nrc=0x13)
+    CAC --> DES : Error_Acknowledged
+end
+
+== Unsupported SID ==
+SD -> DES : ReceiveFrame([0x10, ...])
+DES -> DES : ExtractSID() -> 0x10 (not in {0x22, 0x2E, 0x31})
+DES -> CAC : ReportError(requestSID=0x10, nrc=0x11)
+CAC --> DES : Error_Acknowledged
 
 @enduml

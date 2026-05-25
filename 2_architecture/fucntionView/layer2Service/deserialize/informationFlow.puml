@@ -1,17 +1,48 @@
-@startuml
-title Deserialize (Command Parser) - Information Flow
+﻿@startuml
+title Deserialize (UDS Request Parser) - Information Flow
 
-package "Command Parsing Flow" {
+package "SID 0x22 Read Request" {
     component "Serial Driver" as SD1
     component "Deserialize" as DES1
     component "Central App Controller" as CAC1
-    
-    SD1 -down-> DES1 : RX_Data("I2C:WRITE:0x50:0x10:0xAA\\r\\n")
-    DES1 -down-> DES1 : Tokenize command string
-    DES1 -down-> DES1 : Parse command type
-    DES1 -down-> DES1 : Extract parameters
-    DES1 -down-> DES1 : Validate syntax
-    DES1 -down-> CAC1 : Parsed_Command{type=I2C_WRITE,\naddr=0x50, params...} / Parse_Error
+
+    SD1 -down-> DES1 : RX_Frame([0x22, 0x10, 0x01])
+    DES1 -down-> DES1 : SID = 0x22 (ReadDataByIdentifier)
+    DES1 -down-> DES1 : DID = 0x1001
+    DES1 -down-> CAC1 : UDS_Request{sid=0x22, did=0x1001}
+}
+
+package "SID 0x2E Write Request" {
+    component "Serial Driver" as SD2
+    component "Deserialize" as DES2
+    component "Central App Controller" as CAC2
+
+    SD2 -down-> DES2 : RX_Frame([0x2E, 0x10, 0x01, 0x04, 0x00])
+    DES2 -down-> DES2 : SID = 0x2E (WriteDataByIdentifier)
+    DES2 -down-> DES2 : DID = 0x1001, data = [0x04, 0x00]
+    DES2 -down-> CAC2 : UDS_Request{sid=0x2E, did=0x1001, data=[0x04,0x00]}
+}
+
+package "SID 0x31 Routine Control Request" {
+    component "Serial Driver" as SD3
+    component "Deserialize" as DES3
+    component "Central App Controller" as CAC3
+
+    SD3 -down-> DES3 : RX_Frame([0x31, 0x01, 0x02, 0x00])
+    DES3 -down-> DES3 : SID = 0x31 (RoutineControl)
+    DES3 -down-> DES3 : routineControlType = 0x01 (startRoutine)
+    DES3 -down-> DES3 : routineID = 0x0200
+    DES3 -down-> CAC3 : UDS_Request{sid=0x31, routineControlType=0x01, routineID=0x0200}
+}
+
+package "Unsupported SID" {
+    component "Serial Driver" as SD4
+    component "Deserialize" as DES4
+    component "Central App Controller" as CAC4
+
+    SD4 -down-> DES4 : RX_Frame([0x10, ...])
+    DES4 -down-> DES4 : SID = 0x10 (not supported)
+    DES4 -down-> CAC4 : UDS_Error{requestSID=0x10, nrc=0x11}
 }
 
 @enduml

@@ -1,37 +1,34 @@
-@startuml
-title Serialize (Response Formatter) - Dynamic Behaviour
+﻿@startuml
+title Serialize (UDS Response Builder) - Dynamic Behaviour
 
 participant "Central App Controller" as CAC
 participant "Serialize" as SER
 participant "Serial Driver" as SD
 
-== Format ADC Read Response ==
-CAC -> SER : FormatResponse(ADC_READ_RESPONSE, {channel:1, value:2048})
-SER -> SER : DetermineFormat() -> ASCII
-SER -> SER : BuildResponseString()
-SER -> SER : response = "ADC:CH1:VALUE:2048"
-SER -> SER : AddDelimiters(response)
-SER -> SD : Transmit("ADC:CH1:VALUE:2048\\r\\n")
+== SID 0x22 ReadDataByIdentifier Response ==
+CAC -> SER : BuildResponse(sid=0x22, did=0x1001, data=[0x04,0x00])
+SER -> SER : responseSID = 0x22 + 0x40 = 0x62
+SER -> SER : Encode DID big-endian: [0x10, 0x01]
+SER -> SER : frame = [0x62, 0x10, 0x01, 0x04, 0x00]
+SER -> SD : Transmit(frame)
 
-== Format I2C Read Response (Hex Format) ==
-CAC -> SER : FormatResponse(I2C_READ_RESPONSE, {addr:0x50, data:[0xAA, 0xBB, 0xCC]})
-SER -> SER : DetermineFormat() -> HEX
-SER -> SER : ConvertBytesToHex([0xAA, 0xBB, 0xCC])
-SER -> SER : response = "I2C:READ:0x50:DATA:AA BB CC"
-SER -> SER : AddDelimiters(response)
-SER -> SD : Transmit("I2C:READ:0x50:DATA:AA BB CC\\r\\n")
+== SID 0x2E WriteDataByIdentifier Response ==
+CAC -> SER : BuildResponse(sid=0x2E, did=0x1001)
+SER -> SER : responseSID = 0x2E + 0x40 = 0x6E
+SER -> SER : Encode DID big-endian: [0x10, 0x01]
+SER -> SER : frame = [0x6E, 0x10, 0x01]
+SER -> SD : Transmit(frame)
 
-== Format Error Response ==
-CAC -> SER : FormatError(ERROR_TIMEOUT, "I2C timeout")
-SER -> SER : BuildErrorString()
-SER -> SER : error = "ERROR:TIMEOUT:I2C timeout"
-SER -> SER : AddDelimiters(error)
-SER -> SD : Transmit("ERROR:TIMEOUT:I2C timeout\\r\\n")
+== SID 0x31 RoutineControl Response ==
+CAC -> SER : BuildResponse(sid=0x31, routineControlType=0x01, routineID=0x0200, status=0x00)
+SER -> SER : responseSID = 0x31 + 0x40 = 0x71
+SER -> SER : Encode routineID big-endian: [0x02, 0x00]
+SER -> SER : frame = [0x71, 0x01, 0x02, 0x00, 0x00]
+SER -> SD : Transmit(frame)
 
-== Format Simple Acknowledgment ==
-CAC -> SER : FormatAck(SUCCESS)
-SER -> SER : ack = "OK"
-SER -> SER : AddDelimiters(ack)
-SER -> SD : Transmit("OK\\r\\n")
+== Negative Response ==
+CAC -> SER : BuildNegativeResponse(requestSID=0x22, nrc=0x31)
+SER -> SER : frame = [0x7F, 0x22, 0x31]
+SER -> SD : Transmit(frame)
 
 @enduml

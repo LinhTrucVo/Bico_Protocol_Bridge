@@ -1,10 +1,7 @@
 SW Function Component
 #####################
 
-This document describes the software function component architecture for the Bico Protocol Bridge project.
-
-Architecture Overview
-*********************
+This document describes the software function component in the Bico Protocol Bridge project.
 
 The system is organized into a three-layer architecture with 18 components total. 
 Each component is responsible for specific functionality and follows a consistent structure.

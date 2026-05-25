@@ -1,36 +1,28 @@
-@startuml
+﻿@startuml
 
-title Serialize (Response Formatter) - Static View
+title Serialize (UDS Response Builder) - Static View
 
 package "Serialize" {
-    [Response Builder] as builder
-    note right of builder
-        - Converts data structures to text format
-        - Example: {channel:1, value:2048} 
-          → "ADC:CH1:VALUE:2048"
-        - Serializes raw data without conversion
+    [Response Encoder] as encoder
+    note right of encoder
+        - Encodes response SID: requestSID + 0x40
+        - Encodes DID or RoutineID (2 bytes, big-endian)
+        - Appends data payload for SID 0x22
     end note
-    
-    [Format Handler] as format
-    note right of format
-        - Handles different output formats
-        - ASCII text, HEX strings, binary
-        - No physical unit conversion
-    end note
-    
-    [Message Framing] as framing
-    note right of framing
-        - Adds delimiters and terminators
-        - Example: "OK" → "OK\\r\\n"
+
+    [Negative Response Builder] as negBuilder
+    note right of negBuilder
+        - Builds frame: [0x7F, requestSID, NRC]
+        - NRC codes per ISO 14229
     end note
 }
 
 [Central App Controller] as controller
 [Serial Driver] as serialDriver
 
-controller --> builder : Raw data structure
-builder --> format : Format serialization
-format --> framing : Apply delimiters
-framing --> serialDriver : Complete serial stream
+controller --> encoder : UDS_Response{sid, did/routineID, data}
+controller --> negBuilder : UDS_Error{requestSID, nrc}
+encoder --> serialDriver : UDS positive response frame (bytes)
+negBuilder --> serialDriver : UDS negative response frame (bytes)
 
 @enduml

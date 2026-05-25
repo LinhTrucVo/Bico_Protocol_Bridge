@@ -1,39 +1,47 @@
-@startuml
-title Serialize (Response Formatter) - Information Flow
+﻿@startuml
+title Serialize (UDS Response Builder) - Information Flow
 
-package "Format Success Response Flow" {
+package "SID 0x22 Read Response" {
     component "Central App Controller" as CAC1
     component "Serialize" as SER1
     component "Serial Driver" as SD1
-    
-    CAC1 -down-> SER1 : Response{type=ADC_READ,\ndata={channel:1, value:2048}}
-    SER1 -down-> SER1 : FormatResponse()
-    SER1 -down-> SER1 : "ADC:READ:CH1:VALUE:2048"
-    SER1 -down-> SER1 : AddFraming() ->\n"ADC:READ:CH1:VALUE:2048\\r\\n"
-    SER1 -down-> SD1 : Transmit("ADC:READ:CH1:VALUE:2048\\r\\n")
+
+    CAC1 -down-> SER1 : UDS_Response{sid=0x22, did=0x1001, data=[0x04,0x00]}
+    SER1 -down-> SER1 : responseSID = 0x22 + 0x40 = 0x62
+    SER1 -down-> SER1 : frame = [0x62, 0x10, 0x01, 0x04, 0x00]
+    SER1 -down-> SD1 : Transmit([0x62, 0x10, 0x01, 0x04, 0x00])
 }
 
-package "Format Error Response Flow" {
+package "SID 0x2E Write Response" {
     component "Central App Controller" as CAC2
     component "Serialize" as SER2
     component "Serial Driver" as SD2
-    
-    CAC2 -down-> SER2 : Error{code=INVALID_PARAM,\nmessage="Invalid channel"}
-    SER2 -down-> SER2 : FormatError()
-    SER2 -down-> SER2 : "ERROR:INVALID_PARAM:Invalid channel"
-    SER2 -down-> SER2 : AddFraming() ->\n"ERROR:INVALID_PARAM:Invalid channel\\r\\n"
-    SER2 -down-> SD2 : Transmit("ERROR:INVALID_PARAM:Invalid channel\\r\\n")
+
+    CAC2 -down-> SER2 : UDS_Response{sid=0x2E, did=0x1001}
+    SER2 -down-> SER2 : responseSID = 0x2E + 0x40 = 0x6E
+    SER2 -down-> SER2 : frame = [0x6E, 0x10, 0x01]
+    SER2 -down-> SD2 : Transmit([0x6E, 0x10, 0x01])
 }
 
-package "Format Status Message Flow" {
+package "SID 0x31 Routine Control Response" {
     component "Central App Controller" as CAC3
     component "Serialize" as SER3
     component "Serial Driver" as SD3
-    
-    CAC3 -down-> SER3 : Status{type=CONFIG_SAVED}
-    SER3 -down-> SER3 : FormatStatus()
-    SER3 -down-> SER3 : "OK:CONFIG_SAVED\\r\\n"
-    SER3 -down-> SD3 : Transmit("OK:CONFIG_SAVED\\r\\n")
+
+    CAC3 -down-> SER3 : UDS_Response{sid=0x31, routineControlType=0x01,\nroutineID=0x0200, status=0x00}
+    SER3 -down-> SER3 : responseSID = 0x31 + 0x40 = 0x71
+    SER3 -down-> SER3 : frame = [0x71, 0x01, 0x02, 0x00, 0x00]
+    SER3 -down-> SD3 : Transmit([0x71, 0x01, 0x02, 0x00, 0x00])
+}
+
+package "Negative Response" {
+    component "Central App Controller" as CAC4
+    component "Serialize" as SER4
+    component "Serial Driver" as SD4
+
+    CAC4 -down-> SER4 : UDS_Error{requestSID=0x22, nrc=0x31}
+    SER4 -down-> SER4 : frame = [0x7F, 0x22, 0x31]
+    SER4 -down-> SD4 : Transmit([0x7F, 0x22, 0x31])
 }
 
 @enduml
