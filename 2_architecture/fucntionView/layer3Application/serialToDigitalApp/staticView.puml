@@ -1,26 +1,33 @@
-@startuml
+﻿@startuml
 
 title SerialToDigital App - Static View
 
 package "SerialToDigital App" {
-    [Command Handler] as cmdHandler
+    [Routine Handler] as routineHandler
+    note right of routineHandler
+        RID 0x0200: GPIO write
+        RID 0x0201: GPIO read
+        RID 0x0300: PWM start
+        RID 0x0301: PWM stop
+    end note
     [GPIO Manager] as gpioMgr
     [PWM Manager] as pwmMgr
     [Pin Mode Manager] as pinModeMgr
-    [Config Manager] as configMgr
 }
 
 [GPIO Driver] as gpioDriver
 [PWM Driver] as pwmDriver
 [Config Service] as configService
-[NVM Service] as nvmService
 
-cmdHandler --> gpioMgr : GPIO commands
-cmdHandler --> pwmMgr : PWM commands
-gpioMgr --> pinModeMgr : Configure modes
+routineHandler --> gpioMgr : RID 0x02xx
+routineHandler --> pwmMgr : RID 0x03xx
+gpioMgr --> pinModeMgr : Mode check
 gpioMgr --> gpioDriver : Digital operations
 pwmMgr --> pwmDriver : PWM operations
-configMgr --> configService : Load/save config
-configMgr --> nvmService : Persist status
+
+note right of gpioMgr
+    Config loaded from Config Service at init.
+    No runtime config saving here.
+end note
 
 @enduml

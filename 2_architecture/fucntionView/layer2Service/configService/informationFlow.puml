@@ -1,29 +1,41 @@
-@startuml
+﻿@startuml
 title Configuration Service - Information Flow
 
 package "System Startup Flow" {
-    component "Application" as APP1
-    component "Configuration Service" as CS1
+    component "Central App Controller" as CAC1
+    component "Config Service" as CS1
     component "NVM Driver" as NVM1
-    
-    APP1 -down-> CS1 : Load_Configuration()
+
+    CAC1 -down-> CS1 : ConfigService_Init()
     CS1 -down-> NVM1 : NVM_Read(config_addr)
-    NVM1 -up-> CS1 : Config Data (Valid or Invalid)
-    CS1 -down-> CS1 : Validate / Load_Defaults()
-    CS1 -up-> APP1 : Config Loaded / Default Config
+    NVM1 -up-> CS1 : JSON config data
+    CS1 -down-> CS1 : Parse JSON / Validate
+    CS1 -up-> CAC1 : CONFIG_LOADED / DEFAULT_CONFIG_LOADED
 }
 
-package "Configuration Update Flow" {
-    component "Application" as APP2
-    component "Configuration Service" as CS2
-    component "NVM Driver" as NVM2
-    
-    APP2 -down-> CS2 : Update_Config(config_data)
-    CS2 -down-> CS2 : Validate_Parameters()
-    CS2 -down-> CS2 : Update_Config()
-    CS2 -down-> NVM2 : NVM_Write(config_addr, data)
-    NVM2 -up-> CS2 : Success / Error
-    CS2 -up-> APP2 : Config_Updated / Validation_Error
+package "SID 0x22 Read (Get) Flow" {
+    component "Central App Controller" as CAC2
+    component "Config Service" as CS2
+
+    CAC2 -down-> CS2 : ConfigService_Get(did=0x1001)
+    CS2 -down-> CS2 : Lookup DID in registry
+    CS2 -down-> CS2 : Read config parameter
+    CS2 -up-> CAC2 : data=[0x04, 0x00]
+}
+
+package "SID 0x2E Write (Validate + Set) Flow" {
+    component "Central App Controller" as CAC3
+    component "Config Service" as CS3
+    component "NVM Driver" as NVM3
+
+    CAC3 -down-> CS3 : ConfigService_Validate(did=0x1001, data=[0x08,0x00])
+    CS3 -down-> CS3 : Lookup DID / Check range
+    CS3 -up-> CAC3 : VALID / INVALID (nrc)
+    CAC3 -down-> CS3 : ConfigService_Set(did=0x1001, data=[0x08,0x00])
+    CS3 -down-> CS3 : Update internal config
+    CS3 -down-> NVM3 : NVM_Write(JSON config)
+    NVM3 -up-> CS3 : SUCCESS
+    CS3 -up-> CAC3 : OK
 }
 
 @enduml

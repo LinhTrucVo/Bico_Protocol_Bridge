@@ -1,51 +1,19 @@
-@startuml
+﻿@startuml
 title SerialToAnalog App - Information Flow
 
-
-package "Configure Channel Flow" {
-    component "Central Controller" as CC1
+package "RID 0x0100 ADC Read Flow" {
+    component "Central App Controller" as CC1
     component "SerialToAnalog App" as AA1
     component "ADC Driver" as ADC1
-    
-    CC1 -down-> AA1 : Config_ADC_Channel\n(ch, rate, resolution)
-    AA1 -down-> ADC1 : ADC_ConfigChannel(ch, resolution)
-    ADC1 -up-> AA1 : Success
-    AA1 -down-> AA1 : Store_Channel_Config(ch, rate)
-    AA1 -down-> AA1 : Save_To_NVM()
-    AA1 -up-> CC1 : Config_Success
-}
 
-package "Read Analog Value Flow" {
-    component "Central Controller" as CC2
-    component "SerialToAnalog App" as AA2
-    component "ADC Driver" as ADC2
-    
-    CC2 -down-> AA2 : Read_ADC(channel)
-    AA2 -down-> ADC2 : ADC_StartSingle(channel)
-    ADC2 -up-> AA2 : Conversion_Complete(raw_value)
-    AA2 -up-> CC2 : ADC_Reading{channel, raw_value}
-    
-    note right of AA2
-      Returns raw ADC values only
-    end note
-}
+    CC1 -down-> AA1 : ReadADC(ch=1)
+    AA1 -down-> ADC1 : ADC_StartSingle(ch=1)
+    ADC1 -up-> AA1 : ConversionComplete(raw_value=2048)
+    AA1 -up-> CC1 : raw_value=2048
 
-package "Threshold Alert Flow" {
-    component "SerialToAnalog App" as AA3
-    component "ADC Driver" as ADC3
-    component "Central Controller" as CC3
-    
-    AA3 -down-> AA3 : Periodic_Threshold_Check()
-    AA3 -down-> ADC3 : ADC_ReadValue(channel)
-    ADC3 -up-> AA3 : raw_value
-    AA3 -down-> AA3 : Compare_To_Threshold(raw_value)
-    
-    alt Threshold Exceeded
-        AA3 -up-> CC3 : Threshold_Alert(channel, raw_value, threshold)
-    end
-    
-    note right of AA3
-      Thresholds in raw ADC counts
+    note right of AA1
+        Returns raw ADC value only.
+        No unit conversion.
     end note
 }
 

@@ -1,15 +1,15 @@
-@startuml
+﻿@startuml
 title SerialToAnalog App - Dynamic Behaviour
 
-participant "Central Controller" as CC
+participant "Central App Controller" as CC
 participant "Analog App" as AA
 participant "ADC Driver" as ADC
-participant "Config Service" as CFG
+participant "Config Service" as CS
 
 == Initialization ==
 CC -> AA : AnalogApp_Init()
-AA -> CFG : LoadConfiguration(ANALOG_CONFIG)
-CFG --> AA : config_data
+AA -> CS : ConfigService_Get(did=ADC_CONFIG_DID)
+CS --> AA : config_data
 AA -> AA : InitializeChannels(config_data)
 loop For each configured channel
     AA -> ADC : ADC_ConfigChannel(ch, resolution, rate)
@@ -17,57 +17,15 @@ loop For each configured channel
 end
 AA --> CC : INIT_SUCCESS
 
-== Configure ADC Channel ==
-CC -> AA : ConfigureADCChannel(ch=1, rate=1000Hz, res=12bit)
-AA -> ADC : ADC_ConfigChannel(ch=1, resolution=12, mode=CONTINUOUS)
-ADC --> AA : SUCCESS
-AA -> AA : UpdateChannelConfig(ch=1, rate=1000)
-AA -> CFG : SaveConfiguration(channel_config)
-CFG --> AA : SAVED
-AA --> CC : CONFIG_SUCCESS
-
-== Read Single ADC Value ==
-CC -> AA : ReadADC(channel=1)
+== RID 0x0100 ADC Read (startRoutine) ==
+CC -> AA : ExecuteRoutine(rid=0x0100, params={ch=1})
 AA -> ADC : ADC_StartSingle(ch=1)
 ADC -> ADC : Perform conversion
-ADC -> AA : ConversionComplete_Callback(raw_adc=2048)
-AA --> CC : ADC_Result{ch=1, raw_adc=2048}
-
-== Continuous Sampling with Averaging ==
-CC -> AA : StartContinuous(ch=1, avg_samples=16)
-AA -> AA : SetAveragingMode(ch=1, samples=16)
-AA -> ADC : ADC_StartContinuous(ch=1)
-
-loop Continuous sampling
-    ADC -> AA : ConversionComplete_Callback(raw_value)
-    AA -> AA : AddToAveragingBuffer(ch=1, raw_value)
-    
-    alt Buffer Full (16 samples)
-        AA -> AA : CalculateAverage()
-        AA -> CC : NewSample_Event(ch=1, avg_raw_value)
-    end
+ADC -> AA : ConversionComplete_Callback(raw_value=2048)
+alt Conversion OK
+    AA --> CC : result={raw_value=2048, status=0x00}
+else Conversion Error
+    AA --> CC : result={status=0x01}
 end
-
-CC -> AA : StopContinuous(ch=1)
-AA -> ADC : ADC_Stop(ch=1)
-
-== Threshold Monitoring ==
-CC -> AA : SetThreshold(ch=1, min=100, max=3900)
-AA -> AA : ConfigureThreshold(ch=1, min, max)
-
-loop Monitoring
-    AA -> ADC : ADC_ReadValue(ch=1)
-    ADC --> AA : raw_value
-    AA -> AA : CheckThreshold(raw_value, min=100, max=3900)
-    
-    alt Threshold Exceeded
-        AA -> CC : ThresholdAlert(ch=1, raw_value, threshold_type)
-    end
-end
-
-note right of AA
-  Works with raw ADC values only
-  Thresholds in raw ADC counts (0-4095 for 12-bit)
-end note
 
 @enduml

@@ -1,28 +1,26 @@
-@startuml
+﻿@startuml
 
 title SerialToAnalog App - Static View
 
 package "SerialToAnalog App" {
-    [Command Handler] as cmdHandler
+    [Routine Handler] as routineHandler
+    note right of routineHandler
+        RID 0x0100: ADC trigger + read result
+    end note
     [Channel Manager] as channelMgr
     [Sampling Controller] as samplingCtrl
-    [Averaging Engine] as averaging
-    [Threshold Monitor] as thresholdMon
-    [Config Manager] as configMgr
 }
 
 [ADC Driver] as adcDriver
 [Config Service] as configService
 
-cmdHandler --> channelMgr : Channel commands
+routineHandler --> channelMgr : Route by channel
 channelMgr --> adcDriver : ADC operations
-samplingCtrl --> adcDriver : Start/stop sampling
-averaging --> adcDriver : Read samples
-thresholdMon --> channelMgr : Monitor values
-configMgr --> configService : Load/save config
+samplingCtrl --> adcDriver : Start/stop conversion
 
 note right of channelMgr
-  Works with raw ADC values only
+    Config loaded from Config Service at init.
+    No runtime config saving here.
 end note
 
 @enduml

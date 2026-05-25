@@ -1,113 +1,39 @@
-@startuml
+﻿@startuml
 title SerialToI2C App - Dynamic Behaviour
 
-participant "Central Controller" as CC
+participant "Central App Controller" as CC
 participant "I2C App" as I2C
-participant "I2C Master" as MASTER
-participant "I2C Slave" as SLAVE
-participant "Config Service" as CFG
+participant "I2C Master Driver" as DRV
+participant "Config Service" as CS
 
 == Initialization ==
 CC -> I2C : I2CApp_Init()
-I2C -> CFG : LoadConfiguration(I2C_CONFIG)
-CFG --> I2C : config_data
-I2C -> I2C : SetMode(NONE)
-alt Master Mode Configured
-    I2C -> I2C : SetMode(MASTER)
-    I2C -> MASTER : I2CMaster_Init(clock_speed)
-    MASTER --> I2C : SUCCESS
-else Slave Mode Configured
-    I2C -> I2C : SetMode(SLAVE)
-    I2C -> SLAVE : I2CSlave_Init(slave_address)
-    SLAVE --> I2C : SUCCESS
-    I2C -> SLAVE : I2CSlave_EnableListen()
-else No Mode Configured
-    I2C -> I2C : SetMode(NONE)
-end
+I2C -> CS : ConfigService_Get(did=I2C_CONFIG_DID)
+CS --> I2C : config_data
+I2C -> DRV : I2CMaster_Init(clock_speed)
+DRV --> I2C : SUCCESS
 I2C --> CC : INIT_SUCCESS
 
-== Configure I2C Master ==
-CC -> I2C : ConfigureI2CMaster(clock=400kHz)
-I2C -> I2C : GetCurrentMode()
-alt Slave Mode Active
-    I2C -> SLAVE : I2CSlave_Disable()
-    SLAVE --> I2C : DISABLED
-    I2C -> I2C : SetMode(NONE)
-end
-I2C -> I2C : SetMode(MASTER)
-I2C -> MASTER : I2CMaster_Init(clock=400000)
-MASTER --> I2C : SUCCESS
-I2C -> I2C : UpdateMasterConfig(clock=400kHz)
-I2C -> CFG : SaveConfiguration(i2c_config)
-CFG --> I2C : SAVED
-I2C --> CC : MASTER_CONFIG_SUCCESS
-
-== I2C Master Write Transaction ==
-CC -> I2C : I2CMasterWrite(addr=0x50, data=[0xAA, 0xBB, 0xCC])
-I2C -> MASTER : I2CMaster_Write(addr=0x50, data, len=3)
-alt Transaction Success
-    MASTER --> I2C : ACK
-    I2C --> CC : WRITE_SUCCESS
-else NACK or Timeout
-    MASTER --> I2C : NACK/TIMEOUT
-    I2C -> I2C : LogError(I2C_ERROR)
-    I2C --> CC : WRITE_ERROR
+== RID 0x0400 I2C Write ==
+CC -> I2C : ExecuteRoutine(rid=0x0400, params={addr=0x50, data=[0x10,0xAA]})
+I2C -> DRV : I2CMaster_Write(addr=0x50, data, len=2)
+alt ACK received
+    DRV --> I2C : ACK
+    I2C --> CC : result={status=0x00}
+else NACK / timeout
+    DRV --> I2C : NACK
+    I2C --> CC : result={status=0x01}
 end
 
-== I2C Master Read Transaction ==
-CC -> I2C : I2CMasterRead(addr=0x50, length=4)
-I2C -> MASTER : I2CMaster_Read(addr=0x50, buffer, len=4)
-alt Transaction Success
-    MASTER --> I2C : data=[0x11, 0x22, 0x33, 0x44] + ACK
-    I2C --> CC : READ_SUCCESS{data=[0x11, 0x22, 0x33, 0x44]}
-else NACK or Timeout
-    MASTER --> I2C : NACK/TIMEOUT
-    I2C -> I2C : LogError(I2C_READ_ERROR)
-    I2C --> CC : READ_ERROR
+== RID 0x0401 I2C Read ==
+CC -> I2C : ExecuteRoutine(rid=0x0401, params={addr=0x50, len=2})
+I2C -> DRV : I2CMaster_Read(addr=0x50, buffer, len=2)
+alt Data received
+    DRV --> I2C : data=[0xAA, 0xBB]
+    I2C --> CC : result={data=[0xAA,0xBB], status=0x00}
+else Error
+    DRV --> I2C : ERROR
+    I2C --> CC : result={status=0x01}
 end
-
-== I2C Bus Scan ==
-CC -> I2C : ScanI2CBus()
-I2C -> I2C : InitializeScan()
-loop For each address 0x08 to 0x77
-    I2C -> MASTER : I2CMaster_Write(addr, dummy_data, 0)
-    alt Device Responds
-        MASTER --> I2C : ACK
-        I2C -> I2C : AddToDeviceList(addr)
-    else No Device
-        MASTER --> I2C : NACK
-    end
-end
-I2C --> CC : DeviceList[addresses]
-
-== Configure I2C Slave ==
-CC -> I2C : ConfigureI2CSlave(slave_addr=0x48)
-I2C -> I2C : GetCurrentMode()
-alt Master Mode Active
-    I2C -> MASTER : I2CMaster_Disable()
-    MASTER --> I2C : DISABLED
-    I2C -> I2C : SetMode(NONE)
-end
-I2C -> I2C : SetMode(SLAVE)
-I2C -> SLAVE : I2CSlave_Init(addr=0x48)
-SLAVE --> I2C : SUCCESS
-I2C -> SLAVE : I2CSlave_EnableListen()
-SLAVE --> I2C : LISTENING
-I2C -> CFG : SaveConfiguration(slave_config)
-CFG --> I2C : SAVED
-I2C --> CC : SLAVE_CONFIG_SUCCESS
-
-== I2C Slave Receive (Master Writes to Us) ==
-SLAVE -> I2C : SlaveRx_Callback(data=[0xAA, 0xBB])
-I2C -> I2C : ProcessReceivedData(data)
-I2C -> CC : SlaveDataReceived{data=[0xAA, 0xBB]}
-
-== I2C Slave Transmit (Master Reads from Us) ==
-SLAVE -> I2C : MasterReadRequest_Callback()
-I2C -> CC : PrepareSlave Response()
-CC -> I2C : SetSlaveResponse(data=[0x11, 0x22])
-I2C -> SLAVE : I2CSlave_Transmit(data=[0x11, 0x22])
-SLAVE --> I2C : TRANSMITTED
-I2C --> CC : SLAVE_RESPONSE_SENT
 
 @enduml

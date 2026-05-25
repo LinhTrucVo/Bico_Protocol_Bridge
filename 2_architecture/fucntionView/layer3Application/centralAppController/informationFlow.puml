@@ -1,51 +1,93 @@
-@startuml
+﻿@startuml
 title Central App Controller - Information Flow
 
 package "System Startup Flow" {
     component "Central App Controller" as CAC1
+    component "Config Service" as CS1
     component "SerialToAnalog App" as AA1
     component "SerialToDigital App" as DA1
-    component "SerialToI2C App" as I2C1
-    component "SerialToSPI App" as SPI1
-    
-    CAC1 -down-> CAC1 : System_Init()
-    CAC1 -down-> AA1 : Init()
-    AA1 -up-> CAC1 : Ready
-    CAC1 -down-> DA1 : Init()
-    DA1 -up-> CAC1 : Ready
-    CAC1 -down-> I2C1 : Init()
-    I2C1 -up-> CAC1 : Ready
-    CAC1 -down-> SPI1 : Init()
-    SPI1 -up-> CAC1 : Ready
+    component "SerialToI2C App" as I2CA1
+    component "SerialToSPI App" as SPIA1
+
+    CAC1 -down-> CS1 : ConfigService_Init()
+    CS1 -up-> CAC1 : CONFIG_LOADED
+    CAC1 -down-> AA1 : Init(config)
+    CAC1 -down-> DA1 : Init(config)
+    CAC1 -down-> I2CA1 : Init(config)
+    CAC1 -down-> SPIA1 : Init(config)
 }
 
-package "Command Routing Flow" {
+package "SID 0x22 Read Config Flow" {
     component "Deserialize" as DES2
     component "Central App Controller" as CAC2
-    component "SerialToAnalog App" as AA2
-    component "SerialToI2C App" as I2C2
+    component "Config Service" as CS2
     component "Serialize" as SER2
-    
-    DES2 -down-> CAC2 : Route_Command(ADC_READ, params)
-    CAC2 -down-> CAC2 : Identify target module
-    CAC2 -down-> AA2 : Execute(ADC_READ, params)
-    AA2 -up-> CAC2 : Result
-    CAC2 -down-> SER2 : FormatResponse(Result)
-    
-    DES2 -down-> CAC2 : Route_Command(I2C_WRITE, params)
-    CAC2 -down-> CAC2 : Identify target module
-    CAC2 -down-> I2C2 : Execute(I2C_WRITE, params)
-    I2C2 -up-> CAC2 : Result
-    CAC2 -down-> SER2 : FormatResponse(Result)
+
+    DES2 -down-> CAC2 : UDS_Request{sid=0x22, did=0x1001}
+    CAC2 -down-> CS2 : Get(did=0x1001)
+    CS2 -up-> CAC2 : data=[0x04, 0x00]
+    CAC2 -down-> SER2 : UDS_Response{sid=0x22, did=0x1001, data}
 }
 
-package "Resource Arbitration Flow" {
-    component "SerialToAnalog App" as AA3
+package "SID 0x2E Write Config Flow" {
+    component "Deserialize" as DES3
     component "Central App Controller" as CAC3
-    
-    AA3 -down-> CAC3 : Request_Resource(NVM)
-    CAC3 -down-> CAC3 : Check_Availability(NVM)
-    CAC3 -up-> AA3 : Grant_Access(NVM) / Resource_Busy
+    component "Config Service" as CS3
+    component "Serialize" as SER3
+
+    DES3 -down-> CAC3 : UDS_Request{sid=0x2E, did=0x1001, data=[0x08,0x00]}
+    CAC3 -down-> CS3 : Validate(did, data) -> VALID
+    CAC3 -down-> CS3 : Set(did, data)
+    CS3 -up-> CAC3 : OK
+    CAC3 -down-> SER3 : UDS_Response{sid=0x2E, did=0x1001}
+}
+
+package "SID 0x31 RID 0x0100 ADC Read" {
+    component "Deserialize" as DES4
+    component "Central App Controller" as CAC4
+    component "SerialToAnalog App" as AA4
+    component "Serialize" as SER4
+
+    DES4 -down-> CAC4 : UDS_Request{sid=0x31, rid=0x0100, params={ch=1}}
+    CAC4 -down-> AA4 : ReadADC(ch=1)
+    AA4 -up-> CAC4 : raw_value=2048
+    CAC4 -down-> SER4 : UDS_Response{sid=0x31, rid=0x0100, data=[0x08,0x00]}
+}
+
+package "SID 0x31 RID 0x0200 GPIO Write" {
+    component "Deserialize" as DES5
+    component "Central App Controller" as CAC5
+    component "SerialToDigital App" as DA5
+    component "Serialize" as SER5
+
+    DES5 -down-> CAC5 : UDS_Request{sid=0x31, rid=0x0200, params={pin=PA5, state=HIGH}}
+    CAC5 -down-> DA5 : WriteGPIO(pin=PA5, state=HIGH)
+    DA5 -up-> CAC5 : OK
+    CAC5 -down-> SER5 : UDS_Response{sid=0x31, rid=0x0200, status=0x00}
+}
+
+package "SID 0x31 RID 0x0401 I2C Read" {
+    component "Deserialize" as DES6
+    component "Central App Controller" as CAC6
+    component "SerialToI2C App" as I2CA6
+    component "Serialize" as SER6
+
+    DES6 -down-> CAC6 : UDS_Request{sid=0x31, rid=0x0401, params={addr=0x50, len=2}}
+    CAC6 -down-> I2CA6 : ReadI2C(addr=0x50, len=2)
+    I2CA6 -up-> CAC6 : data=[0xAA, 0xBB]
+    CAC6 -down-> SER6 : UDS_Response{sid=0x31, rid=0x0401, data=[0xAA,0xBB]}
+}
+
+package "SID 0x31 RID 0x0501 SPI Transceive" {
+    component "Deserialize" as DES7
+    component "Central App Controller" as CAC7
+    component "SerialToSPI App" as SPIA7
+    component "Serialize" as SER7
+
+    DES7 -down-> CAC7 : UDS_Request{sid=0x31, rid=0x0501, params={dev=0, data=[0x9F]}}
+    CAC7 -down-> SPIA7 : SPITransceive(dev=0, tx=[0x9F])
+    SPIA7 -up-> CAC7 : rx=[0xEF, 0x40, 0x18]
+    CAC7 -down-> SER7 : UDS_Response{sid=0x31, rid=0x0501, data=[0xEF,0x40,0x18]}
 }
 
 @enduml

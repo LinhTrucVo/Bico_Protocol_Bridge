@@ -1,92 +1,51 @@
-@startuml
+﻿@startuml
 title SerialToDigital App - Dynamic Behaviour
 
-participant "Central Controller" as CC
+participant "Central App Controller" as CC
 participant "Digital App" as DA
 participant "GPIO Driver" as GPIO
 participant "PWM Driver" as PWM
-participant "Config Service" as CFG
-participant "NVM Service" as NVM
+participant "Config Service" as CS
 
 == Initialization ==
 CC -> DA : DigitalApp_Init()
-DA -> CFG : LoadConfiguration(DIGITAL_CONFIG)
-CFG --> DA : config_data
+DA -> CS : ConfigService_Get(did=GPIO_CONFIG_DID)
+CS --> DA : config_data
 DA -> DA : InitializeGPIOPins(config_data)
 loop For each configured GPIO pin
     DA -> GPIO : GPIO_Init(pin, mode, pull)
     GPIO --> DA : SUCCESS
 end
-DA -> DA : InitializePWMChannels(config_data)
+DA -> CS : ConfigService_Get(did=PWM_CONFIG_DID)
+CS --> DA : pwm_config
 loop For each configured PWM channel
-    DA -> PWM : PWM_Init(channel)
-    DA -> PWM : PWM_Config(channel, freq, duty)
+    DA -> PWM : PWM_Init(ch, freq, duty)
     PWM --> DA : SUCCESS
 end
 DA --> CC : INIT_SUCCESS
 
-== Configure GPIO as Output ==
-CC -> DA : ConfigureGPIO(pin=PA5, mode=OUTPUT, pull=NONE)
-DA -> GPIO : GPIO_Init(pin=PA5, mode=OUTPUT, pull=NOPULL)
+== RID 0x0200 GPIO Write ==
+CC -> DA : ExecuteRoutine(rid=0x0200, params={pin=PA5, state=HIGH})
+DA -> GPIO : GPIO_WritePin(PA5, HIGH)
 GPIO --> DA : SUCCESS
-DA -> DA : UpdatePinConfig(PA5, OUTPUT)
-DA -> CFG : SaveConfiguration(pin_config)
-CFG --> DA : SAVED
-DA -> NVM : WriteStatus(pin_status)
-NVM --> DA : SAVED
-DA --> CC : CONFIG_SUCCESS
+DA --> CC : result={status=0x00}
 
-== Write Digital Output ==
-CC -> DA : WriteGPIO(pin=PA5, state=HIGH)
-DA -> GPIO : GPIO_WritePin(PA5, GPIO_PIN_SET)
-GPIO --> DA : SUCCESS
-DA -> NVM : WriteStatus(pin_status)
-NVM --> DA : SAVED
-DA --> CC : WRITE_SUCCESS
-
-== Read Digital Input ==
-CC -> DA : ReadGPIO(pin=PB3)
+== RID 0x0201 GPIO Read ==
+CC -> DA : ExecuteRoutine(rid=0x0201, params={pin=PB3})
 DA -> GPIO : GPIO_ReadPin(PB3)
 GPIO --> DA : pin_state=HIGH
-DA --> CC : GPIO_State{pin=PB3, state=HIGH}
+DA --> CC : result={pin_state=HIGH, status=0x00}
 
-== Configure PWM ==
-CC -> DA : ConfigurePWM(ch=1, freq=1000Hz, duty=50%)
-DA -> PWM : PWM_Init(timer1, ch=1)
-PWM --> DA : SUCCESS
-DA -> PWM : PWM_Config(ch=1, freq=1000, duty=50)
-PWM --> DA : SUCCESS
-DA -> DA : UpdatePWMConfig(ch=1, freq=1000, duty=50)
-DA -> CFG : SaveConfiguration(pwm_config)
-CFG --> DA : SAVED
-DA -> NVM : WriteStatus(pwm_status)
-NVM --> DA : SAVED
-DA --> CC : PWM_CONFIG_SUCCESS
-
-== Start PWM ==
-CC -> DA : StartPWM(channel=1)
+== RID 0x0300 PWM Start ==
+CC -> DA : ExecuteRoutine(rid=0x0300, params={ch=1})
 DA -> PWM : PWM_Start(ch=1)
-PWM --> DA : PWM_STARTED
-DA --> CC : PWM_ACTIVE
+PWM --> DA : SUCCESS
+DA --> CC : result={status=0x00}
 
-== Update PWM Duty Cycle (Runtime) ==
-CC -> DA : SetPWMDuty(channel=1, duty=75%)
-DA -> PWM : PWM_SetDuty(ch=1, duty=75)
-PWM --> DA : UPDATED
-DA --> CC : DUTY_UPDATED
-
-== Stop PWM ==
-CC -> DA : StopPWM(channel=1)
+== RID 0x0301 PWM Stop ==
+CC -> DA : ExecuteRoutine(rid=0x0301, params={ch=1})
 DA -> PWM : PWM_Stop(ch=1)
-PWM --> DA : PWM_STOPPED
-DA --> CC : PWM_STOPPED
-
-== Toggle GPIO ==
-CC -> DA : ToggleGPIO(pin=PA5)
-DA -> GPIO : GPIO_TogglePin(PA5)
-GPIO --> DA : SUCCESS
-DA -> NVM : WriteStatus(pin_status)
-NVM --> DA : SAVED
-DA --> CC : TOGGLE_SUCCESS
+PWM --> DA : SUCCESS
+DA --> CC : result={status=0x00}
 
 @enduml

@@ -1,67 +1,48 @@
-@startuml
+﻿@startuml
 title SerialToDigital App - Information Flow
 
-
-package "Configure GPIO Pin Flow" {
-    component "Central Controller" as CC1
+package "RID 0x0200 GPIO Write Flow" {
+    component "Central App Controller" as CC1
     component "SerialToDigital App" as DA1
     component "GPIO Driver" as GPIO1
-    component "NVM Service" as NVM1
-    
-    CC1 -down-> DA1 : Config_GPIO(pin, mode, pull)
-    DA1 -down-> GPIO1 : GPIO_Init(pin, mode, pull)
-    GPIO1 -up-> DA1 : Success
-    DA1 -down-> DA1 : Store_Pin_Config(pin)
-    DA1 -down-> NVM1 : Save_Status(pin_config)
-    NVM1 -up-> DA1 : Saved
-    DA1 -up-> CC1 : Config_Success
+
+    CC1 -down-> DA1 : WriteGPIO(pin=PA5, state=HIGH)
+    DA1 -down-> GPIO1 : GPIO_WritePin(PA5, HIGH)
+    GPIO1 -up-> DA1 : SUCCESS
+    DA1 -up-> CC1 : status=0x00
 }
 
-package "Write Digital Output Flow" {
-    component "Central Controller" as CC2
+package "RID 0x0201 GPIO Read Flow" {
+    component "Central App Controller" as CC2
     component "SerialToDigital App" as DA2
     component "GPIO Driver" as GPIO2
-    
-    CC2 -down-> DA2 : GPIO_Write(pin, state)
-    DA2 -down-> GPIO2 : GPIO_WritePin(pin, state)
-    GPIO2 -up-> DA2 : Success
-    DA2 -up-> CC2 : Write_Success
+
+    CC2 -down-> DA2 : ReadGPIO(pin=PB3)
+    DA2 -down-> GPIO2 : GPIO_ReadPin(PB3)
+    GPIO2 -up-> DA2 : pin_state=HIGH
+    DA2 -up-> CC2 : pin_state=HIGH
 }
 
-package "Read Digital Input Flow" {
-    component "Central Controller" as CC3
+package "RID 0x0300 PWM Start Flow" {
+    component "Central App Controller" as CC3
     component "SerialToDigital App" as DA3
-    component "GPIO Driver" as GPIO3
-    
-    CC3 -down-> DA3 : GPIO_Read(pin)
-    DA3 -down-> GPIO3 : GPIO_ReadPin(pin)
-    GPIO3 -up-> DA3 : pin_state
-    DA3 -up-> CC3 : GPIO_Reading{pin, state}
+    component "PWM Driver" as PWM3
+
+    CC3 -down-> DA3 : StartPWM(ch=1)
+    DA3 -down-> PWM3 : PWM_Start(ch=1)
+    PWM3 -up-> DA3 : SUCCESS
+    DA3 -up-> CC3 : status=0x00
 }
 
-package "Configure and Start PWM Flow" {
-    component "Central Controller" as CC4
+package "RID 0x0301 PWM Stop Flow" {
+    component "Central App Controller" as CC4
     component "SerialToDigital App" as DA4
     component "PWM Driver" as PWM4
-    component "NVM Service" as NVM4
-    
-    CC4 -down-> DA4 : Config_PWM(channel, freq, duty)
-    DA4 -down-> PWM4 : PWM_Config(channel, freq, duty)
-    PWM4 -up-> DA4 : Success
-    DA4 -down-> PWM4 : PWM_Start(channel)
-    PWM4 -up-> DA4 : Started
-    DA4 -down-> NVM4 : Save_Status(pwm_config)
-    NVM4 -up-> DA4 : Saved
-    DA4 -up-> CC4 : PWM_Started
+
+    CC4 -down-> DA4 : StopPWM(ch=1)
+    DA4 -down-> PWM4 : PWM_Stop(ch=1)
+    PWM4 -up-> DA4 : SUCCESS
+    DA4 -up-> CC4 : status=0x00
 }
-
-@enduml
-DA --> CC : PWM_Started
-
-== Update PWM Duty Cycle ==
-CC -> DA : Set_PWM_Duty(channel, duty)
-DA -> PWM : PWM_SetDuty(channel, duty)
-PWM --> DA : Updated
-DA --> CC : Duty_Updated
 
 @enduml

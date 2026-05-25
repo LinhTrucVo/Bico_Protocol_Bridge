@@ -1,12 +1,18 @@
-@startuml
+﻿@startuml
 
 title Central App Controller - Static View
 
 package "Central App Controller" {
     [System Initializer] as init
-    [Command Router] as router
+    [UDS Command Dispatcher] as dispatcher
+    note right of dispatcher
+        SID 0x22 / 0x2E  -> Config Service (DIDs)
+        SID 0x31 RID 0x01xx -> SerialToAnalog App
+        SID 0x31 RID 0x02xx / 0x03xx -> SerialToDigital App
+        SID 0x31 RID 0x04xx -> SerialToI2C App
+        SID 0x31 RID 0x05xx -> SerialToSPI App
+    end note
     [Resource Arbiter] as arbiter
-    [Module Coordinator] as coordinator
     [State Manager] as stateMgr
     [Health Monitor] as watchdog
 }
@@ -15,21 +21,20 @@ package "Central App Controller" {
 [SerialToDigital App] as digitalApp
 [SerialToI2C App] as i2cApp
 [SerialToSPI App] as spiApp
-
 [Deserialize] as deserialize
 [Serialize] as serialize
 [Config Service] as configService
 
-deserialize -[#orange]-> router : Parsed commands
-router -[#blue]-> analogApp : Analog commands
-router -[#blue]-> digitalApp : Digital commands
-router -[#blue]-> i2cApp : I2C commands
-router -[#blue]-> spiApp : SPI commands
-router -[#orange]-> serialize : Format responses
+deserialize -[#orange]-> dispatcher : UDS_Request{sid, did/rid, params}
+dispatcher -[#purple]-> configService : SID 0x22 Get(did) / SID 0x2E Validate+Set(did, data)
+dispatcher -[#blue]-> analogApp : SID 0x31 RID 0x01xx
+dispatcher -[#blue]-> digitalApp : SID 0x31 RID 0x02xx / 0x03xx
+dispatcher -[#blue]-> i2cApp : SID 0x31 RID 0x04xx
+dispatcher -[#blue]-> spiApp : SID 0x31 RID 0x05xx
+dispatcher -[#orange]-> serialize : UDS_Response{sid, did/rid, data} or UDS_Error{requestSID, nrc}
 init -[#green]-> analogApp : Initialize
 init -[#green]-> digitalApp : Initialize
 init -[#green]-> i2cApp : Initialize
 init -[#green]-> spiApp : Initialize
-configService -[#purple]-> stateMgr : System config
 
 @enduml

@@ -1,46 +1,50 @@
-@startuml
+﻿@startuml
 title Configuration Service - Dynamic Behaviour
 
-participant "Application" as APP
+participant "Central App Controller" as CAC
 participant "Config Service" as CS
 participant "NVM Driver" as NVM
 
 == System Initialization ==
-APP -> CS : ConfigService_Init()
-CS -> NVM : NVM_Init()
-NVM --> CS : OK
-CS -> CS : LoadConfiguration()
+CAC -> CS : ConfigService_Init()
 CS -> NVM : NVM_Read(CONFIG_ADDRESS, buffer, size)
-alt Configuration Valid
-    NVM --> CS : config_data
-    CS -> CS : ValidateConfig(data)
-    CS --> APP : CONFIG_LOADED
-else Configuration Invalid or Empty
+alt NVM data valid
+    NVM --> CS : JSON config data
+    CS -> CS : ParseJson(data)
+    CS -> CS : ValidateAll()
+    CS --> CAC : CONFIG_LOADED
+else NVM empty or corrupt
     CS -> CS : LoadDefaults()
-    CS --> APP : DEFAULT_CONFIG_LOADED
+    CS --> CAC : DEFAULT_CONFIG_LOADED
 end
 
-== Save Configuration ==
-APP -> CS : ConfigService_Save(config)
-CS -> CS : ValidateConfig(config)
-alt Valid Configuration
-    CS -> NVM : NVM_Write(CONFIG_ADDRESS, config, size)
-    NVM --> CS : SUCCESS
-    CS --> APP : CONFIG_SAVED
-else Invalid Configuration
-    CS --> APP : VALIDATION_ERROR
-end
+== SID 0x22 Read Parameter ==
+CAC -> CS : ConfigService_Get(did=0x1001)
+CS -> CS : LookupDID(0x1001) -> found: ADC_SAMPLE_RATE
+CS -> CS : ReadParameter(ADC_SAMPLE_RATE)
+CS --> CAC : data=[0x04, 0x00]
 
-== Update Parameter ==
-APP -> CS : ConfigService_UpdateParam(param_id, value)
-CS -> CS : ValidateParameter(param_id, value)
-alt Valid
-    CS -> CS : UpdateInternalConfig(param_id, value)
-    CS -> NVM : NVM_Write(param_addr, value, size)
-    NVM --> CS : SUCCESS
-    CS --> APP : PARAM_UPDATED
-else Invalid
-    CS --> APP : INVALID_PARAM
-end
+== SID 0x2E Write Parameter ==
+CAC -> CS : ConfigService_Validate(did=0x1001, data=[0x08,0x00])
+CS -> CS : LookupDID(0x1001) -> found
+CS -> CS : CheckRange(data=[0x08,0x00]) -> OK
+CS --> CAC : VALID
+
+CAC -> CS : ConfigService_Set(did=0x1001, data=[0x08,0x00])
+CS -> CS : UpdateParameter(ADC_SAMPLE_RATE, 0x0800)
+CS -> NVM : NVM_Write(CONFIG_ADDRESS, JSON, size)
+NVM --> CS : SUCCESS
+CS --> CAC : OK
+
+== SID 0x2E Write - Validation Failure ==
+CAC -> CS : ConfigService_Validate(did=0x1001, data=[0xFF,0xFF])
+CS -> CS : LookupDID(0x1001) -> found
+CS -> CS : CheckRange(data=[0xFF,0xFF]) -> OUT_OF_RANGE
+CS --> CAC : INVALID (nrc=0x31)
+
+== Unsupported DID ==
+CAC -> CS : ConfigService_Get(did=0xFFFF)
+CS -> CS : LookupDID(0xFFFF) -> not found
+CS --> CAC : INVALID (nrc=0x31)
 
 @enduml

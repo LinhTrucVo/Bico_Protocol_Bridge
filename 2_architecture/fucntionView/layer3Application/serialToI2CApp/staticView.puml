@@ -1,35 +1,40 @@
-@startuml
+﻿@startuml
 
 title SerialToI2C App - Static View
 
 package "SerialToI2C App" {
-    [Command Handler] as cmdHandler
+    [Routine Handler] as routineHandler
+    note right of routineHandler
+        RID 0x0400: I2C write
+        RID 0x0401: I2C read
+    end note
     [Mode Manager] as modeMgr
+    note right of modeMgr
+        Enforces mutual exclusivity:
+        Only Master OR Slave mode active at a time
+    end note
     [Master Manager] as masterMgr
     [Slave Manager] as slaveMgr
     [Device Manager] as deviceMgr
     [Error Handler] as errorHandler
-    [Config Manager] as configMgr
-    
-    note right of modeMgr
-        Enforces mutual exclusivity:
-        Only Master OR Slave mode
-        active at a time
-    end note
 }
 
 [I2C Master Driver] as i2cMasterDriver
 [I2C Slave Driver] as i2cSlaveDriver
 [Config Service] as configService
 
-cmdHandler --> modeMgr : Mode requests
-modeMgr --> masterMgr : Master commands
-modeMgr --> slaveMgr : Slave commands
-masterMgr --> i2cMasterDriver : Master operations
-slaveMgr --> i2cSlaveDriver : Slave operations
+routineHandler --> modeMgr : Route by RID
+modeMgr --> masterMgr : Master operations
+modeMgr --> slaveMgr : Slave operations
+masterMgr --> i2cMasterDriver : Master transfers
+slaveMgr --> i2cSlaveDriver : Slave transfers
 masterMgr --> deviceMgr : Device tracking
 errorHandler <-- i2cMasterDriver : Error events
 errorHandler <-- i2cSlaveDriver : Error events
-configMgr --> configService : Load/save config
+
+note right of masterMgr
+    Config loaded from Config Service at init.
+    No runtime config saving here.
+end note
 
 @enduml

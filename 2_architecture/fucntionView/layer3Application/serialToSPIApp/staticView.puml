@@ -1,21 +1,23 @@
-@startuml
+﻿@startuml
 
 title SerialToSPI App - Static View
 
 package "SerialToSPI App" {
-    [Command Handler] as cmdHandler
+    [Routine Handler] as routineHandler
+    note right of routineHandler
+        RID 0x0500: SPI write
+        RID 0x0501: SPI transceive (write + read)
+    end note
     [Mode Manager] as modeMgr
+    note right of modeMgr
+        Enforces mutual exclusivity:
+        Only Master OR Slave mode active at a time
+    end note
     [Master Manager] as masterMgr
     [Slave Manager] as slaveMgr
     [CS Manager] as csMgr
     [Device Manager] as deviceMgr
-    [Config Manager] as configMgr
-    
-    note right of modeMgr
-        Enforces mutual exclusivity:
-        Only Master OR Slave mode
-        active at a time
-    end note
+    [Error Handler] as errorHandler
 }
 
 [SPI Master Driver] as spiMasterDriver
@@ -23,14 +25,18 @@ package "SerialToSPI App" {
 [GPIO Driver] as gpioDriver
 [Config Service] as configService
 
-cmdHandler --> modeMgr : Mode requests
-modeMgr --> masterMgr : Master commands
-modeMgr --> slaveMgr : Slave commands
-masterMgr --> spiMasterDriver : Master operations
-slaveMgr --> spiSlaveDriver : Slave operations
+routineHandler --> modeMgr : Route by RID
+modeMgr --> masterMgr : Master operations
+modeMgr --> slaveMgr : Slave operations
+masterMgr --> spiMasterDriver : Master transfers
+slaveMgr --> spiSlaveDriver : Slave transfers
 masterMgr --> csMgr : CS control
 csMgr --> gpioDriver : CS pin operations
 masterMgr --> deviceMgr : Device tracking
-configMgr --> configService : Load/save config
+
+note right of masterMgr
+    Config loaded from Config Service at init.
+    No runtime config saving here.
+end note
 
 @enduml

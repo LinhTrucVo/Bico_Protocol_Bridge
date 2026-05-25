@@ -1,130 +1,46 @@
-@startuml
+﻿@startuml
 title SerialToSPI App - Dynamic Behaviour
 
-participant "Central Controller" as CC
+participant "Central App Controller" as CC
 participant "SPI App" as SPI
-participant "SPI Master" as MASTER
-participant "SPI Slave" as SLAVE
+participant "SPI Master Driver" as DRV
 participant "GPIO Driver" as GPIO
-participant "Config Service" as CFG
+participant "Config Service" as CS
 
 == Initialization ==
 CC -> SPI : SPIApp_Init()
-SPI -> CFG : LoadConfiguration(SPI_CONFIG)
-CFG --> SPI : config_data
-SPI -> SPI : SetMode(NONE)
-alt Master Mode Configured
-    SPI -> SPI : SetMode(MASTER)
-    SPI -> MASTER : SPIMaster_Init(clock, mode, bitorder)
-    MASTER --> SPI : SUCCESS
-    SPI -> SPI : InitializeDevices(device_list)
-    loop For each device
-        SPI -> GPIO : GPIO_Init(cs_pin, OUTPUT)
-        SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
-    end
-else Slave Mode Configured
-    SPI -> SPI : SetMode(SLAVE)
-    SPI -> SLAVE : SPISlave_Init(mode, bitorder)
-    SLAVE --> SPI : SUCCESS
-else No Mode Configured
-    SPI -> SPI : SetMode(NONE)
-end
+SPI -> CS : ConfigService_Get(did=SPI_CONFIG_DID)
+CS --> SPI : config_data
+SPI -> DRV : SPIMaster_Init(clock, mode, bitorder)
+DRV --> SPI : SUCCESS
 SPI --> CC : INIT_SUCCESS
 
-== Configure SPI Master ==
-CC -> SPI : ConfigureSPIMaster(clock=1MHz, mode=0, bitorder=MSB)
-SPI -> SPI : GetCurrentMode()
-alt Slave Mode Active
-    SPI -> SLAVE : SPISlave_Disable()
-    SLAVE --> SPI : DISABLED
-    SPI -> SPI : SetMode(NONE)
-end
-SPI -> SPI : SetMode(MASTER)
-SPI -> MASTER : SPIMaster_Init(clock=1000000, mode=0, bitorder=MSB_FIRST)
-MASTER --> SPI : SUCCESS
-SPI -> SPI : UpdateMasterConfig(clock, mode, bitorder)
-SPI -> CFG : SaveConfiguration(spi_config)
-CFG --> SPI : SAVED
-SPI --> CC : MASTER_CONFIG_SUCCESS
-
-== Add SPI Device ==
-CC -> SPI : AddDevice(device_id=1, cs_pin=PA4)
-SPI -> GPIO : GPIO_Init(PA4, OUTPUT, NOPULL)
-GPIO --> SPI : SUCCESS
-SPI -> GPIO : GPIO_WritePin(PA4, HIGH)
-SPI -> SPI : RegisterDevice(id=1, cs_pin=PA4)
-SPI --> CC : DEVICE_ADDED
-
-== SPI Master Write Transaction ==
-CC -> SPI : SPIMasterWrite(device=1, data=[0xAA, 0xBB, 0xCC])
-SPI -> SPI : GetDeviceCSPin(device=1) -> PA4
-SPI -> GPIO : GPIO_WritePin(PA4, LOW)
-GPIO --> SPI : OK
-SPI -> MASTER : SPIMaster_Transmit(data, len=3)
-alt Transaction Success
-    MASTER --> SPI : SUCCESS
-    SPI -> GPIO : GPIO_WritePin(PA4, HIGH)
-    SPI --> CC : WRITE_SUCCESS
-else Transaction Error
-    MASTER --> SPI : ERROR
-    SPI -> GPIO : GPIO_WritePin(PA4, HIGH)
-    SPI -> SPI : LogError(SPI_ERROR)
-    SPI --> CC : WRITE_ERROR
+== RID 0x0500 SPI Write ==
+CC -> SPI : ExecuteRoutine(rid=0x0500, params={dev=0, data=[0x9F]})
+SPI -> GPIO : GPIO_WritePin(cs_pin, LOW)
+SPI -> DRV : SPIMaster_Transmit(data, len=1)
+alt SUCCESS
+    DRV --> SPI : SUCCESS
+    SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
+    SPI --> CC : result={status=0x00}
+else ERROR
+    DRV --> SPI : ERROR
+    SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
+    SPI --> CC : result={status=0x01}
 end
 
-== SPI Master Full-Duplex Transaction ==
-CC -> SPI : SPIMasterTransceive(device=1, tx_data=[0x01, 0x02])
-SPI -> SPI : GetDeviceCSPin(device=1) -> PA4
-SPI -> GPIO : GPIO_WritePin(PA4, LOW)
-GPIO --> SPI : OK
-SPI -> MASTER : SPIMaster_Transceive(tx_data, rx_buffer, len=2)
-alt Transaction Success
-    MASTER --> SPI : rx_data=[0x55, 0x66] + SUCCESS
-    SPI -> GPIO : GPIO_WritePin(PA4, HIGH)
-    SPI --> CC : TRANSCEIVE_SUCCESS{rx=[0x55, 0x66]}
-else Transaction Error
-    MASTER --> SPI : ERROR
-    SPI -> GPIO : GPIO_WritePin(PA4, HIGH)
-    SPI -> SPI : LogError(SPI_ERROR)
-    SPI --> CC : TRANSCEIVE_ERROR
+== RID 0x0501 SPI Transceive ==
+CC -> SPI : ExecuteRoutine(rid=0x0501, params={dev=0, tx=[0x9F], rx_len=3})
+SPI -> GPIO : GPIO_WritePin(cs_pin, LOW)
+SPI -> DRV : SPIMaster_TransmitReceive(tx, rx_buf, len)
+alt SUCCESS
+    DRV --> SPI : rx=[0xEF, 0x40, 0x18]
+    SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
+    SPI --> CC : result={data=[0xEF,0x40,0x18], status=0x00}
+else ERROR
+    DRV --> SPI : ERROR
+    SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
+    SPI --> CC : result={status=0x01}
 end
-
-== SPI Master Read Transaction ==
-CC -> SPI : SPIMasterRead(device=1, length=4)
-SPI -> SPI : PrepareDummyData(length=4) -> [0xFF, 0xFF, 0xFF, 0xFF]
-SPI -> GPIO : GPIO_WritePin(PA4, LOW)
-SPI -> MASTER : SPIMaster_Transceive(dummy_data, rx_buffer, len=4)
-MASTER --> SPI : rx_data=[0x11, 0x22, 0x33, 0x44]
-SPI -> GPIO : GPIO_WritePin(PA4, HIGH)
-SPI --> CC : READ_SUCCESS{data=[0x11, 0x22, 0x33, 0x44]}
-
-== Configure SPI Slave ==
-CC -> SPI : ConfigureSPISlave(mode=0, bitorder=MSB)
-SPI -> SPI : GetCurrentMode()
-alt Master Mode Active
-    SPI -> MASTER : SPIMaster_Disable()
-    MASTER --> SPI : DISABLED
-    SPI -> SPI : SetMode(NONE)
-end
-SPI -> SPI : SetMode(SLAVE)
-SPI -> SLAVE : SPISlave_Init(mode=0, bitorder=MSB_FIRST)
-SLAVE --> SPI : SUCCESS
-SPI -> CFG : SaveConfiguration(slave_config)
-CFG --> SPI : SAVED
-SPI --> CC : SLAVE_CONFIG_SUCCESS
-
-== SPI Slave Transaction ==
-SPI -> SLAVE : SPISlave_PrepareData(tx_data=[0xAA, 0xBB])
-
-SLAVE -> SPI : TransactionStart_Callback()
-SPI -> CC : SlaveTransactionStarted()
-
-SLAVE -> SPI : TransactionComplete_Callback(rx_data=[0x01, 0x02])
-SPI -> SPI : ProcessReceivedData(rx_data)
-SPI -> CC : SlaveDataReceived{rx=[0x01, 0x02]}
-
-CC -> SPI : PrepareNextSlaveData(data=[0xCC, 0xDD])
-SPI -> SLAVE : SPISlave_PrepareData(data=[0xCC, 0xDD])
-SPI --> CC : SLAVE_DATA_READY
 
 @enduml
