@@ -13,29 +13,34 @@ package "System Startup Flow" {
     CS1 -up-> CAC1 : CONFIG_LOADED / DEFAULT_CONFIG_LOADED
 }
 
-package "SID 0x22 Read (Get) Flow" {
+package "Read Config Parameter" {
     component "Central App Controller" as CAC2
     component "Config Service" as CS2
 
-    CAC2 -down-> CS2 : ConfigService_Get(did=0x1001)
-    CS2 -down-> CS2 : Lookup DID in registry
-    CS2 -down-> CS2 : Read config parameter
-    CS2 -up-> CAC2 : data=[0x04, 0x00]
+    CAC2 -down-> CS2 : ConfigService_GetAdcSampleRate()
+    CS2 -up-> CAC2 : sampleRate=1000
 }
 
-package "SID 0x2E Write (Validate + Set) Flow" {
+package "Write Config Parameter" {
     component "Central App Controller" as CAC3
     component "Config Service" as CS3
     component "NVM Driver" as NVM3
 
-    CAC3 -down-> CS3 : ConfigService_Validate(did=0x1001, data=[0x08,0x00])
-    CS3 -down-> CS3 : Lookup DID / Check range
-    CS3 -up-> CAC3 : VALID / INVALID (nrc)
-    CAC3 -down-> CS3 : ConfigService_Set(did=0x1001, data=[0x08,0x00])
+    CAC3 -down-> CS3 : ConfigService_SetAdcSampleRate(2000)
+    CS3 -down-> CS3 : Validate range (100..10000) -> OK
     CS3 -down-> CS3 : Update internal config
     CS3 -down-> NVM3 : NVM_Write(JSON config)
     NVM3 -up-> CS3 : SUCCESS
     CS3 -up-> CAC3 : OK
+}
+
+package "Write Config - Invalid Parameter" {
+    component "Central App Controller" as CAC4
+    component "Config Service" as CS4
+
+    CAC4 -down-> CS4 : ConfigService_SetAdcSampleRate(99999)
+    CS4 -down-> CS4 : Validate range -> OUT_OF_RANGE
+    CS4 -up-> CAC4 : INVALID_PARAM
 }
 
 @enduml

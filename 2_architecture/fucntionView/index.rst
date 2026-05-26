@@ -86,3 +86,47 @@ Design Principles
 - **Modularity**: Functions can be developed, tested, and maintained independently
 - **Scalability**: New features can be added by creating new application modules
 - **Reusability**: Services and drivers can be shared across multiple applications
+
+Design Decision: Why CAC Routes Through App Modules
+****************************************************
+
+The Central App Controller (CAC) calls peripheral App modules (SerialToXxxApp)
+rather than calling drivers directly.
+
+**Current Design: CAC → SerialToXxxApp → Driver**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Benefit
+     - Why it matters
+   * - Encapsulation
+     - The app module hides driver-specific details (e.g., CS pin management for SPI, master/slave mode switching for I2C). CAC doesn't need to know hardware wiring.
+   * - Testability
+     - You can unit-test the app module in isolation by mocking the driver. You can also test CAC by mocking the app module — two clean boundaries.
+   * - Multi-step operations
+     - Some operations require sequencing (assert CS → transmit → deassert CS, or check mode → switch mode → transfer). The app module owns that logic.
+   * - State management
+     - The app module tracks channel configs, pin modes, device states. If CAC called the driver directly, CAC would need to manage all that state itself.
+   * - Scalability
+     - Adding a new peripheral operation only touches the app module — CAC just adds one more RID mapping line.
+
+**Alternative: CAC Calls Drivers Directly**
+
+.. list-table::
+   :header-rows: 1
+   :widths: 30 70
+
+   * - Benefit
+     - Cost
+   * - Fewer layers, slightly less code
+     - CAC becomes a god object — owns UDS mapping, hardware sequencing, state management, error handling for ALL peripherals
+   * - Marginally faster call path
+     - Untestable in isolation; any driver change ripples into CAC
+   * - —
+     - Adding a new feature (e.g., I2C repeated start) means modifying CAC instead of a focused module
+
+**Conclusion**: The app layer exists because peripheral operations are not single function calls —
+they involve state, sequencing, and error recovery. Keeping that in a dedicated module keeps
+CAC's job clean: *map UDS → typed API call → encode response*. Nothing more.

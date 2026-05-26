@@ -8,32 +8,32 @@ participant "Config Service" as CS
 
 == Initialization ==
 CC -> I2C : I2CApp_Init()
-I2C -> CS : ConfigService_Get(did=I2C_CONFIG_DID)
-CS --> I2C : config_data
-I2C -> DRV : I2CMaster_Init(clock_speed)
+I2C -> CS : ConfigService_GetI2cClockSpeed()
+CS --> I2C : clockSpeed=400000
+I2C -> DRV : I2CMaster_Init(clockSpeed=400000)
 DRV --> I2C : SUCCESS
 I2C --> CC : INIT_SUCCESS
 
-== RID 0x0400 I2C Write ==
-CC -> I2C : ExecuteRoutine(rid=0x0400, params={addr=0x50, data=[0x10,0xAA]})
+== I2C Write ==
+CC -> I2C : I2CApp_Write(addr=0x50, data=[0x10,0xAA], len=2)
 I2C -> DRV : I2CMaster_Write(addr=0x50, data, len=2)
 alt ACK received
     DRV --> I2C : ACK
-    I2C --> CC : result={status=0x00}
+    I2C --> CC : OK
 else NACK / timeout
     DRV --> I2C : NACK
-    I2C --> CC : result={status=0x01}
+    I2C --> CC : ERROR_NACK
 end
 
-== RID 0x0401 I2C Read ==
-CC -> I2C : ExecuteRoutine(rid=0x0401, params={addr=0x50, len=2})
+== I2C Read ==
+CC -> I2C : I2CApp_Read(addr=0x50, len=2)
 I2C -> DRV : I2CMaster_Read(addr=0x50, buffer, len=2)
 alt Data received
     DRV --> I2C : data=[0xAA, 0xBB]
-    I2C --> CC : result={data=[0xAA,0xBB], status=0x00}
+    I2C --> CC : data=[0xAA, 0xBB]
 else Error
     DRV --> I2C : ERROR
-    I2C --> CC : result={status=0x01}
+    I2C --> CC : ERROR_BUS
 end
 
 @enduml

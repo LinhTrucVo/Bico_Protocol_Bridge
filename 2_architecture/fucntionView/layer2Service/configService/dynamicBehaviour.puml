@@ -18,33 +18,29 @@ else NVM empty or corrupt
     CS --> CAC : DEFAULT_CONFIG_LOADED
 end
 
-== SID 0x22 Read Parameter ==
-CAC -> CS : ConfigService_Get(did=0x1001)
-CS -> CS : LookupDID(0x1001) -> found: ADC_SAMPLE_RATE
-CS -> CS : ReadParameter(ADC_SAMPLE_RATE)
-CS --> CAC : data=[0x04, 0x00]
+== Read Parameter ==
+CAC -> CS : ConfigService_GetAdcSampleRate()
+CS -> CS : ReadFromInternalStore(ADC_SAMPLE_RATE)
+CS --> CAC : sampleRate=1000
 
-== SID 0x2E Write Parameter ==
-CAC -> CS : ConfigService_Validate(did=0x1001, data=[0x08,0x00])
-CS -> CS : LookupDID(0x1001) -> found
-CS -> CS : CheckRange(data=[0x08,0x00]) -> OK
-CS --> CAC : VALID
-
-CAC -> CS : ConfigService_Set(did=0x1001, data=[0x08,0x00])
-CS -> CS : UpdateParameter(ADC_SAMPLE_RATE, 0x0800)
+== Write Parameter (Valid) ==
+CAC -> CS : ConfigService_SetAdcSampleRate(2000)
+CS -> CS : ValidateRange(2000, min=100, max=10000) -> OK
+CS -> CS : UpdateInternalStore(ADC_SAMPLE_RATE, 2000)
 CS -> NVM : NVM_Write(CONFIG_ADDRESS, JSON, size)
 NVM --> CS : SUCCESS
 CS --> CAC : OK
 
-== SID 0x2E Write - Validation Failure ==
-CAC -> CS : ConfigService_Validate(did=0x1001, data=[0xFF,0xFF])
-CS -> CS : LookupDID(0x1001) -> found
-CS -> CS : CheckRange(data=[0xFF,0xFF]) -> OUT_OF_RANGE
-CS --> CAC : INVALID (nrc=0x31)
+== Write Parameter (Invalid) ==
+CAC -> CS : ConfigService_SetAdcSampleRate(99999)
+CS -> CS : ValidateRange(99999, min=100, max=10000) -> FAIL
+CS --> CAC : INVALID_PARAM
 
-== Unsupported DID ==
-CAC -> CS : ConfigService_Get(did=0xFFFF)
-CS -> CS : LookupDID(0xFFFF) -> not found
-CS --> CAC : INVALID (nrc=0x31)
+== Save All to NVM ==
+CAC -> CS : ConfigService_SaveAll()
+CS -> CS : SerializeToJson()
+CS -> NVM : NVM_Write(CONFIG_ADDRESS, JSON, size)
+NVM --> CS : SUCCESS
+CS --> CAC : OK
 
 @enduml

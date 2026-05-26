@@ -3,9 +3,9 @@
 title SerialToAnalog App - Static View
 
 package "SerialToAnalog App" {
-    [Routine Handler] as routineHandler
-    note right of routineHandler
-        RID 0x0100: ADC trigger + read result
+    [ADC Read Handler] as readHandler
+    note right of readHandler
+        API: AnalogApp_ReadAdc(channel) -> raw_value
     end note
     [Channel Manager] as channelMgr
     [Sampling Controller] as samplingCtrl
@@ -14,13 +14,13 @@ package "SerialToAnalog App" {
 [ADC Driver] as adcDriver
 [Config Service] as configService
 
-routineHandler --> channelMgr : Route by channel
+readHandler --> channelMgr : Select channel
 channelMgr --> adcDriver : ADC operations
-samplingCtrl --> adcDriver : Start/stop conversion
+samplingCtrl --> adcDriver : Start conversion
 
-note right of channelMgr
-    Config loaded from Config Service at init.
-    No runtime config saving here.
+note bottom of readHandler
+    No DID/RID awareness.
+    Receives typed channel number from CAC.
 end note
 
 @enduml

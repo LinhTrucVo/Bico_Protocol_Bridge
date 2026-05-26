@@ -9,38 +9,38 @@ participant "Config Service" as CS
 
 == Initialization ==
 CC -> SPI : SPIApp_Init()
-SPI -> CS : ConfigService_Get(did=SPI_CONFIG_DID)
-CS --> SPI : config_data
+SPI -> CS : ConfigService_GetSpiConfig()
+CS --> SPI : {clock, mode, bitorder}
 SPI -> DRV : SPIMaster_Init(clock, mode, bitorder)
 DRV --> SPI : SUCCESS
 SPI --> CC : INIT_SUCCESS
 
-== RID 0x0500 SPI Write ==
-CC -> SPI : ExecuteRoutine(rid=0x0500, params={dev=0, data=[0x9F]})
+== SPI Write ==
+CC -> SPI : SPIApp_Write(dev=0, data=[0x9F], len=1)
 SPI -> GPIO : GPIO_WritePin(cs_pin, LOW)
 SPI -> DRV : SPIMaster_Transmit(data, len=1)
 alt SUCCESS
     DRV --> SPI : SUCCESS
     SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
-    SPI --> CC : result={status=0x00}
+    SPI --> CC : OK
 else ERROR
     DRV --> SPI : ERROR
     SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
-    SPI --> CC : result={status=0x01}
+    SPI --> CC : ERROR_BUS
 end
 
-== RID 0x0501 SPI Transceive ==
-CC -> SPI : ExecuteRoutine(rid=0x0501, params={dev=0, tx=[0x9F], rx_len=3})
+== SPI Transceive ==
+CC -> SPI : SPIApp_Transceive(dev=0, tx=[0x9F], rx_len=3)
 SPI -> GPIO : GPIO_WritePin(cs_pin, LOW)
 SPI -> DRV : SPIMaster_TransmitReceive(tx, rx_buf, len)
 alt SUCCESS
     DRV --> SPI : rx=[0xEF, 0x40, 0x18]
     SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
-    SPI --> CC : result={data=[0xEF,0x40,0x18], status=0x00}
+    SPI --> CC : data=[0xEF, 0x40, 0x18]
 else ERROR
     DRV --> SPI : ERROR
     SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
-    SPI --> CC : result={status=0x01}
+    SPI --> CC : ERROR_BUS
 end
 
 @enduml

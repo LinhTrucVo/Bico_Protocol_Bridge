@@ -6,13 +6,23 @@ package "Central App Controller" {
     [System Initializer] as init
     [UDS Command Dispatcher] as dispatcher
     note right of dispatcher
-        SID 0x22 / 0x2E  -> Config Service (DIDs)
-        SID 0x31 RID 0x01xx -> SerialToAnalog App
-        SID 0x31 RID 0x02xx / 0x03xx -> SerialToDigital App
-        SID 0x31 RID 0x04xx -> SerialToI2C App
-        SID 0x31 RID 0x05xx -> SerialToSPI App
+        Owns all DID/RID definitions.
+        Maps DID/RID + payload to typed API calls.
     end note
-    [Resource Arbiter] as arbiter
+    [DID/RID Mapper] as mapper
+    note right of mapper
+        DID 0x1001 -> ConfigService.SetAdcSampleRate(rate)
+        DID 0x1002 -> ConfigService.SetAdcResolution(res)
+        RID 0x0100 -> AnalogApp.ReadAdc(channel)
+        RID 0x0200 -> DigitalApp.WriteGpio(pin, state)
+        RID 0x0201 -> DigitalApp.ReadGpio(pin)
+        RID 0x0300 -> DigitalApp.StartPwm(channel)
+        RID 0x0301 -> DigitalApp.StopPwm(channel)
+        RID 0x0400 -> I2CApp.Write(addr, data)
+        RID 0x0401 -> I2CApp.Read(addr, len)
+        RID 0x0500 -> SPIApp.Write(dev, data)
+        RID 0x0501 -> SPIApp.Transceive(dev, tx, rx_len)
+    end note
     [State Manager] as stateMgr
     [Health Monitor] as watchdog
 }
@@ -25,13 +35,14 @@ package "Central App Controller" {
 [Serialize] as serialize
 [Config Service] as configService
 
-deserialize -[#orange]-> dispatcher : UDS_Request{sid, did/rid, params}
-dispatcher -[#purple]-> configService : SID 0x22 Get(did) / SID 0x2E Validate+Set(did, data)
-dispatcher -[#blue]-> analogApp : SID 0x31 RID 0x01xx
-dispatcher -[#blue]-> digitalApp : SID 0x31 RID 0x02xx / 0x03xx
-dispatcher -[#blue]-> i2cApp : SID 0x31 RID 0x04xx
-dispatcher -[#blue]-> spiApp : SID 0x31 RID 0x05xx
-dispatcher -[#orange]-> serialize : UDS_Response{sid, did/rid, data} or UDS_Error{requestSID, nrc}
+deserialize -[#orange]-> dispatcher : UDS_Request{sid, did/rid, raw payload}
+dispatcher --> mapper : Decode DID/RID + extract params
+mapper -[#purple]-> configService : Typed API (e.g. SetAdcSampleRate(1000))
+mapper -[#blue]-> analogApp : Typed API (e.g. ReadAdc(ch=1))
+mapper -[#blue]-> digitalApp : Typed API (e.g. WriteGpio(PA5, HIGH))
+mapper -[#blue]-> i2cApp : Typed API (e.g. Write(0x50, data))
+mapper -[#blue]-> spiApp : Typed API (e.g. Transceive(dev, tx, rx_len))
+dispatcher -[#orange]-> serialize : UDS_Response / UDS_Error
 init -[#green]-> analogApp : Initialize
 init -[#green]-> digitalApp : Initialize
 init -[#green]-> i2cApp : Initialize

@@ -27,49 +27,66 @@ CAC --> MAIN : SYSTEM_READY
 
 == SID 0x22 Read Config ==
 DES -> CAC : Dispatch(UDS_Request{sid=0x22, did=0x1001})
-CAC -> CS : ConfigService_Get(did=0x1001)
-CS --> CAC : data=[0x04, 0x00]
-CAC -> SER : BuildResponse(sid=0x22, did=0x1001, data)
+CAC -> CAC : MapDID(0x1001) -> GetAdcSampleRate
+CAC -> CS : ConfigService_GetAdcSampleRate()
+CS --> CAC : sampleRate=1000
+CAC -> CAC : EncodeResponse(1000) -> [0x03, 0xE8]
+CAC -> SER : BuildResponse(sid=0x22, did=0x1001, data=[0x03,0xE8])
 
 == SID 0x2E Write Config ==
-DES -> CAC : Dispatch(UDS_Request{sid=0x2E, did=0x1001, data=[0x08,0x00]})
-CAC -> CS : ConfigService_Validate(did=0x1001, data)
+DES -> CAC : Dispatch(UDS_Request{sid=0x2E, did=0x1001, data=[0x07,0xD0]})
+CAC -> CAC : MapDID(0x1001) -> SetAdcSampleRate\nDecodePayload([0x07,0xD0]) -> rate=2000
+CAC -> CS : ConfigService_SetAdcSampleRate(2000)
 alt Valid
-    CS --> CAC : VALID
-    CAC -> CS : ConfigService_Set(did=0x1001, data)
     CS --> CAC : OK
     CAC -> SER : BuildResponse(sid=0x2E, did=0x1001)
-else Invalid
-    CS --> CAC : INVALID (nrc=0x31)
+else Invalid parameter
+    CS --> CAC : INVALID_PARAM
     CAC -> SER : BuildNegativeResponse(requestSID=0x2E, nrc=0x31)
 end
 
-== SID 0x31 RID Dispatch ==
+== SID 0x31 Peripheral Control ==
 DES -> CAC : Dispatch(UDS_Request{sid=0x31, routineControlType=0x01, rid, params})
-CAC -> CAC : RouteByRID(rid)
+CAC -> CAC : MapRID(rid) + DecodeParams(params)
 
-alt RID 0x01xx (ADC)
-    CAC -> AA : ExecuteRoutine(rid, params)
-    AA --> CAC : result
-    CAC -> SER : BuildResponse(sid=0x31, rid, data=result)
+alt RID 0x0100 (ADC Read)
+    CAC -> AA : AnalogApp_ReadAdc(channel=1)
+    AA --> CAC : raw_value=2048
+    CAC -> CAC : EncodeResult(2048) -> [0x08, 0x00]
+    CAC -> SER : BuildResponse(sid=0x31, rid=0x0100, data=[0x08,0x00])
 
-else RID 0x02xx / 0x03xx (GPIO / PWM)
-    CAC -> DA : ExecuteRoutine(rid, params)
-    DA --> CAC : result
-    CAC -> SER : BuildResponse(sid=0x31, rid, data=result)
+else RID 0x0200 (GPIO Write)
+    CAC -> DA : DigitalApp_WriteGpio(pin=PA5, state=HIGH)
+    DA --> CAC : OK
+    CAC -> SER : BuildResponse(sid=0x31, rid=0x0200, status=0x00)
 
-else RID 0x04xx (I2C)
-    CAC -> I2C : ExecuteRoutine(rid, params)
-    I2C --> CAC : result
-    CAC -> SER : BuildResponse(sid=0x31, rid, data=result)
+else RID 0x0201 (GPIO Read)
+    CAC -> DA : DigitalApp_ReadGpio(pin=PB3)
+    DA --> CAC : pin_state=HIGH
+    CAC -> SER : BuildResponse(sid=0x31, rid=0x0201, data=[0x01])
 
-else RID 0x05xx (SPI)
-    CAC -> SPI : ExecuteRoutine(rid, params)
-    SPI --> CAC : result
-    CAC -> SER : BuildResponse(sid=0x31, rid, data=result)
+else RID 0x0400 (I2C Write)
+    CAC -> I2C : I2CApp_Write(addr=0x50, data, len)
+    I2C --> CAC : OK
+    CAC -> SER : BuildResponse(sid=0x31, rid=0x0400, status=0x00)
 
-else Unknown RID
-    CAC -> SER : BuildNegativeResponse(requestSID=0x31, nrc=0x31)
+else RID 0x0401 (I2C Read)
+    CAC -> I2C : I2CApp_Read(addr=0x50, len=2)
+    I2C --> CAC : data=[0xAA, 0xBB]
+    CAC -> SER : BuildResponse(sid=0x31, rid=0x0401, data=[0xAA,0xBB])
+
+else RID 0x0500 (SPI Write)
+    CAC -> SPI : SPIApp_Write(dev=0, data=[0x9F])
+    SPI --> CAC : OK
+    CAC -> SER : BuildResponse(sid=0x31, rid=0x0500, status=0x00)
+
+else RID 0x0501 (SPI Transceive)
+    CAC -> SPI : SPIApp_Transceive(dev=0, tx=[0x9F], rx_len=3)
+    SPI --> CAC : rx=[0xEF, 0x40, 0x18]
+    CAC -> SER : BuildResponse(sid=0x31, rid=0x0501, data=[0xEF,0x40,0x18])
+
+else Unknown DID/RID
+    CAC -> SER : BuildNegativeResponse(requestSID, nrc=0x31)
 end
 
 @enduml

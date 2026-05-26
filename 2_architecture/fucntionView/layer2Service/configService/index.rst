@@ -12,12 +12,12 @@ providing a unified interface for configuration storage, retrieval, validation, 
 It works with the NVM Driver to persist configurations across power cycles.
 
 Key responsibilities:
-- Store configuration parameters to non-volatile memory
-- Load configuration parameters from non-volatile memory
-- Validate configuration parameters before storing
-- Provide default configuration values
+- Provide typed Get/Set API for each configuration parameter (no DID/RID awareness)
+- Validate parameter ranges internally on Set calls
+- Store configuration parameters to non-volatile memory as JSON
+- Load configuration parameters from non-volatile memory on startup
+- Provide default configuration values when NVM is empty or corrupt
 - Manage configuration versioning
-- Handle structured configuration data (input/output via Application layer)
 
 Static view
 ***********

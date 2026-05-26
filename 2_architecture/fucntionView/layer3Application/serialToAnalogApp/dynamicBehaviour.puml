@@ -8,24 +8,26 @@ participant "Config Service" as CS
 
 == Initialization ==
 CC -> AA : AnalogApp_Init()
-AA -> CS : ConfigService_Get(did=ADC_CONFIG_DID)
-CS --> AA : config_data
-AA -> AA : InitializeChannels(config_data)
+AA -> CS : ConfigService_GetAdcResolution()
+CS --> AA : resolution=12
+AA -> CS : ConfigService_GetAdcSampleRate()
+CS --> AA : sampleRate=1000
+AA -> AA : InitializeChannels(resolution, sampleRate)
 loop For each configured channel
     AA -> ADC : ADC_ConfigChannel(ch, resolution, rate)
     ADC --> AA : SUCCESS
 end
 AA --> CC : INIT_SUCCESS
 
-== RID 0x0100 ADC Read (startRoutine) ==
-CC -> AA : ExecuteRoutine(rid=0x0100, params={ch=1})
+== Read ADC ==
+CC -> AA : AnalogApp_ReadAdc(channel=1)
 AA -> ADC : ADC_StartSingle(ch=1)
 ADC -> ADC : Perform conversion
 ADC -> AA : ConversionComplete_Callback(raw_value=2048)
 alt Conversion OK
-    AA --> CC : result={raw_value=2048, status=0x00}
+    AA --> CC : raw_value=2048
 else Conversion Error
-    AA --> CC : result={status=0x01}
+    AA --> CC : ERROR_CONVERSION
 end
 
 @enduml

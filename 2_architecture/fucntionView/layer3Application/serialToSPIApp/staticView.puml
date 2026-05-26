@@ -3,10 +3,11 @@
 title SerialToSPI App - Static View
 
 package "SerialToSPI App" {
-    [Routine Handler] as routineHandler
-    note right of routineHandler
-        RID 0x0500: SPI write
-        RID 0x0501: SPI transceive (write + read)
+    [SPI Handler] as spiHandler
+    note right of spiHandler
+        API:
+        SPIApp_Write(dev, data, len) -> status
+        SPIApp_Transceive(dev, tx, tx_len, rx, rx_len) -> status
     end note
     [Mode Manager] as modeMgr
     note right of modeMgr
@@ -16,7 +17,6 @@ package "SerialToSPI App" {
     [Master Manager] as masterMgr
     [Slave Manager] as slaveMgr
     [CS Manager] as csMgr
-    [Device Manager] as deviceMgr
     [Error Handler] as errorHandler
 }
 
@@ -25,18 +25,17 @@ package "SerialToSPI App" {
 [GPIO Driver] as gpioDriver
 [Config Service] as configService
 
-routineHandler --> modeMgr : Route by RID
+spiHandler --> modeMgr : Route operation
 modeMgr --> masterMgr : Master operations
 modeMgr --> slaveMgr : Slave operations
 masterMgr --> spiMasterDriver : Master transfers
 slaveMgr --> spiSlaveDriver : Slave transfers
 masterMgr --> csMgr : CS control
 csMgr --> gpioDriver : CS pin operations
-masterMgr --> deviceMgr : Device tracking
 
-note right of masterMgr
-    Config loaded from Config Service at init.
-    No runtime config saving here.
+note bottom of spiHandler
+    No DID/RID awareness.
+    Receives typed dev/data from CAC.
 end note
 
 @enduml

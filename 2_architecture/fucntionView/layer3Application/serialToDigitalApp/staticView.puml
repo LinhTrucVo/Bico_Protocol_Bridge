@@ -3,15 +3,18 @@
 title SerialToDigital App - Static View
 
 package "SerialToDigital App" {
-    [Routine Handler] as routineHandler
-    note right of routineHandler
-        RID 0x0200: GPIO write
-        RID 0x0201: GPIO read
-        RID 0x0300: PWM start
-        RID 0x0301: PWM stop
+    [GPIO Handler] as gpioHandler
+    note right of gpioHandler
+        API:
+        DigitalApp_WriteGpio(pin, state) -> status
+        DigitalApp_ReadGpio(pin) -> pin_state
     end note
-    [GPIO Manager] as gpioMgr
-    [PWM Manager] as pwmMgr
+    [PWM Handler] as pwmHandler
+    note right of pwmHandler
+        API:
+        DigitalApp_StartPwm(channel) -> status
+        DigitalApp_StopPwm(channel) -> status
+    end note
     [Pin Mode Manager] as pinModeMgr
 }
 
@@ -19,15 +22,13 @@ package "SerialToDigital App" {
 [PWM Driver] as pwmDriver
 [Config Service] as configService
 
-routineHandler --> gpioMgr : RID 0x02xx
-routineHandler --> pwmMgr : RID 0x03xx
-gpioMgr --> pinModeMgr : Mode check
-gpioMgr --> gpioDriver : Digital operations
-pwmMgr --> pwmDriver : PWM operations
+gpioHandler --> pinModeMgr : Mode check
+gpioHandler --> gpioDriver : Digital operations
+pwmHandler --> pwmDriver : PWM operations
 
-note right of gpioMgr
-    Config loaded from Config Service at init.
-    No runtime config saving here.
+note bottom of gpioHandler
+    No DID/RID awareness.
+    Receives typed pin/state from CAC.
 end note
 
 @enduml

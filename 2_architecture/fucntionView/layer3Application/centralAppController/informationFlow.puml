@@ -11,35 +11,37 @@ package "System Startup Flow" {
 
     CAC1 -down-> CS1 : ConfigService_Init()
     CS1 -up-> CAC1 : CONFIG_LOADED
-    CAC1 -down-> AA1 : Init(config)
-    CAC1 -down-> DA1 : Init(config)
-    CAC1 -down-> I2CA1 : Init(config)
-    CAC1 -down-> SPIA1 : Init(config)
+    CAC1 -down-> AA1 : AnalogApp_Init()
+    CAC1 -down-> DA1 : DigitalApp_Init()
+    CAC1 -down-> I2CA1 : I2CApp_Init()
+    CAC1 -down-> SPIA1 : SPIApp_Init()
 }
 
-package "SID 0x22 Read Config Flow" {
+package "SID 0x22 Read Config (DID 0x1001 = ADC Sample Rate)" {
     component "Deserialize" as DES2
     component "Central App Controller" as CAC2
     component "Config Service" as CS2
     component "Serialize" as SER2
 
     DES2 -down-> CAC2 : UDS_Request{sid=0x22, did=0x1001}
-    CAC2 -down-> CS2 : Get(did=0x1001)
-    CS2 -up-> CAC2 : data=[0x04, 0x00]
-    CAC2 -down-> SER2 : UDS_Response{sid=0x22, did=0x1001, data}
+    CAC2 -down-> CAC2 : Map DID 0x1001 -> GetAdcSampleRate
+    CAC2 -down-> CS2 : ConfigService_GetAdcSampleRate()
+    CS2 -up-> CAC2 : sampleRate=1000
+    CAC2 -down-> CAC2 : Encode result -> [0x03, 0xE8]
+    CAC2 -down-> SER2 : UDS_Response{sid=0x22, did=0x1001, data=[0x03,0xE8]}
 }
 
-package "SID 0x2E Write Config Flow" {
+package "SID 0x2E Write Config (DID 0x1001 = ADC Sample Rate)" {
     component "Deserialize" as DES3
     component "Central App Controller" as CAC3
     component "Config Service" as CS3
     component "Serialize" as SER3
 
-    DES3 -down-> CAC3 : UDS_Request{sid=0x2E, did=0x1001, data=[0x08,0x00]}
-    CAC3 -down-> CS3 : Validate(did, data) -> VALID
-    CAC3 -down-> CS3 : Set(did, data)
-    CS3 -up-> CAC3 : OK
-    CAC3 -down-> SER3 : UDS_Response{sid=0x2E, did=0x1001}
+    DES3 -down-> CAC3 : UDS_Request{sid=0x2E, did=0x1001, data=[0x07,0xD0]}
+    CAC3 -down-> CAC3 : Map DID 0x1001 -> SetAdcSampleRate\nDecode data -> rate=2000
+    CAC3 -down-> CS3 : ConfigService_SetAdcSampleRate(2000)
+    CS3 -up-> CAC3 : OK / INVALID_PARAM
+    CAC3 -down-> SER3 : UDS_Response{sid=0x2E, did=0x1001}\nor UDS_Error{requestSID=0x2E, nrc=0x31}
 }
 
 package "SID 0x31 RID 0x0100 ADC Read" {
@@ -48,9 +50,11 @@ package "SID 0x31 RID 0x0100 ADC Read" {
     component "SerialToAnalog App" as AA4
     component "Serialize" as SER4
 
-    DES4 -down-> CAC4 : UDS_Request{sid=0x31, rid=0x0100, params={ch=1}}
-    CAC4 -down-> AA4 : ReadADC(ch=1)
+    DES4 -down-> CAC4 : UDS_Request{sid=0x31, rid=0x0100, params=[0x01]}
+    CAC4 -down-> CAC4 : Map RID 0x0100 -> ReadAdc\nDecode params -> channel=1
+    CAC4 -down-> AA4 : AnalogApp_ReadAdc(channel=1)
     AA4 -up-> CAC4 : raw_value=2048
+    CAC4 -down-> CAC4 : Encode result -> [0x08, 0x00]
     CAC4 -down-> SER4 : UDS_Response{sid=0x31, rid=0x0100, data=[0x08,0x00]}
 }
 
@@ -60,34 +64,24 @@ package "SID 0x31 RID 0x0200 GPIO Write" {
     component "SerialToDigital App" as DA5
     component "Serialize" as SER5
 
-    DES5 -down-> CAC5 : UDS_Request{sid=0x31, rid=0x0200, params={pin=PA5, state=HIGH}}
-    CAC5 -down-> DA5 : WriteGPIO(pin=PA5, state=HIGH)
+    DES5 -down-> CAC5 : UDS_Request{sid=0x31, rid=0x0200, params=[0x05, 0x01]}
+    CAC5 -down-> CAC5 : Map RID 0x0200 -> WriteGpio\nDecode params -> pin=PA5, state=HIGH
+    CAC5 -down-> DA5 : DigitalApp_WriteGpio(pin=PA5, state=HIGH)
     DA5 -up-> CAC5 : OK
     CAC5 -down-> SER5 : UDS_Response{sid=0x31, rid=0x0200, status=0x00}
 }
 
-package "SID 0x31 RID 0x0401 I2C Read" {
+package "SID 0x31 RID 0x0400 I2C Write" {
     component "Deserialize" as DES6
     component "Central App Controller" as CAC6
     component "SerialToI2C App" as I2CA6
     component "Serialize" as SER6
 
-    DES6 -down-> CAC6 : UDS_Request{sid=0x31, rid=0x0401, params={addr=0x50, len=2}}
-    CAC6 -down-> I2CA6 : ReadI2C(addr=0x50, len=2)
-    I2CA6 -up-> CAC6 : data=[0xAA, 0xBB]
-    CAC6 -down-> SER6 : UDS_Response{sid=0x31, rid=0x0401, data=[0xAA,0xBB]}
-}
-
-package "SID 0x31 RID 0x0501 SPI Transceive" {
-    component "Deserialize" as DES7
-    component "Central App Controller" as CAC7
-    component "SerialToSPI App" as SPIA7
-    component "Serialize" as SER7
-
-    DES7 -down-> CAC7 : UDS_Request{sid=0x31, rid=0x0501, params={dev=0, data=[0x9F]}}
-    CAC7 -down-> SPIA7 : SPITransceive(dev=0, tx=[0x9F])
-    SPIA7 -up-> CAC7 : rx=[0xEF, 0x40, 0x18]
-    CAC7 -down-> SER7 : UDS_Response{sid=0x31, rid=0x0501, data=[0xEF,0x40,0x18]}
+    DES6 -down-> CAC6 : UDS_Request{sid=0x31, rid=0x0400, params=[0x50, 0x10, 0xAA]}
+    CAC6 -down-> CAC6 : Map RID 0x0400 -> I2CWrite\nDecode params -> addr=0x50, data=[0x10,0xAA]
+    CAC6 -down-> I2CA6 : I2CApp_Write(addr=0x50, data=[0x10,0xAA], len=2)
+    I2CA6 -up-> CAC6 : OK
+    CAC6 -down-> SER6 : UDS_Response{sid=0x31, rid=0x0400, status=0x00}
 }
 
 @enduml

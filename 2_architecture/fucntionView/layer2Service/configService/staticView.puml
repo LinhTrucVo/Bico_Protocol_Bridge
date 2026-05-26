@@ -3,24 +3,20 @@
 title Configuration Service - Static View
 
 package "Configuration Service" {
-    [DID Registry] as didRegistry
-    note right of didRegistry
-        - Defines all valid DIDs and RIDs
-        - Maps DID to config parameter
-        - Owned here; used by serialize/deserialize
-    end note
-
     [Config Validator] as validator
     note right of validator
-        - Validates DID existence
-        - Validates data range and length
-        - Called by Central App Controller (SID 0x2E)
+        - Validates parameter ranges
+        - Returns OK or INVALID_PARAM
     end note
 
     [Config Store] as store
     note right of store
-        - Get(did): read config parameter
-        - Set(did, data): write config parameter
+        - Get/Set typed config parameters
+        - API examples:
+          GetAdcSampleRate() -> uint16_t
+          SetAdcSampleRate(uint16_t rate) -> status
+          GetI2cClockSpeed() -> uint32_t
+          SetI2cClockSpeed(uint32_t speed) -> status
     end note
 
     [NVM Persistence] as nvmPersist
@@ -38,10 +34,14 @@ package "Configuration Service" {
 [Central App Controller] as cac
 [NVM Driver] as nvmDriver
 
-cac --> didRegistry : Lookup DID/RID
-cac --> validator : Validate(did, data)
-cac --> store : Get(did) / Set(did, data)
+cac --> validator : Typed Set calls (validates internally)
+cac --> store : Typed Get/Set calls
 nvmPersist --> nvmDriver : Read/Write JSON config
 defaults ..> nvmPersist : Fallback on invalid NVM
+
+note bottom of store
+    No DID/RID awareness.
+    Receives typed parameters only.
+end note
 
 @enduml
