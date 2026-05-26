@@ -1,10 +1,10 @@
-serialToSPIAppCfg.h
+﻿serialToSPIAppCfg.h
 ########################
 
-Defines compile-time feature flags for the Serial-to-SPI Application:
+Defines compile-time configuration for the Serial-to-SPI Application:
 
-- ``SERIAL_TO_SPI_CFG_ENABLE_MASTER``: Enables SPI master full-duplex transfer support.
-- ``SERIAL_TO_SPI_CFG_ENABLE_SLAVE``: Enables SPI slave mode support (disabled by default).
+- ``SERIAL_TO_SPI_CFG_MAX_TRANSFER_SIZE``: Maximum SPI transfer size in bytes.
+- ``SERIAL_TO_SPI_CFG_MAX_DEVICES``: Maximum number of SPI slave devices.
 
 ..  doxygenfile::  serialToSPIAppCfg.h
     :project: SerialToSPIApp

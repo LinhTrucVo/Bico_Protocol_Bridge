@@ -1,23 +1,17 @@
-@startuml serialToAnalogAppStateMachine
+﻿@startuml serialToAnalogAppStateMachine
 state Uninitialized
-state Initialized
-state Running
+state Ready
 
 [*] --> Uninitialized
 
-Uninitialized --> Initialized : Init()
+Uninitialized --> Ready : Init()
+Ready --> Uninitialized : DeInit()
 
-Initialized --> Running : Run()
+Ready --> Ready : ReadAdc()
 
-Running --> Running : ProcessFrame()
-
-Running --> Initialized : Stop()
-
-Initialized --> Uninitialized : DeInit()
-
-note right of Running
-  Application actively processing
-  serial commands and generating
-  analog outputs
+note right of Ready
+  Stateless.
+  Each ReadAdc() is an independent
+  ADC driver read operation.
 end note
 @enduml

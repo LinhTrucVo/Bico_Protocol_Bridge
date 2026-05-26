@@ -1,11 +1,10 @@
 ﻿//----------------------------------------------------------------------------
-// Unit Test file for Serialize component
+// Unit Test file for Serialize component - UDS Response Builder
 //----------------------------------------------------------------------------
 
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-// Unit under test
 extern "C"
 {
 #include "mockSerialize.h"
@@ -19,179 +18,147 @@ class Serialize : public ::testing::Test
 protected:
     void SetUp() override 
     {
-        // Reset all fake functions before each test
         FFF_RESET_HISTORY();
+        call_SerializeUnit_Init();
     }
 
     void TearDown() override 
     {
-        // Clean up after each test if needed
+        call_SerializeUnit_DeInit();
     }
 };
 
 //------------------------------------------------------------------------------
-// Test Cases for SerializeUnit_Init
+// Test Cases for SerializeUnit_Init / DeInit
 //------------------------------------------------------------------------------
 TEST_F(Serialize, Serialize_Init_Valid_ReturnsOK)
 {
-    // Arrange
-    // No setup needed
-    
-    // Act
+    call_SerializeUnit_DeInit();
     Serialize_Status_t status = call_SerializeUnit_Init();
-    
-    // Assert
     EXPECT_EQ(SERIALIZE_STATUS_OK, status);
 }
 
-//------------------------------------------------------------------------------
-// Test Cases for SerializeUnit_BuildFrame
-//------------------------------------------------------------------------------
-TEST_F(Serialize, Serialize_BuildFrame_ValidMessage_ReturnsOK)
-{
-    // Arrange
-    uint8_t payload[2] = {0x01, 0x02};
-    uint8_t buffer[64] = {0};
-    Serialize_Message_t msg = { {0x10, 0x01, SERIALIZE_MSG_TYPE_RESPONSE}, payload, 2 };
-    Serialize_Buffer_t out = { buffer, sizeof(buffer) };
-    uint16_t frameLen = 0;
-    call_SerializeUnit_Init();
-    
-    // Act
-    Serialize_Status_t status = call_SerializeUnit_BuildFrame(&msg, &out, &frameLen);
-    
-    // Assert
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
-    EXPECT_GT(frameLen, 0U);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for SerializeUnit_ComputeCrc
-//------------------------------------------------------------------------------
-TEST_F(Serialize, Serialize_ComputeCrc_ValidData_ReturnsOK)
-{
-    // Arrange
-    uint8_t data[4] = {0x10, 0x01, 0x00, 0x00};
-    uint16_t crc = 0;
-    call_SerializeUnit_Init();
-    
-    // Act
-    Serialize_Status_t status = call_SerializeUnit_ComputeCrc(data, 4, &crc);
-    
-    // Assert
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for SerializeUnit_BuildError
-//------------------------------------------------------------------------------
-TEST_F(Serialize, Serialize_BuildError_ValidError_ReturnsOK)
-{
-    // Arrange
-    uint8_t buffer[64] = {0};
-    Serialize_Buffer_t out = { buffer, sizeof(buffer) };
-    uint16_t frameLen = 0;
-    call_SerializeUnit_Init();
-    
-    // Act
-    Serialize_Status_t status = call_SerializeUnit_BuildError(0x10, 0x01, SERIALIZE_ERROR_INVALID_COMMAND, &out, &frameLen);
-    
-    // Assert
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
-    EXPECT_GT(frameLen, 0U);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for SerializeUnit_BuildAnalogSamples
-//------------------------------------------------------------------------------
-TEST_F(Serialize, Serialize_BuildAnalogSamples_ValidSamples_ReturnsOK)
-{
-    // Arrange
-    uint16_t samples[4] = {100, 200, 300, 400};
-    uint8_t buffer[64] = {0};
-    Serialize_Buffer_t out = { buffer, sizeof(buffer) };
-    uint16_t frameLen = 0;
-    call_SerializeUnit_Init();
-    
-    // Act
-    Serialize_Status_t status = call_SerializeUnit_BuildAnalogSamples(0, samples, 4, &out, &frameLen);
-    
-    // Assert
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
-    EXPECT_GT(frameLen, 0U);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for SerializeUnit_BuildDigitalRead
-//------------------------------------------------------------------------------
-TEST_F(Serialize, Serialize_BuildDigitalRead_ValidPin_ReturnsOK)
-{
-    // Arrange
-    uint8_t buffer[64] = {0};
-    Serialize_Buffer_t out = { buffer, sizeof(buffer) };
-    uint16_t frameLen = 0;
-    call_SerializeUnit_Init();
-    
-    // Act
-    Serialize_Status_t status = call_SerializeUnit_BuildDigitalRead(0, 1, &out, &frameLen);
-    
-    // Assert
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
-    EXPECT_GT(frameLen, 0U);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for SerializeUnit_BuildI2CRead
-//------------------------------------------------------------------------------
-TEST_F(Serialize, Serialize_BuildI2CRead_ValidData_ReturnsOK)
-{
-    // Arrange
-    uint8_t data[4] = {0x01, 0x02, 0x03, 0x04};
-    uint8_t buffer[64] = {0};
-    Serialize_Buffer_t out = { buffer, sizeof(buffer) };
-    uint16_t frameLen = 0;
-    call_SerializeUnit_Init();
-    
-    // Act
-    Serialize_Status_t status = call_SerializeUnit_BuildI2CRead(0x50, data, 4, &out, &frameLen);
-    
-    // Assert
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
-    EXPECT_GT(frameLen, 0U);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for SerializeUnit_BuildSPITransfer
-//------------------------------------------------------------------------------
-TEST_F(Serialize, Serialize_BuildSPITransfer_ValidData_ReturnsOK)
-{
-    // Arrange
-    uint8_t txData[2] = {0xAA, 0xBB};
-    uint8_t rxData[2] = {0x11, 0x22};
-    uint8_t buffer[64] = {0};
-    Serialize_Buffer_t out = { buffer, sizeof(buffer) };
-    uint16_t frameLen = 0;
-    call_SerializeUnit_Init();
-    
-    // Act
-    Serialize_Status_t status = call_SerializeUnit_BuildSPITransfer(txData, rxData, 2, &out, &frameLen);
-    
-    // Assert
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
-    EXPECT_GT(frameLen, 0U);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for SerializeUnit_DeInit
-//------------------------------------------------------------------------------
 TEST_F(Serialize, Serialize_DeInit_Valid_ReturnsOK)
 {
-    // Arrange
-    call_SerializeUnit_Init();
-    
-    // Act
     Serialize_Status_t status = call_SerializeUnit_DeInit();
-    
+    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+}
+
+//------------------------------------------------------------------------------
+// Test Cases for BuildReadResponse (SID 0x22 -> 0x62)
+//------------------------------------------------------------------------------
+TEST_F(Serialize, Serialize_BuildReadResponse_Valid_ReturnsOK)
+{
+    // Arrange
+    uint8_t data[] = {0x03, 0xE8};
+    Serialize_UdsResponse_t resp = {0};
+
+    // Act
+    Serialize_Status_t status = call_SerializeUnit_BuildReadResponse(0x1001, data, 2, &resp);
+
     // Assert
     EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(5U, resp.length); // 0x62 + DID(2) + data(2)
+    EXPECT_EQ(0x62U, resp.buffer[0]);
+    EXPECT_EQ(0x10U, resp.buffer[1]);
+    EXPECT_EQ(0x01U, resp.buffer[2]);
+    EXPECT_EQ(0x03U, resp.buffer[3]);
+    EXPECT_EQ(0xE8U, resp.buffer[4]);
+}
+
+TEST_F(Serialize, Serialize_BuildReadResponse_NullResponse_ReturnsInvalidParam)
+{
+    uint8_t data[] = {0x01};
+    Serialize_Status_t status = call_SerializeUnit_BuildReadResponse(0x1001, data, 1, nullptr);
+    EXPECT_EQ(SERIALIZE_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(Serialize, Serialize_BuildReadResponse_NotInitialized_ReturnsError)
+{
+    call_SerializeUnit_DeInit();
+    uint8_t data[] = {0x01};
+    Serialize_UdsResponse_t resp = {0};
+    Serialize_Status_t status = call_SerializeUnit_BuildReadResponse(0x1001, data, 1, &resp);
+    EXPECT_EQ(SERIALIZE_STATUS_ERROR, status);
+}
+
+//------------------------------------------------------------------------------
+// Test Cases for BuildWriteResponse (SID 0x2E -> 0x6E)
+//------------------------------------------------------------------------------
+TEST_F(Serialize, Serialize_BuildWriteResponse_Valid_ReturnsOK)
+{
+    // Arrange
+    Serialize_UdsResponse_t resp = {0};
+
+    // Act
+    Serialize_Status_t status = call_SerializeUnit_BuildWriteResponse(0x1001, &resp);
+
+    // Assert
+    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(3U, resp.length); // 0x6E + DID(2)
+    EXPECT_EQ(0x6EU, resp.buffer[0]);
+    EXPECT_EQ(0x10U, resp.buffer[1]);
+    EXPECT_EQ(0x01U, resp.buffer[2]);
+}
+
+TEST_F(Serialize, Serialize_BuildWriteResponse_NullResponse_ReturnsInvalidParam)
+{
+    Serialize_Status_t status = call_SerializeUnit_BuildWriteResponse(0x1001, nullptr);
+    EXPECT_EQ(SERIALIZE_STATUS_INVALID_PARAM, status);
+}
+
+//------------------------------------------------------------------------------
+// Test Cases for BuildRoutineResponse (SID 0x31 -> 0x71)
+//------------------------------------------------------------------------------
+TEST_F(Serialize, Serialize_BuildRoutineResponse_Valid_ReturnsOK)
+{
+    // Arrange
+    uint8_t statusRec[] = {0x08, 0x00};
+    Serialize_UdsResponse_t resp = {0};
+
+    // Act
+    Serialize_Status_t status = call_SerializeUnit_BuildRoutineResponse(0x01, 0x0100, statusRec, 2, &resp);
+
+    // Assert
+    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(6U, resp.length); // 0x71 + type(1) + RID(2) + status(2)
+    EXPECT_EQ(0x71U, resp.buffer[0]);
+    EXPECT_EQ(0x01U, resp.buffer[1]); // routineControlType
+    EXPECT_EQ(0x01U, resp.buffer[2]); // RID high
+    EXPECT_EQ(0x00U, resp.buffer[3]); // RID low
+    EXPECT_EQ(0x08U, resp.buffer[4]);
+    EXPECT_EQ(0x00U, resp.buffer[5]);
+}
+
+TEST_F(Serialize, Serialize_BuildRoutineResponse_NoStatus_ReturnsOK)
+{
+    Serialize_UdsResponse_t resp = {0};
+    Serialize_Status_t status = call_SerializeUnit_BuildRoutineResponse(0x01, 0x0200, nullptr, 0, &resp);
+    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(4U, resp.length);
+}
+
+//------------------------------------------------------------------------------
+// Test Cases for BuildNegativeResponse (0x7F)
+//------------------------------------------------------------------------------
+TEST_F(Serialize, Serialize_BuildNegativeResponse_Valid_ReturnsOK)
+{
+    // Arrange
+    Serialize_UdsResponse_t resp = {0};
+
+    // Act
+    Serialize_Status_t status = call_SerializeUnit_BuildNegativeResponse(0x22, 0x31, &resp);
+
+    // Assert
+    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(3U, resp.length);
+    EXPECT_EQ(0x7FU, resp.buffer[0]);
+    EXPECT_EQ(0x22U, resp.buffer[1]); // requestSID
+    EXPECT_EQ(0x31U, resp.buffer[2]); // NRC
+}
+
+TEST_F(Serialize, Serialize_BuildNegativeResponse_NullResponse_ReturnsInvalidParam)
+{
+    Serialize_Status_t status = call_SerializeUnit_BuildNegativeResponse(0x22, 0x31, nullptr);
+    EXPECT_EQ(SERIALIZE_STATUS_INVALID_PARAM, status);
 }

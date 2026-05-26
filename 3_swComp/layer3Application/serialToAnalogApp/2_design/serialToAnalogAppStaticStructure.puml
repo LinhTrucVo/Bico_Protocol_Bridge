@@ -1,33 +1,32 @@
-@startuml serialToAnalogAppStaticStructure
+﻿@startuml serialToAnalogAppStaticStructure
 skinparam backgroundColor #FEFEFE
 
 package "serialToAnalogApp" {
     interface ISerialToAnalogApp {
-        + Init()
-        + DeInit()
-        + Run()
-        + ProcessFrame(frame, frameLength, response)
+        + Init() : Status_t
+        + DeInit() : Status_t
+        + ReadAdc(channel, pRawValue) : Status_t
     }
 
     class SerialToAnalogApp_Context_t {
         - initialized: bool
-        - enabled: bool
-        - channelConfig[8]: ChannelConfig_t
     }
 
-    class ChannelConfig_t {
-        - channelId: uint8_t
-        - enabled: bool
-        - resolution: Resolution_t
-        - range: Range_t
-    }
-
-    ISerialToAnalogApp --> SerialToAnalogApp_Context_t : manages\n(static instance)
-    SerialToAnalogApp_Context_t *-- ChannelConfig_t : contains [8]
+    ISerialToAnalogApp --> SerialToAnalogApp_Context_t : manages
 }
 
-note right of SerialToAnalogApp_Context_t
-    Raw data handling - no conversion
-    Tracks channel configurations
+package "layer1Driver" {
+    interface IAdcDriver {
+        + AdcDriver_Read(channel, pValue) : Status_t
+    }
+}
+
+ISerialToAnalogApp --> IAdcDriver : delegates
+
+note right of ISerialToAnalogApp
+  No UDS awareness.
+  Called by CAC for RID 0x0101.
+  Parameters: channel (uint8_t)
+  Returns: rawValue (uint16_t)
 end note
 @enduml

@@ -2,59 +2,9 @@
 What is this component about?
 #################################
 
-The Serial To I2C App bridges serial commands to I2C master transactions.
-It manages I2C configuration, transaction execution, and response formatting.
-
-
-#################################
-Static structure
-#################################
-
-Files:
-* serialToI2CApp.h
-* serialToI2CAppCfg.h
-* serialToI2CAppUnit.c
-
-..  uml::
-
-	@startuml
-	class SerialToI2C_Context
-	@enduml
-
-
-#################################
-Dynamic behaviour
-#################################
-
-* State machine diagram
-..  uml::
-
-	@startuml
-	[*] --> Idle
-	Idle --> Processing : Command
-	Processing --> Idle : Done
-	Processing --> Error : Invalid
-	Error --> Idle
-	@enduml
-
-* Sequence diagram
-..  uml::
-
-	@startuml
-	actor Host
-	participant SerialToI2C
-	participant I2C
-	Host -> SerialToI2C : Command
-	SerialToI2C -> I2C : Write/Read
-	SerialToI2C --> Host : Response
-	@enduml
-
-
-#################################
-What is this component about?
-#################################
-
-The Serial-to-I2C App translates serial commands to I2C transactions.
+The Serial-to-I2C Application provides typed I2C write and read operations. It is called
+by the Central Application Controller via RID 0x0401 (I2C Write) and RID 0x0402 (I2C Read).
+This module has no UDS awareness - it receives typed parameters and returns typed results.
 
 
 #################################
@@ -76,28 +26,30 @@ Dynamic behaviour
 
 
 #################################
-Design chooices
+Design choices
 #################################
 Description:
 ************
-Provide serial-controlled I2C transactions.
+Provide hardware-abstracted I2C master read/write for the CAC dispatcher.
 
 Assumptions and influencing factors:
 ************************************
-* I2C master driver is available.
+* I2C master driver is initialized and available.
+* Address is 7-bit, data buffer and length provided by caller.
+* No UDS framing knowledge required in this module.
 
 Solutions list:
 ***************
-Solution 1 - Direct I2C operations
-Map commands to I2C transfers.
+Solution 1 - Separate Write/Read functions
+Expose Write(addr, pData, len) and Read(addr, pData, len).
 
-Solution 2 - Transaction queue
-Queue requests for scheduled execution.
+Solution 2 - Combined transfer function with direction parameter
+Single function with read/write flag.
 
 Solution evaluation:
 ********************
-Direct operations are simplest for low traffic.
+Separate functions match the RID mapping (0x0401=Write, 0x0402=Read) and are more explicit.
 
 Final solution:
 ****************
-Solution 1 selected for simplicity.
+Solution 1 selected for clarity and RID alignment.

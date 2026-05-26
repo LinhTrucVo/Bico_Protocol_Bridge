@@ -1,4 +1,4 @@
-﻿// SerialToSPIApp Implementation
+﻿// SerialToSPIApp Implementation - Typed SPI API
 
 #include <stddef.h>
 #include "serialToSPIApp.h"
@@ -7,8 +7,6 @@
 typedef struct
 {
     bool initialized;
-    SerialToSPIApp_State_t currentState;
-    SerialToSPIApp_Config_t config;
 } SerialToSPIApp_Context_t;
 
 static SerialToSPIApp_Context_t context = {0};
@@ -16,92 +14,52 @@ static SerialToSPIApp_Context_t context = {0};
 SerialToSPIApp_Status_t SerialToSPIApp_Init(void)
 {
     context.initialized = true;
-    context.currentState = SerialToSPIApp_STATE_IDLE;
-    context.config.clockSpeed = SERIAL_TO_SPI_CFG_DEFAULT_SPEED;
-    context.config.mode = SERIAL_TO_SPI_MODE_0;
-    context.config.bitOrder = SERIAL_TO_SPI_BITORDER_MSB_FIRST;
+    /* TODO: Initialize SPI master driver from ConfigService */
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }
 
 SerialToSPIApp_Status_t SerialToSPIApp_DeInit(void)
 {
     context.initialized = false;
-    context.currentState = SerialToSPIApp_STATE_IDLE;
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }
 
-SerialToSPIApp_Status_t SerialToSPIApp_Run(void)
+SerialToSPIApp_Status_t SerialToSPIApp_Write(uint8_t device, const uint8_t *pData, uint16_t length)
 {
     if (!context.initialized)
     {
         return SERIAL_TO_SPI_APP_STATUS_NOT_INITIALIZED;
     }
-    return SERIAL_TO_SPI_APP_STATUS_OK;
-}
-
-SerialToSPIApp_Status_t SerialToSPIApp_GetState(SerialToSPIApp_State_t *pState)
-{
-    if (pState == NULL)
+    if (pData == NULL || length == 0U || length > SERIAL_TO_SPI_CFG_MAX_TRANSFER)
     {
         return SERIAL_TO_SPI_APP_STATUS_INVALID_PARAM;
     }
-    *pState = context.currentState;
+
+    /* TODO: Assert CS for device, call SPIMaster_Transmit(pData, length), deassert CS */
+    (void)device;
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }
 
-SerialToSPIApp_Status_t SerialToSPIApp_Configure(const SerialToSPIApp_Config_t *pConfig)
+SerialToSPIApp_Status_t SerialToSPIApp_Transceive(uint8_t device, const uint8_t *pTxData, uint16_t txLength, uint8_t *pRxData, uint16_t rxLength)
 {
-    if (pConfig == NULL)
+    if (!context.initialized)
+    {
+        return SERIAL_TO_SPI_APP_STATUS_NOT_INITIALIZED;
+    }
+    if (pTxData == NULL || txLength == 0U || pRxData == NULL || rxLength == 0U)
     {
         return SERIAL_TO_SPI_APP_STATUS_INVALID_PARAM;
     }
-    context.config = *pConfig;
-    return SERIAL_TO_SPI_APP_STATUS_OK;
-}
-
-SerialToSPIApp_Status_t SerialToSPIApp_GetConfig(SerialToSPIApp_Config_t *pConfig)
-{
-    if (pConfig == NULL)
+    if ((txLength + rxLength) > SERIAL_TO_SPI_CFG_MAX_TRANSFER)
     {
         return SERIAL_TO_SPI_APP_STATUS_INVALID_PARAM;
     }
-    *pConfig = context.config;
-    return SERIAL_TO_SPI_APP_STATUS_OK;
-}
 
-SerialToSPIApp_Status_t SerialToSPIApp_Transfer(const SerialToSPIApp_Transfer_t *pTransfer)
-{
-    if (pTransfer == NULL || pTransfer->length == 0 || pTransfer->length > SERIAL_TO_SPI_CFG_MAX_TRANSFER)
+    /* TODO: Assert CS, SPIMaster_TransmitReceive(tx, rx, len), deassert CS */
+    (void)device;
+    for (uint16_t i = 0U; i < rxLength; i++)
     {
-        return SERIAL_TO_SPI_APP_STATUS_INVALID_PARAM;
+        pRxData[i] = 0U; /* Placeholder until driver integration */
     }
-    if (pTransfer->pRxData != NULL)
-    {
-        for (uint16_t i = 0; i < pTransfer->length; i++)
-        {
-            pTransfer->pRxData[i] = 0;
-        }
-    }
-    return SERIAL_TO_SPI_APP_STATUS_OK;
-}
-
-SerialToSPIApp_Status_t SerialToSPIApp_SaveConfig(void)
-{
-    // TODO: Persist configuration using NvmService
-    return SERIAL_TO_SPI_APP_STATUS_OK;
-}
-
-SerialToSPIApp_Status_t SerialToSPIApp_LoadConfig(void)
-{
-    // TODO: Load configuration using NvmService
-    return SERIAL_TO_SPI_APP_STATUS_OK;
-}
-
-SerialToSPIApp_Status_t SerialToSPIApp_ProcessFrame(const uint8_t *pFrame, uint16_t frameLength, uint8_t *pResponse, uint16_t *pResponseLength)
-{
-    (void)pFrame;
-    (void)frameLength;
-    (void)pResponse;
-    (void)pResponseLength;
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }

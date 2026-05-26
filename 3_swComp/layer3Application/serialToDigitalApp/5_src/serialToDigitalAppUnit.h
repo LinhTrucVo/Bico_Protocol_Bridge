@@ -1,4 +1,4 @@
-#ifndef SERIAL_TO_DIGITAL_APPUNIT_H
+﻿#ifndef SERIAL_TO_DIGITAL_APPUNIT_H
 #define SERIAL_TO_DIGITAL_APPUNIT_H
 #include <stdint.h>
 #include <stdbool.h>
@@ -7,10 +7,8 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define SERIAL_TO_DIGITAL_CFG_MAX_PINS        32
-#define SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH      8
-#define SERIAL_TO_DIGITAL_CFG_DEFAULT_PWM_HZ  1000
-#define SERIAL_TO_DIGITAL_CFG_DEFAULT_DUTY    5000
+#define SERIAL_TO_DIGITAL_CFG_MAX_PINS        32U
+#define SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH      8U
 
 //============================================================================
 // Type Definitions
@@ -23,55 +21,18 @@ typedef enum
     SERIAL_TO_DIGITAL_APP_STATUS_NOT_INITIALIZED
 } SerialToDigitalApp_Status_t;
 
-typedef enum
-{
-    SerialToDigitalApp_STATE_IDLE = 0,
-    SerialToDigitalApp_STATE_PROCESSING,
-    SerialToDigitalApp_STATE_ERROR
-} SerialToDigitalApp_State_t;
-
-typedef enum
-{
-    SERIAL_TO_DIGITAL_DIR_INPUT  = 0,
-    SERIAL_TO_DIGITAL_DIR_OUTPUT = 1
-} SerialToDigitalApp_Direction_t;
-
-typedef enum
-{
-    SERIAL_TO_DIGITAL_STATE_LOW  = 0,
-    SERIAL_TO_DIGITAL_STATE_HIGH = 1
-} SerialToDigitalApp_StateValue_t;
-
-typedef struct
-{
-    uint8_t  pinId;
-    SerialToDigitalApp_Direction_t   direction;
-    SerialToDigitalApp_StateValue_t  initialState;
-    bool     enablePullup;
-} SerialToDigitalApp_PinConfig_t;
-
-typedef struct
-{
-    uint8_t  channelId;
-    uint32_t frequency;
-    uint16_t dutyCycle;
-    bool     enable;
-} SerialToDigitalApp_PwmConfig_t;
-
 //============================================================================
-// Public Functions
+// Public Functions - Typed API (no DID/RID awareness)
 //============================================================================
-SerialToDigitalApp_Status_t SerialToDigitalAppUnit_Init(void);
-SerialToDigitalApp_Status_t SerialToDigitalAppUnit_DeInit(void);
-SerialToDigitalApp_Status_t SerialToDigitalAppUnit_Run(void);
-SerialToDigitalApp_Status_t SerialToDigitalAppUnit_ProcessFrame(const uint8_t *pFrame, uint16_t frameLength, uint8_t *pResponse, uint16_t *pResponseLength);
+SerialToDigitalApp_Status_t SerialToDigitalApp_Init(void);
+SerialToDigitalApp_Status_t SerialToDigitalApp_DeInit(void);
 
-//============================================================================
-// Backward Compatibility Macros
-//============================================================================
-#define SerialToDigitalAppUnit_Init           SerialToDigitalApp_Init
-#define SerialToDigitalAppUnit_DeInit         SerialToDigitalApp_DeInit
-#define SerialToDigitalAppUnit_Run            SerialToDigitalApp_Run
-#define SerialToDigitalAppUnit_ProcessFrame   SerialToDigitalApp_ProcessFrame
+/* GPIO operations */
+SerialToDigitalApp_Status_t SerialToDigitalApp_WriteGpio(uint8_t pin, uint8_t state);
+SerialToDigitalApp_Status_t SerialToDigitalApp_ReadGpio(uint8_t pin, uint8_t *pState);
+
+/* PWM operations */
+SerialToDigitalApp_Status_t SerialToDigitalApp_StartPwm(uint8_t channel);
+SerialToDigitalApp_Status_t SerialToDigitalApp_StopPwm(uint8_t channel);
 
 #endif /* SERIAL_TO_DIGITAL_APPUNIT_H */

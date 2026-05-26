@@ -1,11 +1,10 @@
 ﻿//----------------------------------------------------------------------------
-// Unit Test file for Serial To I2C App component
+// Unit Test file for SerialToI2CApp - Typed I2C API
 //----------------------------------------------------------------------------
 
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-// Unit under test
 extern "C"
 {
 #include "mockSerialToI2CApp.h"
@@ -19,44 +18,91 @@ class SerialToI2CApp : public ::testing::Test
 protected:
     void SetUp() override 
     {
-        // Reset all fake functions before each test
         FFF_RESET_HISTORY();
+        call_SerialToI2CApp_Init();
     }
 
     void TearDown() override 
     {
-        // Clean up after each test if needed
+        call_SerialToI2CApp_DeInit();
     }
 };
 
 //------------------------------------------------------------------------------
-// Test Cases for SerialToI2CAppUnit_Init
+// Init / DeInit
 //------------------------------------------------------------------------------
 TEST_F(SerialToI2CApp, SerialToI2CApp_Init_Valid_ReturnsOK)
 {
-    // Arrange
-    
-    // Act
-    SerialToI2CApp_Status_t status = call_SerialToI2CAppUnit_Init();
-    
-    // Assert
+    call_SerialToI2CApp_DeInit();
+    SerialToI2CApp_Status_t status = call_SerialToI2CApp_Init();
     EXPECT_EQ(SERIAL_TO_I2C_APP_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
-// Test Cases for SerialToI2CAppUnit_ProcessFrame
+// I2C Write
 //------------------------------------------------------------------------------
-TEST_F(SerialToI2CApp, SerialToI2CApp_ProcessFrame_ValidFrame_ReturnsOK)
+TEST_F(SerialToI2CApp, SerialToI2CApp_Write_Valid_ReturnsOK)
 {
-    // Arrange
-    uint8_t frameBuffer[32] = {0};
-    uint8_t responseBuffer[64] = {0};
-    uint16_t responseLength = 0;
-    call_SerialToI2CAppUnit_Init();
-    
-    // Act
-    SerialToI2CApp_Status_t status = call_SerialToI2CAppUnit_ProcessFrame(frameBuffer, sizeof(frameBuffer), responseBuffer, &responseLength);
-    
-    // Assert
+    uint8_t data[] = {0x10, 0xAA};
+    SerialToI2CApp_Status_t status = call_SerialToI2CApp_Write(0x50, data, 2);
     EXPECT_EQ(SERIAL_TO_I2C_APP_STATUS_OK, status);
+}
+
+TEST_F(SerialToI2CApp, SerialToI2CApp_Write_NullData_ReturnsInvalidParam)
+{
+    SerialToI2CApp_Status_t status = call_SerialToI2CApp_Write(0x50, nullptr, 2);
+    EXPECT_EQ(SERIAL_TO_I2C_APP_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(SerialToI2CApp, SerialToI2CApp_Write_ZeroLength_ReturnsInvalidParam)
+{
+    uint8_t data[] = {0x10};
+    SerialToI2CApp_Status_t status = call_SerialToI2CApp_Write(0x50, data, 0);
+    EXPECT_EQ(SERIAL_TO_I2C_APP_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(SerialToI2CApp, SerialToI2CApp_Write_OverMaxTransfer_ReturnsInvalidParam)
+{
+    uint8_t data[257] = {0};
+    SerialToI2CApp_Status_t status = call_SerialToI2CApp_Write(0x50, data, 257);
+    EXPECT_EQ(SERIAL_TO_I2C_APP_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(SerialToI2CApp, SerialToI2CApp_Write_NotInitialized_ReturnsNotInitialized)
+{
+    call_SerialToI2CApp_DeInit();
+    uint8_t data[] = {0x10};
+    SerialToI2CApp_Status_t status = call_SerialToI2CApp_Write(0x50, data, 1);
+    EXPECT_EQ(SERIAL_TO_I2C_APP_STATUS_NOT_INITIALIZED, status);
+}
+
+//------------------------------------------------------------------------------
+// I2C Read
+//------------------------------------------------------------------------------
+TEST_F(SerialToI2CApp, SerialToI2CApp_Read_Valid_ReturnsOK)
+{
+    uint8_t data[4] = {0};
+    SerialToI2CApp_Status_t status = call_SerialToI2CApp_Read(0x50, data, 4);
+    EXPECT_EQ(SERIAL_TO_I2C_APP_STATUS_OK, status);
+}
+
+TEST_F(SerialToI2CApp, SerialToI2CApp_Read_NullData_ReturnsInvalidParam)
+{
+    SerialToI2CApp_Status_t status = call_SerialToI2CApp_Read(0x50, nullptr, 4);
+    EXPECT_EQ(SERIAL_TO_I2C_APP_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(SerialToI2CApp, SerialToI2CApp_Read_ZeroLength_ReturnsInvalidParam)
+{
+    uint8_t data[4] = {0};
+    SerialToI2CApp_Status_t status = call_SerialToI2CApp_Read(0x50, data, 0);
+    EXPECT_EQ(SERIAL_TO_I2C_APP_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(SerialToI2CApp, SerialToI2CApp_Read_NotInitialized_ReturnsNotInitialized)
+{
+    call_SerialToI2CApp_DeInit();
+    uint8_t data[4] = {0};
+    SerialToI2CApp_Status_t status = call_SerialToI2CApp_Read(0x50, data, 4);
+    EXPECT_EQ(SERIAL_TO_I2C_APP_STATUS_NOT_INITIALIZED, status);
 }

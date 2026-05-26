@@ -1,39 +1,44 @@
-﻿.. Descrive about the Serialize Service component requirements
+﻿.. Describe about the Serialize Service component requirements
 Overall requirements
 ********************
 
-The Serialize Service shall build response, event, and error frames in the system protocol format.
-The component shall compute and append CRC to all serialized frames.
+The Serialize Service shall build UDS (ISO 14229) response frames including positive and negative responses.
+The component encodes response SIDs, identifiers (DID/RID) in big-endian, and payload data.
+The component has no knowledge of DID/RID semantics - it only performs structural encoding.
 
 Input validation
 ****************
 
-The component shall validate buffer pointers and available buffer length before writing output.
-The component shall reject payload lengths exceeding the maximum supported size.
+The component shall validate output buffer pointer before writing response data.
+The component shall reject payload lengths that would exceed the maximum response buffer size.
 
 Requirements for component
 **************************
 
-Req-serialize-001: The component shall build a response frame from a provided header and payload.
-   Verification: BuildFrame outputs a valid frame with correct header, payload, and CRC.
+Req-serialize-001: The component shall build a positive response for SID 0x22 (ReadDataByIdentifier).
+   Format: [0x62, DID_HI, DID_LO, Data...]
+   Verification: BuildReadResponse outputs correct response SID 0x62 with DID and data payload.
 
-Req-serialize-002: The component shall build standardized error frames with error codes.
-   Verification: BuildError outputs a frame containing the error code and correct CRC.
+Req-serialize-002: The component shall build a positive response for SID 0x2E (WriteDataByIdentifier).
+   Format: [0x6E, DID_HI, DID_LO]
+   Verification: BuildWriteResponse outputs correct response SID 0x6E with DID.
 
-Req-serialize-003: The component shall serialize analog sample data into a response frame.
-   Verification: BuildAnalogSamples encodes channel ID and sample values correctly.
+Req-serialize-003: The component shall build a positive response for SID 0x31 (RoutineControl).
+   Format: [0x71, routineControlType, RID_HI, RID_LO, statusRecord...]
+   Verification: BuildRoutineResponse outputs correct response SID 0x71 with type, RID, and status.
 
-Req-serialize-004: The component shall serialize digital read data into a response frame.
-   Verification: BuildDigitalRead encodes pin ID and state correctly.
+Req-serialize-004: The component shall build a negative response for any rejected request.
+   Format: [0x7F, requestSID, NRC]
+   Verification: BuildNegativeResponse outputs 0x7F followed by the original SID and NRC code.
 
-Req-serialize-005: The component shall serialize I2C read data into a response frame.
-   Verification: BuildI2CRead encodes address and data bytes correctly.
+Req-serialize-005: The component shall encode DID/RID as 2-byte big-endian in the response.
+   Verification: Identifier 0x0102 encodes as bytes [0x01, 0x02] in the response buffer.
 
-Req-serialize-006: The component shall serialize SPI transfer data into a response frame.
-   Verification: BuildSPITransfer encodes TX/RX data and length correctly.
+Req-serialize-006: The component shall return BUFFER_OVERFLOW if total response exceeds maximum size.
+   Verification: Build functions return SERIALIZE_STATUS_BUFFER_OVERFLOW without writing beyond buffer.
 
-Req-serialize-007: The component shall compute CRC over header and payload data.
-   Verification: ComputeCrc matches expected CRC for reference vectors.
+Req-serialize-007: The component shall return INVALID_PARAM when output pointer is null.
+   Verification: All build functions return INVALID_PARAM for null response pointer.
 
-Req-serialize-008: The component shall return an error if output buffer is too small.
-   Verification: Build functions return BUFFER_TOO_SMALL without modifying buffer beyond size.
+Req-serialize-008: The component shall return ERROR when called before initialization.
+   Verification: Build functions return ERROR if Init has not been called.

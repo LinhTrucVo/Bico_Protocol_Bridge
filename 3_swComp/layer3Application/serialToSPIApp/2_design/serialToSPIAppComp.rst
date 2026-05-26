@@ -2,59 +2,10 @@
 What is this component about?
 #################################
 
-The Serial To SPI App bridges serial commands to SPI master transfers.
-It manages SPI configuration, full-duplex transfer execution, and response formatting.
-
-
-#################################
-Static structure
-#################################
-
-Files:
-* serialToSPIApp.h
-* serialToSPIAppCfg.h
-* serialToSPIAppUnit.c
-
-..  uml::
-
-	@startuml
-	class SerialToSPI_Context
-	@enduml
-
-
-#################################
-Dynamic behaviour
-#################################
-
-* State machine diagram
-..  uml::
-
-	@startuml
-	[*] --> Idle
-	Idle --> Processing : Command
-	Processing --> Idle : Done
-	Processing --> Error : Invalid
-	Error --> Idle
-	@enduml
-
-* Sequence diagram
-..  uml::
-
-	@startuml
-	actor Host
-	participant SerialToSPI
-	participant SPI
-	Host -> SerialToSPI : Command
-	SerialToSPI -> SPI : Transfer
-	SerialToSPI --> Host : Response
-	@enduml
-
-
-#################################
-What is this component about?
-#################################
-
-The Serial-to-SPI App translates serial commands to SPI transactions.
+The Serial-to-SPI Application provides typed SPI write and transceive operations. It is
+called by the Central Application Controller via RID 0x0501 (SPI Write) and
+RID 0x0502 (SPI Transceive). This module has no UDS awareness - it receives typed
+parameters and returns typed results.
 
 
 #################################
@@ -76,28 +27,30 @@ Dynamic behaviour
 
 
 #################################
-Design chooices
+Design choices
 #################################
 Description:
 ************
-Provide serial-controlled SPI transactions.
+Provide hardware-abstracted SPI write and full-duplex transceive for the CAC dispatcher.
 
 Assumptions and influencing factors:
 ************************************
-* SPI master driver is available.
+* SPI master driver is initialized and available.
+* Device selection is handled via device index (chip select managed by driver).
+* No UDS framing knowledge required in this module.
 
 Solutions list:
 ***************
-Solution 1 - Direct SPI operations
-Map commands to SPI transfers.
+Solution 1 - Write + Transceive functions
+Expose Write(dev, pData, len) and Transceive(dev, pTx, txLen, pRx, rxLen).
 
-Solution 2 - Transaction queue
-Queue requests for scheduled execution.
+Solution 2 - Single transfer function with mode parameter
+Combined function handling both write-only and full-duplex.
 
 Solution evaluation:
 ********************
-Direct operations are simplest for low traffic.
+Separate functions match the RID mapping and provide clearer API semantics.
 
 Final solution:
 ****************
-Solution 1 selected for simplicity.
+Solution 1 selected for clarity and RID alignment.

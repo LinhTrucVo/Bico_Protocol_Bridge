@@ -1,31 +1,36 @@
-@startuml serializeSequenceDiagram
-actor Client
-participant "serialize" as ser
-participant "Context" as ctx
+﻿@startuml serializeSequenceDiagram
+participant "Central App Controller" as CAC
+participant "Serialize" as ser
 
-Client -> ser : Init()
-ser -> ctx : initialized = true
-ctx --> ser : OK
-ser --> Client : SERIALIZE_STATUS_OK
+== Positive Read Response ==
+CAC -> ser : SerializeUnit_BuildReadResponse(did, pData, dataLen, pResp)
+ser -> ser : resp.buffer[0] = 0x62
+ser -> ser : resp.buffer[1] = (did >> 8) & 0xFF
+ser -> ser : resp.buffer[2] = did & 0xFF
+ser -> ser : memcpy(&buffer[3], pData, dataLen)
+ser -> ser : resp.length = 3 + dataLen
+ser --> CAC : SERIALIZE_STATUS_OK
 
-Client -> ser : BuildFrame(message, buffer)
-ser -> ser : Copy header fields
-ser -> ser : Copy payload bytes
-ser -> ser : ComputeCrc16()
-ser --> Client : SERIALIZE_STATUS_OK + frameLength
+== Positive Write Response ==
+CAC -> ser : SerializeUnit_BuildWriteResponse(did, pResp)
+ser -> ser : resp.buffer[0] = 0x6E
+ser -> ser : resp.buffer[1..2] = DID big-endian
+ser -> ser : resp.length = 3
+ser --> CAC : SERIALIZE_STATUS_OK
 
-Client -> ser : BuildError(cmdId, seqId, errorCode)
-ser -> ser : Create error message
-ser -> ser : BuildFrame()
-ser --> Client : SERIALIZE_STATUS_OK + frameLength
+== Positive Routine Response ==
+CAC -> ser : SerializeUnit_BuildRoutineResponse(rid, pData, dataLen, pResp)
+ser -> ser : resp.buffer[0] = 0x71
+ser -> ser : resp.buffer[1..2] = RID big-endian
+ser -> ser : memcpy(&buffer[3], pData, dataLen)
+ser -> ser : resp.length = 3 + dataLen
+ser --> CAC : SERIALIZE_STATUS_OK
 
-Client -> ser : BuildAnalogSamples(channelId, samples)
-ser -> ser : Format analog data
-ser -> ser : BuildFrame()
-ser --> Client : SERIALIZE_STATUS_OK + frameLength
-
-Client -> ser : DeInit()
-ser -> ctx : initialized = false
-ctx --> ser : OK
-ser --> Client : SERIALIZE_STATUS_OK
+== Negative Response ==
+CAC -> ser : SerializeUnit_BuildNegativeResponse(requestSid, nrc, pResp)
+ser -> ser : resp.buffer[0] = 0x7F
+ser -> ser : resp.buffer[1] = requestSid
+ser -> ser : resp.buffer[2] = nrc
+ser -> ser : resp.length = 3
+ser --> CAC : SERIALIZE_STATUS_OK
 @enduml

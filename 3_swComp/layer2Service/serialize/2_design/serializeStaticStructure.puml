@@ -1,35 +1,36 @@
-@startuml serializeStaticStructure
+﻿@startuml serializeStaticStructure
 skinparam backgroundColor #FEFEFE
 
 package "serialize" {
     interface ISerialize {
-        + Init()
-        + BuildFrame(message, buffer)
-        + BuildError(commandId, seqId, errorCode)
-        + BuildAnalogSamples(channelId, samples)
-        + BuildDigitalRead(pinId, state)
-        + BuildI2CRead(address, data, length)
-        + BuildSPITransfer(txData, rxData, length)
-        + ComputeCrc(data, length)
-        + DeInit()
+        + Init() : Status_t
+        + DeInit() : Status_t
+        + BuildReadResponse(did, pData, dataLen, pResp) : Status_t
+        + BuildWriteResponse(did, pResp) : Status_t
+        + BuildRoutineResponse(rid, pData, dataLen, pResp) : Status_t
+        + BuildNegativeResponse(sid, nrc, pResp) : Status_t
     }
 
     class Serialize_Context_t {
         - initialized: bool
     }
 
-    class Serialize_Message_t {
-        - header: Message_Header_t
-        - pPayload: uint8_t[]
-        - payloadLength: uint16_t
+    class Serialize_UdsResponse_t {
+        + buffer[256]: uint8_t
+        + length: uint16_t
     }
 
     ISerialize --> Serialize_Context_t : manages\n(static instance)
-    ISerialize --> Serialize_Message_t : processes
+    ISerialize --> Serialize_UdsResponse_t : produces
 }
 
-note right of Serialize_Context_t
-    Simple context tracking
-    initialization state
+note right of Serialize_UdsResponse_t
+    Positive response format:
+    ReadDataByIdentifier:  [0x62][DID_H][DID_L][data...]
+    WriteDataByIdentifier: [0x6E][DID_H][DID_L]
+    RoutineControl:        [0x71][RID_H][RID_L][data...]
+
+    Negative response format:
+    [0x7F][requestSID][NRC]
 end note
 @enduml

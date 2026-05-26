@@ -1,11 +1,10 @@
 ﻿// Fake implementation header for CentralAppController testing
-// This file provides fake implementations to simulate hardware/dependencies
+// Provides fake implementations for all CAC dependencies
 
 #ifndef FAKECENTRALAPPCONTROLLER_H
 #define FAKECENTRALAPPCONTROLLER_H
 
 #include <stdint.h>
-
-// Add fake function declarations here as needed for testing
+#include <stdbool.h>
 
 #endif /* FAKECENTRALAPPCONTROLLER_H */

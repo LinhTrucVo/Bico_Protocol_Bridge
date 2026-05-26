@@ -1,27 +1,20 @@
-@startuml centralAppControllerStateMachine
+﻿@startuml centralAppControllerStateMachine
 state Uninitialized
-state Initialized
-state Running
-state ErrorState
+state Ready
 
 [*] --> Uninitialized
 
-Uninitialized --> Initialized : Init()
+Uninitialized --> Ready : Init()\n/ Init all downstream modules
 
-Initialized --> Running : Run()
+Ready --> Ready : Dispatch()\n/ Parse -> Route -> Respond
+Ready --> Uninitialized : DeInit()
 
-Running --> Running : ProcessFrame()
-
-Running --> ErrorState : Error encountered
-ErrorState --> ErrorState : OnError()
-
-Running --> Initialized : Stop()
-ErrorState --> Initialized : Stop()
-
-Initialized --> Uninitialized : DeInit()
-
-note right of Running
-  Central controller actively
-  dispatching frames to protocol handlers
+note right of Ready
+  Stateless dispatcher.
+  Each Dispatch() call:
+  1. Deserialize request
+  2. Switch on SID
+  3. Map DID/RID to downstream call
+  4. Build response via Serialize
 end note
 @enduml

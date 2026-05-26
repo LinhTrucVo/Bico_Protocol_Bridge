@@ -1,32 +1,34 @@
-@startuml serialToSPIAppStaticStructure
+﻿@startuml serialToSPIAppStaticStructure
 skinparam backgroundColor #FEFEFE
 
 package "serialToSPIApp" {
     interface ISerialToSPIApp {
-        + Init()
-        + DeInit()
-        + Run()
-        + ProcessFrame(frame, frameLength, response)
+        + Init() : Status_t
+        + DeInit() : Status_t
+        + Write(device, pData, len) : Status_t
+        + Transceive(device, pTx, txLen, pRx, rxLen) : Status_t
     }
 
     class SerialToSPIApp_Context_t {
         - initialized: bool
-        - enabled: bool
-        - config: Config_t
     }
 
-    class SerialToSPIApp_Config_t {
-        - clockSpeed: uint32_t
-        - mode: SpiMode_t
-        - bitOrder: BitOrder_t
-    }
-
-    ISerialToSPIApp --> SerialToSPIApp_Context_t : manages\n(static instance)
-    SerialToSPIApp_Context_t *-- SerialToSPIApp_Config_t : contains
+    ISerialToSPIApp --> SerialToSPIApp_Context_t : manages
 }
 
-note right of SerialToSPIApp_Context_t
-    SPI protocol conversion
-    Uses spiMasterDriver
+package "layer1Driver" {
+    interface ISpiMasterDriver {
+        + SpiMasterDriver_Write(device, pData, len) : Status_t
+        + SpiMasterDriver_Transceive(device, pTx, txLen, pRx, rxLen) : Status_t
+    }
+}
+
+ISerialToSPIApp --> ISpiMasterDriver : delegates
+
+note right of ISerialToSPIApp
+  No UDS awareness.
+  Called by CAC for:
+  - RID 0x0501: Write(dev, pData, len)
+  - RID 0x0502: Transceive(dev, pTx, txLen, pRx, rxLen)
 end note
 @enduml

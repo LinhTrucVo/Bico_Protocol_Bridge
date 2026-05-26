@@ -1,24 +1,20 @@
-@startuml serializeStateMachine
+﻿@startuml serializeStateMachine
 state Uninitialized
-state Initialized
+state Ready
 
 [*] --> Uninitialized
 
-Uninitialized --> Initialized : Init()
+Uninitialized --> Ready : Init()
+Ready --> Uninitialized : DeInit()
 
-Initialized --> Uninitialized : DeInit()
+Ready --> Ready : BuildReadResponse()
+Ready --> Ready : BuildWriteResponse()
+Ready --> Ready : BuildRoutineResponse()
+Ready --> Ready : BuildNegativeResponse()
 
-Initialized --> Initialized : BuildFrame()
-Initialized --> Initialized : BuildError()
-Initialized --> Initialized : BuildAnalogSamples()
-Initialized --> Initialized : BuildDigitalRead()
-Initialized --> Initialized : BuildI2CRead()
-Initialized --> Initialized : BuildSPITransfer()
-Initialized --> Initialized : ComputeCrc()
-
-note right of Initialized
-  Any serialization function
-  can be called multiple times
-  No state change during serialization
+note right of Ready
+  Stateless builder.
+  Each Build*() call is independent.
+  No persistent state between calls.
 end note
 @enduml

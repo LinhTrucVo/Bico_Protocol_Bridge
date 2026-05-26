@@ -1,38 +1,34 @@
-@startuml deserializeSequenceDiagram
-actor Transport
-participant "deserialize" as des
+﻿@startuml deserializeSequenceDiagram
+participant "Central App Controller" as CAC
+participant "Deserialize" as des
 participant "Context" as ctx
 
-Transport -> des : Init()
+CAC -> des : DeserializeUnit_Init()
 des -> ctx : initialized = true
-ctx --> des : OK
-des --> Transport : DESERIALIZE_STATUS_OK
+des --> CAC : DESERIALIZE_STATUS_OK
 
-Transport -> des : ValidateFrame(pFrame)
-des -> des : Check frameLength >= MIN_SIZE
-des -> des : Parse header and length fields
-des -> des : ComputeCrc16() on frame data
-des -> des : Compare computed vs stored CRC
-des --> Transport : DESERIALIZE_STATUS_OK or ERROR
+CAC -> des : DeserializeUnit_Parse(pFrame, pRequest)
+des -> des : Check initialized
+des -> des : Validate pFrame != NULL, pRequest != NULL
+des -> des : Check frame.length >= MIN_FRAME_SIZE (3)
+des -> des : Extract SID from pFrame->pData[0]
 
-Transport -> des : ParseFrame(pFrame, pRequest)
-des -> des : Call ValidateFrame(pFrame)
-des -> des : Extract commandId from frame[0]
-des -> des : Extract sequenceId from frame[1]
-des -> des : Map commandId to Deserialize_Command_t
-des -> des : Extract payload from frame[5..] to pRequest
-des --> Transport : DESERIALIZE_STATUS_OK + request
+alt SID == 0x22 (ReadDataByIdentifier)
+    des -> des : Decode DID = (byte[1] << 8) | byte[2]
+    des -> des : pRequest->id = DID
+    des -> des : No payload
+else SID == 0x2E (WriteDataByIdentifier)
+    des -> des : Check length >= 4
+    des -> des : Decode DID = (byte[1] << 8) | byte[2]
+    des -> des : pPayload = &byte[3], payloadLength = length - 3
+else SID == 0x31 (RoutineControl)
+    des -> des : Check length >= 4
+    des -> des : routineControlType = byte[1]
+    des -> des : Decode RID = (byte[2] << 8) | byte[3]
+    des -> des : pPayload = &byte[4] (if length > 4)
+else Unknown SID
+    des --> CAC : DESERIALIZE_STATUS_UNSUPPORTED_SID
+end
 
-Transport -> des : ComputeCrc(pData, length, pCrc)
-des -> des : CRC16 algorithm on pData
-des --> Transport : DESERIALIZE_STATUS_OK + CRC value
-
-Transport -> des : GetCommandName(command, pName)
-des -> des : Map command enum to string
-des --> Transport : DESERIALIZE_STATUS_OK + name string
-
-Transport -> des : DeInit()
-des -> ctx : initialized = false
-ctx --> des : OK
-des --> Transport : DESERIALIZE_STATUS_OK
+des --> CAC : DESERIALIZE_STATUS_OK + populated request
 @enduml

@@ -1,11 +1,10 @@
 ﻿//----------------------------------------------------------------------------
-// Unit Test file for Serial To Digital App component
+// Unit Test file for SerialToDigitalApp - Typed GPIO/PWM API
 //----------------------------------------------------------------------------
 
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-// Unit under test
 extern "C"
 {
 #include "mockSerialToDigitalApp.h"
@@ -19,44 +18,96 @@ class SerialToDigitalApp : public ::testing::Test
 protected:
     void SetUp() override 
     {
-        // Reset all fake functions before each test
         FFF_RESET_HISTORY();
+        call_SerialToDigitalApp_Init();
     }
 
     void TearDown() override 
     {
-        // Clean up after each test if needed
+        call_SerialToDigitalApp_DeInit();
     }
 };
 
 //------------------------------------------------------------------------------
-// Test Cases for SerialToDigitalAppUnit_Init
+// Init / DeInit
 //------------------------------------------------------------------------------
 TEST_F(SerialToDigitalApp, SerialToDigitalApp_Init_Valid_ReturnsOK)
 {
-    // Arrange
-    
-    // Act
-    SerialToDigitalApp_Status_t status = call_SerialToDigitalAppUnit_Init();
-    
-    // Assert
+    call_SerialToDigitalApp_DeInit();
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalApp_Init();
     EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
-// Test Cases for SerialToDigitalAppUnit_ProcessFrame
+// GPIO Write
 //------------------------------------------------------------------------------
-TEST_F(SerialToDigitalApp, SerialToDigitalApp_ProcessFrame_ValidFrame_ReturnsOK)
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_WriteGpio_ValidPin_ReturnsOK)
 {
-    // Arrange
-    uint8_t frameBuffer[32] = {0};
-    uint8_t responseBuffer[64] = {0};
-    uint16_t responseLength = 0;
-    call_SerialToDigitalAppUnit_Init();
-    
-    // Act
-    SerialToDigitalApp_Status_t status = call_SerialToDigitalAppUnit_ProcessFrame(frameBuffer, sizeof(frameBuffer), responseBuffer, &responseLength);
-    
-    // Assert
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalApp_WriteGpio(5, 1);
     EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_OK, status);
+}
+
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_WriteGpio_InvalidPin_ReturnsInvalidParam)
+{
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalApp_WriteGpio(32, 1);
+    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_WriteGpio_NotInitialized_ReturnsNotInitialized)
+{
+    call_SerialToDigitalApp_DeInit();
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalApp_WriteGpio(5, 1);
+    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_NOT_INITIALIZED, status);
+}
+
+//------------------------------------------------------------------------------
+// GPIO Read
+//------------------------------------------------------------------------------
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_ReadGpio_ValidPin_ReturnsOK)
+{
+    call_SerialToDigitalApp_WriteGpio(3, 1);
+    uint8_t state = 0;
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalApp_ReadGpio(3, &state);
+    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_OK, status);
+    EXPECT_EQ(1U, state);
+}
+
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_ReadGpio_InvalidPin_ReturnsInvalidParam)
+{
+    uint8_t state = 0;
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalApp_ReadGpio(32, &state);
+    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_ReadGpio_NullPointer_ReturnsInvalidParam)
+{
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalApp_ReadGpio(3, nullptr);
+    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM, status);
+}
+
+//------------------------------------------------------------------------------
+// PWM Start / Stop
+//------------------------------------------------------------------------------
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_StartPwm_ValidChannel_ReturnsOK)
+{
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalApp_StartPwm(1);
+    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_OK, status);
+}
+
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_StartPwm_InvalidChannel_ReturnsInvalidParam)
+{
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalApp_StartPwm(8);
+    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_StopPwm_ValidChannel_ReturnsOK)
+{
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalApp_StopPwm(1);
+    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_OK, status);
+}
+
+TEST_F(SerialToDigitalApp, SerialToDigitalApp_StopPwm_InvalidChannel_ReturnsInvalidParam)
+{
+    SerialToDigitalApp_Status_t status = call_SerialToDigitalApp_StopPwm(8);
+    EXPECT_EQ(SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM, status);
 }

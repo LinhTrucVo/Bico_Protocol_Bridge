@@ -1,23 +1,26 @@
-@startuml serialToI2CAppSequenceDiagram
-actor Client
-participant "serialToI2CApp" as app
-participant "Context" as ctx
+﻿@startuml serialToI2CAppSequenceDiagram
+participant "CAC" as cac
+participant "SerialToI2CApp" as app
+participant "I2cMasterDriver" as drv
 
-Client -> app : Init()
-app -> ctx : Initialize I2C config
-ctx --> app : OK
-app --> Client : OK
+== I2C Write (RID 0x0401) ==
+cac -> app : SerialToI2CApp_Write(addr, pData, len)
+app -> app : Validate initialized
+app -> drv : I2cMasterDriver_Write(addr, pData, len)
+drv --> app : OK
+app --> cac : OK
 
-Client -> app : Run()
-app -> ctx : Set running = true
-ctx --> app : OK
-app --> Client : OK
+== I2C Read (RID 0x0402) ==
+cac -> app : SerialToI2CApp_Read(addr, pData, len)
+app -> app : Validate initialized
+app -> drv : I2cMasterDriver_Read(addr, pData, len)
+drv --> app : OK + data
+app --> cac : OK + pData filled
 
-Client -> app : ProcessFrame(serialCmd)
-app -> app : Deserialize I2C command
-app -> app : Call i2cMasterDriver\nfor I2C transaction
-app -> ctx : Update transaction result
-ctx --> app : OK
-app -> app : Serialize I2C response
-app --> Client : response + frameLength
+note over app
+  CAC extracts addr and data from
+  RID payload and passes as typed params.
+  Read result is returned to CAC which
+  builds the RoutineControl response.
+end note
 @enduml

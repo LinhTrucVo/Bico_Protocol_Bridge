@@ -1,36 +1,39 @@
-﻿.. Descrive about the Serial To SPI App component requirements
+﻿.. Describe about the Serial To SPI App component requirements
 Overall requirements
 ********************
 
-The Serial To SPI App shall bridge serial commands to SPI master transactions.
-The component shall support SPI mode, clock speed, and bit order configuration.
+The SerialToSPI Application shall provide typed SPI Write and Transceive operations for the Central App Controller.
+The component has no UDS/DID/RID awareness - it receives typed device/data/length from CAC.
+SPI bus configuration (clock, mode, bit order) is managed by ConfigService.
+Chip Select (CS) management is handled internally by the component.
 
 Input validation
 ****************
 
-The component shall validate transfer lengths, configuration parameters, and null pointers.
-The component shall reject transfers exceeding the maximum supported size.
+- Data pointers shall be validated for null
+- Transfer lengths shall be validated against maximum supported size (1024 bytes)
+- Zero-length transfers shall be rejected
 
 Requirements for component
 **************************
 
-Req-serialToSPIApp-001: The component shall initialize the SPI master driver on startup.
-   Verification: Initialization returns OK when the SPI driver is ready.
+Req-serialToSPIApp-001: The component shall initialize the SPI master driver from ConfigService on startup.
+   Verification: Init retrieves SPI config and configures the SPI master driver.
 
-Req-serialToSPIApp-002: The component shall configure SPI mode, clock speed, and bit order.
-   Verification: Configure applies valid parameters and rejects invalid values.
+Req-serialToSPIApp-002: The component shall perform SPI write (TX only) to a specified device.
+   Verification: Write(dev, data, len) asserts CS, transmits data, deasserts CS.
 
-Req-serialToSPIApp-003: The component shall perform full-duplex SPI transfers.
-   Verification: Transfer returns received data for the specified length.
+Req-serialToSPIApp-003: The component shall perform SPI transceive (TX+RX) to a specified device.
+   Verification: Transceive(dev, tx, tx_len, rx, rx_len) transmits and receives simultaneously.
 
-Req-serialToSPIApp-004: The component shall support transfers with only TX or only RX buffers.
-   Verification: Transfer succeeds when either TX or RX buffer is null and length is valid.
+Req-serialToSPIApp-004: The component shall manage CS pin assertion/deassertion for each transfer.
+   Verification: CS is asserted before transfer and deasserted after (even on error).
 
-Req-serialToSPIApp-005: The component shall return an error response on SPI timeouts or bus errors.
-   Verification: Error conditions map to error status and serialized response.
+Req-serialToSPIApp-005: The component shall return BUS_ERROR on SPI driver errors.
+   Verification: Driver errors propagate as SERIAL_TO_SPI_APP_STATUS_BUS_ERROR.
 
-Req-serialToSPIApp-006: The component shall persist and restore SPI configuration to NVM.
-   Verification: SaveConfig and LoadConfig maintain configuration across resets.
+Req-serialToSPIApp-006: The component shall return INVALID_PARAM for null pointers or oversized transfers.
+   Verification: Invalid inputs return error without hardware action.
 
-Req-serialToSPIApp-007: The component shall provide a run function to process pending SPI requests.
-   Verification: Run processes queued commands and updates state.
+Req-serialToSPIApp-007: The component shall return NOT_INITIALIZED if called before Init.
+   Verification: All API functions return NOT_INITIALIZED when not initialized.

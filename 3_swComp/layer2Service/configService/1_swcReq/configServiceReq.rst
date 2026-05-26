@@ -1,4 +1,4 @@
-﻿.. Descrive about the Config Service component requirements
+﻿.. Describe about the Config Service component requirements
 Overall requirements
 ********************
 

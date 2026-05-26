@@ -1,10 +1,10 @@
-serialToI2CAppCfg.h
+﻿serialToI2CAppCfg.h
 ########################
 
-Defines compile-time feature flags for the Serial-to-I2C Application:
+Defines compile-time configuration for the Serial-to-I2C Application:
 
-- ``SERIAL_TO_I2C_CFG_ENABLE_MASTER``: Enables I2C master transaction support (write, read, write-read).
-- ``SERIAL_TO_I2C_CFG_ENABLE_SLAVE``: Enables I2C slave mode support (disabled by default).
+- ``SERIAL_TO_I2C_CFG_MAX_TRANSFER_SIZE``: Maximum I2C transfer size in bytes.
+- ``SERIAL_TO_I2C_CFG_DEFAULT_TIMEOUT_MS``: Default I2C transaction timeout.
 
 ..  doxygenfile::  serialToI2CAppCfg.h
     :project: SerialToI2CApp

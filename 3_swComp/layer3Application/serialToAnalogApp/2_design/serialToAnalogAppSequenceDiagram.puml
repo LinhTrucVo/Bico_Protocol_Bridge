@@ -1,27 +1,23 @@
-@startuml serialToAnalogAppSequenceDiagram
-actor Client
-participant "serialToAnalogApp" as app
-participant "Context" as ctx
+﻿@startuml serialToAnalogAppSequenceDiagram
+participant "CAC" as cac
+participant "SerialToAnalogApp" as app
+participant "AdcDriver" as drv
 
-Client -> app : Init()
-app -> ctx : Initialize channels
-ctx --> app : OK
-app --> Client : OK
+cac -> app : SerialToAnalogApp_Init()
+app -> drv : AdcDriver_Init()
+app --> cac : OK
 
-Client -> app : Run()
-app -> ctx : Set running = true
-ctx --> app : OK
-app --> Client : OK
+cac -> app : SerialToAnalogApp_ReadAdc(channel, &rawValue)
+app -> app : Validate initialized
+app -> drv : AdcDriver_Read(channel, &value)
+drv --> app : OK + value
+app -> app : *pRawValue = value
+app --> cac : OK
 
-Client -> app : ProcessFrame(serialData)
-app -> app : Deserialize command
-app -> app : Get raw analog value
-app -> app : Serialize response
-app --> Client : response + frameLength
-
-Client -> app : ProcessFrame(serialData)
-app -> app : Parse channel config
-app -> ctx : Update channelConfig
-ctx --> app : OK
-app --> Client : response + frameLength
+note over app
+  CAC extracts channel from RID payload
+  and passes it as a typed parameter.
+  Result rawValue is returned to CAC
+  which builds the RoutineControl response.
+end note
 @enduml

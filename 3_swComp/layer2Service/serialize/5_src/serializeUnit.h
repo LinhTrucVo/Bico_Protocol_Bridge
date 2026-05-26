@@ -1,9 +1,5 @@
-#ifndef SERIALIZEUNIT_H
+﻿#ifndef SERIALIZEUNIT_H
 #define SERIALIZEUNIT_H
-
-//============================================================================
-// Dependencies
-//============================================================================
 #include <stdint.h>
 #include <stdbool.h>
 #include "serializeCfg.h"
@@ -11,87 +7,77 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define SERIALIZE_CFG_MAX_FRAME_SIZE      256
-#define SERIALIZE_CFG_MAX_PAYLOAD_SIZE    224
-#define SERIALIZE_CFG_CRC_POLY            0x1021
-#define SERIALIZE_CFG_CRC_INIT            0xFFFF
+#define SERIALIZE_MAX_RESPONSE_SIZE      256U
 
 //============================================================================
-// Type Definitions
+// UDS Response SID Offset
 //============================================================================
-typedef struct
-{
-    uint8_t *pBuffer;
-    uint16_t bufferLength;
-} Serialize_Buffer_t;
+#define SERIALIZE_POSITIVE_RESPONSE_OFFSET   0x40U
+#define SERIALIZE_NEGATIVE_RESPONSE_SID      0x7FU
 
-typedef enum
-{
-    SERIALIZE_MSG_TYPE_REQUEST = 0,
-    SERIALIZE_MSG_TYPE_RESPONSE = 1,
-    SERIALIZE_MSG_TYPE_EVENT = 2,
-    SERIALIZE_MSG_TYPE_ERROR = 3
-} Serialize_MessageType_t;
+//============================================================================
+// NRC (Negative Response Codes)
+//============================================================================
+#define SERIALIZE_NRC_SERVICE_NOT_SUPPORTED          0x11U
+#define SERIALIZE_NRC_INCORRECT_MSG_LENGTH           0x13U
+#define SERIALIZE_NRC_REQUEST_OUT_OF_RANGE           0x31U
+#define SERIALIZE_NRC_CONDITIONS_NOT_CORRECT         0x22U
+#define SERIALIZE_NRC_GENERAL_REJECT                 0x10U
 
-typedef struct
-{
-    uint8_t commandId;
-    uint8_t sequenceId;
-    Serialize_MessageType_t type;
-} Serialize_Header_t;
-
-typedef struct
-{
-    Serialize_Header_t header;
-    const uint8_t *pPayload;
-    uint16_t payloadLength;
-} Serialize_Message_t;
-
-typedef enum
-{
-    SERIALIZE_ERROR_OK = 0,
-    SERIALIZE_ERROR_INVALID_PARAM,
-    SERIALIZE_ERROR_INVALID_COMMAND,
-    SERIALIZE_ERROR_BUFFER_OVERFLOW,
-    SERIALIZE_ERROR_UNKNOWN
-} Serialize_ErrorCode_t;
-
+//============================================================================
+// Status Codes
+//============================================================================
 typedef enum
 {
     SERIALIZE_STATUS_OK = 0,
     SERIALIZE_STATUS_ERROR,
     SERIALIZE_STATUS_INVALID_PARAM,
-    SERIALIZE_STATUS_BUFFER_TOO_SMALL,
     SERIALIZE_STATUS_BUFFER_OVERFLOW
 } Serialize_Status_t;
 
 //============================================================================
-// Public Functions
+// UDS Response Structure
 //============================================================================
-// Public Functions
+typedef struct
+{
+    uint8_t buffer[SERIALIZE_MAX_RESPONSE_SIZE];
+    uint16_t length;
+} Serialize_UdsResponse_t;
+
+//============================================================================
+// Function Declarations
 //============================================================================
 Serialize_Status_t SerializeUnit_Init(void);
 Serialize_Status_t SerializeUnit_DeInit(void);
-Serialize_Status_t SerializeUnit_BuildFrame(const Serialize_Message_t *pMessage, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength);
-Serialize_Status_t SerializeUnit_BuildError(uint8_t commandId, uint8_t sequenceId, Serialize_ErrorCode_t errorCode, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength);
-Serialize_Status_t SerializeUnit_BuildAnalogSamples(uint8_t channelId, const uint16_t *pSamples, uint16_t sampleCount, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength);
-Serialize_Status_t SerializeUnit_BuildDigitalRead(uint8_t pinId, uint8_t state, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength);
-Serialize_Status_t SerializeUnit_BuildI2CRead(uint8_t address, const uint8_t *pData, uint16_t length, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength);
-Serialize_Status_t SerializeUnit_BuildSPITransfer(const uint8_t *pTxData, const uint8_t *pRxData, uint16_t length, Serialize_Buffer_t *pOutBuffer, uint16_t *pFrameLength);
-Serialize_Status_t SerializeUnit_ComputeCrc(const uint8_t *pData, uint16_t length, uint16_t *pCrc);
 
-//============================================================================
-// Backward Compatibility Macros
-//============================================================================
-#define Serialize_Init SerializeUnit_Init
-#define Serialize_DeInit SerializeUnit_DeInit
-#define Serialize_BuildFrame SerializeUnit_BuildFrame
-#define Serialize_BuildError SerializeUnit_BuildError
-#define Serialize_BuildAnalogSamples SerializeUnit_BuildAnalogSamples
-#define Serialize_BuildDigitalRead SerializeUnit_BuildDigitalRead
-#define Serialize_BuildI2CRead SerializeUnit_BuildI2CRead
-#define Serialize_BuildSPITransfer SerializeUnit_BuildSPITransfer
-#define Serialize_ComputeCrc SerializeUnit_ComputeCrc
-#define SERIALIZE_ERROR_INVALID_CMD SERIALIZE_ERROR_INVALID_COMMAND
+/* Build positive response for SID 0x22 (ReadDataByIdentifier) */
+/* Response: [0x62, DID_HI, DID_LO, Data...] */
+Serialize_Status_t SerializeUnit_BuildReadResponse(
+    uint16_t did,
+    const uint8_t *pData,
+    uint16_t dataLength,
+    Serialize_UdsResponse_t *pResponse);
+
+/* Build positive response for SID 0x2E (WriteDataByIdentifier) */
+/* Response: [0x6E, DID_HI, DID_LO] */
+Serialize_Status_t SerializeUnit_BuildWriteResponse(
+    uint16_t did,
+    Serialize_UdsResponse_t *pResponse);
+
+/* Build positive response for SID 0x31 (RoutineControl) */
+/* Response: [0x71, routineControlType, RID_HI, RID_LO, statusRecord...] */
+Serialize_Status_t SerializeUnit_BuildRoutineResponse(
+    uint8_t routineControlType,
+    uint16_t rid,
+    const uint8_t *pStatusRecord,
+    uint16_t statusLength,
+    Serialize_UdsResponse_t *pResponse);
+
+/* Build negative response */
+/* Response: [0x7F, requestSID, NRC] */
+Serialize_Status_t SerializeUnit_BuildNegativeResponse(
+    uint8_t requestSid,
+    uint8_t nrc,
+    Serialize_UdsResponse_t *pResponse);
 
 #endif /* SERIALIZEUNIT_H */

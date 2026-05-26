@@ -1,23 +1,26 @@
-@startuml serialToSPIAppSequenceDiagram
-actor Client
-participant "serialToSPIApp" as app
-participant "Context" as ctx
+﻿@startuml serialToSPIAppSequenceDiagram
+participant "CAC" as cac
+participant "SerialToSPIApp" as app
+participant "SpiMasterDriver" as drv
 
-Client -> app : Init()
-app -> ctx : Initialize SPI config
-ctx --> app : OK
-app --> Client : OK
+== SPI Write (RID 0x0501) ==
+cac -> app : SerialToSPIApp_Write(device, pData, len)
+app -> app : Validate initialized
+app -> drv : SpiMasterDriver_Write(device, pData, len)
+drv --> app : OK
+app --> cac : OK
 
-Client -> app : Run()
-app -> ctx : Set running = true
-ctx --> app : OK
-app --> Client : OK
+== SPI Transceive (RID 0x0502) ==
+cac -> app : SerialToSPIApp_Transceive(device, pTx, txLen, pRx, rxLen)
+app -> app : Validate initialized
+app -> drv : SpiMasterDriver_Transceive(device, pTx, txLen, pRx, rxLen)
+drv --> app : OK + pRx filled
+app --> cac : OK + received data
 
-Client -> app : ProcessFrame(serialCmd)
-app -> app : Deserialize SPI command
-app -> app : Call spiMasterDriver\nfor SPI transfer
-app -> ctx : Store transfer result
-ctx --> app : OK
-app -> app : Serialize SPI response
-app --> Client : response + frameLength
+note over app
+  CAC extracts device, data from
+  RID payload and passes as typed params.
+  Transceive result is returned to CAC
+  which builds the RoutineControl response.
+end note
 @enduml

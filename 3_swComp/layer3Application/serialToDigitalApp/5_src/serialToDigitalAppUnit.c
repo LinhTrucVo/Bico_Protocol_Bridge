@@ -1,4 +1,4 @@
-﻿// SerialToDigitalApp Implementation
+﻿// SerialToDigitalApp Implementation - Typed GPIO/PWM API
 
 #include <stddef.h>
 #include "serialToDigitalApp.h"
@@ -7,10 +7,8 @@
 typedef struct
 {
     bool initialized;
-    SerialToDigitalApp_State_t currentState;
-    SerialToDigitalApp_PinConfig_t pinConfig[SERIAL_TO_DIGITAL_CFG_MAX_PINS];
-    SerialToDigitalApp_StateValue_t pinState[SERIAL_TO_DIGITAL_CFG_MAX_PINS];
-    SerialToDigitalApp_PwmConfig_t pwmConfig[SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH];
+    uint8_t pinState[SERIAL_TO_DIGITAL_CFG_MAX_PINS];
+    bool pwmRunning[SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH];
 } SerialToDigitalApp_Context_t;
 
 static SerialToDigitalApp_Context_t context = {0};
@@ -18,23 +16,14 @@ static SerialToDigitalApp_Context_t context = {0};
 SerialToDigitalApp_Status_t SerialToDigitalApp_Init(void)
 {
     context.initialized = true;
-    context.currentState = SerialToDigitalApp_STATE_IDLE;
-    for (uint8_t i = 0; i < SERIAL_TO_DIGITAL_CFG_MAX_PINS; i++)
-    
+    /* TODO: Initialize GPIO/PWM drivers from ConfigService */
+    for (uint8_t i = 0U; i < SERIAL_TO_DIGITAL_CFG_MAX_PINS; i++)
     {
-        context.pinConfig[i].pinId = i;
-        context.pinConfig[i].direction = SERIAL_TO_DIGITAL_DIR_INPUT;
-        context.pinConfig[i].initialState = SERIAL_TO_DIGITAL_STATE_LOW;
-        context.pinConfig[i].enablePullup = false;
-        context.pinState[i] = SERIAL_TO_DIGITAL_STATE_LOW;
+        context.pinState[i] = 0U;
     }
-
-    for (uint8_t i = 0; i < SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH; i++)
+    for (uint8_t i = 0U; i < SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH; i++)
     {
-        context.pwmConfig[i].channelId = i;
-        context.pwmConfig[i].frequency = SERIAL_TO_DIGITAL_CFG_DEFAULT_PWM_HZ;
-        context.pwmConfig[i].dutyCycle = SERIAL_TO_DIGITAL_CFG_DEFAULT_DUTY;
-        context.pwmConfig[i].enable = false;
+        context.pwmRunning[i] = false;
     }
     return SERIAL_TO_DIGITAL_APP_STATUS_OK;
 }
@@ -42,107 +31,69 @@ SerialToDigitalApp_Status_t SerialToDigitalApp_Init(void)
 SerialToDigitalApp_Status_t SerialToDigitalApp_DeInit(void)
 {
     context.initialized = false;
-    context.currentState = SerialToDigitalApp_STATE_IDLE;
     return SERIAL_TO_DIGITAL_APP_STATUS_OK;
 }
 
-SerialToDigitalApp_Status_t SerialToDigitalApp_Run(void)
+SerialToDigitalApp_Status_t SerialToDigitalApp_WriteGpio(uint8_t pin, uint8_t state)
 {
     if (!context.initialized)
     {
         return SERIAL_TO_DIGITAL_APP_STATUS_NOT_INITIALIZED;
     }
-    return SERIAL_TO_DIGITAL_APP_STATUS_OK;
-}
-
-SerialToDigitalApp_Status_t SerialToDigitalApp_GetState(SerialToDigitalApp_State_t *pState)
-{
-    if (pState == NULL)
+    if (pin >= SERIAL_TO_DIGITAL_CFG_MAX_PINS)
     {
         return SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM;
     }
-    *pState = context.currentState;
+
+    /* TODO: Call GPIO_WritePin(pin, state) via driver */
+    context.pinState[pin] = state;
     return SERIAL_TO_DIGITAL_APP_STATUS_OK;
 }
 
-SerialToDigitalApp_Status_t SerialToDigitalApp_ConfigurePin(const SerialToDigitalApp_PinConfig_t *pConfig)
+SerialToDigitalApp_Status_t SerialToDigitalApp_ReadGpio(uint8_t pin, uint8_t *pState)
 {
-    if (pConfig == NULL || pConfig->pinId >= SERIAL_TO_DIGITAL_CFG_MAX_PINS)
+    if (!context.initialized)
+    {
+        return SERIAL_TO_DIGITAL_APP_STATUS_NOT_INITIALIZED;
+    }
+    if (pState == NULL || pin >= SERIAL_TO_DIGITAL_CFG_MAX_PINS)
     {
         return SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM;
     }
-    context.pinConfig[pConfig->pinId] = *pConfig;
-    context.pinState[pConfig->pinId] = pConfig->initialState;
+
+    /* TODO: Call GPIO_ReadPin(pin) via driver */
+    *pState = context.pinState[pin];
     return SERIAL_TO_DIGITAL_APP_STATUS_OK;
 }
 
-SerialToDigitalApp_Status_t SerialToDigitalApp_ReadPin(uint8_t pinId, SerialToDigitalApp_StateValue_t *pState)
+SerialToDigitalApp_Status_t SerialToDigitalApp_StartPwm(uint8_t channel)
 {
-    if (pState == NULL || pinId >= SERIAL_TO_DIGITAL_CFG_MAX_PINS)
+    if (!context.initialized)
+    {
+        return SERIAL_TO_DIGITAL_APP_STATUS_NOT_INITIALIZED;
+    }
+    if (channel >= SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH)
     {
         return SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM;
     }
-    *pState = context.pinState[pinId];
+
+    /* TODO: Call PWM_Start(channel) via driver */
+    context.pwmRunning[channel] = true;
     return SERIAL_TO_DIGITAL_APP_STATUS_OK;
 }
 
-SerialToDigitalApp_Status_t SerialToDigitalApp_WritePin(uint8_t pinId, SerialToDigitalApp_StateValue_t state)
+SerialToDigitalApp_Status_t SerialToDigitalApp_StopPwm(uint8_t channel)
 {
-    if (pinId >= SERIAL_TO_DIGITAL_CFG_MAX_PINS)
+    if (!context.initialized)
+    {
+        return SERIAL_TO_DIGITAL_APP_STATUS_NOT_INITIALIZED;
+    }
+    if (channel >= SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH)
     {
         return SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM;
     }
-    context.pinState[pinId] = state;
-    return SERIAL_TO_DIGITAL_APP_STATUS_OK;
-}
 
-SerialToDigitalApp_Status_t SerialToDigitalApp_ConfigurePwm(const SerialToDigitalApp_PwmConfig_t *pConfig)
-{
-    if (pConfig == NULL || pConfig->channelId >= SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH)
-    {
-        return SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM;
-    }
-    context.pwmConfig[pConfig->channelId] = *pConfig;
-    return SERIAL_TO_DIGITAL_APP_STATUS_OK;
-}
-
-SerialToDigitalApp_Status_t SerialToDigitalApp_StartPwm(uint8_t channelId)
-{
-    if (channelId >= SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH)
-    {
-        return SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM;
-    }
-    context.pwmConfig[channelId].enable = true;
-    return SERIAL_TO_DIGITAL_APP_STATUS_OK;
-}
-
-SerialToDigitalApp_Status_t SerialToDigitalApp_StopPwm(uint8_t channelId)
-{
-    if (channelId >= SERIAL_TO_DIGITAL_CFG_MAX_PWM_CH)
-    {
-        return SERIAL_TO_DIGITAL_APP_STATUS_INVALID_PARAM;
-    }
-    context.pwmConfig[channelId].enable = false;
-    return SERIAL_TO_DIGITAL_APP_STATUS_OK;
-}
-
-SerialToDigitalApp_Status_t SerialToDigitalApp_SaveConfig(void)
-{
-    // TODO: Persist configuration using NvmService
-    return SERIAL_TO_DIGITAL_APP_STATUS_OK;
-}
-
-SerialToDigitalApp_Status_t SerialToDigitalApp_LoadConfig(void)
-{
-    // TODO: Load configuration using NvmService
-    return SERIAL_TO_DIGITAL_APP_STATUS_OK;
-}
-
-SerialToDigitalApp_Status_t SerialToDigitalApp_ProcessFrame(const uint8_t *pFrame, uint16_t frameLength, uint8_t *pResponse, uint16_t *pResponseLength)
-{
-    (void)pFrame;
-    (void)frameLength;
-    (void)pResponse;
-    (void)pResponseLength;
+    /* TODO: Call PWM_Stop(channel) via driver */
+    context.pwmRunning[channel] = false;
     return SERIAL_TO_DIGITAL_APP_STATUS_OK;
 }

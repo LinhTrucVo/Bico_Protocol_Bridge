@@ -1,22 +1,18 @@
-@startuml serialToI2CAppStateMachine
+﻿@startuml serialToI2CAppStateMachine
 state Uninitialized
-state Initialized
-state Running
+state Ready
 
 [*] --> Uninitialized
 
-Uninitialized --> Initialized : Init()
+Uninitialized --> Ready : Init()
+Ready --> Uninitialized : DeInit()
 
-Initialized --> Running : Run()
+Ready --> Ready : Write()
+Ready --> Ready : Read()
 
-Running --> Running : ProcessFrame()
-
-Running --> Initialized : Stop()
-
-Initialized --> Uninitialized : DeInit()
-
-note right of Running
-  Actively processing serial-to-I2C
-  commands via i2cMasterDriver
+note right of Ready
+  Stateless.
+  Each call is an independent
+  I2C master driver operation.
 end note
 @enduml

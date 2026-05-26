@@ -2,61 +2,9 @@
 What is this component about?
 #################################
 
-The Serial To Digital App handles GPIO and PWM commands received over serial.
-It validates requests, drives the GPIO/PWM drivers, and returns formatted responses.
-
-
-#################################
-Static structure
-#################################
-
-Files:
-* serialToDigitalApp.h
-* serialToDigitalAppCfg.h
-* serialToDigitalAppUnit.c
-
-..  uml::
-
-	@startuml
-	class SerialToDigital_Context
-	@enduml
-
-
-#################################
-Dynamic behaviour
-#################################
-
-* State machine diagram
-..  uml::
-
-	@startuml
-	[*] --> Idle
-	Idle --> Processing : Command
-	Processing --> Idle : Done
-	Processing --> Error : Invalid
-	Error --> Idle
-	@enduml
-
-* Sequence diagram
-..  uml::
-
-	@startuml
-	actor Host
-	participant SerialToDigital
-	participant GPIO
-	participant PWM
-	Host -> SerialToDigital : Command
-	SerialToDigital -> GPIO : Configure/Read/Write
-	SerialToDigital -> PWM : Configure/Start/Stop
-	SerialToDigital --> Host : Response
-	@enduml
-
-
-#################################
-What is this component about?
-#################################
-
-The Serial-to-Digital App maps serial commands to GPIO states.
+The Serial-to-Digital Application provides typed GPIO and PWM operations. It is called
+by the Central Application Controller via RID 0x02xx (GPIO) and RID 0x03xx (PWM).
+This module has no UDS awareness - it receives typed parameters and returns typed results.
 
 
 #################################
@@ -78,28 +26,30 @@ Dynamic behaviour
 
 
 #################################
-Design chooices
+Design choices
 #################################
 Description:
 ************
-Provide a serial-controlled digital I/O application.
+Provide hardware-abstracted GPIO read/write and PWM start/stop for the CAC dispatcher.
 
 Assumptions and influencing factors:
 ************************************
-* GPIO drivers are available.
+* GPIO and PWM drivers are initialized and available.
+* Pin/channel numbers are validated at driver level.
+* No UDS framing knowledge required in this module.
 
 Solutions list:
 ***************
-Solution 1 - Direct pin control
-Map commands to pin write operations.
+Solution 1 - Separate functions per operation
+Expose WriteGpio, ReadGpio, StartPwm, StopPwm individually.
 
-Solution 2 - Shadowed outputs
-Maintain a local shadow state for safety.
+Solution 2 - Combined GPIO/PWM function with operation parameter
+Single function with operation enum.
 
 Solution evaluation:
 ********************
-Direct pin control is simplest and sufficient.
+Separate functions provide clear API semantics and match 1:1 with RID mapping.
 
 Final solution:
 ****************
-Solution 1 selected for simplicity.
+Solution 1 selected for API clarity.

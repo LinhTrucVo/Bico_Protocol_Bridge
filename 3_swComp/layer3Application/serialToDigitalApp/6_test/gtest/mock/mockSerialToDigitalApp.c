@@ -1,42 +1,11 @@
-﻿// This file defines the FFF for functions and MOCK functions for SerialToDigitalApp testing
-
-//============================================================================
-// Dependencies
-//============================================================================
-#include "mockSerialToDigitalApp.h"
-
-// Include the .c file to get access to static variables and functions
+﻿#include "mockSerialToDigitalApp.h"
 #include "../../../5_src/serialToDigitalAppUnit.c"
 
-//============================================================================
-// Mock function definitions
-//============================================================================
-
-// Required for FFF
 DEFINE_FFF_GLOBALS;
 
-// DEFINE_FAKE_VALUE_FUNC(int, ExternalFunction, int);
-
-//============================================================================
-// Static function wrapper definitions
-//============================================================================
-
-SerialToDigitalApp_Status_t call_SerialToDigitalAppUnit_Init(void)
-{
-    return SerialToDigitalAppUnit_Init();
-}
-
-SerialToDigitalApp_Status_t call_SerialToDigitalAppUnit_DeInit(void)
-{
-    return SerialToDigitalAppUnit_DeInit();
-}
-
-SerialToDigitalApp_Status_t call_SerialToDigitalAppUnit_Run(void)
-{
-    return SerialToDigitalAppUnit_Run();
-}
-
-SerialToDigitalApp_Status_t call_SerialToDigitalAppUnit_ProcessFrame(const uint8_t *pFrame, uint16_t frameLength, uint8_t *pResponse, uint16_t *pResponseLength)
-{
-    return SerialToDigitalAppUnit_ProcessFrame(pFrame, frameLength, pResponse, pResponseLength);
-}
+SerialToDigitalApp_Status_t call_SerialToDigitalApp_Init(void) { return SerialToDigitalApp_Init(); }
+SerialToDigitalApp_Status_t call_SerialToDigitalApp_DeInit(void) { return SerialToDigitalApp_DeInit(); }
+SerialToDigitalApp_Status_t call_SerialToDigitalApp_WriteGpio(uint8_t pin, uint8_t state) { return SerialToDigitalApp_WriteGpio(pin, state); }
+SerialToDigitalApp_Status_t call_SerialToDigitalApp_ReadGpio(uint8_t pin, uint8_t *pState) { return SerialToDigitalApp_ReadGpio(pin, pState); }
+SerialToDigitalApp_Status_t call_SerialToDigitalApp_StartPwm(uint8_t channel) { return SerialToDigitalApp_StartPwm(channel); }
+SerialToDigitalApp_Status_t call_SerialToDigitalApp_StopPwm(uint8_t channel) { return SerialToDigitalApp_StopPwm(channel); }

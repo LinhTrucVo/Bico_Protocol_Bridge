@@ -1,36 +1,43 @@
-﻿.. Descrive about the Deserialize Service component requirements
+﻿.. Describe about the Deserialize Service component requirements
 Overall requirements
 ********************
 
-The Deserialize Service shall parse protocol frames and extract command identifiers and payload data.
-The component shall validate CRC and length before accepting a request.
+The Deserialize Service shall parse UDS (ISO 14229) request frames and extract the Service Identifier,
+Data Identifier or Routine Identifier, and payload data.
+The component has no knowledge of DID/RID semantics - it only performs structural parsing.
 
 Input validation
 ****************
 
-The component shall validate frame pointers and length against the minimum header size.
-The component shall reject frames exceeding the maximum supported size.
+The component shall validate frame pointers and length against the minimum frame size (3 bytes).
+The component shall reject frames with null pointers or zero length.
 
 Requirements for component
 **************************
 
-Req-deserialize-001: The component shall validate CRC for every incoming frame.
-   Verification: Frames with incorrect CRC are rejected with CRC_ERROR status.
+Req-deserialize-001: The component shall extract the Service Identifier (SID) from byte 0 of the frame.
+   Verification: Parsed SID matches reference frames for valid inputs.
 
-Req-deserialize-002: The component shall parse command ID and sequence ID from the frame.
-   Verification: Parsed values match reference frames for valid inputs.
+Req-deserialize-002: The component shall support SID 0x22 (ReadDataByIdentifier) with minimum frame length 3 bytes.
+   Verification: Frame [0x22, DID_HI, DID_LO] is parsed correctly.
 
-Req-deserialize-003: The component shall map command IDs to internal command enums.
-   Verification: Supported command IDs map to correct enums; unsupported IDs return error.
+Req-deserialize-003: The component shall support SID 0x2E (WriteDataByIdentifier) with minimum frame length 4 bytes.
+   Verification: Frame [0x2E, DID_HI, DID_LO, Data...] extracts DID and payload.
 
-Req-deserialize-004: The component shall extract payload pointer and length for the command.
-   Verification: Payload length matches frame metadata and buffer bounds.
+Req-deserialize-004: The component shall support SID 0x31 (RoutineControl) with minimum frame length 4 bytes.
+   Verification: Frame [0x31, subFunction, RID_HI, RID_LO, params...] extracts type, RID, and parameters.
 
-Req-deserialize-005: The component shall return INVALID_FRAME for malformed length fields.
-   Verification: Truncated frames are rejected without processing.
+Req-deserialize-005: The component shall decode DID/RID as 2-byte big-endian unsigned integer.
+   Verification: Bytes [0x01, 0x02] decode to identifier value 0x0102.
 
-Req-deserialize-006: The component shall provide a command name lookup for diagnostics.
-   Verification: GetCommandName returns a non-null name for supported commands.
+Req-deserialize-006: The component shall return UNSUPPORTED_SID for any SID not in {0x22, 0x2E, 0x31}.
+   Verification: Unknown SID returns DESERIALIZE_STATUS_UNSUPPORTED_SID.
 
 Req-deserialize-007: The component shall return INVALID_PARAM when input pointers are null.
-   Verification: ParseFrame returns INVALID_PARAM for null inputs.
+   Verification: Parse returns INVALID_PARAM for null frame or request pointers.
+
+Req-deserialize-008: The component shall return INVALID_FRAME when frame length is below minimum for the given SID.
+   Verification: Truncated frames are rejected with INVALID_FRAME status.
+
+Req-deserialize-009: The component shall return ERROR when called before initialization.
+   Verification: Parse returns ERROR if Init has not been called.

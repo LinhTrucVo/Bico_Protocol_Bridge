@@ -1,10 +1,10 @@
-serializeCfg.h
+﻿serializeCfg.h
 ########################
 
 Defines compile-time feature flags for the Serialize service:
 
-- ``SERIALIZE_CFG_ENABLE_CRC_GENERATION``: Enables CRC-16 computation and appending to outgoing frames.
-- ``SERIALIZE_CFG_ENABLE_FRAME_FORMATTING``: Enables full frame formatting (start byte, length, payload, CRC).
+- ``SERIALIZE_CFG_MAX_RESPONSE_SIZE``: Maximum response buffer size (default 256 bytes).
+- ``SERIALIZE_CFG_ENABLE_LENGTH_CHECK``: Enables bounds checking on response data length.
 
 ..  doxygenfile::  serializeCfg.h
     :project: Serialize

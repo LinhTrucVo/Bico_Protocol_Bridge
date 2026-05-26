@@ -1,32 +1,34 @@
-@startuml serialToI2CAppStaticStructure
+﻿@startuml serialToI2CAppStaticStructure
 skinparam backgroundColor #FEFEFE
 
 package "serialToI2CApp" {
     interface ISerialToI2CApp {
-        + Init()
-        + DeInit()
-        + Run()
-        + ProcessFrame(frame, frameLength, response)
+        + Init() : Status_t
+        + DeInit() : Status_t
+        + Write(addr, pData, len) : Status_t
+        + Read(addr, pData, len) : Status_t
     }
 
     class SerialToI2CApp_Context_t {
         - initialized: bool
-        - enabled: bool
-        - config: Config_t
     }
 
-    class SerialToI2CApp_Config_t {
-        - clockSpeed: uint32_t
-        - addressMode: AddressMode_t
-        - timeout: uint32_t
-    }
-
-    ISerialToI2CApp --> SerialToI2CApp_Context_t : manages\n(static instance)
-    SerialToI2CApp_Context_t *-- SerialToI2CApp_Config_t : contains
+    ISerialToI2CApp --> SerialToI2CApp_Context_t : manages
 }
 
-note right of SerialToI2CApp_Context_t
-    I2C protocol conversion
-    Uses i2cMasterDriver
+package "layer1Driver" {
+    interface II2cMasterDriver {
+        + I2cMasterDriver_Write(addr, pData, len) : Status_t
+        + I2cMasterDriver_Read(addr, pData, len) : Status_t
+    }
+}
+
+ISerialToI2CApp --> II2cMasterDriver : delegates
+
+note right of ISerialToI2CApp
+  No UDS awareness.
+  Called by CAC for:
+  - RID 0x0401: Write(addr, pData, len)
+  - RID 0x0402: Read(addr, pData, len)
 end note
 @enduml

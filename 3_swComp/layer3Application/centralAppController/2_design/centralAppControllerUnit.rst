@@ -1,9 +1,11 @@
-..  c:namespace:: CentralAppController
+﻿..  c:namespace:: CentralAppController
 
 centralAppControllerUnit.c
 ###########################
 
-Application layer component providing the central application controller, orchestrating the overall system behavior and coordinating communication between different protocol conversion applications.
+Application layer component providing UDS command dispatching. Parses requests via Deserialize,
+maps DID/RID to downstream typed APIs (ConfigService for reads/writes, peripheral apps for
+routine control), and builds responses via Serialize.
 
 ..  doxygenfile:: centralAppControllerUnit.c
     :project: CentralAppController

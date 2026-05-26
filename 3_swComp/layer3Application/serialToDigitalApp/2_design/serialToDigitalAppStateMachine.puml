@@ -1,22 +1,20 @@
-@startuml serialToDigitalAppStateMachine
+﻿@startuml serialToDigitalAppStateMachine
 state Uninitialized
-state Initialized
-state Running
+state Ready
 
 [*] --> Uninitialized
 
-Uninitialized --> Initialized : Init()
+Uninitialized --> Ready : Init()
+Ready --> Uninitialized : DeInit()
 
-Initialized --> Running : Run()
+Ready --> Ready : WriteGpio()
+Ready --> Ready : ReadGpio()
+Ready --> Ready : StartPwm()
+Ready --> Ready : StopPwm()
 
-Running --> Running : ProcessFrame()
-
-Running --> Initialized : Stop()
-
-Initialized --> Uninitialized : DeInit()
-
-note right of Running
-  Actively processing serial commands
-  Controlling GPIO pins via gpioDriver
+note right of Ready
+  Stateless.
+  Each call is an independent
+  driver-level operation.
 end note
 @enduml

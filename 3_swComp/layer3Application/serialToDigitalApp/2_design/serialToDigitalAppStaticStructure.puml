@@ -1,33 +1,43 @@
-@startuml serialToDigitalAppStaticStructure
+﻿@startuml serialToDigitalAppStaticStructure
 skinparam backgroundColor #FEFEFE
 
 package "serialToDigitalApp" {
     interface ISerialToDigitalApp {
-        + Init()
-        + DeInit()
-        + Run()
-        + ProcessFrame(frame, frameLength, response)
+        + Init() : Status_t
+        + DeInit() : Status_t
+        + WriteGpio(pin, state) : Status_t
+        + ReadGpio(pin, pState) : Status_t
+        + StartPwm(channel) : Status_t
+        + StopPwm(channel) : Status_t
     }
 
     class SerialToDigitalApp_Context_t {
         - initialized: bool
-        - enabled: bool
-        - pinConfig[]: PinConfig_t
     }
 
-    class PinConfig_t {
-        - pinId: uint8_t
-        - direction: Direction_t
-        - state: State_t
-        - enabled: bool
-    }
-
-    ISerialToDigitalApp --> SerialToDigitalApp_Context_t : manages\n(static instance)
-    SerialToDigitalApp_Context_t *-- PinConfig_t : contains
+    ISerialToDigitalApp --> SerialToDigitalApp_Context_t : manages
 }
 
-note right of SerialToDigitalApp_Context_t
-    Manages digital pin states
-    Processes serial commands to control pins
+package "layer1Driver" {
+    interface IGpioDriver {
+        + GpioDriver_Write(pin, state) : Status_t
+        + GpioDriver_Read(pin, pState) : Status_t
+    }
+    interface IPwmDriver {
+        + PwmDriver_Start(channel) : Status_t
+        + PwmDriver_Stop(channel) : Status_t
+    }
+}
+
+ISerialToDigitalApp --> IGpioDriver : GPIO operations
+ISerialToDigitalApp --> IPwmDriver : PWM operations
+
+note right of ISerialToDigitalApp
+  No UDS awareness.
+  Called by CAC for:
+  - RID 0x0201: WriteGpio
+  - RID 0x0202: ReadGpio
+  - RID 0x0301: StartPwm
+  - RID 0x0302: StopPwm
 end note
 @enduml

@@ -1,24 +1,30 @@
-@startuml serialToDigitalAppSequenceDiagram
-actor Client
-participant "serialToDigitalApp" as app
-participant "Context" as ctx
+﻿@startuml serialToDigitalAppSequenceDiagram
+participant "CAC" as cac
+participant "SerialToDigitalApp" as app
+participant "GpioDriver" as gpio
+participant "PwmDriver" as pwm
 
-Client -> app : Init()
-app -> ctx : Initialize pins
-ctx --> app : OK
-app --> Client : OK
+== GPIO Write (RID 0x0201) ==
+cac -> app : SerialToDigitalApp_WriteGpio(pin, state)
+app -> gpio : GpioDriver_Write(pin, state)
+gpio --> app : OK
+app --> cac : OK
 
-Client -> app : Run()
-app -> ctx : Set running = true
-ctx --> app : OK
-app --> Client : OK
+== GPIO Read (RID 0x0202) ==
+cac -> app : SerialToDigitalApp_ReadGpio(pin, &state)
+app -> gpio : GpioDriver_Read(pin, &state)
+gpio --> app : OK + state
+app --> cac : OK
 
-Client -> app : ProcessFrame(serialCmd)
-app -> app : Deserialize serial command
-app -> ctx : Update pinConfig
-ctx --> app : OK
-app -> app : Serialize response
-app --> Client : response + frameLength
+== PWM Start (RID 0x0301) ==
+cac -> app : SerialToDigitalApp_StartPwm(channel)
+app -> pwm : PwmDriver_Start(channel)
+pwm --> app : OK
+app --> cac : OK
 
-note over app : Pin state is reflected\nin response data
+== PWM Stop (RID 0x0302) ==
+cac -> app : SerialToDigitalApp_StopPwm(channel)
+app -> pwm : PwmDriver_Stop(channel)
+pwm --> app : OK
+app --> cac : OK
 @enduml

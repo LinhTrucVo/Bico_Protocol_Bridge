@@ -1,11 +1,10 @@
 ﻿//----------------------------------------------------------------------------
-// Unit Test file for Serial To Analog App component
+// Unit Test file for SerialToAnalogApp - Typed ADC API
 //----------------------------------------------------------------------------
 
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
-// Unit under test
 extern "C"
 {
 #include "mockSerialToAnalogApp.h"
@@ -19,42 +18,69 @@ class SerialToAnalogApp : public ::testing::Test
 protected:
     void SetUp() override 
     {
-        // Reset all fake functions before each test
         FFF_RESET_HISTORY();
+        call_SerialToAnalogApp_Init();
     }
 
     void TearDown() override 
     {
-        // Clean up after each test if needed
+        call_SerialToAnalogApp_DeInit();
     }
 };
 
 //------------------------------------------------------------------------------
-// Test Cases for SerialToAnalogAppUnit_Init
+// Test Cases for Init / DeInit
 //------------------------------------------------------------------------------
 TEST_F(SerialToAnalogApp, SerialToAnalogApp_Init_Valid_ReturnsOK)
 {
-    // Arrange
-    
-    // Act
-    SerialToAnalogApp_Status_t status = call_SerialToAnalogAppUnit_Init();
-    
-    // Assert
+    call_SerialToAnalogApp_DeInit();
+    SerialToAnalogApp_Status_t status = call_SerialToAnalogApp_Init();
+    EXPECT_EQ(SERIAL_TO_ANALOG_APP_STATUS_OK, status);
+}
+
+TEST_F(SerialToAnalogApp, SerialToAnalogApp_DeInit_Valid_ReturnsOK)
+{
+    SerialToAnalogApp_Status_t status = call_SerialToAnalogApp_DeInit();
     EXPECT_EQ(SERIAL_TO_ANALOG_APP_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
-// Test Cases for SerialToAnalogAppUnit_ConfigureChannel
+// Test Cases for ReadAdc
 //------------------------------------------------------------------------------
-TEST_F(SerialToAnalogApp, SerialToAnalogApp_ConfigureChannel_ValidConfig_ReturnsOK)
+TEST_F(SerialToAnalogApp, SerialToAnalogApp_ReadAdc_ValidChannel_ReturnsOK)
 {
-    // Arrange
-    SerialToAnalogApp_ChannelConfig_t cfg = {0, true, SERIAL_TO_ANALOG_RESOLUTION_12BIT, SERIAL_TO_ANALOG_RANGE_3V3, 1000, 1, false, 0.0f, 0.0f};
-    call_SerialToAnalogAppUnit_Init();
-    
-    // Act
-    SerialToAnalogApp_Status_t status = call_SerialToAnalogAppUnit_ProcessFrame(nullptr, 0, nullptr, nullptr);
-    
-    // Assert
-    EXPECT_EQ(SERIAL_TO_ANALOG_APP_STATUS_OK, status) << "ProcessFrame should succeed";
+    uint16_t rawValue = 0;
+    SerialToAnalogApp_Status_t status = call_SerialToAnalogApp_ReadAdc(0, &rawValue);
+    EXPECT_EQ(SERIAL_TO_ANALOG_APP_STATUS_OK, status);
+}
+
+TEST_F(SerialToAnalogApp, SerialToAnalogApp_ReadAdc_InvalidChannel_ReturnsInvalidParam)
+{
+    uint16_t rawValue = 0;
+    SerialToAnalogApp_Status_t status = call_SerialToAnalogApp_ReadAdc(8, &rawValue);
+    EXPECT_EQ(SERIAL_TO_ANALOG_APP_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(SerialToAnalogApp, SerialToAnalogApp_ReadAdc_NullPointer_ReturnsInvalidParam)
+{
+    SerialToAnalogApp_Status_t status = call_SerialToAnalogApp_ReadAdc(0, nullptr);
+    EXPECT_EQ(SERIAL_TO_ANALOG_APP_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(SerialToAnalogApp, SerialToAnalogApp_ReadAdc_NotInitialized_ReturnsNotInitialized)
+{
+    call_SerialToAnalogApp_DeInit();
+    uint16_t rawValue = 0;
+    SerialToAnalogApp_Status_t status = call_SerialToAnalogApp_ReadAdc(0, &rawValue);
+    EXPECT_EQ(SERIAL_TO_ANALOG_APP_STATUS_NOT_INITIALIZED, status);
+}
+
+TEST_F(SerialToAnalogApp, SerialToAnalogApp_ReadAdc_AllChannels_ReturnsOK)
+{
+    for (uint8_t ch = 0; ch < 8; ch++)
+    {
+        uint16_t rawValue = 0;
+        SerialToAnalogApp_Status_t status = call_SerialToAnalogApp_ReadAdc(ch, &rawValue);
+        EXPECT_EQ(SERIAL_TO_ANALOG_APP_STATUS_OK, status);
+    }
 }

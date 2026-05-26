@@ -11,11 +11,7 @@
 //============================================================================
 // Mock function definitions
 //============================================================================
-
-// Required for FFF
 DEFINE_FFF_GLOBALS;
-
-// DEFINE_FAKE_VALUE_FUNC(int, ExternalFunction, int);
 
 //============================================================================
 // Static function wrapper definitions
@@ -41,9 +37,9 @@ CentralAppController_Status_t call_CentralAppControllerUnit_GetState(CentralAppC
     return CentralAppControllerUnit_GetState(pState);
 }
 
-CentralAppController_Status_t call_CentralAppControllerUnit_ProcessFrame(const CentralAppController_Frame_t *pInFrame, CentralAppController_OutFrame_t *pOutFrame, uint16_t *pOutLength)
+CentralAppController_Status_t call_CentralAppControllerUnit_Dispatch(const uint8_t *pRequestFrame, uint16_t requestLength, uint8_t *pResponseBuffer, uint16_t bufferSize, uint16_t *pResponseLength)
 {
-    return CentralAppControllerUnit_ProcessFrame(pInFrame, pOutFrame, pOutLength);
+    return CentralAppControllerUnit_Dispatch(pRequestFrame, requestLength, pResponseBuffer, bufferSize, pResponseLength);
 }
 
 CentralAppController_Status_t call_CentralAppControllerUnit_RegisterErrorCallback(CentralAppController_ErrorCallback_t callback)

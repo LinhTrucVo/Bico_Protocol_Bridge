@@ -1,25 +1,47 @@
-@startuml centralAppControllerSequenceDiagram
-actor Client
-participant "centralAppController" as ctrl
-participant "Context" as ctx
+﻿@startuml centralAppControllerSequenceDiagram
+participant "Host" as host
+participant "CAC" as cac
+participant "Deserialize" as des
+participant "ConfigService" as cfg
+participant "PeripheralApp" as app
+participant "Serialize" as ser
 
-Client -> ctrl : Init()
-ctrl -> ctx : Initialize state
-ctx --> ctrl : OK
-ctrl --> Client : OK
+== ReadDataByIdentifier (SID 0x22) ==
+host -> cac : Dispatch(frame, response)
+cac -> des : Parse(frame, &request)
+des --> cac : OK {sid=0x22, id=DID}
+cac -> cfg : ConfigService_Get(DID, pData, &len)
+cfg --> cac : OK + data
+cac -> ser : BuildReadResponse(DID, pData, len, &resp)
+ser --> cac : OK
+cac --> host : response
 
-Client -> ctrl : Run()
-ctrl -> ctx : Set running = true
-ctx --> ctrl : OK
-ctrl --> Client : OK
+== WriteDataByIdentifier (SID 0x2E) ==
+host -> cac : Dispatch(frame, response)
+cac -> des : Parse(frame, &request)
+des --> cac : OK {sid=0x2E, id=DID, payload}
+cac -> cfg : ConfigService_Set(DID, pPayload, payloadLen)
+cfg --> cac : OK
+cac -> ser : BuildWriteResponse(DID, &resp)
+ser --> cac : OK
+cac --> host : response
 
-Client -> ctrl : ProcessFrame(inFrame, outFrame)
-ctrl -> ctrl : Deserialize frame
-ctrl -> ctrl : Dispatch to protocol handler
-ctrl -> ctx : Update state if needed
-ctrl -> ctrl : Build response
-ctrl -> ctrl : Serialize response
-ctrl --> Client : OK + responseLength
+== RoutineControl (SID 0x31) ==
+host -> cac : Dispatch(frame, response)
+cac -> des : Parse(frame, &request)
+des --> cac : OK {sid=0x31, id=RID, routineControlType, payload}
+cac -> app : TypedAPI(params extracted from payload)
+app --> cac : OK + result data
+cac -> ser : BuildRoutineResponse(RID, pResult, resultLen, &resp)
+ser --> cac : OK
+cac --> host : response
 
-note over ctrl : Error triggers\nerror callback
+== Error Case ==
+host -> cac : Dispatch(frame, response)
+cac -> des : Parse(frame, &request)
+des --> cac : OK {sid=0x22, id=unknownDID}
+cac -> cac : DID not in mapping table
+cac -> ser : BuildNegativeResponse(0x22, NRC_REQUEST_OUT_OF_RANGE, &resp)
+ser --> cac : OK
+cac --> host : negative response [0x7F, 0x22, 0x31]
 @enduml

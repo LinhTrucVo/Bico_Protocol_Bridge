@@ -1,5 +1,5 @@
 ﻿//----------------------------------------------------------------------------
-// Unit Test file for Deserialize component
+// Unit Test file for Deserialize component - UDS Request Parser
 //----------------------------------------------------------------------------
 
 #include "gtest/gtest.h"
@@ -19,105 +19,230 @@ class Deserialize : public ::testing::Test
 protected:
     void SetUp() override 
     {
-        // Reset all fake functions before each test
         FFF_RESET_HISTORY();
+        call_DeserializeUnit_Init();
     }
 
     void TearDown() override 
     {
-        // Clean up after each test if needed
+        call_DeserializeUnit_DeInit();
     }
 };
 
 //------------------------------------------------------------------------------
-// Test Cases for DeserializeUnit_Init
+// Test Cases for DeserializeUnit_Init / DeInit
 //------------------------------------------------------------------------------
 TEST_F(Deserialize, Deserialize_Init_Valid_ReturnsOK)
 {
     // Arrange
-    // No setup needed
-    
+    call_DeserializeUnit_DeInit();
+
     // Act
     Deserialize_Status_t status = call_DeserializeUnit_Init();
-    
+
     // Assert
     EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
 }
 
-//------------------------------------------------------------------------------
-// Test Cases for DeserializeUnit_ComputeCrc
-//------------------------------------------------------------------------------
-TEST_F(Deserialize, Deserialize_ComputeCrc_ValidFrame_ReturnsOK)
-{
-    // Arrange
-    uint8_t frame[5] = {0x02, 0x01, 0x00, 0x00, 0x00};
-    uint16_t crc = 0;
-    call_DeserializeUnit_Init();
-    
-    // Act
-    Deserialize_Status_t status = call_DeserializeUnit_ComputeCrc(frame, 5, &crc);
-    
-    // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for DeserializeUnit_ParseFrame
-//------------------------------------------------------------------------------
-TEST_F(Deserialize, Deserialize_ParseFrame_ValidFrame_ReturnsOK)
-{
-    // Arrange
-    uint8_t frame[16] = {0};
-    frame[0] = 0x02; // ADC_READ
-    frame[1] = 0x01; // seq
-    frame[2] = 0x00; // type
-    frame[3] = 0x00; // payload length LSB
-    frame[4] = 0x00; // payload length MSB
-    uint16_t crc = 0;
-    Deserialize_Frame_t f = { frame, 7 };
-    Deserialize_Request_t req = {0};
-    call_DeserializeUnit_Init();
-    call_DeserializeUnit_ComputeCrc(frame, 5, &crc);
-    frame[5] = (uint8_t)(crc & 0xFFU);
-    frame[6] = (uint8_t)((crc >> 8U) & 0xFFU);
-    
-    // Act
-    Deserialize_Status_t status = call_DeserializeUnit_ParseFrame(&f, &req);
-    
-    // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for DeserializeUnit_ValidateFrame
-//------------------------------------------------------------------------------
-TEST_F(Deserialize, Deserialize_ValidateFrame_ValidFrame_ReturnsOK)
-{
-    // Arrange
-    uint8_t frame[16] = {0};
-    frame[0] = 0x02;
-    frame[1] = 0x01;
-    Deserialize_Frame_t f = { frame, 7 };
-    call_DeserializeUnit_Init();
-    
-    // Act
-    Deserialize_Status_t status = call_DeserializeUnit_ValidateFrame(&f);
-    
-    // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
-}
-
-//------------------------------------------------------------------------------
-// Test Cases for DeserializeUnit_DeInit
-//------------------------------------------------------------------------------
 TEST_F(Deserialize, Deserialize_DeInit_Valid_ReturnsOK)
 {
-    // Arrange
-    call_DeserializeUnit_Init();
-    
     // Act
     Deserialize_Status_t status = call_DeserializeUnit_DeInit();
-    
+
     // Assert
     EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
+}
+
+//------------------------------------------------------------------------------
+// Test Cases for DeserializeUnit_Parse - SID 0x22 ReadDataByIdentifier
+//------------------------------------------------------------------------------
+TEST_F(Deserialize, Deserialize_Parse_SID22_ValidFrame_ReturnsOK)
+{
+    // Arrange
+    uint8_t frame[] = {0x22, 0x10, 0x01}; // SID=0x22, DID=0x1001
+    Deserialize_Frame_t f = { frame, sizeof(frame) };
+    Deserialize_UdsRequest_t req = {0};
+
+    // Act
+    Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
+
+    // Assert
+    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(0x22U, req.sid);
+    EXPECT_EQ(0x1001U, req.id);
+    EXPECT_EQ(nullptr, req.pPayload);
+    EXPECT_EQ(0U, req.payloadLength);
+}
+
+TEST_F(Deserialize, Deserialize_Parse_SID22_DIDDecodesBigEndian)
+{
+    // Arrange
+    uint8_t frame[] = {0x22, 0xAB, 0xCD};
+    Deserialize_Frame_t f = { frame, sizeof(frame) };
+    Deserialize_UdsRequest_t req = {0};
+
+    // Act
+    call_DeserializeUnit_Parse(&f, &req);
+
+    // Assert
+    EXPECT_EQ(0xABCDU, req.id);
+}
+
+TEST_F(Deserialize, Deserialize_Parse_SID22_TooShort_ReturnsInvalidFrame)
+{
+    // Arrange - only 2 bytes (need minimum 3)
+    uint8_t frame[] = {0x22, 0x10};
+    Deserialize_Frame_t f = { frame, sizeof(frame) };
+    Deserialize_UdsRequest_t req = {0};
+
+    // Act
+    Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
+
+    // Assert
+    EXPECT_EQ(DESERIALIZE_STATUS_INVALID_FRAME, status);
+}
+
+//------------------------------------------------------------------------------
+// Test Cases for DeserializeUnit_Parse - SID 0x2E WriteDataByIdentifier
+//------------------------------------------------------------------------------
+TEST_F(Deserialize, Deserialize_Parse_SID2E_ValidFrame_ReturnsOK)
+{
+    // Arrange
+    uint8_t frame[] = {0x2E, 0x10, 0x01, 0x07, 0xD0}; // SID=0x2E, DID=0x1001, data=[0x07,0xD0]
+    Deserialize_Frame_t f = { frame, sizeof(frame) };
+    Deserialize_UdsRequest_t req = {0};
+
+    // Act
+    Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
+
+    // Assert
+    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(0x2EU, req.sid);
+    EXPECT_EQ(0x1001U, req.id);
+    EXPECT_EQ(&frame[3], req.pPayload);
+    EXPECT_EQ(2U, req.payloadLength);
+}
+
+TEST_F(Deserialize, Deserialize_Parse_SID2E_NoPayload_ReturnsInvalidFrame)
+{
+    // Arrange - SID + DID but no data (need minimum 4 bytes)
+    uint8_t frame[] = {0x2E, 0x10, 0x01};
+    Deserialize_Frame_t f = { frame, sizeof(frame) };
+    Deserialize_UdsRequest_t req = {0};
+
+    // Act
+    Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
+
+    // Assert
+    EXPECT_EQ(DESERIALIZE_STATUS_INVALID_FRAME, status);
+}
+
+//------------------------------------------------------------------------------
+// Test Cases for DeserializeUnit_Parse - SID 0x31 RoutineControl
+//------------------------------------------------------------------------------
+TEST_F(Deserialize, Deserialize_Parse_SID31_ValidFrame_ReturnsOK)
+{
+    // Arrange
+    uint8_t frame[] = {0x31, 0x01, 0x01, 0x00, 0x05}; // SID=0x31, type=start, RID=0x0100, params=[0x05]
+    Deserialize_Frame_t f = { frame, sizeof(frame) };
+    Deserialize_UdsRequest_t req = {0};
+
+    // Act
+    Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
+
+    // Assert
+    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(0x31U, req.sid);
+    EXPECT_EQ(0x01U, req.routineControlType);
+    EXPECT_EQ(0x0100U, req.id);
+    EXPECT_EQ(&frame[4], req.pPayload);
+    EXPECT_EQ(1U, req.payloadLength);
+}
+
+TEST_F(Deserialize, Deserialize_Parse_SID31_NoParams_ReturnsOK)
+{
+    // Arrange - minimum valid: SID + type + RID (4 bytes, no params)
+    uint8_t frame[] = {0x31, 0x01, 0x02, 0x00};
+    Deserialize_Frame_t f = { frame, sizeof(frame) };
+    Deserialize_UdsRequest_t req = {0};
+
+    // Act
+    Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
+
+    // Assert
+    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(0x0200U, req.id);
+    EXPECT_EQ(nullptr, req.pPayload);
+    EXPECT_EQ(0U, req.payloadLength);
+}
+
+TEST_F(Deserialize, Deserialize_Parse_SID31_TooShort_ReturnsInvalidFrame)
+{
+    // Arrange - only 3 bytes (need minimum 4 for SID 0x31)
+    uint8_t frame[] = {0x31, 0x01, 0x01};
+    Deserialize_Frame_t f = { frame, sizeof(frame) };
+    Deserialize_UdsRequest_t req = {0};
+
+    // Act
+    Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
+
+    // Assert
+    EXPECT_EQ(DESERIALIZE_STATUS_INVALID_FRAME, status);
+}
+
+//------------------------------------------------------------------------------
+// Test Cases for error conditions
+//------------------------------------------------------------------------------
+TEST_F(Deserialize, Deserialize_Parse_UnsupportedSID_ReturnsUnsupportedSID)
+{
+    // Arrange
+    uint8_t frame[] = {0x99, 0x10, 0x01};
+    Deserialize_Frame_t f = { frame, sizeof(frame) };
+    Deserialize_UdsRequest_t req = {0};
+
+    // Act
+    Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
+
+    // Assert
+    EXPECT_EQ(DESERIALIZE_STATUS_UNSUPPORTED_SID, status);
+}
+
+TEST_F(Deserialize, Deserialize_Parse_NullFrame_ReturnsInvalidParam)
+{
+    // Arrange
+    Deserialize_UdsRequest_t req = {0};
+
+    // Act
+    Deserialize_Status_t status = call_DeserializeUnit_Parse(nullptr, &req);
+
+    // Assert
+    EXPECT_EQ(DESERIALIZE_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(Deserialize, Deserialize_Parse_NullRequest_ReturnsInvalidParam)
+{
+    // Arrange
+    uint8_t frame[] = {0x22, 0x10, 0x01};
+    Deserialize_Frame_t f = { frame, sizeof(frame) };
+
+    // Act
+    Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, nullptr);
+
+    // Assert
+    EXPECT_EQ(DESERIALIZE_STATUS_INVALID_PARAM, status);
+}
+
+TEST_F(Deserialize, Deserialize_Parse_NotInitialized_ReturnsError)
+{
+    // Arrange
+    call_DeserializeUnit_DeInit();
+    uint8_t frame[] = {0x22, 0x10, 0x01};
+    Deserialize_Frame_t f = { frame, sizeof(frame) };
+    Deserialize_UdsRequest_t req = {0};
+
+    // Act
+    Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
+
+    // Assert
+    EXPECT_EQ(DESERIALIZE_STATUS_ERROR, status);
 }

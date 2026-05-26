@@ -1,40 +1,51 @@
-﻿.. Descrive about the Central App Controller component requirements
+﻿.. Describe about the Central App Controller component requirements
 Overall requirements
 ********************
 
-The Central App Controller shall coordinate command processing for all application components and return serialized responses over the serial interface.
-The component shall provide deterministic processing and clear error reporting for invalid commands or parameters.
+The Central App Controller shall be the sole owner of all DID and RID definitions in the system.
+It shall dispatch UDS requests (SID 0x22, 0x2E, 0x31) to downstream services using typed API calls.
+Downstream modules (ConfigService, peripheral apps) have no UDS/DID/RID awareness.
 
 Input validation
 ****************
 
-The component shall validate incoming frame length, header fields, and CRC before dispatching any command.
-The component shall reject unsupported command IDs and return a standardized error response.
-The component shall validate output buffer pointers and sizes prior to writing response data.
+The component shall validate incoming UDS request frames via the Deserialize service.
+The component shall reject unsupported SIDs with NRC 0x11 (serviceNotSupported).
+The component shall reject unknown DIDs/RIDs with NRC 0x31 (requestOutOfRange).
+The component shall reject insufficient payload length with NRC 0x13 (incorrectMessageLength).
 
 Requirements for component
 **************************
 
-Req-centralAppController-001: The component shall initialize all dependent application services on startup.
-   Verification: Initialize sequence invokes each application init and returns OK when all succeed.
+Req-centralAppController-001: The component shall initialize all dependent services and applications on startup.
+   Verification: Init sequence invokes Deserialize, Serialize, ConfigService, and all peripheral app Init.
 
-Req-centralAppController-002: The component shall parse and validate each incoming frame before command dispatch.
-   Verification: Frames with invalid CRC or length are rejected and an error response is produced.
+Req-centralAppController-002: The component shall dispatch SID 0x22 (ReadDataByIdentifier) to ConfigService getters.
+   Verification: DID 0x1001 returns ADC sample rate, DID 0x1002 returns ADC resolution.
 
-Req-centralAppController-003: The component shall dispatch valid commands to the appropriate application module.
-   Verification: Command routing maps to the correct application handler for analog, digital, I2C, and SPI commands.
+Req-centralAppController-003: The component shall dispatch SID 0x2E (WriteDataByIdentifier) to ConfigService setters.
+   Verification: DID 0x1001 with payload sets ADC sample rate; invalid value returns NRC 0x31.
 
-Req-centralAppController-004: The component shall generate a serialized response or error for every processed frame.
-   Verification: For each input frame, a response frame is produced with matching command and sequence IDs.
+Req-centralAppController-004: The component shall dispatch SID 0x31 RID 0x0100 to AnalogApp_ReadAdc.
+   Verification: Routine response contains raw ADC value for specified channel.
 
-Req-centralAppController-005: The component shall support a running state machine with idle, processing, and error states.
-   Verification: State transitions occur as specified for idle, processing, and error conditions.
+Req-centralAppController-005: The component shall dispatch SID 0x31 RID 0x0200/0x0201 to DigitalApp GPIO operations.
+   Verification: GPIO write/read executes on specified pin and returns result.
 
-Req-centralAppController-006: The component shall provide an API to process a single frame and return the response length.
-   Verification: ProcessFrame returns the response length and status code for valid and invalid inputs.
+Req-centralAppController-006: The component shall dispatch SID 0x31 RID 0x0300/0x0301 to DigitalApp PWM operations.
+   Verification: PWM start/stop executes on specified channel.
 
-Req-centralAppController-007: The component shall report errors via a registered callback if configured.
-   Verification: Error callback is invoked with correct error code on processing failure.
+Req-centralAppController-007: The component shall dispatch SID 0x31 RID 0x0400/0x0401 to I2CApp Write/Read.
+   Verification: I2C operations execute with specified address and data.
 
-Req-centralAppController-008: The component shall process commands within 10 ms under nominal conditions.
-   Verification: Timing measurement demonstrates processing completion within the required interval.
+Req-centralAppController-008: The component shall dispatch SID 0x31 RID 0x0500/0x0501 to SPIApp Write/Transceive.
+   Verification: SPI operations execute with specified device and data.
+
+Req-centralAppController-009: The component shall build positive UDS responses via Serialize service.
+   Verification: Positive responses contain correct response SID (request+0x40), identifier, and data.
+
+Req-centralAppController-010: The component shall build negative UDS responses (0x7F) for all error conditions.
+   Verification: Negative responses contain [0x7F, requestSID, NRC] with appropriate NRC code.
+
+Req-centralAppController-011: The component shall report errors via registered callback if configured.
+   Verification: Error callback invoked with NRC code on processing failure.

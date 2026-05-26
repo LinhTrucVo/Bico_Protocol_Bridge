@@ -2,60 +2,9 @@
 What is this component about?
 #################################
 
-The Serialize Service builds protocol response, event, and error frames from structured data.
-It encapsulates header construction, payload packing, and CRC generation for downstream transport.
-
-
-#################################
-Static structure
-#################################
-
-Files:
-* serialize.h
-* serializeCfg.h
-* serializeUnit.c
-
-..  uml::
-
-	@startuml
-	package serialize {
-	  class Serialize_Context
-	  class Serialize_Message
-	  class Serialize_Buffer
-	}
-	@enduml
-
-
-#################################
-Dynamic behaviour
-#################################
-
-* State machine diagram
-..  uml::
-
-	@startuml
-	[*] --> Idle
-	Idle --> Building : BuildFrame
-	Building --> Idle : Done
-	@enduml
-
-* Sequence diagram
-..  uml::
-
-	@startuml
-	actor Caller
-	participant Serialize
-	Caller -> Serialize : Serialize_BuildFrame()
-	Serialize -> Serialize : Compute CRC
-	Serialize --> Caller : Frame
-	@enduml
-
-
-#################################
-What is this component about?
-#################################
-
-The Serialize service builds outgoing protocol frames from responses.
+The Serialize service builds UDS (ISO 14229) response frames including positive responses
+for ReadDataByIdentifier (0x62), WriteDataByIdentifier (0x6E), RoutineControl (0x71),
+and negative responses (0x7F + NRC). It has no DID/RID semantic knowledge.
 
 
 #################################
@@ -77,28 +26,30 @@ Dynamic behaviour
 
 
 #################################
-Design chooices
+Design choices
 #################################
 Description:
 ************
-Provide frame construction utilities for protocol responses.
+Provide UDS response frame construction for the Central Application Controller.
 
 Assumptions and influencing factors:
 ************************************
-* CRC polynomial matches Deserialize service.
+* Response buffer is statically allocated (256 bytes max).
+* DID/RID encoded big-endian in response frames.
+* Caller provides response data; Serialize only assembles the frame.
 
 Solutions list:
 ***************
-Solution 1 - Streaming builder
-Build frame sequentially with CRC update.
+Solution 1 - Builder pattern with dedicated functions
+Separate build functions per response type (Read, Write, Routine, Negative).
 
-Solution 2 - Buffer then CRC
-Compute CRC after buffer build.
+Solution 2 - Generic frame builder
+Single function with parameters for all frame types.
 
 Solution evaluation:
 ********************
-Streaming builder is memory efficient.
+Builder pattern provides type safety and clear semantics per response type.
 
 Final solution:
 ****************
-Solution 1 selected for efficiency.
+Solution 1 selected for clarity and compile-time safety.
