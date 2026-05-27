@@ -7,8 +7,8 @@ package "serialize" {
         + DeInit() : Status_t
         + BuildReadResponse(did, pData, dataLen, pResp) : Status_t
         + BuildWriteResponse(did, pResp) : Status_t
-        + BuildRoutineResponse(rid, pData, dataLen, pResp) : Status_t
-        + BuildNegativeResponse(sid, nrc, pResp) : Status_t
+        + BuildRoutineResponse(routineControlType, rid, pStatusRecord, statusLen, pResp) : Status_t
+        + BuildNegativeResponse(requestSid, nrc, pResp) : Status_t
     }
 
     class Serialize_Context_t {
@@ -28,7 +28,7 @@ note right of Serialize_UdsResponse_t
     Positive response format:
     ReadDataByIdentifier:  [0x62][DID_H][DID_L][data...]
     WriteDataByIdentifier: [0x6E][DID_H][DID_L]
-    RoutineControl:        [0x71][RID_H][RID_L][data...]
+    RoutineControl:        [0x71][routineControlType][RID_H][RID_L][statusRecord...]
 
     Negative response format:
     [0x7F][requestSID][NRC]

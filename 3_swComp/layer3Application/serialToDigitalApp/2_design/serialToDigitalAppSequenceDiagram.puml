@@ -4,25 +4,25 @@ participant "SerialToDigitalApp" as app
 participant "GpioDriver" as gpio
 participant "PwmDriver" as pwm
 
-== GPIO Write (RID 0x0201) ==
+== GPIO Write (RID 0x0200) ==
 cac -> app : SerialToDigitalApp_WriteGpio(pin, state)
 app -> gpio : GpioDriver_Write(pin, state)
 gpio --> app : OK
 app --> cac : OK
 
-== GPIO Read (RID 0x0202) ==
+== GPIO Read (RID 0x0201) ==
 cac -> app : SerialToDigitalApp_ReadGpio(pin, &state)
 app -> gpio : GpioDriver_Read(pin, &state)
 gpio --> app : OK + state
 app --> cac : OK
 
-== PWM Start (RID 0x0301) ==
+== PWM Start (RID 0x0300) ==
 cac -> app : SerialToDigitalApp_StartPwm(channel)
 app -> pwm : PwmDriver_Start(channel)
 pwm --> app : OK
 app --> cac : OK
 
-== PWM Stop (RID 0x0302) ==
+== PWM Stop (RID 0x0301) ==
 cac -> app : SerialToDigitalApp_StopPwm(channel)
 app -> pwm : PwmDriver_Stop(channel)
 pwm --> app : OK

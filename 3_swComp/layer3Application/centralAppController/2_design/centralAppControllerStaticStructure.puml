@@ -5,7 +5,10 @@ package "centralAppController" {
     interface ICentralAppController {
         + Init() : Status_t
         + DeInit() : Status_t
-        + Dispatch(pFrame, pResponse) : Status_t
+        + Run() : Status_t
+        + GetState(pState) : Status_t
+        + Dispatch(pRequestFrame, requestLength, pResponseBuffer, bufferSize, pResponseLength) : Status_t
+        + RegisterErrorCallback(callback) : Status_t
     }
 
     class CAC_DID_Map <<static>> {
@@ -19,16 +22,24 @@ package "centralAppController" {
     }
 
     class CAC_RID_Map <<static>> {
-        + CAC_RID_ADC_READ_CHANNEL = 0x0101
-        + CAC_RID_GPIO_WRITE = 0x0201
-        + CAC_RID_GPIO_READ = 0x0202
-        + CAC_RID_PWM_START = 0x0301
-        + CAC_RID_PWM_STOP = 0x0302
-        + CAC_RID_I2C_WRITE = 0x0401
-        + CAC_RID_I2C_READ = 0x0402
-        + CAC_RID_SPI_WRITE = 0x0501
-        + CAC_RID_SPI_TRANSCEIVE = 0x0502
+        + CAC_RID_ADC_READ = 0x0100
+        + CAC_RID_GPIO_WRITE = 0x0200
+        + CAC_RID_GPIO_READ = 0x0201
+        + CAC_RID_PWM_START = 0x0300
+        + CAC_RID_PWM_STOP = 0x0301
+        + CAC_RID_I2C_WRITE = 0x0400
+        + CAC_RID_I2C_READ = 0x0401
+        + CAC_RID_SPI_WRITE = 0x0500
+        + CAC_RID_SPI_TRANSCEIVE = 0x0501
     }
+
+    class CentralAppController_Context_t {
+        - initialized: bool
+        - state: CentralAppController_State_t
+        - errorCallback: CentralAppController_ErrorCallback_t
+    }
+
+    ICentralAppController --> CentralAppController_Context_t : manages\n(static instance)
 }
 
 package "layer2Service" {
@@ -36,10 +47,10 @@ package "layer2Service" {
         + Parse(pFrame, pRequest) : Status_t
     }
     interface ISerialize {
-        + BuildReadResponse(...)
-        + BuildWriteResponse(...)
-        + BuildRoutineResponse(...)
-        + BuildNegativeResponse(...)
+        + BuildReadResponse(did, pData, dataLen, pResp) : Status_t
+        + BuildWriteResponse(did, pResp) : Status_t
+        + BuildRoutineResponse(routineControlType, rid, pStatusRecord, statusLen, pResp) : Status_t
+        + BuildNegativeResponse(requestSid, nrc, pResp) : Status_t
     }
     interface IConfigService {
         + Get(did, pData, pLen) : Status_t
@@ -49,29 +60,29 @@ package "layer2Service" {
 
 package "peripheralApps" {
     interface ISerialToAnalogApp {
-        + ReadAdc(channel, pRawValue)
+        + ReadAdc(channel, pRawValue) : Status_t
     }
     interface ISerialToDigitalApp {
-        + WriteGpio(pin, state)
-        + ReadGpio(pin, pState)
-        + StartPwm(channel)
-        + StopPwm(channel)
+        + WriteGpio(pin, state) : Status_t
+        + ReadGpio(pin, pState) : Status_t
+        + StartPwm(channel) : Status_t
+        + StopPwm(channel) : Status_t
     }
     interface ISerialToI2CApp {
-        + Write(addr, pData, len)
-        + Read(addr, pData, len)
+        + Write(address, pData, length) : Status_t
+        + Read(address, pData, length) : Status_t
     }
     interface ISerialToSPIApp {
-        + Write(dev, pData, len)
-        + Transceive(dev, pTx, txLen, pRx, rxLen)
+        + Write(device, pData, length) : Status_t
+        + Transceive(device, pTxData, txLen, pRxData, rxLen) : Status_t
     }
 }
 
 ICentralAppController --> IDeserialize : uses
 ICentralAppController --> ISerialize : uses
 ICentralAppController --> IConfigService : DID read/write
-ICentralAppController --> ISerialToAnalogApp : RID 0x01xx
-ICentralAppController --> ISerialToDigitalApp : RID 0x02xx/0x03xx
-ICentralAppController --> ISerialToI2CApp : RID 0x04xx
-ICentralAppController --> ISerialToSPIApp : RID 0x05xx
+ICentralAppController --> ISerialToAnalogApp : RID 0x0100
+ICentralAppController --> ISerialToDigitalApp : RID 0x0200-0x0301
+ICentralAppController --> ISerialToI2CApp : RID 0x0400-0x0401
+ICentralAppController --> ISerialToSPIApp : RID 0x0500-0x0501
 @enduml

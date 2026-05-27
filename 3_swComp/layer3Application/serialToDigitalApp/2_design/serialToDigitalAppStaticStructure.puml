@@ -35,9 +35,9 @@ ISerialToDigitalApp --> IPwmDriver : PWM operations
 note right of ISerialToDigitalApp
   No UDS awareness.
   Called by CAC for:
-  - RID 0x0201: WriteGpio
-  - RID 0x0202: ReadGpio
-  - RID 0x0301: StartPwm
-  - RID 0x0302: StopPwm
+  - RID 0x0200: WriteGpio
+  - RID 0x0201: ReadGpio
+  - RID 0x0300: StartPwm
+  - RID 0x0301: StopPwm
 end note
 @enduml

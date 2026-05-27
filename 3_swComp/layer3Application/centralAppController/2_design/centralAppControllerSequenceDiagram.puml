@@ -6,38 +6,50 @@ participant "ConfigService" as cfg
 participant "PeripheralApp" as app
 participant "Serialize" as ser
 
+== Initialization ==
+host -> cac : CentralAppControllerUnit_Init()
+cac -> des : DeserializeUnit_Init()
+cac -> ser : SerializeUnit_Init()
+cac -> cfg : ConfigServiceUnit_Init()
+cac -> app : PeripheralApp_Init() (all apps)
+cac --> host : OK, state = IDLE
+
+== Run (periodic) ==
+host -> cac : CentralAppControllerUnit_Run()
+cac --> host : OK (no-op currently)
+
 == ReadDataByIdentifier (SID 0x22) ==
-host -> cac : Dispatch(frame, response)
+host -> cac : Dispatch(pFrame, len, pResp, bufSize, &respLen)
 cac -> des : Parse(frame, &request)
 des --> cac : OK {sid=0x22, id=DID}
 cac -> cfg : ConfigService_Get(DID, pData, &len)
 cfg --> cac : OK + data
 cac -> ser : BuildReadResponse(DID, pData, len, &resp)
 ser --> cac : OK
-cac --> host : response
+cac --> host : OK, response copied to pResp
 
 == WriteDataByIdentifier (SID 0x2E) ==
-host -> cac : Dispatch(frame, response)
+host -> cac : Dispatch(pFrame, len, pResp, bufSize, &respLen)
 cac -> des : Parse(frame, &request)
 des --> cac : OK {sid=0x2E, id=DID, payload}
 cac -> cfg : ConfigService_Set(DID, pPayload, payloadLen)
 cfg --> cac : OK
 cac -> ser : BuildWriteResponse(DID, &resp)
 ser --> cac : OK
-cac --> host : response
+cac --> host : OK, response copied to pResp
 
 == RoutineControl (SID 0x31) ==
-host -> cac : Dispatch(frame, response)
+host -> cac : Dispatch(pFrame, len, pResp, bufSize, &respLen)
 cac -> des : Parse(frame, &request)
 des --> cac : OK {sid=0x31, id=RID, routineControlType, payload}
 cac -> app : TypedAPI(params extracted from payload)
 app --> cac : OK + result data
-cac -> ser : BuildRoutineResponse(RID, pResult, resultLen, &resp)
+cac -> ser : BuildRoutineResponse(routineControlType, RID, pResult, resultLen, &resp)
 ser --> cac : OK
-cac --> host : response
+cac --> host : OK, response copied to pResp
 
-== Error Case ==
-host -> cac : Dispatch(frame, response)
+== Error: Unknown DID ==
+host -> cac : Dispatch(pFrame, len, pResp, bufSize, &respLen)
 cac -> des : Parse(frame, &request)
 des --> cac : OK {sid=0x22, id=unknownDID}
 cac -> cac : DID not in mapping table

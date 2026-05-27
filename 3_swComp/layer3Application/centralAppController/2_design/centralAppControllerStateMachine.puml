@@ -1,20 +1,31 @@
 ﻿@startuml centralAppControllerStateMachine
 state Uninitialized
-state Ready
+state Idle
+state Processing
+state Error
 
 [*] --> Uninitialized
 
-Uninitialized --> Ready : Init()\n/ Init all downstream modules
+Uninitialized --> Idle : Init()\n/ Init all downstream modules
 
-Ready --> Ready : Dispatch()\n/ Parse -> Route -> Respond
-Ready --> Uninitialized : DeInit()
+Idle --> Processing : Dispatch()\n/ Parse request
+Processing --> Idle : Response built successfully
+Processing --> Error : Dispatch failure
 
-note right of Ready
-  Stateless dispatcher.
-  Each Dispatch() call:
-  1. Deserialize request
-  2. Switch on SID
-  3. Map DID/RID to downstream call
-  4. Build response via Serialize
+Idle --> Idle : Run()\n/ periodic tick (no-op currently)
+Error --> Idle : Run()\n/ auto-recover
+
+Idle --> Uninitialized : DeInit()
+Error --> Uninitialized : DeInit()
+
+note right of Idle
+  GetState() returns IDLE.
+  RegisterErrorCallback() stores callback.
+  Dispatch() triggers parse -> route -> respond.
+end note
+
+note right of Error
+  GetState() returns ERROR.
+  ErrorCallback invoked if registered.
 end note
 @enduml

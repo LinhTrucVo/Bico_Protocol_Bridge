@@ -5,8 +5,8 @@ package "serialToSPIApp" {
     interface ISerialToSPIApp {
         + Init() : Status_t
         + DeInit() : Status_t
-        + Write(device, pData, len) : Status_t
-        + Transceive(device, pTx, txLen, pRx, rxLen) : Status_t
+        + Write(device, pData, length) : Status_t
+        + Transceive(device, pTxData, txLength, pRxData, rxLength) : Status_t
     }
 
     class SerialToSPIApp_Context_t {
@@ -28,7 +28,7 @@ ISerialToSPIApp --> ISpiMasterDriver : delegates
 note right of ISerialToSPIApp
   No UDS awareness.
   Called by CAC for:
-  - RID 0x0501: Write(dev, pData, len)
-  - RID 0x0502: Transceive(dev, pTx, txLen, pRx, rxLen)
+  - RID 0x0500: Write(device, pData, length)
+  - RID 0x0501: Transceive(device, pTxData, txLen, pRxData, rxLen)
 end note
 @enduml

@@ -3,8 +3,8 @@ What is this component about?
 #################################
 
 The Serial-to-SPI Application provides typed SPI write and transceive operations. It is
-called by the Central Application Controller via RID 0x0501 (SPI Write) and
-RID 0x0502 (SPI Transceive). This module has no UDS awareness - it receives typed
+called by the Central Application Controller via RID 0x0500 (SPI Write) and
+RID 0x0501 (SPI Transceive). This module has no UDS awareness - it receives typed
 parameters and returns typed results.
 
 

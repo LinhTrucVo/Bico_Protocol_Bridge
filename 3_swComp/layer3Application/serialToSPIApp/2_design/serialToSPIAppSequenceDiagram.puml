@@ -3,18 +3,18 @@ participant "CAC" as cac
 participant "SerialToSPIApp" as app
 participant "SpiMasterDriver" as drv
 
-== SPI Write (RID 0x0501) ==
-cac -> app : SerialToSPIApp_Write(device, pData, len)
+== SPI Write (RID 0x0500) ==
+cac -> app : SerialToSPIApp_Write(device, pData, length)
 app -> app : Validate initialized
-app -> drv : SpiMasterDriver_Write(device, pData, len)
+app -> drv : SpiMasterDriver_Write(device, pData, length)
 drv --> app : OK
 app --> cac : OK
 
-== SPI Transceive (RID 0x0502) ==
-cac -> app : SerialToSPIApp_Transceive(device, pTx, txLen, pRx, rxLen)
+== SPI Transceive (RID 0x0501) ==
+cac -> app : SerialToSPIApp_Transceive(device, pTxData, txLength, pRxData, rxLength)
 app -> app : Validate initialized
-app -> drv : SpiMasterDriver_Transceive(device, pTx, txLen, pRx, rxLen)
-drv --> app : OK + pRx filled
+app -> drv : SpiMasterDriver_Transceive(device, pTxData, txLength, pRxData, rxLength)
+drv --> app : OK + pRxData filled
 app --> cac : OK + received data
 
 note over app

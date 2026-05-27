@@ -19,11 +19,12 @@ ser -> ser : resp.length = 3
 ser --> CAC : SERIALIZE_STATUS_OK
 
 == Positive Routine Response ==
-CAC -> ser : SerializeUnit_BuildRoutineResponse(rid, pData, dataLen, pResp)
+CAC -> ser : SerializeUnit_BuildRoutineResponse(routineControlType, rid, pStatusRecord, statusLen, pResp)
 ser -> ser : resp.buffer[0] = 0x71
-ser -> ser : resp.buffer[1..2] = RID big-endian
-ser -> ser : memcpy(&buffer[3], pData, dataLen)
-ser -> ser : resp.length = 3 + dataLen
+ser -> ser : resp.buffer[1] = routineControlType
+ser -> ser : resp.buffer[2..3] = RID big-endian
+ser -> ser : memcpy(&buffer[4], pStatusRecord, statusLen)
+ser -> ser : resp.length = 4 + statusLen
 ser --> CAC : SERIALIZE_STATUS_OK
 
 == Negative Response ==

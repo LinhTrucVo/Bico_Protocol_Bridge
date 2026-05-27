@@ -5,8 +5,8 @@ package "serialToI2CApp" {
     interface ISerialToI2CApp {
         + Init() : Status_t
         + DeInit() : Status_t
-        + Write(addr, pData, len) : Status_t
-        + Read(addr, pData, len) : Status_t
+        + Write(address, pData, length) : Status_t
+        + Read(address, pData, length) : Status_t
     }
 
     class SerialToI2CApp_Context_t {
@@ -28,7 +28,7 @@ ISerialToI2CApp --> II2cMasterDriver : delegates
 note right of ISerialToI2CApp
   No UDS awareness.
   Called by CAC for:
-  - RID 0x0401: Write(addr, pData, len)
-  - RID 0x0402: Read(addr, pData, len)
+  - RID 0x0400: Write(address, pData, length)
+  - RID 0x0401: Read(address, pData, length)
 end note
 @enduml

@@ -3,7 +3,7 @@ What is this component about?
 #################################
 
 The Serial-to-I2C Application provides typed I2C write and read operations. It is called
-by the Central Application Controller via RID 0x0401 (I2C Write) and RID 0x0402 (I2C Read).
+by the Central Application Controller via RID 0x0400 (I2C Write) and RID 0x0401 (I2C Read).
 This module has no UDS awareness - it receives typed parameters and returns typed results.
 
 
