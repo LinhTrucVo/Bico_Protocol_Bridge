@@ -13,7 +13,6 @@ package "ADC Read Flow" {
 
     note right of AA1
         Returns raw ADC value.
-        No UDS framing here.
     end note
 }
 

@@ -3,7 +3,7 @@ What is this component about?
 #################################
 
 The Serial-to-Analog Application provides typed ADC read operations. It is called by the
-Central Application Controller via RID 0x01xx (RoutineControl). This module has no UDS
+Central Application Controller via RID 0x01xx (RoutineControl).
 awareness - it receives typed parameters and returns typed results.
 
 
@@ -36,7 +36,6 @@ Assumptions and influencing factors:
 ************************************
 * ADC driver is initialized and available.
 * Channel number and raw value are the only parameters needed.
-* No UDS framing knowledge required in this module.
 
 Solutions list:
 ***************

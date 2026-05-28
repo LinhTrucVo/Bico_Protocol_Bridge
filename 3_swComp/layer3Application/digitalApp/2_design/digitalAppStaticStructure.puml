@@ -33,7 +33,6 @@ IDIGITALAPP --> IGpioDriver : GPIO operations
 IDIGITALAPP --> IPwmDriver : PWM operations
 
 note right of IDIGITALAPP
-  No UDS awareness.
   Called by CAC for:
   - RID 0x0200: WriteGpio
   - RID 0x0201: ReadGpio

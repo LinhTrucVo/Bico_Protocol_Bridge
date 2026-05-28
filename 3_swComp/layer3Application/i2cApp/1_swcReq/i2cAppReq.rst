@@ -3,7 +3,7 @@ Overall requirements
 ********************
 
 The I2C Application shall provide typed I2C Write and Read operations for the Central App Controller.
-The component has no UDS/DID/RID awareness - it receives typed address/data/length from CAC.
+Receives typed address/data/length from CAC.
 I2C bus configuration (clock speed, address mode) is managed by ConfigService.
 
 Input validation

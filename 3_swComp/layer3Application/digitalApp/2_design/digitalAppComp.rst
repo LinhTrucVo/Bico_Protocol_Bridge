@@ -4,7 +4,7 @@ What is this component about?
 
 The Serial-to-Digital Application provides typed GPIO and PWM operations. It is called
 by the Central Application Controller via RID 0x02xx (GPIO) and RID 0x03xx (PWM).
-This module has no UDS awareness - it receives typed parameters and returns typed results.
+It receives typed parameters and returns typed results.
 
 
 #################################
@@ -36,7 +36,6 @@ Assumptions and influencing factors:
 ************************************
 * GPIO and PWM drivers are initialized and available.
 * Pin/channel numbers are validated at driver level.
-* No UDS framing knowledge required in this module.
 
 Solutions list:
 ***************

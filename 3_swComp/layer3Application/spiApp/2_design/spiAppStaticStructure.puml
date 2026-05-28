@@ -26,7 +26,6 @@ package "layer1Driver" {
 ISPIAPP --> ISpiMasterDriver : delegates
 
 note right of ISPIAPP
-  No UDS awareness.
   Called by CAC for:
   - RID 0x0500: Write(device, pData, length)
   - RID 0x0501: Transceive(device, pTxData, txLen, pRxData, rxLen)

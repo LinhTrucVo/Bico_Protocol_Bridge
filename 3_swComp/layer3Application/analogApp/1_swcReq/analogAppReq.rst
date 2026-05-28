@@ -3,7 +3,7 @@ Overall requirements
 ********************
 
 The Analog Application shall provide typed ADC read operations for the Central App Controller.
-The component has no UDS/DID/RID awareness - it receives typed channel numbers from CAC.
+Receives typed channel numbers from CAC.
 All ADC configuration (resolution, sample rate) is managed by ConfigService.
 
 Input validation

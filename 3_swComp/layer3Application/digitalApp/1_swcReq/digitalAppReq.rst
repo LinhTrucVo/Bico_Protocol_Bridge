@@ -3,7 +3,7 @@ Overall requirements
 ********************
 
 The Digital Application shall provide typed GPIO and PWM operations for the Central App Controller.
-The component has no UDS/DID/RID awareness - it receives typed pin/channel/state from CAC.
+Receives typed pin/channel/state from CAC.
 GPIO and PWM configuration is managed by ConfigService.
 
 Input validation

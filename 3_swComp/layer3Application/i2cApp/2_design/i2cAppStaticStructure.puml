@@ -26,7 +26,6 @@ package "layer1Driver" {
 II2CAPP --> II2cMasterDriver : delegates
 
 note right of II2CAPP
-  No UDS awareness.
   Called by CAC for:
   - RID 0x0400: Write(address, pData, length)
   - RID 0x0401: Read(address, pData, length)

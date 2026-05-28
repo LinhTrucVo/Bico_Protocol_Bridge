@@ -3,7 +3,7 @@ Overall requirements
 ********************
 
 The SPI Application shall provide typed SPI Write and Transceive operations for the Central App Controller.
-The component has no UDS/DID/RID awareness - it receives typed device/data/length from CAC.
+Receives typed device/data/length from CAC.
 SPI bus configuration (clock, mode, bit order) is managed by ConfigService.
 Chip Select (CS) management is handled internally by the component.
 

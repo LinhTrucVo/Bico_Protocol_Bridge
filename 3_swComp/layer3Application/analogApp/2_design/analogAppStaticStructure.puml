@@ -24,7 +24,6 @@ package "layer1Driver" {
 IANALOGAPP --> IAdcDriver : delegates
 
 note right of IANALOGAPP
-  No UDS awareness.
   Called by CAC for RID 0x0100.
   Parameters: channel (uint8_t)
   Returns: rawValue (uint16_t)
