@@ -1,0 +1,36 @@
+@startuml
+title ComService - Information Flow
+
+package "Rx Path (Serial Driver -> Upper Layer)" {
+    component "UART HW" as HW1
+    component "Serial Driver" as SD1
+    component "ComService\nRxCallback" as COM1
+    component "ComService\nRx Ring Buffer" as RXBUF
+    component "Central App Controller" as CAC1
+
+    HW1 -down-> SD1 : RX Complete IRQ
+    SD1 -down-> COM1 : RxCallback(receivedLength)
+    COM1 -down-> RXBUF : Write bytes to ring-buffer
+    COM1 -up-> SD1 : SerialDriverUnit_Receive() [re-arm]
+    CAC1 -down-> RXBUF : IsRxDataAvailable()
+    RXBUF -up-> CAC1 : true/false
+    CAC1 -down-> RXBUF : Read(&pData, &length)
+    RXBUF -up-> CAC1 : Frame data
+}
+
+package "Tx Path (Upper Layer -> Serial Driver)" {
+    component "Central App Controller" as CAC2
+    component "ComService\nTx Ring Buffer" as TXBUF
+    component "ComService\nRun()" as COM2
+    component "Serial Driver" as SD2
+    component "UART HW" as HW2
+
+    CAC2 -down-> TXBUF : Write(pData, length)
+    COM2 -down-> TXBUF : Read frame from Tx ring-buffer
+    COM2 -down-> SD2 : SerialDriverUnit_Send(pData, length)
+    SD2 -down-> HW2 : HAL_UART_Transmit_IT()
+    HW2 -up-> SD2 : TX Complete IRQ
+    SD2 -up-> COM2 : TxCallback() -> txBusy = false
+}
+
+@enduml

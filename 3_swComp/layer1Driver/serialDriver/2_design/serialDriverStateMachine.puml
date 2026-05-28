@@ -1,5 +1,50 @@
 @startuml serialDriverStateMachine
-[*] --> Idle
-Idle --> Active : Init
-Active --> Idle : DeInit
+
+title Serial Driver - State Machine
+
+state "Uninitialized" as UNINIT
+state "Idle" as IDLE
+state "TX Busy" as TX_BUSY
+state "RX Busy" as RX_BUSY
+state "Error" as ERROR
+
+[*] --> UNINIT
+
+UNINIT --> IDLE : Init(pConfig) [valid config] / HAL_UART_Init()
+UNINIT --> UNINIT : Any API call / return NOT_INITIALIZED
+
+IDLE --> TX_BUSY : Send(pData, len) [valid params] / HAL_UART_Transmit_IT()
+IDLE --> RX_BUSY : Receive(pData, maxLen) [valid params] / HAL_UART_Receive_IT()
+IDLE --> UNINIT : DeInit() / HAL_UART_DeInit()
+IDLE --> IDLE : Configure() [valid params] / update config
+IDLE --> IDLE : GetStatus() / return current status
+
+TX_BUSY --> IDLE : TX_Complete_Callback() / invoke txCallback
+TX_BUSY --> ERROR : TX_Error_Callback() / invoke error handling
+TX_BUSY --> IDLE : Timeout elapsed / return TIMEOUT
+TX_BUSY --> TX_BUSY : Send() / return BUSY
+
+RX_BUSY --> IDLE : RX_Complete_Callback() / invoke rxCallback, store data
+RX_BUSY --> ERROR : RX_Error_Callback() / invoke error handling
+RX_BUSY --> IDLE : Timeout elapsed / return TIMEOUT
+RX_BUSY --> RX_BUSY : Receive() / return BUSY
+
+ERROR --> IDLE : Init(pConfig) / re-initialize HAL
+ERROR --> UNINIT : DeInit() / HAL_UART_DeInit()
+
+note right of TX_BUSY
+  DMA or Interrupt-driven transmission.
+  Buffer pointer and length tracked internally.
+end note
+
+note right of RX_BUSY
+  DMA or Interrupt-driven reception.
+  Data written directly to caller-provided buffer.
+end note
+
+note right of ERROR
+  Overrun, framing, parity, or noise error detected.
+  Requires re-initialization to recover.
+end note
+
 @enduml

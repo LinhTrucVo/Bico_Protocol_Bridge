@@ -1,3 +1,107 @@
 @startuml serialDriverStaticStructure
-class SerialDriver
+
+title Serial Driver - Static Structure
+
+package "Serial Driver" {
+
+    enum SerialDriver_Status_t {
+        SERIAL_STATUS_OK
+        SERIAL_STATUS_ERROR
+        SERIAL_STATUS_BUSY
+        SERIAL_STATUS_TIMEOUT
+        SERIAL_STATUS_INVALID_PARAM
+        SERIAL_STATUS_NOT_INITIALIZED
+    }
+
+    enum SerialDriver_State_t {
+        SERIAL_STATE_UNINITIALIZED
+        SERIAL_STATE_IDLE
+        SERIAL_STATE_TX_BUSY
+        SERIAL_STATE_RX_BUSY
+        SERIAL_STATE_ERROR
+    }
+
+    enum SerialDriver_Baudrate_t {
+        SERIAL_BAUDRATE_9600
+        SERIAL_BAUDRATE_19200
+        SERIAL_BAUDRATE_38400
+        SERIAL_BAUDRATE_57600
+        SERIAL_BAUDRATE_115200
+        SERIAL_BAUDRATE_230400
+        SERIAL_BAUDRATE_460800
+        SERIAL_BAUDRATE_921600
+    }
+
+    enum SerialDriver_Parity_t {
+        SERIAL_PARITY_NONE
+        SERIAL_PARITY_EVEN
+        SERIAL_PARITY_ODD
+    }
+
+    enum SerialDriver_StopBits_t {
+        SERIAL_STOPBITS_1
+        SERIAL_STOPBITS_2
+    }
+
+    enum SerialDriver_DataBits_t {
+        SERIAL_DATABITS_7
+        SERIAL_DATABITS_8
+        SERIAL_DATABITS_9
+    }
+
+    class SerialDriver_Config_t <<struct>> {
+        +baudrate : SerialDriver_Baudrate_t
+        +parity : SerialDriver_Parity_t
+        +stopBits : SerialDriver_StopBits_t
+        +dataBits : SerialDriver_DataBits_t
+    }
+
+    class SerialDriver_Handle_t <<struct>> {
+        -state : SerialDriver_State_t
+        -config : SerialDriver_Config_t
+        -rxCallback : SerialDriver_RxCallback_t
+        -txCallback : SerialDriver_TxCallback_t
+    }
+
+    class SerialDriverUnit <<module>> {
+        +SerialDriverUnit_Init(pConfig : const SerialDriver_Config_t*) : SerialDriver_Status_t
+        +SerialDriverUnit_DeInit() : SerialDriver_Status_t
+        +SerialDriverUnit_Configure(baudrate, parity, stopBits, dataBits) : SerialDriver_Status_t
+        +SerialDriverUnit_Send(pData : const uint8_t*, length : uint16_t) : SerialDriver_Status_t
+        +SerialDriverUnit_SendWithTimeout(pData : const uint8_t*, length : uint16_t, timeoutMs : uint32_t) : SerialDriver_Status_t
+        +SerialDriverUnit_Receive(pData : uint8_t*, maxLength : uint16_t, pReceivedLength : uint16_t*) : SerialDriver_Status_t
+        +SerialDriverUnit_ReceiveWithTimeout(pData : uint8_t*, maxLength : uint16_t, pReceivedLength : uint16_t*, timeoutMs : uint32_t) : SerialDriver_Status_t
+        +SerialDriverUnit_RegisterRxCallback(callback : SerialDriver_RxCallback_t) : SerialDriver_Status_t
+        +SerialDriverUnit_RegisterTxCallback(callback : SerialDriver_TxCallback_t) : SerialDriver_Status_t
+        +SerialDriverUnit_GetStatus(pStatus : SerialDriver_Status_t*) : SerialDriver_Status_t
+    }
+
+    SerialDriverUnit --> SerialDriver_Handle_t : manages
+    SerialDriver_Handle_t --> SerialDriver_Config_t : contains
+    SerialDriver_Handle_t --> SerialDriver_State_t : tracks
+}
+
+package "Vendor HAL" {
+    class VendorUART_HAL <<external>> {
+        +HAL_UART_Init(config) : HAL_Status
+        +HAL_UART_DeInit() : HAL_Status
+        +HAL_UART_Transmit_IT(pData, length) : HAL_Status
+        +HAL_UART_Receive_IT(pData, length) : HAL_Status
+        +HAL_UART_Transmit_DMA(pData, length) : HAL_Status
+        +HAL_UART_Receive_DMA(pData, length) : HAL_Status
+        +HAL_UART_TxCpltCallback()
+        +HAL_UART_RxCpltCallback()
+        +HAL_UART_ErrorCallback()
+    }
+}
+
+package "Upper Layer (ComService)" {
+    class ComService <<external>> {
+        Uses SerialDriverUnit API
+    }
+}
+
+ComService ..> SerialDriverUnit : <<uses>>
+SerialDriverUnit ..> VendorUART_HAL : <<wraps>>
+
 @enduml

@@ -23,36 +23,10 @@
 #include "serializeUnit.c"
 
 /* ============================================================
- * Fake ConfigService
+ * Fake ConfigService - include actual implementation
+ * (In-memory store, no HW dependencies, suitable for testing)
  * ============================================================ */
-static uint32_t fake_adcSampleRate = 1000U;
-static uint8_t fake_adcResolution = 12U;
-
-ConfigService_Status_t ConfigServiceUnit_Init(void) { return CONFIG_SERVICE_STATUS_OK; }
-ConfigService_Status_t ConfigServiceUnit_GetAnalogSampleRate(uint32_t *pRate)
-{
-    if (pRate == NULL) return CONFIG_SERVICE_STATUS_INVALID_PARAM;
-    *pRate = fake_adcSampleRate;
-    return CONFIG_SERVICE_STATUS_OK;
-}
-ConfigService_Status_t ConfigServiceUnit_SetAnalogSampleRate(uint32_t rate)
-{
-    if (rate < 1U || rate > 10000U) return CONFIG_SERVICE_STATUS_INVALID_PARAM;
-    fake_adcSampleRate = rate;
-    return CONFIG_SERVICE_STATUS_OK;
-}
-ConfigService_Status_t ConfigServiceUnit_GetAnalogResolution(uint8_t *pRes)
-{
-    if (pRes == NULL) return CONFIG_SERVICE_STATUS_INVALID_PARAM;
-    *pRes = fake_adcResolution;
-    return CONFIG_SERVICE_STATUS_OK;
-}
-ConfigService_Status_t ConfigServiceUnit_SetAnalogResolution(uint8_t res)
-{
-    if (res != 8U && res != 10U && res != 12U && res != 16U) return CONFIG_SERVICE_STATUS_INVALID_PARAM;
-    fake_adcResolution = res;
-    return CONFIG_SERVICE_STATUS_OK;
-}
+#include "configServiceUnit.c"
 
 /* ============================================================
  * Fake SerialToAnalogApp

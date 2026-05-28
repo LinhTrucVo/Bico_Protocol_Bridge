@@ -99,4 +99,8 @@ ConfigService_Status_t ConfigServiceUnit_ValidatePwmConfig(const ConfigService_P
 ConfigService_Status_t ConfigServiceUnit_ValidateI2cConfig(const ConfigService_I2cConfig_t *pConfig);
 ConfigService_Status_t ConfigServiceUnit_ValidateSpiConfig(const ConfigService_SpiConfig_t *pConfig);
 
+/* NVM persistence: load all config from NVM, store all config to NVM */
+ConfigService_Status_t ConfigServiceUnit_Load(void);
+ConfigService_Status_t ConfigServiceUnit_Store(void);
+
 #endif

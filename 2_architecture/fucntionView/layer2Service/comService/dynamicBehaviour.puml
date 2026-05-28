@@ -1,0 +1,61 @@
+@startuml
+title ComService - Dynamic Behaviour
+
+participant "Central App Controller" as CAC
+participant "ComService" as COM
+participant "Serial Driver" as SD
+participant "UART HW" as HW
+
+== Initialization ==
+CAC -> COM : ComServiceUnit_Init()
+COM -> COM : Initialize Rx ring-buffer (head=0, tail=0)
+COM -> COM : Initialize Tx ring-buffer (head=0, tail=0)
+COM -> SD : SerialDriverUnit_RegisterRxCallback(ComService_RxCallback)
+SD --> COM : SERIAL_STATUS_OK
+COM -> SD : SerialDriverUnit_RegisterTxCallback(ComService_TxCallback)
+SD --> COM : SERIAL_STATUS_OK
+COM -> SD : SerialDriverUnit_Receive(rxTempBuf, maxLen, &rxLen)
+SD --> COM : SERIAL_STATUS_OK (starts listening)
+COM --> CAC : COMSERVICE_STATUS_OK
+
+== RX Path (ISR-driven) ==
+note over HW, SD : Byte(s) received by UART hardware
+HW -> SD : HAL_UART_RxCpltCallback()
+SD -> COM : ComService_RxCallback(receivedLength)
+COM -> COM : Write received bytes into Rx ring-buffer
+COM -> SD : SerialDriverUnit_Receive(rxTempBuf, maxLen, &rxLen)
+note right of COM : Re-arm reception for next data
+SD --> COM : SERIAL_STATUS_OK
+
+== Run (periodic - Tx flush) ==
+CAC -> COM : ComServiceUnit_Run()
+alt Tx ring-buffer not empty AND txBusy == false
+    COM -> COM : Read frame from Tx ring-buffer
+    COM -> COM : txBusy = true
+    COM -> SD : SerialDriverUnit_Send(pData, length)
+    SD --> COM : SERIAL_STATUS_OK
+end
+COM --> CAC : return
+
+== TX Complete (ISR-driven) ==
+HW -> SD : HAL_UART_TxCpltCallback()
+SD -> COM : ComService_TxCallback(transmittedLength)
+COM -> COM : txBusy = false
+note right of COM : Next Run() cycle will send queued data
+
+== IsRxDataAvailable ==
+CAC -> COM : ComServiceUnit_IsRxDataAvailable()
+COM -> COM : Check Rx ring-buffer (head != tail)
+COM --> CAC : true / false
+
+== Read ==
+CAC -> COM : ComServiceUnit_Read(pData, maxLength, &readLength)
+COM -> COM : Copy frame from Rx ring-buffer to pData
+COM --> CAC : COMSERVICE_STATUS_OK + data
+
+== Write ==
+CAC -> COM : ComServiceUnit_Write(pData, length)
+COM -> COM : Copy frame into Tx ring-buffer
+COM --> CAC : COMSERVICE_STATUS_OK
+
+@enduml

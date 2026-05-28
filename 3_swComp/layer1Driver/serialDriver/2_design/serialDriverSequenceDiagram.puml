@@ -1,6 +1,115 @@
 @startuml serialDriverSequenceDiagram
-actor Client
-participant SerialDriver
-Client -> SerialDriver : Send(data)
-SerialDriver --> Client : Status
+
+title Serial Driver - Sequence Diagrams
+
+participant "ComService\n(Higher Layer)" as Client
+participant "SerialDriverUnit" as SD
+participant "Vendor UART HAL" as HAL
+
+== Initialization ==
+Client -> SD : SerialDriverUnit_Init(pConfig)
+SD -> SD : Validate pConfig != NULL
+SD -> SD : Validate baudrate, parity, stopBits, dataBits
+SD -> HAL : HAL_UART_Init(halConfig)
+HAL --> SD : HAL_OK
+SD -> SD : state = IDLE
+SD --> Client : SERIAL_STATUS_OK
+
+== Transmit Data (Interrupt Mode) ==
+Client -> SD : SerialDriverUnit_Send(pData, length)
+SD -> SD : Validate pData != NULL, length > 0
+SD -> SD : Check state == IDLE
+SD -> SD : state = TX_BUSY
+SD -> HAL : HAL_UART_Transmit_IT(pData, length)
+HAL --> SD : HAL_OK
+SD --> Client : SERIAL_STATUS_OK
+
+...time passes (hardware transmitting)...
+
+HAL -> SD : HAL_UART_TxCpltCallback()
+SD -> SD : state = IDLE
+SD -> Client : txCallback(length)
+
+== Transmit with Timeout ==
+Client -> SD : SerialDriverUnit_SendWithTimeout(pData, length, timeoutMs)
+SD -> SD : Validate parameters
+SD -> SD : state = TX_BUSY
+SD -> HAL : HAL_UART_Transmit_IT(pData, length)
+HAL --> SD : HAL_OK
+
+alt Transmission completes within timeout
+    HAL -> SD : HAL_UART_TxCpltCallback()
+    SD -> SD : state = IDLE
+    SD --> Client : SERIAL_STATUS_OK
+else Timeout elapsed
+    SD -> HAL : HAL_UART_AbortTransmit()
+    SD -> SD : state = IDLE
+    SD --> Client : SERIAL_STATUS_TIMEOUT
+end
+
+== Receive Data (Interrupt Mode) ==
+Client -> SD : SerialDriverUnit_Receive(pData, maxLength, &receivedLength)
+SD -> SD : Validate pData, maxLength > 0
+SD -> SD : state = RX_BUSY
+SD -> HAL : HAL_UART_Receive_IT(pData, maxLength)
+HAL --> SD : HAL_OK
+SD --> Client : SERIAL_STATUS_OK
+
+...time passes (hardware receiving)...
+
+HAL -> SD : HAL_UART_RxCpltCallback()
+SD -> SD : state = IDLE
+SD -> Client : rxCallback(receivedLength)
+
+== Receive with Timeout ==
+Client -> SD : SerialDriverUnit_ReceiveWithTimeout(pData, maxLen, &rxLen, timeoutMs)
+SD -> SD : Validate parameters
+SD -> SD : state = RX_BUSY
+SD -> HAL : HAL_UART_Receive_IT(pData, maxLen)
+
+alt Data received before timeout
+    HAL -> SD : HAL_UART_RxCpltCallback()
+    SD -> SD : state = IDLE
+    SD --> Client : SERIAL_STATUS_OK, rxLen=N
+else Timeout elapsed
+    SD -> HAL : HAL_UART_AbortReceive()
+    SD -> SD : state = IDLE
+    SD --> Client : SERIAL_STATUS_TIMEOUT, rxLen=0
+end
+
+== Runtime Reconfiguration ==
+Client -> SD : SerialDriverUnit_Configure(baudrate, parity, stopBits, dataBits)
+SD -> SD : Validate parameters
+SD -> HAL : HAL_UART_DeInit()
+SD -> HAL : HAL_UART_Init(newConfig)
+HAL --> SD : HAL_OK
+SD --> Client : SERIAL_STATUS_OK
+
+== Callback Registration ==
+Client -> SD : SerialDriverUnit_RegisterRxCallback(callback)
+SD -> SD : Store rxCallback = callback
+SD --> Client : SERIAL_STATUS_OK
+
+Client -> SD : SerialDriverUnit_RegisterTxCallback(callback)
+SD -> SD : Store txCallback = callback
+SD --> Client : SERIAL_STATUS_OK
+
+== De-Initialization ==
+Client -> SD : SerialDriverUnit_DeInit()
+SD -> HAL : HAL_UART_AbortTransmit()
+SD -> HAL : HAL_UART_AbortReceive()
+SD -> HAL : HAL_UART_DeInit()
+SD -> SD : state = UNINITIALIZED
+SD --> Client : SERIAL_STATUS_OK
+
+== Error Handling ==
+HAL -> SD : HAL_UART_ErrorCallback(errorCode)
+SD -> SD : state = ERROR
+SD -> Client : errorNotification
+
+note over SD
+  Error recovery requires re-initialization.
+  Possible errors: Overrun, Framing, Parity, Noise.
+end note
+
 @enduml

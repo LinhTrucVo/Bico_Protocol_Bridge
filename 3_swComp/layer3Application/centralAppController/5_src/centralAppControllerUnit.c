@@ -164,12 +164,15 @@ static CentralAppController_Status_t HandleReadDataById(const Deserialize_UdsReq
     {
         case CAC_DID_ADC_SAMPLE_RATE:
         {
-            uint32_t rate = 0U;
-            if (ConfigServiceUnit_GetAnalogSampleRate(&rate) == CONFIG_SERVICE_STATUS_OK)
+            ConfigService_AnalogChannelConfig_t cfg = {0};
+            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) == CONFIG_SERVICE_STATUS_OK)
             {
-                data[0] = (uint8_t)(rate >> 8U);
-                data[1] = (uint8_t)(rate & 0xFFU);
-                dataLen = 2U;
+                uint32_t rate = cfg.samplingFrequency;
+                data[0] = (uint8_t)((rate >> 24U) & 0xFFU);
+                data[1] = (uint8_t)((rate >> 16U) & 0xFFU);
+                data[2] = (uint8_t)((rate >> 8U) & 0xFFU);
+                data[3] = (uint8_t)(rate & 0xFFU);
+                dataLen = 4U;
             }
             else
             {
@@ -180,11 +183,111 @@ static CentralAppController_Status_t HandleReadDataById(const Deserialize_UdsReq
         }
         case CAC_DID_ADC_RESOLUTION:
         {
-            uint8_t resolution = 0U;
-            if (ConfigServiceUnit_GetAnalogResolution(&resolution) == CONFIG_SERVICE_STATUS_OK)
+            ConfigService_AnalogChannelConfig_t cfg = {0};
+            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) == CONFIG_SERVICE_STATUS_OK)
             {
-                data[0] = resolution;
+                data[0] = cfg.resolutionBits;
                 dataLen = 1U;
+            }
+            else
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            break;
+        }
+        case CAC_DID_GPIO_CONFIG:
+        {
+            ConfigService_DigitalPinConfig_t cfg = {0};
+            if (ConfigServiceUnit_GetDigitalPinConfig(0U, &cfg) == CONFIG_SERVICE_STATUS_OK)
+            {
+                data[0] = cfg.pinId;
+                data[1] = cfg.direction;
+                data[2] = cfg.initialState;
+                dataLen = 3U;
+            }
+            else
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            break;
+        }
+        case CAC_DID_PWM_CONFIG:
+        {
+            ConfigService_PwmConfig_t cfg = {0};
+            if (ConfigServiceUnit_GetPwmConfig(0U, &cfg) == CONFIG_SERVICE_STATUS_OK)
+            {
+                data[0] = cfg.channelId;
+                data[1] = (uint8_t)((cfg.frequency >> 24U) & 0xFFU);
+                data[2] = (uint8_t)((cfg.frequency >> 16U) & 0xFFU);
+                data[3] = (uint8_t)((cfg.frequency >> 8U) & 0xFFU);
+                data[4] = (uint8_t)(cfg.frequency & 0xFFU);
+                data[5] = (uint8_t)((cfg.dutyCycle >> 8U) & 0xFFU);
+                data[6] = (uint8_t)(cfg.dutyCycle & 0xFFU);
+                dataLen = 7U;
+            }
+            else
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            break;
+        }
+        case CAC_DID_I2C_CONFIG:
+        {
+            ConfigService_I2cConfig_t cfg = {0};
+            if (ConfigServiceUnit_GetI2cConfig(&cfg) == CONFIG_SERVICE_STATUS_OK)
+            {
+                data[0] = (uint8_t)((cfg.speed >> 24U) & 0xFFU);
+                data[1] = (uint8_t)((cfg.speed >> 16U) & 0xFFU);
+                data[2] = (uint8_t)((cfg.speed >> 8U) & 0xFFU);
+                data[3] = (uint8_t)(cfg.speed & 0xFFU);
+                data[4] = cfg.addressMode;
+                data[5] = (uint8_t)((cfg.timeoutMs >> 8U) & 0xFFU);
+                data[6] = (uint8_t)(cfg.timeoutMs & 0xFFU);
+                dataLen = 7U;
+            }
+            else
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            break;
+        }
+        case CAC_DID_SPI_CONFIG:
+        {
+            ConfigService_SpiConfig_t cfg = {0};
+            if (ConfigServiceUnit_GetSpiConfig(&cfg) == CONFIG_SERVICE_STATUS_OK)
+            {
+                data[0] = (uint8_t)((cfg.clockSpeed >> 24U) & 0xFFU);
+                data[1] = (uint8_t)((cfg.clockSpeed >> 16U) & 0xFFU);
+                data[2] = (uint8_t)((cfg.clockSpeed >> 8U) & 0xFFU);
+                data[3] = (uint8_t)(cfg.clockSpeed & 0xFFU);
+                data[4] = cfg.mode;
+                data[5] = cfg.bitOrder;
+                dataLen = 6U;
+            }
+            else
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            break;
+        }
+        case CAC_DID_SERIAL_CONFIG:
+        {
+            ConfigService_SerialConfig_t cfg = {0};
+            if (ConfigServiceUnit_GetSerialConfig(&cfg) == CONFIG_SERVICE_STATUS_OK)
+            {
+                data[0] = (uint8_t)((cfg.baudrate >> 24U) & 0xFFU);
+                data[1] = (uint8_t)((cfg.baudrate >> 16U) & 0xFFU);
+                data[2] = (uint8_t)((cfg.baudrate >> 8U) & 0xFFU);
+                data[3] = (uint8_t)(cfg.baudrate & 0xFFU);
+                data[4] = cfg.dataBits;
+                data[5] = cfg.stopBits;
+                data[6] = cfg.parity;
+                dataLen = 7U;
             }
             else
             {
@@ -211,13 +314,22 @@ static CentralAppController_Status_t HandleWriteDataById(const Deserialize_UdsRe
     {
         case CAC_DID_ADC_SAMPLE_RATE:
         {
-            if (pReq->payloadLength < 2U)
+            if (pReq->payloadLength < 4U)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
-            uint32_t rate = ((uint32_t)pReq->pPayload[0] << 8U) | (uint32_t)pReq->pPayload[1];
-            if (ConfigServiceUnit_SetAnalogSampleRate(rate) != CONFIG_SERVICE_STATUS_OK)
+            ConfigService_AnalogChannelConfig_t cfg = {0};
+            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) != CONFIG_SERVICE_STATUS_OK)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            cfg.samplingFrequency = ((uint32_t)pReq->pPayload[0] << 24U)
+                                  | ((uint32_t)pReq->pPayload[1] << 16U)
+                                  | ((uint32_t)pReq->pPayload[2] << 8U)
+                                  | (uint32_t)pReq->pPayload[3];
+            if (ConfigServiceUnit_SetAnalogChannelConfig(0U, &cfg) != CONFIG_SERVICE_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -231,8 +343,119 @@ static CentralAppController_Status_t HandleWriteDataById(const Deserialize_UdsRe
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
-            uint8_t resolution = pReq->pPayload[0];
-            if (ConfigServiceUnit_SetAnalogResolution(resolution) != CONFIG_SERVICE_STATUS_OK)
+            ConfigService_AnalogChannelConfig_t cfg = {0};
+            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) != CONFIG_SERVICE_STATUS_OK)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            cfg.resolutionBits = pReq->pPayload[0];
+            if (ConfigServiceUnit_SetAnalogChannelConfig(0U, &cfg) != CONFIG_SERVICE_STATUS_OK)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            break;
+        }
+        case CAC_DID_GPIO_CONFIG:
+        {
+            if (pReq->payloadLength < 3U)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            ConfigService_DigitalPinConfig_t cfg = {0};
+            cfg.pinId = pReq->pPayload[0];
+            cfg.direction = pReq->pPayload[1];
+            cfg.initialState = pReq->pPayload[2];
+            if (ConfigServiceUnit_SetDigitalPinConfig(cfg.pinId, &cfg) != CONFIG_SERVICE_STATUS_OK)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            break;
+        }
+        case CAC_DID_PWM_CONFIG:
+        {
+            if (pReq->payloadLength < 7U)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            ConfigService_PwmConfig_t cfg = {0};
+            cfg.channelId = pReq->pPayload[0];
+            cfg.frequency = ((uint32_t)pReq->pPayload[1] << 24U)
+                          | ((uint32_t)pReq->pPayload[2] << 16U)
+                          | ((uint32_t)pReq->pPayload[3] << 8U)
+                          | (uint32_t)pReq->pPayload[4];
+            cfg.dutyCycle = ((uint16_t)pReq->pPayload[5] << 8U)
+                          | (uint16_t)pReq->pPayload[6];
+            if (ConfigServiceUnit_SetPwmConfig(cfg.channelId, &cfg) != CONFIG_SERVICE_STATUS_OK)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            break;
+        }
+        case CAC_DID_I2C_CONFIG:
+        {
+            if (pReq->payloadLength < 7U)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            ConfigService_I2cConfig_t cfg = {0};
+            cfg.speed = ((uint32_t)pReq->pPayload[0] << 24U)
+                      | ((uint32_t)pReq->pPayload[1] << 16U)
+                      | ((uint32_t)pReq->pPayload[2] << 8U)
+                      | (uint32_t)pReq->pPayload[3];
+            cfg.addressMode = pReq->pPayload[4];
+            cfg.timeoutMs = ((uint16_t)pReq->pPayload[5] << 8U)
+                          | (uint16_t)pReq->pPayload[6];
+            if (ConfigServiceUnit_SetI2cConfig(&cfg) != CONFIG_SERVICE_STATUS_OK)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            break;
+        }
+        case CAC_DID_SPI_CONFIG:
+        {
+            if (pReq->payloadLength < 6U)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            ConfigService_SpiConfig_t cfg = {0};
+            cfg.clockSpeed = ((uint32_t)pReq->pPayload[0] << 24U)
+                           | ((uint32_t)pReq->pPayload[1] << 16U)
+                           | ((uint32_t)pReq->pPayload[2] << 8U)
+                           | (uint32_t)pReq->pPayload[3];
+            cfg.mode = pReq->pPayload[4];
+            cfg.bitOrder = pReq->pPayload[5];
+            if (ConfigServiceUnit_SetSpiConfig(&cfg) != CONFIG_SERVICE_STATUS_OK)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            break;
+        }
+        case CAC_DID_SERIAL_CONFIG:
+        {
+            if (pReq->payloadLength < 7U)
+            {
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            }
+            ConfigService_SerialConfig_t cfg = {0};
+            cfg.baudrate = ((uint32_t)pReq->pPayload[0] << 24U)
+                         | ((uint32_t)pReq->pPayload[1] << 16U)
+                         | ((uint32_t)pReq->pPayload[2] << 8U)
+                         | (uint32_t)pReq->pPayload[3];
+            cfg.dataBits = pReq->pPayload[4];
+            cfg.stopBits = pReq->pPayload[5];
+            cfg.parity = pReq->pPayload[6];
+            if (ConfigServiceUnit_SetSerialConfig(&cfg) != CONFIG_SERVICE_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;

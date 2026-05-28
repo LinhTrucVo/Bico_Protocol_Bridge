@@ -1,8 +1,10 @@
 ﻿// SerialToSPIApp Implementation - Typed SPI API
 
 #include <stddef.h>
+#include <string.h>
 #include "serialToSPIApp.h"
 #include "serialToSPIAppCfg.h"
+#include "spiMasterDriver.h"
 
 typedef struct
 {
@@ -13,13 +15,30 @@ static SerialToSPIApp_Context_t context = {0};
 
 SerialToSPIApp_Status_t SerialToSPIApp_Init(void)
 {
+    SpiMasterDriver_Config_t spiCfg = {0};
+    spiCfg.clockSpeed = SPI_MASTER_CFG_DEFAULT_SPEED;
+    spiCfg.mode = SPI_MODE_0;
+    spiCfg.bitOrder = SPI_BITORDER_MSB_FIRST;
+    spiCfg.dataSize = SPI_DATASIZE_8BIT;
+    spiCfg.csMode = SPI_CS_MODE_MANUAL;
+    spiCfg.dmaEnabled = false;
+    spiCfg.interruptEnabled = false;
+
+    if (SpiMasterDriverUnit_Init(&spiCfg) != SPIMASTERDRIVERSTATUS_OK)
+    {
+        return SERIAL_TO_SPI_APP_STATUS_ERROR;
+    }
+
     context.initialized = true;
-    /* TODO: Initialize SPI master driver from ConfigService */
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }
 
 SerialToSPIApp_Status_t SerialToSPIApp_DeInit(void)
 {
+    if (context.initialized)
+    {
+        (void)SpiMasterDriverUnit_DeInit();
+    }
     context.initialized = false;
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }
@@ -35,8 +54,22 @@ SerialToSPIApp_Status_t SerialToSPIApp_Write(uint8_t device, const uint8_t *pDat
         return SERIAL_TO_SPI_APP_STATUS_INVALID_PARAM;
     }
 
-    /* TODO: Assert CS for device, call SPIMaster_Transmit(pData, length), deassert CS */
-    (void)device;
+    SpiMasterDriver_ChipSelect_t cs = (SpiMasterDriver_ChipSelect_t)device;
+
+    if (SpiMasterDriverUnit_SelectChip(cs) != SPIMASTERDRIVERSTATUS_OK)
+    {
+        return SERIAL_TO_SPI_APP_STATUS_BUS_ERROR;
+    }
+
+    SpiMasterDriver_Status_t drvStatus = SpiMasterDriverUnit_Transmit(pData, length);
+
+    (void)SpiMasterDriverUnit_DeselectChip(cs);
+
+    if (drvStatus != SPIMASTERDRIVERSTATUS_OK)
+    {
+        return SERIAL_TO_SPI_APP_STATUS_BUS_ERROR;
+    }
+
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }
 
@@ -55,11 +88,30 @@ SerialToSPIApp_Status_t SerialToSPIApp_Transceive(uint8_t device, const uint8_t 
         return SERIAL_TO_SPI_APP_STATUS_INVALID_PARAM;
     }
 
-    /* TODO: Assert CS, SPIMaster_TransmitReceive(tx, rx, len), deassert CS */
-    (void)device;
-    for (uint16_t i = 0U; i < rxLength; i++)
+    SpiMasterDriver_ChipSelect_t cs = (SpiMasterDriver_ChipSelect_t)device;
+
+    if (SpiMasterDriverUnit_SelectChip(cs) != SPIMASTERDRIVERSTATUS_OK)
     {
-        pRxData[i] = 0U; /* Placeholder until driver integration */
+        return SERIAL_TO_SPI_APP_STATUS_BUS_ERROR;
     }
+
+    /* Transmit command/address bytes first */
+    SpiMasterDriver_Status_t drvStatus = SpiMasterDriverUnit_Transmit(pTxData, txLength);
+    if (drvStatus != SPIMASTERDRIVERSTATUS_OK)
+    {
+        (void)SpiMasterDriverUnit_DeselectChip(cs);
+        return SERIAL_TO_SPI_APP_STATUS_BUS_ERROR;
+    }
+
+    /* Then receive response bytes */
+    drvStatus = SpiMasterDriverUnit_Receive(pRxData, rxLength);
+
+    (void)SpiMasterDriverUnit_DeselectChip(cs);
+
+    if (drvStatus != SPIMASTERDRIVERSTATUS_OK)
+    {
+        return SERIAL_TO_SPI_APP_STATUS_BUS_ERROR;
+    }
+
     return SERIAL_TO_SPI_APP_STATUS_OK;
 }

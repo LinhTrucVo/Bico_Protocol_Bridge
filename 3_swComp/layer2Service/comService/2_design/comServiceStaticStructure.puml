@@ -1,0 +1,59 @@
+@startuml comServiceStaticStructure
+skinparam backgroundColor #FEFEFE
+
+package "comService" {
+    interface IComService {
+        + Init() : Status_t
+        + DeInit() : Status_t
+        + Run() : Status_t
+        + IsRxDataAvailable() : bool
+        + Read(pData, maxLength, &readLength) : Status_t
+        + Write(pData, length) : Status_t
+    }
+
+    class ComService_Context_t {
+        - initialized: bool
+        - txBusy: bool
+        - rxBuffer: uint8_t[RX_BUFFER_SIZE]
+        - rxHead: uint16_t
+        - rxTail: uint16_t
+        - rxCount: uint16_t
+        - txBuffer: uint8_t[TX_BUFFER_SIZE]
+        - txHead: uint16_t
+        - txTail: uint16_t
+        - txCount: uint16_t
+    }
+
+    class ComService_Callbacks <<internal>> {
+        - ComService_RxCallback(pData, length) : void
+        - ComService_TxCallback() : void
+    }
+
+    IComService --> ComService_Context_t : manages\n(static instance)
+    ComService_Callbacks --> ComService_Context_t : writes to\nring-buffers
+}
+
+class SerialDriver <<external>> {
+    + SerialDriverUnit_RegisterRxCallback(callback) : Status_t
+    + SerialDriverUnit_RegisterTxCallback(callback) : Status_t
+    + SerialDriverUnit_Send(pData, length) : Status_t
+}
+
+IComService --> SerialDriver : uses
+SerialDriver --> ComService_Callbacks : invokes\n(from ISR context)
+
+note right of ComService_Context_t
+    Ring-buffer mechanism:
+    - head: next write position
+    - tail: next read position
+    - count: number of bytes stored
+    - Full when count == BUFFER_SIZE
+    - Empty when count == 0
+    - Index wraps: (index + 1) % BUFFER_SIZE
+
+    txBusy flag:
+    - Set true when Send() is called
+    - Cleared by TxCallback from ISR
+    - Prevents overlapping transmissions
+end note
+@enduml

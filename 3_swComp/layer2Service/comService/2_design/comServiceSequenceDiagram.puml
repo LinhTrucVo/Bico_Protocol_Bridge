@@ -1,0 +1,68 @@
+@startuml comServiceSequenceDiagram
+participant "Central App Controller" as CAC
+participant "ComService" as COM
+participant "Serial Driver" as SD
+participant "UART HW" as HW
+
+== Initialization ==
+CAC -> COM : ComServiceUnit_Init()
+COM -> COM : rxHead = 0, rxTail = 0, rxCount = 0
+COM -> COM : txHead = 0, txTail = 0, txCount = 0
+COM -> COM : txBusy = false
+COM -> SD : SerialDriverUnit_RegisterRxCallback(ComService_RxCallback)
+SD --> COM : SERIALDRIVERSTATUS_OK
+COM -> SD : SerialDriverUnit_RegisterTxCallback(ComService_TxCallback)
+SD --> COM : SERIALDRIVERSTATUS_OK
+COM -> COM : initialized = true
+COM --> CAC : COMSERVICE_STATUS_OK
+
+== RX Path (ISR-driven) ==
+note over HW, SD : UART hardware receives byte(s)
+HW -> SD : HAL_UART_RxCpltCallback()
+SD -> COM : ComService_RxCallback(pData, length)
+COM -> COM : Write length bytes into Rx ring-buffer\n(advance rxHead, increment rxCount)
+
+== Run (Tx flush) ==
+CAC -> COM : ComServiceUnit_Run()
+alt txCount > 0 AND txBusy == false
+    COM -> COM : Read frame from Tx ring-buffer\n(advance txTail, decrement txCount)
+    COM -> COM : txBusy = true
+    COM -> SD : SerialDriverUnit_Send(pData, length)
+    SD --> COM : SERIALDRIVERSTATUS_OK
+end
+COM --> CAC : COMSERVICE_STATUS_OK
+
+== TX Complete (ISR-driven) ==
+HW -> SD : HAL_UART_TxCpltCallback()
+SD -> COM : ComService_TxCallback()
+COM -> COM : txBusy = false
+
+== IsRxDataAvailable ==
+CAC -> COM : ComServiceUnit_IsRxDataAvailable()
+COM -> COM : return (rxCount > 0)
+COM --> CAC : true / false
+
+== Read ==
+CAC -> COM : ComServiceUnit_Read(pData, maxLength, &readLength)
+COM -> COM : Copy min(rxCount, maxLength) bytes from Rx ring-buffer
+COM -> COM : Advance rxTail, decrement rxCount
+COM --> CAC : COMSERVICE_STATUS_OK + readLength
+
+== Write ==
+CAC -> COM : ComServiceUnit_Write(pData, length)
+alt txCount + length <= TX_BUFFER_SIZE
+    COM -> COM : Copy length bytes into Tx ring-buffer
+    COM -> COM : Advance txHead, increment txCount
+    COM --> CAC : COMSERVICE_STATUS_OK
+else buffer full
+    COM --> CAC : COMSERVICE_STATUS_BUFFER_FULL
+end
+
+== De-Initialization ==
+CAC -> COM : ComServiceUnit_DeInit()
+COM -> SD : SerialDriverUnit_RegisterRxCallback(NULL)
+COM -> SD : SerialDriverUnit_RegisterTxCallback(NULL)
+COM -> COM : initialized = false
+COM --> CAC : COMSERVICE_STATUS_OK
+
+@enduml

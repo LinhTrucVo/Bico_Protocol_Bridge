@@ -1,0 +1,23 @@
+@startuml comServiceStateMachine
+state Uninitialized
+state Ready
+
+[*] --> Uninitialized
+
+Uninitialized --> Ready : Init() / register RxCallback, TxCallback
+Ready --> Uninitialized : DeInit() / deregister callbacks
+
+Ready --> Ready : Run() [flush Tx if !txBusy]
+Ready --> Ready : RxCallback() [ISR: store to Rx ring-buffer]
+Ready --> Ready : TxCallback() [ISR: txBusy = false]
+Ready --> Ready : IsRxDataAvailable()
+Ready --> Ready : Read() [data available]
+Ready --> Ready : Write() [buffer not full]
+
+note right of Ready
+  RX: Data arrives via registered callback
+  from Serial Driver ISR context.
+  TX: Run() flushes Tx ring-buffer when
+  txBusy == false.
+end note
+@enduml

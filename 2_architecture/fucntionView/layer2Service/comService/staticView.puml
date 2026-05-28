@@ -1,0 +1,53 @@
+@startuml
+
+title ComService - Static View
+
+package "ComService" {
+    [Rx Ring Buffer Manager] as rxBuf
+    note right of rxBuf
+        - Stores incoming frames from Serial Driver
+        - FIFO ring-buffer with head/tail pointers
+        - Overflow detection
+    end note
+
+    [Tx Ring Buffer Manager] as txBuf
+    note right of txBuf
+        - Stores outgoing frames for Serial Driver
+        - FIFO ring-buffer with head/tail pointers
+        - Overflow detection
+    end note
+
+    [ComService Controller] as ctrl
+    note right of ctrl
+        - Registers RX/TX callbacks with Serial Driver
+        - RX callback stores received data into Rx ring-buffer
+        - Run() flushes Tx ring-buffer via SerialDriverUnit_Send()
+        - Provides API for upper layers
+    end note
+
+    [RX Callback Handler] as rxCb
+    note right of rxCb
+        - Invoked from ISR context by Serial Driver
+        - Writes received bytes into Rx ring-buffer
+        - Re-arms SerialDriverUnit_Receive()
+    end note
+
+    [TX Callback Handler] as txCb
+    note right of txCb
+        - Invoked from ISR context by Serial Driver
+        - Clears txBusy flag
+    end note
+}
+
+[Serial Driver] as serialDriver
+[Central App Controller] as cac
+
+serialDriver --> rxCb : RxCallback (ISR context)
+serialDriver --> txCb : TxCallback (ISR context)
+rxCb --> rxBuf : Store received data
+ctrl --> txBuf : Retrieve data to send
+ctrl --> serialDriver : SerialDriverUnit_Send() / SerialDriverUnit_Receive()
+cac --> ctrl : IsRxDataAvailable() / Read() / Write()
+ctrl --> cac : Frame data / availability status
+
+@enduml

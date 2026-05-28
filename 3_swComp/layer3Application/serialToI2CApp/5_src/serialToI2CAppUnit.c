@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include "serialToI2CApp.h"
 #include "serialToI2CAppCfg.h"
+#include "i2cMasterDriver.h"
 
 typedef struct
 {
@@ -13,13 +14,28 @@ static SerialToI2CApp_Context_t context = {0};
 
 SerialToI2CApp_Status_t SerialToI2CApp_Init(void)
 {
+    I2cMasterDriver_Config_t i2cCfg = {0};
+    i2cCfg.speed = I2C_SPEED_STANDARD;
+    i2cCfg.addressMode = I2C_ADDRESS_7BIT;
+    i2cCfg.enableDMA = false;
+    i2cCfg.enableInterrupt = false;
+    i2cCfg.timeoutMs = I2C_MASTER_CFG_TIMEOUT_MS;
+
+    if (I2cMasterDriverUnit_Init(&i2cCfg) != I2CMASTERDRIVERSTATUS_OK)
+    {
+        return SERIAL_TO_I2C_APP_STATUS_ERROR;
+    }
+
     context.initialized = true;
-    /* TODO: Initialize I2C master driver from ConfigService clock speed */
     return SERIAL_TO_I2C_APP_STATUS_OK;
 }
 
 SerialToI2CApp_Status_t SerialToI2CApp_DeInit(void)
 {
+    if (context.initialized)
+    {
+        (void)I2cMasterDriverUnit_DeInit();
+    }
     context.initialized = false;
     return SERIAL_TO_I2C_APP_STATUS_OK;
 }
@@ -35,8 +51,18 @@ SerialToI2CApp_Status_t SerialToI2CApp_Write(uint16_t address, const uint8_t *pD
         return SERIAL_TO_I2C_APP_STATUS_INVALID_PARAM;
     }
 
-    /* TODO: Call I2CMaster_Write(address, pData, length) via driver */
-    (void)address;
+    I2cMasterDriver_Status_t drvStatus = I2cMasterDriverUnit_Write(
+        (I2cMasterDriver_Address_t)address, pData, length);
+
+    if (drvStatus == I2CMASTERDRIVERSTATUS_NACK)
+    {
+        return SERIAL_TO_I2C_APP_STATUS_NACK;
+    }
+    if (drvStatus != I2CMASTERDRIVERSTATUS_OK)
+    {
+        return SERIAL_TO_I2C_APP_STATUS_BUS_ERROR;
+    }
+
     return SERIAL_TO_I2C_APP_STATUS_OK;
 }
 
@@ -51,11 +77,17 @@ SerialToI2CApp_Status_t SerialToI2CApp_Read(uint16_t address, uint8_t *pData, ui
         return SERIAL_TO_I2C_APP_STATUS_INVALID_PARAM;
     }
 
-    /* TODO: Call I2CMaster_Read(address, pData, length) via driver */
-    (void)address;
-    for (uint16_t i = 0U; i < length; i++)
+    I2cMasterDriver_Status_t drvStatus = I2cMasterDriverUnit_Read(
+        (I2cMasterDriver_Address_t)address, pData, length);
+
+    if (drvStatus == I2CMASTERDRIVERSTATUS_NACK)
     {
-        pData[i] = 0U; /* Placeholder until driver integration */
+        return SERIAL_TO_I2C_APP_STATUS_NACK;
     }
+    if (drvStatus != I2CMASTERDRIVERSTATUS_OK)
+    {
+        return SERIAL_TO_I2C_APP_STATUS_BUS_ERROR;
+    }
+
     return SERIAL_TO_I2C_APP_STATUS_OK;
 }
