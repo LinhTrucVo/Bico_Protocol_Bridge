@@ -1,0 +1,26 @@
+@startuml
+
+title Analog Service - Static View
+
+package "Analog Service" {
+    [ADC Read Handler] as readHandler
+    note right of readHandler
+        API: AnalogService_ReadAdc(channel) -> raw_value
+    end note
+    [Channel Manager] as channelMgr
+    [Sampling Controller] as samplingCtrl
+}
+
+[ADC Driver] as adcDriver
+[Config Service] as configService
+
+readHandler --> channelMgr : Select channel
+channelMgr --> adcDriver : ADC operations
+samplingCtrl --> adcDriver : Start conversion
+
+note bottom of readHandler
+    No DID/RID awareness.
+    Receives typed channel number from CAC.
+end note
+
+@enduml

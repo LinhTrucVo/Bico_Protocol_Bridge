@@ -80,6 +80,21 @@ static void ComService_TxCallback(void)
 //============================================================================
 ComService_Status_t ComServiceUnit_Init(void)
 {
+    /* Initialize the underlying Serial Driver */
+    SerialDriver_Config_t serialCfg = {0};
+    serialCfg.baudrate = SERIAL_BAUDRATE_115200;
+    serialCfg.parity = SERIAL_PARITY_NONE;
+    serialCfg.stopBits = SERIAL_STOPBITS_1;
+    serialCfg.dataBits = SERIAL_DATABITS_8;
+    serialCfg.flowControl = SERIAL_FLOWCONTROL_NONE;
+    serialCfg.enableDMA = false;
+    serialCfg.enableInterrupt = true;
+
+    if (SerialDriverUnit_Init(&serialCfg) != SERIALDRIVERSTATUS_OK)
+    {
+        return COMSERVICE_STATUS_ERROR;
+    }
+
     context.rx.head  = 0U;
     context.rx.tail  = 0U;
     context.rx.count = 0U;
@@ -101,6 +116,9 @@ ComService_Status_t ComServiceUnit_DeInit(void)
     /* Deregister callbacks */
     (void)SerialDriverUnit_RegisterRxCallback(NULL);
     (void)SerialDriverUnit_RegisterTxCallback(NULL);
+
+    /* Deinitialize the underlying Serial Driver */
+    (void)SerialDriverUnit_DeInit();
 
     context.initialized = false;
     return COMSERVICE_STATUS_OK;

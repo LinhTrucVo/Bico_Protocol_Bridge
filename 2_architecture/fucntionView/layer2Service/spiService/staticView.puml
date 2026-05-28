@@ -1,0 +1,41 @@
+@startuml
+
+title SPI Service - Static View
+
+package "SPI Service" {
+    [SPI Handler] as spiHandler
+    note right of spiHandler
+        API:
+        SpiService_Write(dev, data, len) -> status
+        SpiService_Transceive(dev, tx, tx_len, rx, rx_len) -> status
+    end note
+    [Mode Manager] as modeMgr
+    note right of modeMgr
+        Enforces mutual exclusivity:
+        Only Master OR Slave mode active at a time
+    end note
+    [Master Manager] as masterMgr
+    [Slave Manager] as slaveMgr
+    [CS Manager] as csMgr
+    [Error Handler] as errorHandler
+}
+
+[SPI Master Driver] as spiMasterDriver
+[SPI Slave Driver] as spiSlaveDriver
+[GPIO Driver] as gpioDriver
+[Config Service] as configService
+
+spiHandler --> modeMgr : Route operation
+modeMgr --> masterMgr : Master operations
+modeMgr --> slaveMgr : Slave operations
+masterMgr --> spiMasterDriver : Master transfers
+slaveMgr --> spiSlaveDriver : Slave transfers
+masterMgr --> csMgr : CS control
+csMgr --> gpioDriver : CS pin operations
+
+note bottom of spiHandler
+    No DID/RID awareness.
+    Receives typed dev/data from CAC.
+end note
+
+@enduml

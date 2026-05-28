@@ -1,5 +1,5 @@
 // Fake implementations for CentralAppController testing
-// Provides all dependency fakes: Deserialize, Serialize, ConfigService, peripheral apps
+// Provides all dependency fakes: Deserialize, Serialize, ConfigService, peripheral services
 
 #include <stddef.h>
 #include <string.h>
@@ -7,10 +7,10 @@
 #include "deserialize.h"
 #include "serialize.h"
 #include "configService.h"
-#include "ANALOGAPP.h"
-#include "DIGITALAPP.h"
-#include "I2CAPP.h"
-#include "SPIAPP.h"
+#include "analogService.h"
+#include "digitalService.h"
+#include "i2cService.h"
+#include "spiService.h"
 
 /* ============================================================
  * Fake Deserialize - include actual implementation
@@ -29,78 +29,78 @@
 #include "configServiceUnit.c"
 
 /* ============================================================
- * Fake ANALOGAPP
+ * Fake AnalogService
  * ============================================================ */
-ANALOGAPP_Status_t ANALOGAPP_Init(void) { return ANALOG_APP_STATUS_OK; }
-ANALOGAPP_Status_t ANALOGAPP_ReadAdc(uint8_t channel, uint16_t *pRawValue)
+AnalogService_Status_t AnalogServiceUnit_Init(void) { return ANALOGSERVICE_STATUS_OK; }
+AnalogService_Status_t AnalogServiceUnit_ReadAdc(uint8_t channel, uint16_t *pRawValue)
 {
-    if (pRawValue == NULL || channel >= 8U) return ANALOG_APP_STATUS_INVALID_PARAM;
+    if (pRawValue == NULL || channel >= 8U) return ANALOGSERVICE_STATUS_INVALID_PARAM;
     *pRawValue = 2048U; /* Fake ADC value */
-    return ANALOG_APP_STATUS_OK;
+    return ANALOGSERVICE_STATUS_OK;
 }
 
 /* ============================================================
- * Fake DIGITALAPP
+ * Fake DigitalService
  * ============================================================ */
 static uint8_t fake_pinStates[32] = {0};
 
-DIGITALAPP_Status_t DIGITALAPP_Init(void) { return DIGITAL_APP_STATUS_OK; }
-DIGITALAPP_Status_t DIGITALAPP_WriteGpio(uint8_t pin, uint8_t state)
+DigitalService_Status_t DigitalServiceUnit_Init(void) { return DIGITALSERVICE_STATUS_OK; }
+DigitalService_Status_t DigitalServiceUnit_WriteGpio(uint8_t pin, uint8_t state)
 {
-    if (pin >= 32U) return DIGITAL_APP_STATUS_INVALID_PARAM;
+    if (pin >= 32U) return DIGITALSERVICE_STATUS_INVALID_PARAM;
     fake_pinStates[pin] = state;
-    return DIGITAL_APP_STATUS_OK;
+    return DIGITALSERVICE_STATUS_OK;
 }
-DIGITALAPP_Status_t DIGITALAPP_ReadGpio(uint8_t pin, uint8_t *pState)
+DigitalService_Status_t DigitalServiceUnit_ReadGpio(uint8_t pin, uint8_t *pState)
 {
-    if (pState == NULL || pin >= 32U) return DIGITAL_APP_STATUS_INVALID_PARAM;
+    if (pState == NULL || pin >= 32U) return DIGITALSERVICE_STATUS_INVALID_PARAM;
     *pState = fake_pinStates[pin];
-    return DIGITAL_APP_STATUS_OK;
+    return DIGITALSERVICE_STATUS_OK;
 }
-DIGITALAPP_Status_t DIGITALAPP_StartPwm(uint8_t channel)
+DigitalService_Status_t DigitalServiceUnit_StartPwm(uint8_t channel)
 {
-    if (channel >= 8U) return DIGITAL_APP_STATUS_INVALID_PARAM;
-    return DIGITAL_APP_STATUS_OK;
+    if (channel >= 8U) return DIGITALSERVICE_STATUS_INVALID_PARAM;
+    return DIGITALSERVICE_STATUS_OK;
 }
-DIGITALAPP_Status_t DIGITALAPP_StopPwm(uint8_t channel)
+DigitalService_Status_t DigitalServiceUnit_StopPwm(uint8_t channel)
 {
-    if (channel >= 8U) return DIGITAL_APP_STATUS_INVALID_PARAM;
-    return DIGITAL_APP_STATUS_OK;
+    if (channel >= 8U) return DIGITALSERVICE_STATUS_INVALID_PARAM;
+    return DIGITALSERVICE_STATUS_OK;
 }
 
 /* ============================================================
- * Fake I2CAPP
+ * Fake I2cService
  * ============================================================ */
-I2CAPP_Status_t I2CAPP_Init(void) { return I2C_APP_STATUS_OK; }
-I2CAPP_Status_t I2CAPP_Write(uint16_t address, const uint8_t *pData, uint16_t length)
+I2cService_Status_t I2cServiceUnit_Init(void) { return I2CSERVICE_STATUS_OK; }
+I2cService_Status_t I2cServiceUnit_Write(uint16_t address, const uint8_t *pData, uint16_t length)
 {
-    if (pData == NULL || length == 0U) return I2C_APP_STATUS_INVALID_PARAM;
+    if (pData == NULL || length == 0U) return I2CSERVICE_STATUS_INVALID_PARAM;
     (void)address;
-    return I2C_APP_STATUS_OK;
+    return I2CSERVICE_STATUS_OK;
 }
-I2CAPP_Status_t I2CAPP_Read(uint16_t address, uint8_t *pData, uint16_t length)
+I2cService_Status_t I2cServiceUnit_Read(uint16_t address, uint8_t *pData, uint16_t length)
 {
-    if (pData == NULL || length == 0U) return I2C_APP_STATUS_INVALID_PARAM;
+    if (pData == NULL || length == 0U) return I2CSERVICE_STATUS_INVALID_PARAM;
     (void)address;
     memset(pData, 0xAA, length);
-    return I2C_APP_STATUS_OK;
+    return I2CSERVICE_STATUS_OK;
 }
 
 /* ============================================================
- * Fake SPIAPP
+ * Fake SpiService
  * ============================================================ */
-SPIAPP_Status_t SPIAPP_Init(void) { return SPI_APP_STATUS_OK; }
-SPIAPP_Status_t SPIAPP_Write(uint8_t device, const uint8_t *pData, uint16_t length)
+SpiService_Status_t SpiServiceUnit_Init(void) { return SPISERVICE_STATUS_OK; }
+SpiService_Status_t SpiServiceUnit_Write(uint8_t device, const uint8_t *pData, uint16_t length)
 {
-    if (pData == NULL || length == 0U) return SPI_APP_STATUS_INVALID_PARAM;
+    if (pData == NULL || length == 0U) return SPISERVICE_STATUS_INVALID_PARAM;
     (void)device;
-    return SPI_APP_STATUS_OK;
+    return SPISERVICE_STATUS_OK;
 }
-SPIAPP_Status_t SPIAPP_Transceive(uint8_t device, const uint8_t *pTxData, uint16_t txLength, uint8_t *pRxData, uint16_t rxLength)
+SpiService_Status_t SpiServiceUnit_Transceive(uint8_t device, const uint8_t *pTxData, uint16_t txLength, uint8_t *pRxData, uint16_t rxLength)
 {
     if (pTxData == NULL || pRxData == NULL || txLength == 0U || rxLength == 0U)
-        return SPI_APP_STATUS_INVALID_PARAM;
+        return SPISERVICE_STATUS_INVALID_PARAM;
     (void)device;
     memset(pRxData, 0xEF, rxLength);
-    return SPI_APP_STATUS_OK;
+    return SPISERVICE_STATUS_OK;
 }

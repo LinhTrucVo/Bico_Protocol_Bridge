@@ -11,11 +11,13 @@ The Central App Controller acts as the main coordinator for all application modu
 It manages initialization, command routing, resource arbitration, and system-level coordination.
 
 Key responsibilities:
+- Read raw bytes from ComService and extract UDS frames using prefix/postfix delimiters
 - Initialize and coordinate all application modules
 - Route commands to appropriate application modules
 - Manage resource allocation and arbitration
 - Coordinate inter-module communication
 - Handle system-level state management
+- Wrap UDS responses with frame delimiters and write back to ComService
 - Manage system startup and shutdown sequences
 - Implement watchdog and health monitoring
 

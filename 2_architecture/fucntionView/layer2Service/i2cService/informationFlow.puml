@@ -1,0 +1,26 @@
+@startuml
+title I2C Service - Information Flow
+
+package "I2C Write Flow" {
+    component "Central App Controller" as CC1
+    component "I2C Service" as I2C1
+    component "I2C Master Driver" as DRV1
+
+    CC1 -down-> I2C1 : I2cService_Write(addr=0x50, data=[0x10,0xAA], len=2)
+    I2C1 -down-> DRV1 : I2CMaster_Write(addr=0x50, data, len=2)
+    DRV1 -up-> I2C1 : ACK
+    I2C1 -up-> CC1 : OK
+}
+
+package "I2C Read Flow" {
+    component "Central App Controller" as CC2
+    component "I2C Service" as I2C2
+    component "I2C Master Driver" as DRV2
+
+    CC2 -down-> I2C2 : I2cService_Read(addr=0x50, len=2)
+    I2C2 -down-> DRV2 : I2CMaster_Read(addr=0x50, buffer, len=2)
+    DRV2 -up-> I2C2 : data=[0xAA, 0xBB]
+    I2C2 -up-> CC2 : data=[0xAA, 0xBB]
+}
+
+@enduml

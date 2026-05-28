@@ -1,20 +1,30 @@
 @startuml
 title Central App Controller - Information Flow
 
+package "Frame Extraction (ComService -> CAC)" {
+    component "ComService" as COM0
+    component "Frame Parser" as FP0
+    component "Central App Controller" as CAC0
+
+    COM0 -down-> FP0 : Raw byte stream (ComServiceUnit_Read)
+    FP0 -down-> FP0 : Detect prefix [0x55,0x55]\nCollect payload\nDetect postfix [0xAA,0xAA]
+    FP0 -down-> CAC0 : Extracted UDS frame (payload only)
+}
+
 package "System Startup Flow" {
     component "Central App Controller" as CAC1
     component "Config Service" as CS1
-    component "Analog App" as AA1
-    component "Digital App" as DA1
-    component "I2C App" as I2CA1
-    component "SPI App" as SPIA1
+    component "Analog Service" as AA1
+    component "Digital Service" as DA1
+    component "I2C Service" as I2CA1
+    component "SPI Service" as SPIA1
 
     CAC1 -down-> CS1 : ConfigService_Init()
     CS1 -up-> CAC1 : CONFIG_LOADED
-    CAC1 -down-> AA1 : AnalogApp_Init()
-    CAC1 -down-> DA1 : DigitalApp_Init()
-    CAC1 -down-> I2CA1 : I2CApp_Init()
-    CAC1 -down-> SPIA1 : SPIApp_Init()
+    CAC1 -down-> AA1 : AnalogServiceUnit_Init()
+    CAC1 -down-> DA1 : DigitalServiceUnit_Init()
+    CAC1 -down-> I2CA1 : I2cServiceUnit_Init()
+    CAC1 -down-> SPIA1 : SpiServiceUnit_Init()
 }
 
 package "SID 0x22 Read Config (DID 0x1001 = ADC Sample Rate)" {
@@ -47,12 +57,12 @@ package "SID 0x2E Write Config (DID 0x1001 = ADC Sample Rate)" {
 package "SID 0x31 RID 0x0100 ADC Read" {
     component "Deserialize" as DES4
     component "Central App Controller" as CAC4
-    component "Analog App" as AA4
+    component "Analog Service" as AA4
     component "Serialize" as SER4
 
     DES4 -down-> CAC4 : UDS_Request{sid=0x31, rid=0x0100, params=[0x01]}
     CAC4 -down-> CAC4 : Map RID 0x0100 -> ReadAdc\nDecode params -> channel=1
-    CAC4 -down-> AA4 : AnalogApp_ReadAdc(channel=1)
+    CAC4 -down-> AA4 : AnalogServiceUnit_ReadAdc(channel=1)
     AA4 -up-> CAC4 : raw_value=2048
     CAC4 -down-> CAC4 : Encode result -> [0x08, 0x00]
     CAC4 -down-> SER4 : UDS_Response{sid=0x31, rid=0x0100, data=[0x08,0x00]}
@@ -61,12 +71,12 @@ package "SID 0x31 RID 0x0100 ADC Read" {
 package "SID 0x31 RID 0x0200 GPIO Write" {
     component "Deserialize" as DES5
     component "Central App Controller" as CAC5
-    component "Digital App" as DA5
+    component "Digital Service" as DA5
     component "Serialize" as SER5
 
     DES5 -down-> CAC5 : UDS_Request{sid=0x31, rid=0x0200, params=[0x05, 0x01]}
     CAC5 -down-> CAC5 : Map RID 0x0200 -> WriteGpio\nDecode params -> pin=PA5, state=HIGH
-    CAC5 -down-> DA5 : DigitalApp_WriteGpio(pin=PA5, state=HIGH)
+    CAC5 -down-> DA5 : DigitalServiceUnit_WriteGpio(pin=PA5, state=HIGH)
     DA5 -up-> CAC5 : OK
     CAC5 -down-> SER5 : UDS_Response{sid=0x31, rid=0x0200, status=0x00}
 }
@@ -74,14 +84,24 @@ package "SID 0x31 RID 0x0200 GPIO Write" {
 package "SID 0x31 RID 0x0400 I2C Write" {
     component "Deserialize" as DES6
     component "Central App Controller" as CAC6
-    component "I2C App" as I2CA6
+    component "I2C Service" as I2CA6
     component "Serialize" as SER6
 
     DES6 -down-> CAC6 : UDS_Request{sid=0x31, rid=0x0400, params=[0x50, 0x10, 0xAA]}
     CAC6 -down-> CAC6 : Map RID 0x0400 -> I2CWrite\nDecode params -> addr=0x50, data=[0x10,0xAA]
-    CAC6 -down-> I2CA6 : I2CApp_Write(addr=0x50, data=[0x10,0xAA], len=2)
+    CAC6 -down-> I2CA6 : I2cServiceUnit_Write(addr=0x50, data=[0x10,0xAA], len=2)
     I2CA6 -up-> CAC6 : OK
     CAC6 -down-> SER6 : UDS_Response{sid=0x31, rid=0x0400, status=0x00}
+}
+
+package "Response Framing (CAC -> ComService)" {
+    component "Serialize" as SER7
+    component "Response Framer" as RF7
+    component "ComService" as COM7
+
+    SER7 -down-> RF7 : Serialized UDS response bytes
+    RF7 -down-> RF7 : Prepend prefix [0x55,0x55]\nAppend postfix [0xAA,0xAA]
+    RF7 -down-> COM7 : Framed response (ComServiceUnit_Write)
 }
 
 @enduml

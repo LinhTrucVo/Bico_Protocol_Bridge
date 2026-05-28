@@ -18,21 +18,20 @@ Layer Structure
   Low-level hardware abstraction layer that provides vendor-independent interfaces to MCU peripherals.
   All drivers wrap vendor-specific HAL APIs.
 
-**Layer 2: Services (4 components)**
-  Mid-level services providing business logic, data processing, and protocol handling.
-  Services are reusable across multiple applications.
+**Layer 2: Services (8 components)**
+  Mid-level services providing business logic, data processing, peripheral management, and protocol handling.
+  Services are reusable and each initializes its own layer 1 driver.
 
-**Layer 3: Applications (5 components)**
-  High-level application modules implementing system features.
-  The Central App Controller coordinates all application modules.
+**Layer 3: Applications (1 component)**
+  The Central App Controller coordinates all service modules and dispatches UDS commands.
 
 Component Count Summary
 ************************
 
 - **Total Components**: 18
 - **Layer 1 (Drivers)**: 9 components
-- **Layer 2 (Services)**: 4 components  
-- **Layer 3 (Applications)**: 5 components
+- **Layer 2 (Services)**: 8 components  
+- **Layer 3 (Applications)**: 1 component
 
 Layer 1: Hardware Driver Components
 ************************************
@@ -68,6 +67,10 @@ Layer 2: Service Components
     layer2Service/deserialize/index.rst
     layer2Service/nvmService/index.rst
     layer2Service/serialize/index.rst
+    layer2Service/analogService/index.rst
+    layer2Service/digitalService/index.rst
+    layer2Service/i2cService/index.rst
+    layer2Service/spiService/index.rst
 
 **Service Responsibilities:**
 
@@ -75,6 +78,10 @@ Layer 2: Service Components
 - **deserialize**: Parse incoming serial commands to data structures
 - **serialize**: Format outgoing responses from data structures
 - **nvmService**: High-level NVM operations with integrity checking
+- **analogService**: Multi-channel ADC management with raw data handling
+- **digitalService**: GPIO control and PWM generation
+- **i2cService**: I2C master/slave bridge operations
+- **spiService**: SPI master/slave bridge operations
 
 Layer 3: Application Components
 ********************************
@@ -83,18 +90,10 @@ Layer 3: Application Components
     :maxdepth: 1
     
     layer3Application/centralAppController/index.rst
-    layer3Application/ANALOGAPP/index.rst
-    layer3Application/DIGITALAPP/index.rst
-    layer3Application/I2CAPP/index.rst
-    layer3Application/SPIAPP/index.rst
 
 **Application Responsibilities:**
 
 - **centralAppController**: Command dispatch and application coordination
-- **ANALOGAPP**: Multi-channel ADC management with raw data handling
-- **DIGITALAPP**: GPIO control and PWM generation
-- **I2CAPP**: I2C master/slave bridge operations
-- **SPIAPP**: SPI master/slave bridge operations
 
 Component Structure
 *******************
@@ -119,14 +118,16 @@ Dependencies
 
 **Layer 3 → Layer 2 Dependencies:**
 
-- All applications depend on: serialize, deserialize
-- centralAppController depends on: configService
-- Applications use services for data formatting and configuration
+- centralAppController depends on: all layer 2 services (comService, nvmService, analogService, digitalService, i2cService, spiService, deserialize, serialize, configService)
 
 **Layer 2 → Layer 1 Dependencies:**
 
-- deserialize, serialize → serialDriver
-- configService, nvmService → nvmDriver
+- comService → serialDriver
+- nvmService → nvmDriver
+- analogService → adcDriver
+- digitalService → gpioDriver, pwmDriver
+- i2cService → i2cMasterDriver
+- spiService → spiMasterDriver
 
 **Layer 1 → Hardware:**
 

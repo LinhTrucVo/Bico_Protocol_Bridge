@@ -1,21 +1,43 @@
-// CentralAppController Implementation - UDS Command Dispatcher
+﻿// CentralAppController Implementation - UDS Command Dispatcher
 
 #include <stddef.h>
 #include <string.h>
 #include "centralAppController.h"
+#include "comService.h"
+#include "nvmService.h"
+#include "analogService.h"
+#include "digitalService.h"
+#include "i2cService.h"
+#include "spiService.h"
 #include "deserialize.h"
 #include "serialize.h"
 #include "configService.h"
-#include "ANALOGAPP.h"
-#include "DIGITALAPP.h"
-#include "I2CAPP.h"
-#include "SPIAPP.h"
+
+//============================================================================
+// Frame Parser States
+//============================================================================
+typedef enum
+{
+    FRAME_PARSE_STATE_WAIT_PREFIX_HIGH = 0,
+    FRAME_PARSE_STATE_WAIT_PREFIX_LOW,
+    FRAME_PARSE_STATE_RECEIVE_PAYLOAD,
+    FRAME_PARSE_STATE_FRAME_COMPLETE
+} FrameParseState_t;
+
+typedef struct
+{
+    FrameParseState_t state;
+    uint8_t           frameBuffer[CENTRAL_APP_CFG_MAX_FRAME_SIZE];
+    uint16_t          frameIndex;
+    bool              frameReady;
+} FrameParser_t;
 
 typedef struct
 {
     bool initialized;
     CentralAppController_State_t currentState;
     CentralAppController_ErrorCallback_t errorCallback;
+    FrameParser_t parser;
 } CentralAppController_Context_t;
 
 static CentralAppController_Context_t context = {0};
@@ -24,16 +46,24 @@ static CentralAppController_Context_t context = {0};
 static CentralAppController_Status_t HandleReadDataById(const Deserialize_UdsRequest_t *pReq, Serialize_UdsResponse_t *pResp);
 static CentralAppController_Status_t HandleWriteDataById(const Deserialize_UdsRequest_t *pReq, Serialize_UdsResponse_t *pResp);
 static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsRequest_t *pReq, Serialize_UdsResponse_t *pResp);
+static void FrameParser_Reset(FrameParser_t *pParser);
+static void FrameParser_ProcessByte(FrameParser_t *pParser, uint8_t byte);
+static void SendFramedResponse(const uint8_t *pData, uint16_t length);
 
 CentralAppController_Status_t CentralAppControllerUnit_Init(void)
 {
+    /* Layer 2: Services (each service initializes its own L1 driver) */
+    (void)ComServiceUnit_Init();
+    (void)NvmServiceUnit_Init();
+    (void)AnalogServiceUnit_Init();
+    (void)DigitalServiceUnit_Init();
+    (void)I2cServiceUnit_Init();
+    (void)SpiServiceUnit_Init();
     (void)DeserializeUnit_Init();
     (void)SerializeUnit_Init();
     (void)ConfigServiceUnit_Init();
-    (void)ANALOGAPP_Init();
-    (void)DIGITALAPP_Init();
-    (void)I2CAPP_Init();
-    (void)SPIAPP_Init();
+
+    FrameParser_Reset(&context.parser);
 
     context.initialized = true;
     context.currentState = CentralAppController_STATE_IDLE;
@@ -43,6 +73,17 @@ CentralAppController_Status_t CentralAppControllerUnit_Init(void)
 
 CentralAppController_Status_t CentralAppControllerUnit_DeInit(void)
 {
+    /* Services (reverse order - each service deinits its own L1 driver) */
+    (void)ConfigServiceUnit_DeInit();
+    (void)SerializeUnit_DeInit();
+    (void)DeserializeUnit_DeInit();
+    (void)SpiServiceUnit_DeInit();
+    (void)I2cServiceUnit_DeInit();
+    (void)DigitalServiceUnit_DeInit();
+    (void)AnalogServiceUnit_DeInit();
+    (void)NvmServiceUnit_DeInit();
+    (void)ComServiceUnit_DeInit();
+
     context.initialized = false;
     context.currentState = CentralAppController_STATE_IDLE;
     return CENTRAL_APP_CONTROLLER_STATUS_OK;
@@ -54,6 +95,44 @@ CentralAppController_Status_t CentralAppControllerUnit_Run(void)
     {
         return CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED;
     }
+
+    /* Read available bytes from ComService and feed to frame parser */
+    if (ComServiceUnit_IsRxDataAvailable())
+    {
+        uint8_t  rxBuf[CENTRAL_APP_CFG_MAX_FRAME_SIZE];
+        uint16_t rxLen = 0U;
+
+        if (ComServiceUnit_Read(rxBuf, sizeof(rxBuf), &rxLen) == COMSERVICE_STATUS_OK)
+        {
+            for (uint16_t i = 0U; i < rxLen; i++)
+            {
+                FrameParser_ProcessByte(&context.parser, rxBuf[i]);
+
+                if (context.parser.frameReady)
+                {
+                    /* Complete frame received - dispatch UDS request */
+                    uint8_t  responseBuffer[CENTRAL_APP_CFG_MAX_FRAME_SIZE];
+                    uint16_t responseLength = 0U;
+
+                    (void)CentralAppControllerUnit_Dispatch(
+                        context.parser.frameBuffer,
+                        context.parser.frameIndex,
+                        responseBuffer,
+                        sizeof(responseBuffer),
+                        &responseLength);
+
+                    /* Send framed response back */
+                    if (responseLength > 0U)
+                    {
+                        SendFramedResponse(responseBuffer, responseLength);
+                    }
+
+                    FrameParser_Reset(&context.parser);
+                }
+            }
+        }
+    }
+
     return CENTRAL_APP_CONTROLLER_STATUS_OK;
 }
 
@@ -491,8 +570,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             }
             uint8_t channel = pReq->pPayload[0];
             uint16_t rawValue = 0U;
-            ANALOGAPP_Status_t aStatus = ANALOGAPP_ReadAdc(channel, &rawValue);
-            if (aStatus != ANALOG_APP_STATUS_OK)
+            AnalogService_Status_t aStatus = AnalogServiceUnit_ReadAdc(channel, &rawValue);
+            if (aStatus != ANALOGSERVICE_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -513,8 +592,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             }
             uint8_t pin = pReq->pPayload[0];
             uint8_t state = pReq->pPayload[1];
-            DIGITALAPP_Status_t dStatus = DIGITALAPP_WriteGpio(pin, state);
-            if (dStatus != DIGITAL_APP_STATUS_OK)
+            DigitalService_Status_t dStatus = DigitalServiceUnit_WriteGpio(pin, state);
+            if (dStatus != DIGITALSERVICE_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -534,8 +613,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             }
             uint8_t pin = pReq->pPayload[0];
             uint8_t pinState = 0U;
-            DIGITALAPP_Status_t dStatus = DIGITALAPP_ReadGpio(pin, &pinState);
-            if (dStatus != DIGITAL_APP_STATUS_OK)
+            DigitalService_Status_t dStatus = DigitalServiceUnit_ReadGpio(pin, &pinState);
+            if (dStatus != DIGITALSERVICE_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -554,8 +633,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint8_t channel = pReq->pPayload[0];
-            DIGITALAPP_Status_t dStatus = DIGITALAPP_StartPwm(channel);
-            if (dStatus != DIGITAL_APP_STATUS_OK)
+            DigitalService_Status_t dStatus = DigitalServiceUnit_StartPwm(channel);
+            if (dStatus != DIGITALSERVICE_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -574,8 +653,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint8_t channel = pReq->pPayload[0];
-            DIGITALAPP_Status_t dStatus = DIGITALAPP_StopPwm(channel);
-            if (dStatus != DIGITAL_APP_STATUS_OK)
+            DigitalService_Status_t dStatus = DigitalServiceUnit_StopPwm(channel);
+            if (dStatus != DIGITALSERVICE_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -596,8 +675,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             uint16_t addr = (uint16_t)pReq->pPayload[0];
             const uint8_t *pData = &pReq->pPayload[1];
             uint16_t len = pReq->payloadLength - 1U;
-            I2CAPP_Status_t iStatus = I2CAPP_Write(addr, pData, len);
-            if (iStatus != I2C_APP_STATUS_OK)
+            I2cService_Status_t iStatus = I2cServiceUnit_Write(addr, pData, len);
+            if (iStatus != I2CSERVICE_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -622,8 +701,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
-            I2CAPP_Status_t iStatus = I2CAPP_Read(addr, statusRecord, readLen);
-            if (iStatus != I2C_APP_STATUS_OK)
+            I2cService_Status_t iStatus = I2cServiceUnit_Read(addr, statusRecord, readLen);
+            if (iStatus != I2CSERVICE_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -643,8 +722,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             uint8_t dev = pReq->pPayload[0];
             const uint8_t *pData = &pReq->pPayload[1];
             uint16_t len = pReq->payloadLength - 1U;
-            SPIAPP_Status_t sStatus = SPIAPP_Write(dev, pData, len);
-            if (sStatus != SPI_APP_STATUS_OK)
+            SpiService_Status_t sStatus = SpiServiceUnit_Write(dev, pData, len);
+            if (sStatus != SPISERVICE_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -671,8 +750,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
-            SPIAPP_Status_t sStatus = SPIAPP_Transceive(dev, pTx, txLen, statusRecord, rxLen);
-            if (sStatus != SPI_APP_STATUS_OK)
+            SpiService_Status_t sStatus = SpiServiceUnit_Transceive(dev, pTx, txLen, statusRecord, rxLen);
+            if (sStatus != SPISERVICE_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -688,4 +767,109 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
 
     (void)SerializeUnit_BuildRoutineResponse(pReq->routineControlType, pReq->id, statusRecord, statusLen, pResp);
     return CENTRAL_APP_CONTROLLER_STATUS_OK;
+}
+
+/*============================================================================
+ * Frame Parser - Extracts UDS frames from serial byte stream
+ * Frame format: [PREFIX_HIGH][PREFIX_LOW][payload...][POSTFIX_HIGH][POSTFIX_LOW]
+ *===========================================================================*/
+static void FrameParser_Reset(FrameParser_t *pParser)
+{
+    pParser->state = FRAME_PARSE_STATE_WAIT_PREFIX_HIGH;
+    pParser->frameIndex = 0U;
+    pParser->frameReady = false;
+}
+
+static void FrameParser_ProcessByte(FrameParser_t *pParser, uint8_t byte)
+{
+    switch (pParser->state)
+    {
+        case FRAME_PARSE_STATE_WAIT_PREFIX_HIGH:
+            if (byte == CENTRAL_APP_CFG_FRAME_PREFIX_HIGH)
+            {
+                pParser->state = FRAME_PARSE_STATE_WAIT_PREFIX_LOW;
+            }
+            break;
+
+        case FRAME_PARSE_STATE_WAIT_PREFIX_LOW:
+            if (byte == CENTRAL_APP_CFG_FRAME_PREFIX_LOW)
+            {
+                /* Full prefix detected, start collecting payload */
+                pParser->state = FRAME_PARSE_STATE_RECEIVE_PAYLOAD;
+                pParser->frameIndex = 0U;
+            }
+            else if (byte == CENTRAL_APP_CFG_FRAME_PREFIX_HIGH)
+            {
+                /* Could be start of a new prefix, stay in this state */
+                pParser->state = FRAME_PARSE_STATE_WAIT_PREFIX_LOW;
+            }
+            else
+            {
+                /* Not a valid prefix, go back to waiting */
+                pParser->state = FRAME_PARSE_STATE_WAIT_PREFIX_HIGH;
+            }
+            break;
+
+        case FRAME_PARSE_STATE_RECEIVE_PAYLOAD:
+            /* Check for postfix pattern */
+            if ((pParser->frameIndex >= 1U) &&
+                (pParser->frameBuffer[pParser->frameIndex - 1U] == CENTRAL_APP_CFG_FRAME_POSTFIX_HIGH) &&
+                (byte == CENTRAL_APP_CFG_FRAME_POSTFIX_LOW))
+            {
+                /* Postfix detected - remove the postfix high byte from payload */
+                pParser->frameIndex -= 1U;
+                pParser->frameReady = true;
+                pParser->state = FRAME_PARSE_STATE_FRAME_COMPLETE;
+            }
+            else
+            {
+                /* Store payload byte */
+                if (pParser->frameIndex < CENTRAL_APP_CFG_MAX_FRAME_SIZE)
+                {
+                    pParser->frameBuffer[pParser->frameIndex] = byte;
+                    pParser->frameIndex++;
+                }
+                else
+                {
+                    /* Buffer overflow - discard frame and resync */
+                    FrameParser_Reset(pParser);
+                }
+            }
+            break;
+
+        case FRAME_PARSE_STATE_FRAME_COMPLETE:
+            /* Waiting for caller to process and reset */
+            break;
+
+        default:
+            FrameParser_Reset(pParser);
+            break;
+    }
+}
+
+/*============================================================================
+ * SendFramedResponse - Wraps response with prefix/postfix and sends via ComService
+ *===========================================================================*/
+static void SendFramedResponse(const uint8_t *pData, uint16_t length)
+{
+    uint8_t framedBuffer[CENTRAL_APP_CFG_MAX_FRAME_SIZE + (2U * CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE)];
+    uint16_t totalLength = length + (2U * CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE);
+
+    if (totalLength > sizeof(framedBuffer))
+    {
+        return;
+    }
+
+    /* Prefix */
+    framedBuffer[0] = CENTRAL_APP_CFG_FRAME_PREFIX_HIGH;
+    framedBuffer[1] = CENTRAL_APP_CFG_FRAME_PREFIX_LOW;
+
+    /* Payload */
+    (void)memcpy(&framedBuffer[CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE], pData, length);
+
+    /* Postfix */
+    framedBuffer[CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE + length]      = CENTRAL_APP_CFG_FRAME_POSTFIX_HIGH;
+    framedBuffer[CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE + length + 1U] = CENTRAL_APP_CFG_FRAME_POSTFIX_LOW;
+
+    (void)ComServiceUnit_Write(framedBuffer, totalLength);
 }

@@ -37,3 +37,5 @@ add_subdirectory(3_swComp/layer3Application/ANALOGAPP)
 add_subdirectory(3_swComp/layer3Application/DIGITALAPP)
 add_subdirectory(3_swComp/layer3Application/I2CAPP)
 add_subdirectory(3_swComp/layer3Application/SPIAPP)
+
+

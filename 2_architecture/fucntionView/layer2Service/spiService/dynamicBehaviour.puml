@@ -1,0 +1,46 @@
+@startuml
+title SPI Service - Dynamic Behaviour
+
+participant "Central App Controller" as CC
+participant "SPI Service" as SPI
+participant "SPI Master Driver" as DRV
+participant "GPIO Driver" as GPIO
+participant "Config Service" as CS
+
+== Initialization ==
+CC -> SPI : SpiService_Init()
+SPI -> CS : ConfigService_GetSpiConfig()
+CS --> SPI : {clock, mode, bitorder}
+SPI -> DRV : SPIMaster_Init(clock, mode, bitorder)
+DRV --> SPI : SUCCESS
+SPI --> CC : INIT_SUCCESS
+
+== SPI Write ==
+CC -> SPI : SpiService_Write(dev=0, data=[0x9F], len=1)
+SPI -> GPIO : GPIO_WritePin(cs_pin, LOW)
+SPI -> DRV : SPIMaster_Transmit(data, len=1)
+alt SUCCESS
+    DRV --> SPI : SUCCESS
+    SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
+    SPI --> CC : OK
+else ERROR
+    DRV --> SPI : ERROR
+    SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
+    SPI --> CC : ERROR_BUS
+end
+
+== SPI Transceive ==
+CC -> SPI : SpiService_Transceive(dev=0, tx=[0x9F], rx_len=3)
+SPI -> GPIO : GPIO_WritePin(cs_pin, LOW)
+SPI -> DRV : SPIMaster_TransmitReceive(tx, rx_buf, len)
+alt SUCCESS
+    DRV --> SPI : rx=[0xEF, 0x40, 0x18]
+    SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
+    SPI --> CC : data=[0xEF, 0x40, 0x18]
+else ERROR
+    DRV --> SPI : ERROR
+    SPI -> GPIO : GPIO_WritePin(cs_pin, HIGH)
+    SPI --> CC : ERROR_BUS
+end
+
+@enduml

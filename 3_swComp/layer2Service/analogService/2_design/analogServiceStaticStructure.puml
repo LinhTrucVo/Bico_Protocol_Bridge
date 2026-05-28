@@ -1,0 +1,31 @@
+@startuml AnalogServiceStaticStructure
+skinparam backgroundColor #FEFEFE
+
+package "AnalogService" {
+    interface IAnalogService {
+        + Init() : Status_t
+        + DeInit() : Status_t
+        + ReadAdc(channel, pRawValue) : Status_t
+    }
+
+    class AnalogService_Context_t {
+        - initialized: bool
+    }
+
+    IAnalogService --> AnalogService_Context_t : manages
+}
+
+package "layer1Driver" {
+    interface IAdcDriver {
+        + AdcDriver_Read(channel, pValue) : Status_t
+    }
+}
+
+IAnalogService --> IAdcDriver : delegates
+
+note right of IAnalogService
+  Called by CAC for RID 0x0100.
+  Parameters: channel (uint8_t)
+  Returns: rawValue (uint16_t)
+end note
+@enduml

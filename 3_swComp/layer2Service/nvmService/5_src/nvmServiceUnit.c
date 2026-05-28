@@ -2,6 +2,7 @@
 
 #include "nvmService.h"
 #include "nvmServiceCfg.h"
+#include "nvmDriver.h"
 
 typedef struct
 {
@@ -42,6 +43,20 @@ static uint32_t NvmService_CalcCrc(const uint8_t *pData, uint16_t length)
 
 NvmService_Status_t NvmServiceUnit_Init(void)
 {
+    /* Initialize the underlying NVM Driver */
+    NvmDriver_Config_t nvmCfg = {0};
+    nvmCfg.type = NVM_TYPE_FLASH;
+    nvmCfg.baseAddress = 0x08010000U;
+    nvmCfg.totalSize = NVM_CFG_TOTAL_SIZE;
+    nvmCfg.pageSize = 256U;
+    nvmCfg.sectorSize = 4096U;
+    nvmCfg.enableWriteProtection = false;
+
+    if (NvmDriverUnit_Init(&nvmCfg) != NVMDRIVER_OK)
+    {
+        return NVM_SERVICE_STATUS_ERROR;
+    }
+
     context.initialized = true;
     for (uint8_t i = 0; i < NVM_SERVICE_CFG_MAX_KEYS; i++)
     {
@@ -54,6 +69,7 @@ NvmService_Status_t NvmServiceUnit_Init(void)
 
 NvmService_Status_t NvmServiceUnit_DeInit(void)
 {
+    (void)NvmDriverUnit_DeInit();
     context.initialized = false;
     return NVM_SERVICE_STATUS_OK;
 }

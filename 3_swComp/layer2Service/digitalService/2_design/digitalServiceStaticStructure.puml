@@ -1,0 +1,42 @@
+@startuml DigitalServiceStaticStructure
+skinparam backgroundColor #FEFEFE
+
+package "DigitalService" {
+    interface IDigitalService {
+        + Init() : Status_t
+        + DeInit() : Status_t
+        + WriteGpio(pin, state) : Status_t
+        + ReadGpio(pin, pState) : Status_t
+        + StartPwm(channel) : Status_t
+        + StopPwm(channel) : Status_t
+    }
+
+    class DigitalService_Context_t {
+        - initialized: bool
+    }
+
+    IDigitalService --> DigitalService_Context_t : manages
+}
+
+package "layer1Driver" {
+    interface IGpioDriver {
+        + GpioDriver_Write(pin, state) : Status_t
+        + GpioDriver_Read(pin, pState) : Status_t
+    }
+    interface IPwmDriver {
+        + PwmDriver_Start(channel) : Status_t
+        + PwmDriver_Stop(channel) : Status_t
+    }
+}
+
+IDigitalService --> IGpioDriver : GPIO operations
+IDigitalService --> IPwmDriver : PWM operations
+
+note right of IDigitalService
+  Called by CAC for:
+  - RID 0x0200: WriteGpio
+  - RID 0x0201: ReadGpio
+  - RID 0x0300: StartPwm
+  - RID 0x0301: StopPwm
+end note
+@enduml

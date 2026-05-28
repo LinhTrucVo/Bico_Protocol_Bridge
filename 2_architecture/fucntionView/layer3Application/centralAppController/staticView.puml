@@ -3,6 +3,12 @@
 title Central App Controller - Static View
 
 package "Central App Controller" {
+    [Frame Parser] as frameParser
+    note right of frameParser
+        Extracts UDS frames from serial byte stream.
+        Detects prefix (0x5555) and postfix (0xAAAA).
+        Configurable delimiters via macros.
+    end note
     [System Initializer] as init
     [UDS Command Dispatcher] as dispatcher
     note right of dispatcher
@@ -13,39 +19,49 @@ package "Central App Controller" {
     note right of mapper
         DID 0x1001 -> ConfigService.SetAdcSampleRate(rate)
         DID 0x1002 -> ConfigService.SetAdcResolution(res)
-        RID 0x0100 -> AnalogApp.ReadAdc(channel)
-        RID 0x0200 -> DigitalApp.WriteGpio(pin, state)
-        RID 0x0201 -> DigitalApp.ReadGpio(pin)
-        RID 0x0300 -> DigitalApp.StartPwm(channel)
-        RID 0x0301 -> DigitalApp.StopPwm(channel)
-        RID 0x0400 -> I2CApp.Write(addr, data)
-        RID 0x0401 -> I2CApp.Read(addr, len)
-        RID 0x0500 -> SPIApp.Write(dev, data)
-        RID 0x0501 -> SPIApp.Transceive(dev, tx, rx_len)
+        RID 0x0100 -> AnalogService.ReadAdc(channel)
+        RID 0x0200 -> DigitalService.WriteGpio(pin, state)
+        RID 0x0201 -> DigitalService.ReadGpio(pin)
+        RID 0x0300 -> DigitalService.StartPwm(channel)
+        RID 0x0301 -> DigitalService.StopPwm(channel)
+        RID 0x0400 -> I2cService.Write(addr, data)
+        RID 0x0401 -> I2cService.Read(addr, len)
+        RID 0x0500 -> SpiService.Write(dev, data)
+        RID 0x0501 -> SpiService.Transceive(dev, tx, rx_len)
+    end note
+    [Response Framer] as respFramer
+    note right of respFramer
+        Wraps UDS response with prefix/postfix
+        before writing to ComService.
     end note
     [State Manager] as stateMgr
     [Health Monitor] as watchdog
 }
 
-[Analog App] as analogApp
-[Digital App] as digitalApp
-[I2C App] as i2cApp
-[SPI App] as spiApp
+[ComService] as comService
+[Analog Service] as analogService
+[Digital Service] as digitalService
+[I2C Service] as i2cService
+[SPI Service] as spiService
 [Deserialize] as deserialize
 [Serialize] as serialize
 [Config Service] as configService
 
+comService -[#red]-> frameParser : Raw bytes (ComServiceUnit_Read)
+frameParser -[#red]-> dispatcher : Extracted UDS payload (after prefix/postfix removal)
 deserialize -[#orange]-> dispatcher : UDS_Request{sid, did/rid, raw payload}
 dispatcher --> mapper : Decode DID/RID + extract params
 mapper -[#purple]-> configService : Typed API (e.g. SetAdcSampleRate(1000))
-mapper -[#blue]-> analogApp : Typed API (e.g. ReadAdc(ch=1))
-mapper -[#blue]-> digitalApp : Typed API (e.g. WriteGpio(PA5, HIGH))
-mapper -[#blue]-> i2cApp : Typed API (e.g. Write(0x50, data))
-mapper -[#blue]-> spiApp : Typed API (e.g. Transceive(dev, tx, rx_len))
+mapper -[#blue]-> analogService : Typed API (e.g. ReadAdc(ch=1))
+mapper -[#blue]-> digitalService : Typed API (e.g. WriteGpio(PA5, HIGH))
+mapper -[#blue]-> i2cService : Typed API (e.g. Write(0x50, data))
+mapper -[#blue]-> spiService : Typed API (e.g. Transceive(dev, tx, rx_len))
 dispatcher -[#orange]-> serialize : UDS_Response / UDS_Error
-init -[#green]-> analogApp : Initialize
-init -[#green]-> digitalApp : Initialize
-init -[#green]-> i2cApp : Initialize
-init -[#green]-> spiApp : Initialize
+serialize -[#red]-> respFramer : Serialized response bytes
+respFramer -[#red]-> comService : Framed response (ComServiceUnit_Write)
+init -[#green]-> analogService : Initialize
+init -[#green]-> digitalService : Initialize
+init -[#green]-> i2cService : Initialize
+init -[#green]-> spiService : Initialize
 
 @enduml

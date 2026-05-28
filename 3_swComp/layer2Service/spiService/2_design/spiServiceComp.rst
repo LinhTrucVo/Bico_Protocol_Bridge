@@ -1,0 +1,54 @@
+#################################
+What is this component about?
+#################################
+
+The Serial-to-SPI Application provides typed SPI write and transceive operations. It is
+called by the Central Application Controller via RID 0x0500 (SPI Write) and
+RID 0x0501 (SPI Transceive). Receives typed parameters and returns typed results.
+
+
+#################################
+Static structure
+#################################
+
+..  uml:: SpiServiceStaticStructure.puml
+
+
+#################################
+Dynamic behaviour
+#################################
+
+* State machine diagram
+..  uml:: SpiServiceStateMachine.puml
+
+* Sequence diagram
+..  uml:: SpiServiceSequenceDiagram.puml
+
+
+#################################
+Design choices
+#################################
+Description:
+************
+Provide hardware-abstracted SPI write and full-duplex transceive for the CAC dispatcher.
+
+Assumptions and influencing factors:
+************************************
+* SPI master driver is initialized and available.
+* Device selection is handled via device index (chip select managed by driver).
+
+Solutions list:
+***************
+Solution 1 - Write + Transceive functions
+Expose Write(dev, pData, len) and Transceive(dev, pTx, txLen, pRx, rxLen).
+
+Solution 2 - Single transfer function with mode parameter
+Combined function handling both write-only and full-duplex.
+
+Solution evaluation:
+********************
+Separate functions match the RID mapping and provide clearer API semantics.
+
+Final solution:
+****************
+Solution 1 selected for clarity and RID alignment.

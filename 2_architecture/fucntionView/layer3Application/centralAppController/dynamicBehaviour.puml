@@ -1,92 +1,74 @@
-﻿@startuml
+@startuml
 title Central App Controller - Dynamic Behaviour
 
 participant "Main" as MAIN
 participant "Central App Controller" as CAC
+participant "ComService" as COM
+participant "Frame Parser" as FP
 participant "Config Service" as CS
 participant "Deserialize" as DES
 participant "Serialize" as SER
-participant "Analog App" as AA
-participant "Digital App" as DA
-participant "I2C App" as I2C
-participant "SPI App" as SPI
+participant "Analog Service" as AA
+participant "Digital Service" as DA
+participant "I2C Service" as I2C
+participant "SPI Service" as SPI
 
 == System Initialization ==
 MAIN -> CAC : CentralAppController_Init()
 CAC -> CS : ConfigService_Init()
 CS --> CAC : CONFIG_LOADED
-CAC -> AA : AnalogApp_Init()
+CAC -> AA : AnalogServiceUnit_Init()
 AA --> CAC : INIT_SUCCESS
-CAC -> DA : DigitalApp_Init()
+CAC -> DA : DigitalServiceUnit_Init()
 DA --> CAC : INIT_SUCCESS
-CAC -> I2C : I2CApp_Init()
+CAC -> I2C : I2cServiceUnit_Init()
 I2C --> CAC : INIT_SUCCESS
-CAC -> SPI : SPIApp_Init()
+CAC -> SPI : SpiServiceUnit_Init()
 SPI --> CAC : INIT_SUCCESS
+CAC -> FP : FrameParser_Reset()
 CAC --> MAIN : SYSTEM_READY
 
-== SID 0x22 Read Config ==
-DES -> CAC : Dispatch(UDS_Request{sid=0x22, did=0x1001})
-CAC -> CAC : MapDID(0x1001) -> GetAdcSampleRate
-CAC -> CS : ConfigService_GetAdcSampleRate()
-CS --> CAC : sampleRate=1000
-CAC -> CAC : EncodeResponse(1000) -> [0x03, 0xE8]
-CAC -> SER : BuildResponse(sid=0x22, did=0x1001, data=[0x03,0xE8])
+== Run (periodic) - Frame Extraction from Serial Stream ==
+MAIN -> CAC : CentralAppController_Run()
+CAC -> COM : ComServiceUnit_IsRxDataAvailable()
+COM --> CAC : true
+CAC -> COM : ComServiceUnit_Read(rxBuf, maxLen, &rxLen)
+COM --> CAC : rxLen bytes
 
-== SID 0x2E Write Config ==
-DES -> CAC : Dispatch(UDS_Request{sid=0x2E, did=0x1001, data=[0x07,0xD0]})
-CAC -> CAC : MapDID(0x1001) -> SetAdcSampleRate\nDecodePayload([0x07,0xD0]) -> rate=2000
-CAC -> CS : ConfigService_SetAdcSampleRate(2000)
-alt Valid
-    CS --> CAC : OK
-    CAC -> SER : BuildResponse(sid=0x2E, did=0x1001)
-else Invalid parameter
-    CS --> CAC : INVALID_PARAM
-    CAC -> SER : BuildNegativeResponse(requestSID=0x2E, nrc=0x31)
+loop For each received byte
+    CAC -> FP : FrameParser_ProcessByte(byte)
+    note right of FP
+      Frame format:
+      [0x55][0x55][UDS payload][0xAA][0xAA]
+      Prefix and postfix are configurable macros.
+    end note
 end
 
-== SID 0x31 Peripheral Control ==
-DES -> CAC : Dispatch(UDS_Request{sid=0x31, routineControlType=0x01, rid, params})
-CAC -> CAC : MapRID(rid) + DecodeParams(params)
+alt Frame complete (prefix + payload + postfix detected)
+    FP --> CAC : frameReady = true
 
-alt RID 0x0100 (ADC Read)
-    CAC -> AA : AnalogApp_ReadAdc(channel=1)
-    AA --> CAC : raw_value=2048
-    CAC -> CAC : EncodeResult(2048) -> [0x08, 0x00]
-    CAC -> SER : BuildResponse(sid=0x31, rid=0x0100, data=[0x08,0x00])
+    == UDS Dispatch ==
+    CAC -> DES : DeserializeUnit_Parse(frameBuffer, frameLength)
+    DES --> CAC : UDS_Request{sid, id, payload}
 
-else RID 0x0200 (GPIO Write)
-    CAC -> DA : DigitalApp_WriteGpio(pin=PA5, state=HIGH)
-    DA --> CAC : OK
-    CAC -> SER : BuildResponse(sid=0x31, rid=0x0200, status=0x00)
+    alt SID 0x22 Read Config
+        CAC -> CS : ConfigService_Get...(param)
+        CS --> CAC : value
+        CAC -> SER : BuildReadResponse(did, data)
+    else SID 0x2E Write Config
+        CAC -> CS : ConfigService_Set...(param, value)
+        CS --> CAC : OK / ERROR
+        CAC -> SER : BuildWriteResponse(did) or BuildNegativeResponse(nrc)
+    else SID 0x31 Peripheral Control
+        CAC -> AA : analogService / digitalService / i2cService / spiService
+        AA --> CAC : result
+        CAC -> SER : BuildRoutineResponse(rid, statusRecord)
+    end
 
-else RID 0x0201 (GPIO Read)
-    CAC -> DA : DigitalApp_ReadGpio(pin=PB3)
-    DA --> CAC : pin_state=HIGH
-    CAC -> SER : BuildResponse(sid=0x31, rid=0x0201, data=[0x01])
-
-else RID 0x0400 (I2C Write)
-    CAC -> I2C : I2CApp_Write(addr=0x50, data, len)
-    I2C --> CAC : OK
-    CAC -> SER : BuildResponse(sid=0x31, rid=0x0400, status=0x00)
-
-else RID 0x0401 (I2C Read)
-    CAC -> I2C : I2CApp_Read(addr=0x50, len=2)
-    I2C --> CAC : data=[0xAA, 0xBB]
-    CAC -> SER : BuildResponse(sid=0x31, rid=0x0401, data=[0xAA,0xBB])
-
-else RID 0x0500 (SPI Write)
-    CAC -> SPI : SPIApp_Write(dev=0, data=[0x9F])
-    SPI --> CAC : OK
-    CAC -> SER : BuildResponse(sid=0x31, rid=0x0500, status=0x00)
-
-else RID 0x0501 (SPI Transceive)
-    CAC -> SPI : SPIApp_Transceive(dev=0, tx=[0x9F], rx_len=3)
-    SPI --> CAC : rx=[0xEF, 0x40, 0x18]
-    CAC -> SER : BuildResponse(sid=0x31, rid=0x0501, data=[0xEF,0x40,0x18])
-
-else Unknown DID/RID
-    CAC -> SER : BuildNegativeResponse(requestSID, nrc=0x31)
+    == Send Framed Response ==
+    CAC -> CAC : Wrap response with prefix [0x55,0x55] + postfix [0xAA,0xAA]
+    CAC -> COM : ComServiceUnit_Write(framedResponse, totalLength)
+    CAC -> FP : FrameParser_Reset()
 end
 
 @enduml
