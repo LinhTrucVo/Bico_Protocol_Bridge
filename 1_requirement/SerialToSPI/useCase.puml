@@ -1,4 +1,30 @@
 @startuml Feature_UseCase
 
+actor User
+participant "Serial-SPI\nBridge Board" as Bridge
+participant "SPI Target\nDevice" as Target
+
+== SPI Configuration Use Case ==
+User -> Bridge: Send serial request:\nConfigure SPI (mode, clock, CS)
+Bridge -> Bridge: Save configuration\nto non-volatile storage
+Bridge --> User: Serial response:\nConfiguration successful
+
+== SPI Write Use Case ==
+User -> Bridge: Send serial request:\nWrite data to SPI device
+Bridge -> Target: SPI transfer (MOSI)\nwith configured parameters
+Target --> Bridge: SPI response (MISO)
+Bridge --> User: Serial response:\nWrite successful
+
+== SPI Read Use Case ==
+User -> Bridge: Send serial request:\nRead data from SPI device
+Bridge -> Target: SPI transfer (clock + CS)
+Target --> Bridge: SPI data (MISO)
+Bridge --> User: Serial response:\nRead data bytes
+
+note right of User
+  User communicates with SPI
+  peripherals (displays, flash,
+  sensors) via simple serial commands
+end note
 
 @enduml

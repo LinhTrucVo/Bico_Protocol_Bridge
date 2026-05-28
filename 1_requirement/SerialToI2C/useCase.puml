@@ -1,4 +1,30 @@
 @startuml Feature_UseCase
 
+actor User
+participant "Serial-I2C\nBridge Board" as Bridge
+participant "I2C Target\nDevice" as Target
+
+== I2C Configuration Use Case ==
+User -> Bridge: Send serial request:\nConfigure I2C (address, speed)
+Bridge -> Bridge: Save configuration\nto non-volatile storage
+Bridge --> User: Serial response:\nConfiguration successful
+
+== I2C Write Use Case ==
+User -> Bridge: Send serial request:\nWrite data to I2C device (addr, reg, data)
+Bridge -> Target: I2C write transfer\n(START + addr + reg + data + STOP)
+Target --> Bridge: ACK
+Bridge --> User: Serial response:\nWrite successful
+
+== I2C Read Use Case ==
+User -> Bridge: Send serial request:\nRead data from I2C device (addr, reg, length)
+Bridge -> Target: I2C read transfer\n(START + addr + reg + RESTART + read + STOP)
+Target --> Bridge: I2C data bytes
+Bridge --> User: Serial response:\nRead data bytes
+
+note right of User
+  User communicates with I2C
+  peripherals (sensors, EEPROMs,
+  displays) via simple serial commands
+end note
 
 @enduml
