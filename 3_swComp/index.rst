@@ -83,18 +83,18 @@ Layer 3: Application Components
     :maxdepth: 1
     
     layer3Application/centralAppController/index.rst
-    layer3Application/serialToAnalogApp/index.rst
-    layer3Application/serialToDigitalApp/index.rst
-    layer3Application/serialToI2CApp/index.rst
-    layer3Application/serialToSPIApp/index.rst
+    layer3Application/ANALOGAPP/index.rst
+    layer3Application/DIGITALAPP/index.rst
+    layer3Application/I2CAPP/index.rst
+    layer3Application/SPIAPP/index.rst
 
 **Application Responsibilities:**
 
 - **centralAppController**: Command dispatch and application coordination
-- **serialToAnalogApp**: Multi-channel ADC management with raw data handling
-- **serialToDigitalApp**: GPIO control and PWM generation
-- **serialToI2CApp**: I2C master/slave bridge operations
-- **serialToSPIApp**: SPI master/slave bridge operations
+- **ANALOGAPP**: Multi-channel ADC management with raw data handling
+- **DIGITALAPP**: GPIO control and PWM generation
+- **I2CAPP**: I2C master/slave bridge operations
+- **SPIAPP**: SPI master/slave bridge operations
 
 Component Structure
 *******************

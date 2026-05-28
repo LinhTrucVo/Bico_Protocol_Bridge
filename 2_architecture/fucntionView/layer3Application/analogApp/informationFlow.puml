@@ -1,0 +1,20 @@
+@startuml
+title Analog App - Information Flow
+
+package "ADC Read Flow" {
+    component "Central App Controller" as CC1
+    component "Analog App" as AA1
+    component "ADC Driver" as ADC1
+
+    CC1 -down-> AA1 : AnalogApp_ReadAdc(channel=1)
+    AA1 -down-> ADC1 : ADC_StartSingle(ch=1)
+    ADC1 -up-> AA1 : ConversionComplete(raw_value=2048)
+    AA1 -up-> CC1 : raw_value=2048
+
+    note right of AA1
+        Returns raw ADC value.
+        No UDS framing here.
+    end note
+}
+
+@enduml

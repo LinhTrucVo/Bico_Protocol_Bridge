@@ -1,4 +1,4 @@
-﻿@startuml
+@startuml
 
 title Central App Controller - Static View
 
@@ -27,10 +27,10 @@ package "Central App Controller" {
     [Health Monitor] as watchdog
 }
 
-[SerialToAnalog App] as analogApp
-[SerialToDigital App] as digitalApp
-[SerialToI2C App] as i2cApp
-[SerialToSPI App] as spiApp
+[Analog App] as analogApp
+[Digital App] as digitalApp
+[I2C App] as i2cApp
+[SPI App] as spiApp
 [Deserialize] as deserialize
 [Serialize] as serialize
 [Config Service] as configService

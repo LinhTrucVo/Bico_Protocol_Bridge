@@ -1,4 +1,4 @@
-﻿cmake_minimum_required(VERSION 3.21.0)
+cmake_minimum_required(VERSION 3.21.0)
 
 # Definition of test case executable and its dependencies
 add_executable(testCentralAppController
@@ -28,14 +28,14 @@ target_include_directories(testCentralAppController
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer2Service/configService/5_src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer2Service/configService/4_config
     # Layer3 Peripheral Apps
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/serialToAnalogApp/3_inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/serialToAnalogApp/5_src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/serialToDigitalApp/3_inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/serialToDigitalApp/5_src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/serialToI2CApp/3_inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/serialToI2CApp/5_src
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/serialToSPIApp/3_inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/serialToSPIApp/5_src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/ANALOGAPP/3_inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/ANALOGAPP/5_src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/DIGITALAPP/3_inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/DIGITALAPP/5_src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/I2CAPP/3_inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/I2CAPP/5_src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/SPIAPP/3_inc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../../../layer3Application/SPIAPP/5_src
 )
 
 # Possibility to add preprocessor definitions and compiler options for the test case

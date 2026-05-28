@@ -1,0 +1,34 @@
+@startuml I2CAPPStaticStructure
+skinparam backgroundColor #FEFEFE
+
+package "I2CAPP" {
+    interface II2CAPP {
+        + Init() : Status_t
+        + DeInit() : Status_t
+        + Write(address, pData, length) : Status_t
+        + Read(address, pData, length) : Status_t
+    }
+
+    class I2CAPP_Context_t {
+        - initialized: bool
+    }
+
+    II2CAPP --> I2CAPP_Context_t : manages
+}
+
+package "layer1Driver" {
+    interface II2cMasterDriver {
+        + I2cMasterDriver_Write(addr, pData, len) : Status_t
+        + I2cMasterDriver_Read(addr, pData, len) : Status_t
+    }
+}
+
+II2CAPP --> II2cMasterDriver : delegates
+
+note right of II2CAPP
+  No UDS awareness.
+  Called by CAC for:
+  - RID 0x0400: Write(address, pData, length)
+  - RID 0x0401: Read(address, pData, length)
+end note
+@enduml

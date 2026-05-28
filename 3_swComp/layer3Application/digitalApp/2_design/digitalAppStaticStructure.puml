@@ -1,0 +1,43 @@
+@startuml DIGITALAPPStaticStructure
+skinparam backgroundColor #FEFEFE
+
+package "DIGITALAPP" {
+    interface IDIGITALAPP {
+        + Init() : Status_t
+        + DeInit() : Status_t
+        + WriteGpio(pin, state) : Status_t
+        + ReadGpio(pin, pState) : Status_t
+        + StartPwm(channel) : Status_t
+        + StopPwm(channel) : Status_t
+    }
+
+    class DIGITALAPP_Context_t {
+        - initialized: bool
+    }
+
+    IDIGITALAPP --> DIGITALAPP_Context_t : manages
+}
+
+package "layer1Driver" {
+    interface IGpioDriver {
+        + GpioDriver_Write(pin, state) : Status_t
+        + GpioDriver_Read(pin, pState) : Status_t
+    }
+    interface IPwmDriver {
+        + PwmDriver_Start(channel) : Status_t
+        + PwmDriver_Stop(channel) : Status_t
+    }
+}
+
+IDIGITALAPP --> IGpioDriver : GPIO operations
+IDIGITALAPP --> IPwmDriver : PWM operations
+
+note right of IDIGITALAPP
+  No UDS awareness.
+  Called by CAC for:
+  - RID 0x0200: WriteGpio
+  - RID 0x0201: ReadGpio
+  - RID 0x0300: StartPwm
+  - RID 0x0301: StopPwm
+end note
+@enduml

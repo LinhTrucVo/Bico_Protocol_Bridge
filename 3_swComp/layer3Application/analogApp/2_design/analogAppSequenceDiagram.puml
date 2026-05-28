@@ -1,0 +1,23 @@
+@startuml ANALOGAPPSequenceDiagram
+participant "CAC" as cac
+participant "ANALOGAPP" as app
+participant "AdcDriver" as drv
+
+cac -> app : ANALOGAPP_Init()
+app -> drv : AdcDriver_Init()
+app --> cac : OK
+
+cac -> app : ANALOGAPP_ReadAdc(channel, &rawValue)
+app -> app : Validate initialized
+app -> drv : AdcDriver_Read(channel, &value)
+drv --> app : OK + value
+app -> app : *pRawValue = value
+app --> cac : OK
+
+note over app
+  CAC extracts channel from RID payload
+  and passes it as a typed parameter.
+  Result rawValue is returned to CAC
+  which builds the RoutineControl response.
+end note
+@enduml

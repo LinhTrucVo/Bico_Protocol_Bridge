@@ -45,19 +45,19 @@ The system is organized into a three-layer architecture, each with distinct resp
   High-level application modules that implement the system features. The Central App Controller coordinates 
   all application modules:
   
-  - SerialToAnalog: ADC channel management, sampling, threshold monitoring
-  - SerialToDigital: GPIO control and PWM generation
-  - SerialToI2C: I2C master/slave bridge operations
-  - SerialToSPI: SPI master/slave bridge operations
+  - Analog: ADC channel management, sampling, threshold monitoring
+  - Digital: GPIO control and PWM generation
+  - I2C: I2C master/slave bridge operations
+  - SPI: SPI master/slave bridge operations
 
 ..  toctree::
     :maxdepth: 1
 
     layer3Application/centralAppController/index.rst
-    layer3Application/serialToAnalogApp/index.rst
-    layer3Application/serialToDigitalApp/index.rst
-    layer3Application/serialToI2CApp/index.rst
-    layer3Application/serialToSPIApp/index.rst
+    layer3Application/ANALOGAPP/index.rst
+    layer3Application/DIGITALAPP/index.rst
+    layer3Application/I2CAPP/index.rst
+    layer3Application/SPIAPP/index.rst
 
 
 Information Flow

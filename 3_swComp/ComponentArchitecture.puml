@@ -6,10 +6,10 @@ skinparam packageStyle rectangle
 
 package "Layer 3 - Applications" #FFF3E0 {
     [centralAppController] as central
-    [serialToAnalogApp] as s2a
-    [serialToDigitalApp] as s2d
-    [serialToI2CApp] as s2i2c
-    [serialToSPIApp] as s2spi
+    [ANALOGAPP] as s2a
+    [DIGITALAPP] as s2d
+    [I2CAPP] as s2i2c
+    [SPIAPP] as s2spi
 }
 
 package "Layer 2 - Services" #E3F2FD {

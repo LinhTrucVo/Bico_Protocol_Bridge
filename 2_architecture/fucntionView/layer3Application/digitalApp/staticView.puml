@@ -1,0 +1,34 @@
+@startuml
+
+title Digital App - Static View
+
+package "Digital App" {
+    [GPIO Handler] as gpioHandler
+    note right of gpioHandler
+        API:
+        DigitalApp_WriteGpio(pin, state) -> status
+        DigitalApp_ReadGpio(pin) -> pin_state
+    end note
+    [PWM Handler] as pwmHandler
+    note right of pwmHandler
+        API:
+        DigitalApp_StartPwm(channel) -> status
+        DigitalApp_StopPwm(channel) -> status
+    end note
+    [Pin Mode Manager] as pinModeMgr
+}
+
+[GPIO Driver] as gpioDriver
+[PWM Driver] as pwmDriver
+[Config Service] as configService
+
+gpioHandler --> pinModeMgr : Mode check
+gpioHandler --> gpioDriver : Digital operations
+pwmHandler --> pwmDriver : PWM operations
+
+note bottom of gpioHandler
+    No DID/RID awareness.
+    Receives typed pin/state from CAC.
+end note
+
+@enduml

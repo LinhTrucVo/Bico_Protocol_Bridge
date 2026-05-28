@@ -1,0 +1,48 @@
+@startuml
+title Digital App - Information Flow
+
+package "GPIO Write Flow" {
+    component "Central App Controller" as CC1
+    component "Digital App" as DA1
+    component "GPIO Driver" as GPIO1
+
+    CC1 -down-> DA1 : DigitalApp_WriteGpio(pin=PA5, state=HIGH)
+    DA1 -down-> GPIO1 : GPIO_WritePin(PA5, HIGH)
+    GPIO1 -up-> DA1 : SUCCESS
+    DA1 -up-> CC1 : OK
+}
+
+package "GPIO Read Flow" {
+    component "Central App Controller" as CC2
+    component "Digital App" as DA2
+    component "GPIO Driver" as GPIO2
+
+    CC2 -down-> DA2 : DigitalApp_ReadGpio(pin=PB3)
+    DA2 -down-> GPIO2 : GPIO_ReadPin(PB3)
+    GPIO2 -up-> DA2 : pin_state=HIGH
+    DA2 -up-> CC2 : pin_state=HIGH
+}
+
+package "PWM Start Flow" {
+    component "Central App Controller" as CC3
+    component "Digital App" as DA3
+    component "PWM Driver" as PWM3
+
+    CC3 -down-> DA3 : DigitalApp_StartPwm(channel=1)
+    DA3 -down-> PWM3 : PWM_Start(ch=1)
+    PWM3 -up-> DA3 : SUCCESS
+    DA3 -up-> CC3 : OK
+}
+
+package "PWM Stop Flow" {
+    component "Central App Controller" as CC4
+    component "Digital App" as DA4
+    component "PWM Driver" as PWM4
+
+    CC4 -down-> DA4 : DigitalApp_StopPwm(channel=1)
+    DA4 -down-> PWM4 : PWM_Stop(ch=1)
+    PWM4 -up-> DA4 : SUCCESS
+    DA4 -up-> CC4 : OK
+}
+
+@enduml

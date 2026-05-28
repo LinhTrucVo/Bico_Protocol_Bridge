@@ -24,7 +24,7 @@ Component
 
 ..  swc:: centralAppController
     :provides: centralAppController.h – top-level application dispatch, frame routing, and state management.
-    :requires: deserialize.h, serialize.h, serialToAnalogApp.h, serialToDigitalApp.h, serialToI2CApp.h, serialToSPIApp.h.
+    :requires: deserialize.h, serialize.h, ANALOGAPP.h, DIGITALAPP.h, I2CAPP.h, SPIAPP.h.
 
 Public interfaces
 =================

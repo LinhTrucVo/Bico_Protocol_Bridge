@@ -1,0 +1,26 @@
+@startuml I2CAPPSequenceDiagram
+participant "CAC" as cac
+participant "I2CAPP" as app
+participant "I2cMasterDriver" as drv
+
+== I2C Write (RID 0x0400) ==
+cac -> app : I2CAPP_Write(address, pData, length)
+app -> app : Validate initialized
+app -> drv : I2cMasterDriver_Write(address, pData, length)
+drv --> app : OK
+app --> cac : OK
+
+== I2C Read (RID 0x0401) ==
+cac -> app : I2CAPP_Read(address, pData, length)
+app -> app : Validate initialized
+app -> drv : I2cMasterDriver_Read(address, pData, length)
+drv --> app : OK + data
+app --> cac : OK + pData filled
+
+note over app
+  CAC extracts address and data from
+  RID payload and passes as typed params.
+  Read result is returned to CAC which
+  builds the RoutineControl response.
+end note
+@enduml

@@ -1,13 +1,13 @@
-﻿@startuml
+@startuml
 title Central App Controller - Information Flow
 
 package "System Startup Flow" {
     component "Central App Controller" as CAC1
     component "Config Service" as CS1
-    component "SerialToAnalog App" as AA1
-    component "SerialToDigital App" as DA1
-    component "SerialToI2C App" as I2CA1
-    component "SerialToSPI App" as SPIA1
+    component "Analog App" as AA1
+    component "Digital App" as DA1
+    component "I2C App" as I2CA1
+    component "SPI App" as SPIA1
 
     CAC1 -down-> CS1 : ConfigService_Init()
     CS1 -up-> CAC1 : CONFIG_LOADED
@@ -47,7 +47,7 @@ package "SID 0x2E Write Config (DID 0x1001 = ADC Sample Rate)" {
 package "SID 0x31 RID 0x0100 ADC Read" {
     component "Deserialize" as DES4
     component "Central App Controller" as CAC4
-    component "SerialToAnalog App" as AA4
+    component "Analog App" as AA4
     component "Serialize" as SER4
 
     DES4 -down-> CAC4 : UDS_Request{sid=0x31, rid=0x0100, params=[0x01]}
@@ -61,7 +61,7 @@ package "SID 0x31 RID 0x0100 ADC Read" {
 package "SID 0x31 RID 0x0200 GPIO Write" {
     component "Deserialize" as DES5
     component "Central App Controller" as CAC5
-    component "SerialToDigital App" as DA5
+    component "Digital App" as DA5
     component "Serialize" as SER5
 
     DES5 -down-> CAC5 : UDS_Request{sid=0x31, rid=0x0200, params=[0x05, 0x01]}
@@ -74,7 +74,7 @@ package "SID 0x31 RID 0x0200 GPIO Write" {
 package "SID 0x31 RID 0x0400 I2C Write" {
     component "Deserialize" as DES6
     component "Central App Controller" as CAC6
-    component "SerialToI2C App" as I2CA6
+    component "I2C App" as I2CA6
     component "Serialize" as SER6
 
     DES6 -down-> CAC6 : UDS_Request{sid=0x31, rid=0x0400, params=[0x50, 0x10, 0xAA]}

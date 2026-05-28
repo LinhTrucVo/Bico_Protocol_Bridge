@@ -7,7 +7,7 @@ This function provides centralized control and coordination for all application 
 
 Description
 ***********
-The Central App Controller acts as the main coordinator for all application modules (SerialToAnalog, SerialToDigital, SerialToI2C, SerialToSPI). 
+The Central App Controller acts as the main coordinator for all application modules (Analog, Digital, I2C, SPI). 
 It manages initialization, command routing, resource arbitration, and system-level coordination.
 
 Key responsibilities:

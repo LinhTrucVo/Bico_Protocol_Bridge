@@ -1,4 +1,4 @@
-﻿// CentralAppController Implementation - UDS Command Dispatcher
+// CentralAppController Implementation - UDS Command Dispatcher
 
 #include <stddef.h>
 #include <string.h>
@@ -6,10 +6,10 @@
 #include "deserialize.h"
 #include "serialize.h"
 #include "configService.h"
-#include "serialToAnalogApp.h"
-#include "serialToDigitalApp.h"
-#include "serialToI2CApp.h"
-#include "serialToSPIApp.h"
+#include "ANALOGAPP.h"
+#include "DIGITALAPP.h"
+#include "I2CAPP.h"
+#include "SPIAPP.h"
 
 typedef struct
 {
@@ -30,10 +30,10 @@ CentralAppController_Status_t CentralAppControllerUnit_Init(void)
     (void)DeserializeUnit_Init();
     (void)SerializeUnit_Init();
     (void)ConfigServiceUnit_Init();
-    (void)SerialToAnalogApp_Init();
-    (void)SerialToDigitalApp_Init();
-    (void)SerialToI2CApp_Init();
-    (void)SerialToSPIApp_Init();
+    (void)ANALOGAPP_Init();
+    (void)DIGITALAPP_Init();
+    (void)I2CAPP_Init();
+    (void)SPIAPP_Init();
 
     context.initialized = true;
     context.currentState = CentralAppController_STATE_IDLE;
@@ -491,8 +491,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             }
             uint8_t channel = pReq->pPayload[0];
             uint16_t rawValue = 0U;
-            SerialToAnalogApp_Status_t aStatus = SerialToAnalogApp_ReadAdc(channel, &rawValue);
-            if (aStatus != SERIAL_TO_ANALOG_APP_STATUS_OK)
+            ANALOGAPP_Status_t aStatus = ANALOGAPP_ReadAdc(channel, &rawValue);
+            if (aStatus != ANALOG_APP_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -513,8 +513,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             }
             uint8_t pin = pReq->pPayload[0];
             uint8_t state = pReq->pPayload[1];
-            SerialToDigitalApp_Status_t dStatus = SerialToDigitalApp_WriteGpio(pin, state);
-            if (dStatus != SERIAL_TO_DIGITAL_APP_STATUS_OK)
+            DIGITALAPP_Status_t dStatus = DIGITALAPP_WriteGpio(pin, state);
+            if (dStatus != DIGITAL_APP_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -534,8 +534,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             }
             uint8_t pin = pReq->pPayload[0];
             uint8_t pinState = 0U;
-            SerialToDigitalApp_Status_t dStatus = SerialToDigitalApp_ReadGpio(pin, &pinState);
-            if (dStatus != SERIAL_TO_DIGITAL_APP_STATUS_OK)
+            DIGITALAPP_Status_t dStatus = DIGITALAPP_ReadGpio(pin, &pinState);
+            if (dStatus != DIGITAL_APP_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -554,8 +554,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint8_t channel = pReq->pPayload[0];
-            SerialToDigitalApp_Status_t dStatus = SerialToDigitalApp_StartPwm(channel);
-            if (dStatus != SERIAL_TO_DIGITAL_APP_STATUS_OK)
+            DIGITALAPP_Status_t dStatus = DIGITALAPP_StartPwm(channel);
+            if (dStatus != DIGITAL_APP_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -574,8 +574,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint8_t channel = pReq->pPayload[0];
-            SerialToDigitalApp_Status_t dStatus = SerialToDigitalApp_StopPwm(channel);
-            if (dStatus != SERIAL_TO_DIGITAL_APP_STATUS_OK)
+            DIGITALAPP_Status_t dStatus = DIGITALAPP_StopPwm(channel);
+            if (dStatus != DIGITAL_APP_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -596,8 +596,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             uint16_t addr = (uint16_t)pReq->pPayload[0];
             const uint8_t *pData = &pReq->pPayload[1];
             uint16_t len = pReq->payloadLength - 1U;
-            SerialToI2CApp_Status_t iStatus = SerialToI2CApp_Write(addr, pData, len);
-            if (iStatus != SERIAL_TO_I2C_APP_STATUS_OK)
+            I2CAPP_Status_t iStatus = I2CAPP_Write(addr, pData, len);
+            if (iStatus != I2C_APP_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -622,8 +622,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
-            SerialToI2CApp_Status_t iStatus = SerialToI2CApp_Read(addr, statusRecord, readLen);
-            if (iStatus != SERIAL_TO_I2C_APP_STATUS_OK)
+            I2CAPP_Status_t iStatus = I2CAPP_Read(addr, statusRecord, readLen);
+            if (iStatus != I2C_APP_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -643,8 +643,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             uint8_t dev = pReq->pPayload[0];
             const uint8_t *pData = &pReq->pPayload[1];
             uint16_t len = pReq->payloadLength - 1U;
-            SerialToSPIApp_Status_t sStatus = SerialToSPIApp_Write(dev, pData, len);
-            if (sStatus != SERIAL_TO_SPI_APP_STATUS_OK)
+            SPIAPP_Status_t sStatus = SPIAPP_Write(dev, pData, len);
+            if (sStatus != SPI_APP_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
@@ -671,8 +671,8 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
-            SerialToSPIApp_Status_t sStatus = SerialToSPIApp_Transceive(dev, pTx, txLen, statusRecord, rxLen);
-            if (sStatus != SERIAL_TO_SPI_APP_STATUS_OK)
+            SPIAPP_Status_t sStatus = SPIAPP_Transceive(dev, pTx, txLen, statusRecord, rxLen);
+            if (sStatus != SPI_APP_STATUS_OK)
             {
                 (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
                 return CENTRAL_APP_CONTROLLER_STATUS_ERROR;

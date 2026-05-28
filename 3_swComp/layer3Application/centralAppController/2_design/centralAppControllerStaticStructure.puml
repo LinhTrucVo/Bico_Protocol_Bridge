@@ -1,4 +1,4 @@
-﻿@startuml centralAppControllerStaticStructure
+@startuml centralAppControllerStaticStructure
 skinparam backgroundColor #FEFEFE
 
 package "centralAppController" {
@@ -59,20 +59,20 @@ package "layer2Service" {
 }
 
 package "peripheralApps" {
-    interface ISerialToAnalogApp {
+    interface IANALOGAPP {
         + ReadAdc(channel, pRawValue) : Status_t
     }
-    interface ISerialToDigitalApp {
+    interface IDIGITALAPP {
         + WriteGpio(pin, state) : Status_t
         + ReadGpio(pin, pState) : Status_t
         + StartPwm(channel) : Status_t
         + StopPwm(channel) : Status_t
     }
-    interface ISerialToI2CApp {
+    interface II2CAPP {
         + Write(address, pData, length) : Status_t
         + Read(address, pData, length) : Status_t
     }
-    interface ISerialToSPIApp {
+    interface ISPIAPP {
         + Write(device, pData, length) : Status_t
         + Transceive(device, pTxData, txLen, pRxData, rxLen) : Status_t
     }
@@ -81,8 +81,8 @@ package "peripheralApps" {
 ICentralAppController --> IDeserialize : uses
 ICentralAppController --> ISerialize : uses
 ICentralAppController --> IConfigService : DID read/write
-ICentralAppController --> ISerialToAnalogApp : RID 0x0100
-ICentralAppController --> ISerialToDigitalApp : RID 0x0200-0x0301
-ICentralAppController --> ISerialToI2CApp : RID 0x0400-0x0401
-ICentralAppController --> ISerialToSPIApp : RID 0x0500-0x0501
+ICentralAppController --> IANALOGAPP : RID 0x0100
+ICentralAppController --> IDIGITALAPP : RID 0x0200-0x0301
+ICentralAppController --> II2CAPP : RID 0x0400-0x0401
+ICentralAppController --> ISPIAPP : RID 0x0500-0x0501
 @enduml
