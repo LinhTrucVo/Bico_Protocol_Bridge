@@ -34,3 +34,14 @@ Req-gpioDriver-006: The component shall return INVALID_PIN for invalid pin IDs.
 
 Req-gpioDriver-007: The component shall set IO drive capacity (LV0, LV1, LV2, LV3) for a GPIO pin.
    Verification: SetIOCapability applies the requested drive capacity level (higher LV = higher driving capacity) for valid pins.
+
+Variant Handling
+****************
+
+The component supports multiple hardware variant implementations through the CMake ``L1_VARIANT``
+build variable. The file ``gpioDriverUnitEsp32.c`` provides the ESP32-specific implementation
+of the driver interface and is compiled instead of the default ``gpioDriverUnit.c`` when
+``L1_VARIANT`` is set to ``Esp32``.
+The public interface defined in ``gpioDriverUnit.h`` remains unchanged across all variants,
+ensuring API consistency for all upper layers.
+

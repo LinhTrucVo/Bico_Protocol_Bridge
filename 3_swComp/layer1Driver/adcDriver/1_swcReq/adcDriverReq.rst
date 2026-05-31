@@ -30,4 +30,14 @@ Req-adcDriver-005: The component shall allow configuration of sampling frequency
 
 Req-adcDriver-006: The component shall provide conversion-complete status and callback support.
    Verification: IsConversionComplete and callback are invoked on completion.
-   
+
+Variant Handling
+****************
+
+The component supports multiple hardware variant implementations through the CMake ``L1_VARIANT``
+build variable. The file ``adcDriverUnitEsp32.c`` provides the ESP32-specific implementation
+of the driver interface and is compiled instead of the default ``adcDriverUnit.c`` when
+``L1_VARIANT`` is set to ``Esp32``.
+The public interface defined in ``adcDriverUnit.h`` remains unchanged across all variants,
+ensuring API consistency for all upper layers.
+

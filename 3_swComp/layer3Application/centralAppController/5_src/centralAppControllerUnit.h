@@ -7,7 +7,7 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define CENTRAL_APP_CFG_MAX_FRAME_SIZE      256U
+#define CENTRAL_APP_CFG_MAX_FRAME_SIZE      4096U
 #define CENTRAL_APP_CFG_RESPONSE_TIMEOUT_MS 10U
 
 //============================================================================
