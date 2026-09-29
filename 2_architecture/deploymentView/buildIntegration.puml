@@ -1,0 +1,23 @@
+@startuml buildIntegration
+start
+:idf.py build\n(in 7_1_esp32_workspace/<project>);
+:Project CMakeLists.txt\n(ESP-IDF project.cmake);
+fork
+  :main/bico_protocol_bridge_swcomp/CMakeLists.txt;
+  :include(${BICO_ROOT}/3_swComp/bicoSwComp.cmake);
+  :idf_component_register(\n  SRCS ${BICO_SWCOMP_SOURCES}\n  INCLUDE_DIRS config ${BICO_SWCOMP_INCLUDE_DIRS}\n  REQUIRES bico_protocol_bridge_port_esp32);
+  note right
+    3_swComp sources are compiled in place,
+    never copied. BICO_BUILD_TESTS is OFF.
+  end note
+fork again
+  :main/bico_protocol_bridge_port_esp32/CMakeLists.txt;
+  :idf_component_register(\n  SRCS xxxPortEsp32.c\n  REQUIRES esp_adc esp_driver_* nvs_flash esp_timer);
+fork again
+  :main/CMakeLists.txt;
+  :idf_component_register(\n  SRCS main.cpp\n  REQUIRES bico_protocol_bridge_swcomp arduino);
+end fork
+:Link;
+:firmware.elf / .bin;
+stop
+@enduml

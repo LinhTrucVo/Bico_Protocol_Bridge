@@ -1,0 +1,49 @@
+@startuml deploymentOverview
+skinparam componentStyle rectangle
+skinparam packageStyle folder
+left to right direction
+
+package "3_swComp (hardware independent)" as SW {
+  component "layer3Application\ncentralAppController" as L3
+  component "layer2Service\ncomService, configService,\nserialize, deserialize, ..." as L2
+  component "layer1Driver (generic)\nadcDriver, gpioDriver, serialDriver, ..." as L1
+  interface "xxxPort.h\n(port interfaces)" as PORT
+  artifact "bicoSwComp.cmake\n(source + include list)" as LIST
+  L3 --> L2
+  L2 --> L1
+  L1 --> PORT : calls
+}
+
+package "7_x_<platform>_workspace (hardware dependent)" as WS {
+  package "7_1_esp32_workspace" as ESP {
+    component "main.cpp\nsetup() / loop()" as ESPMAIN
+    component "main/bico_protocol_bridge_swcomp\n(build glue only)" as ESPGLUE
+    component "main/bico_protocol_bridge_port_esp32\nxxxPortEsp32.c" as ESPPORT
+    component "main/config/ (cfg overrides)" as ESPCFG
+    component "ESP-IDF + Arduino" as IDF
+    ESPMAIN --> L3 : Init / Run
+    ESPPORT --> IDF
+  }
+  package "7_2_stm32_workspace (future)" as STM {
+    component "main.c" as STMMAIN
+    component "bico_protocol_bridge_swcomp glue" as STMGLUE
+    component "bico_port_stm32\nxxxPortStm32.c" as STMPORT
+    component "STM32 HAL / CubeMX" as HAL
+    STMMAIN --> L3 : Init / Run
+    STMPORT --> HAL
+  }
+}
+
+package "6_ut (host)" as UT {
+  component "gtest suites" as GT
+  component "fake ports\nxxxPortFake.c" as FAKE
+}
+
+ESPGLUE ..> LIST : include()
+STMGLUE ..> LIST : include()
+ESPPORT ..|> PORT
+STMPORT ..|> PORT
+FAKE ..|> PORT
+ESPCFG ..> L1 : overrides 4_config
+GT --> L1
+@enduml
