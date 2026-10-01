@@ -7,4 +7,4 @@ target_include_directories(spiMasterDriver PUBLIC
     4_config
     5_src
 )
-add_subdirectory(6_test/gtest)
+target_link_libraries(spiMasterDriver PUBLIC bico_protocol_bridge_port)

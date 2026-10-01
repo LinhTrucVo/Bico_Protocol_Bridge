@@ -1,5 +1,6 @@
 ﻿// NvmService Implementation
 
+#include <stddef.h>
 #include "nvmService.h"
 #include "nvmServiceCfg.h"
 #include "nvmDriver.h"

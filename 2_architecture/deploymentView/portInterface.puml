@@ -10,7 +10,7 @@ package "3_swComp/layer1Driver/adcDriver" {
     --
     parameter checks, state, callbacks
   }
-  interface "adcDriverPort.h" as PORT <<port>> {
+  interface "adcDriverPorting.h" as PORT <<port>> {
     + AdcPort_Init()
     + AdcPort_ConfigChannel()
     + AdcPort_ReadRaw()

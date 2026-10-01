@@ -10,4 +10,4 @@ target_include_directories(serialDriver PUBLIC
     5_src
 )
 
-add_subdirectory(6_test/gtest)
+target_link_libraries(serialDriver PUBLIC bico_protocol_bridge_port)

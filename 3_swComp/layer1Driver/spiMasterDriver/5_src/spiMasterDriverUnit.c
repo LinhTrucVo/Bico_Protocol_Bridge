@@ -1,5 +1,8 @@
 ﻿// SpiMasterDriver Implementation
+#include <stddef.h>
+#include <string.h>
 #include "spiMasterDriver.h"
+#include "spiMasterDriverPorting.h"
 
 typedef struct
 {
@@ -12,19 +15,27 @@ typedef struct
 
 static SpiMasterDriver_Context_t context = {0};
 
+static SpiMasterDriver_Status_t SpiMasterDriverUnit_Transfer(const uint8_t *pTxData, uint8_t *pRxData, uint16_t length);
+
 SpiMasterDriver_Status_t SpiMasterDriverUnit_Init(const SpiMasterDriver_Config_t *pConfig)
 {
     if (pConfig == NULL)
     {
         return SPI_MASTER_STATUS_INVALID_PARAM;
     }
+    if (context.initialized)
+    {
+        SpiMasterPort_DeInit();
+    }
 
-    // TODO: Add vendor-specific HAL initialization here
+    (void)memset(&context, 0, sizeof(context));
+    if (!SpiMasterPort_Init(pConfig->clockSpeed, (uint8_t)pConfig->mode, pConfig->bitOrder == SPI_BITORDER_LSB_FIRST))
+    {
+        return SPI_MASTER_STATUS_ERROR;
+    }
+
     context.config = *pConfig;
     context.initialized = true;
-    context.busy = false;
-    context.currentCs = 0;
-    context.callback = NULL;
     return SPI_MASTER_STATUS_OK;
 }
 
@@ -33,6 +44,15 @@ SpiMasterDriver_Status_t SpiMasterDriverUnit_Configure(uint32_t clockSpeed, SpiM
     if (!context.initialized)
     {
         return SPI_MASTER_STATUS_NOT_INITIALIZED;
+    }
+    if (clockSpeed == 0U)
+    {
+        return SPI_MASTER_STATUS_INVALID_PARAM;
+    }
+
+    if (!SpiMasterPort_Configure(clockSpeed, (uint8_t)mode, bitOrder == SPI_BITORDER_LSB_FIRST))
+    {
+        return SPI_MASTER_STATUS_ERROR;
     }
     context.config.clockSpeed = clockSpeed;
     context.config.mode = mode;
@@ -46,6 +66,10 @@ SpiMasterDriver_Status_t SpiMasterDriverUnit_SelectChip(SpiMasterDriver_ChipSele
     {
         return SPI_MASTER_STATUS_NOT_INITIALIZED;
     }
+    if (!SpiMasterPort_AcquireBus())
+    {
+        return SPI_MASTER_STATUS_ERROR;
+    }
     context.currentCs = cs;
     return SPI_MASTER_STATUS_OK;
 }
@@ -57,60 +81,40 @@ SpiMasterDriver_Status_t SpiMasterDriverUnit_DeselectChip(SpiMasterDriver_ChipSe
         return SPI_MASTER_STATUS_NOT_INITIALIZED;
     }
     (void)cs;
+    SpiMasterPort_ReleaseBus();
     return SPI_MASTER_STATUS_OK;
 }
 
 SpiMasterDriver_Status_t SpiMasterDriverUnit_Transmit(const uint8_t *pData, uint16_t length)
 {
-    if (!context.initialized)
+    if (pData == NULL)
     {
-        return SPI_MASTER_STATUS_NOT_INITIALIZED;
+        return context.initialized ? SPI_MASTER_STATUS_INVALID_PARAM : SPI_MASTER_STATUS_NOT_INITIALIZED;
     }
-    if (pData == NULL || length == 0 || length > SPI_MAX_TRANSFER_SIZE)
-    {
-        return SPI_MASTER_STATUS_INVALID_PARAM;
-    }
-    // TODO: Add vendor-specific HAL transmit here
-    if (context.callback != NULL)
-    {
-        context.callback(SPI_MASTER_STATUS_OK);
-    }
-    return SPI_MASTER_STATUS_OK;
+    return SpiMasterDriverUnit_Transfer(pData, NULL, length);
 }
 
 SpiMasterDriver_Status_t SpiMasterDriverUnit_Receive(uint8_t *pData, uint16_t length)
 {
-    if (!context.initialized)
+    if (pData == NULL)
     {
-        return SPI_MASTER_STATUS_NOT_INITIALIZED;
+        return context.initialized ? SPI_MASTER_STATUS_INVALID_PARAM : SPI_MASTER_STATUS_NOT_INITIALIZED;
     }
-    if (pData == NULL || length == 0 || length > SPI_MAX_TRANSFER_SIZE)
-    {
-        return SPI_MASTER_STATUS_INVALID_PARAM;
-    }
-    // TODO: Add vendor-specific HAL receive here
-    return SPI_MASTER_STATUS_OK;
+    return SpiMasterDriverUnit_Transfer(NULL, pData, length);
 }
 
 SpiMasterDriver_Status_t SpiMasterDriverUnit_TransmitReceive(const uint8_t *pTxData, uint8_t *pRxData, uint16_t length)
 {
-    if (!context.initialized)
+    if (pTxData == NULL || pRxData == NULL)
     {
-        return SPI_MASTER_STATUS_NOT_INITIALIZED;
+        return context.initialized ? SPI_MASTER_STATUS_INVALID_PARAM : SPI_MASTER_STATUS_NOT_INITIALIZED;
     }
-    if (length == 0 || length > SPI_MAX_TRANSFER_SIZE)
-    {
-        return SPI_MASTER_STATUS_INVALID_PARAM;
-    }
-    // TODO: Add vendor-specific HAL transfer here
-    (void)pTxData;
-    (void)pRxData;
-    return SPI_MASTER_STATUS_OK;
+    return SpiMasterDriverUnit_Transfer(pTxData, pRxData, length);
 }
 
 SpiMasterDriver_Status_t SpiMasterDriverUnit_TransmitWithTimeout(const uint8_t *pData, uint16_t length, uint32_t timeoutMs)
 {
-    (void)timeoutMs;
+    (void)timeoutMs; // the transfer is blocking and ends when the hardware is done
     return SpiMasterDriverUnit_Transmit(pData, length);
 }
 
@@ -136,9 +140,37 @@ SpiMasterDriver_Status_t SpiMasterDriverUnit_RegisterCallback(SpiMasterDriver_Ca
 
 SpiMasterDriver_Status_t SpiMasterDriverUnit_DeInit(void)
 {
-    // TODO: Add vendor-specific HAL deinitialization here
-    context.initialized = false;
-    context.busy = false;
-    context.callback = NULL;
+    if (context.initialized)
+    {
+        SpiMasterPort_DeInit();
+    }
+    (void)memset(&context, 0, sizeof(context));
     return SPI_MASTER_STATUS_OK;
+}
+
+static SpiMasterDriver_Status_t SpiMasterDriverUnit_Transfer(const uint8_t *pTxData, uint8_t *pRxData, uint16_t length)
+{
+    if (!context.initialized)
+    {
+        return SPI_MASTER_STATUS_NOT_INITIALIZED;
+    }
+    if (length == 0 || length > SPI_MAX_TRANSFER_SIZE)
+    {
+        return SPI_MASTER_STATUS_INVALID_PARAM;
+    }
+    if (context.busy)
+    {
+        return SPI_MASTER_STATUS_BUSY;
+    }
+
+    context.busy = true;
+    const bool done = SpiMasterPort_Transfer(pTxData, pRxData, length);
+    context.busy = false;
+
+    const SpiMasterDriver_Status_t status = done ? SPI_MASTER_STATUS_OK : SPI_MASTER_STATUS_ERROR;
+    if (context.callback != NULL)
+    {
+        context.callback(status);
+    }
+    return status;
 }

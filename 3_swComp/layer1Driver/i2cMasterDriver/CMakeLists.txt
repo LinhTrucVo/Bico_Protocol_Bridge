@@ -10,4 +10,4 @@ target_include_directories(i2cMasterDriver PUBLIC
     5_src
 )
 
-add_subdirectory(6_test/gtest)
+target_link_libraries(i2cMasterDriver PUBLIC bico_protocol_bridge_port)

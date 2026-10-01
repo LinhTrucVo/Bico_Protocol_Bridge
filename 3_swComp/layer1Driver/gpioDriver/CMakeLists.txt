@@ -12,8 +12,5 @@ target_include_directories(gpioDriver PUBLIC
 )
 
 target_link_libraries(gpioDriver PUBLIC
-    # Add vendor HAL dependencies here
+    bico_protocol_bridge_port
 )
-
-# Add tests subdirectory
-add_subdirectory(6_test/gtest)

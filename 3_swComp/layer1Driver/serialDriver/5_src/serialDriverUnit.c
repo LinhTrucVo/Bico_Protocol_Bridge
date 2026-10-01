@@ -4,9 +4,11 @@
 //============================================================================
 // Dependencies
 //============================================================================
+#include <stddef.h>
+#include <string.h>
 #include "serialDriver.h"
 #include "serialDriverCfg.h"
-#include "serialDriverUnit.h"
+#include "serialDriverPorting.h"
 
 //============================================================================
 // Local Macros
@@ -29,6 +31,12 @@ typedef struct
 static SerialDriver_Context_t serialContext = {0};
 
 //============================================================================
+// Local Function Prototypes
+//============================================================================
+static SerialPort_Parity_t SerialDriverUnit_ToPortParity(SerialDriver_Parity_t parity);
+static SerialPort_StopBits_t SerialDriverUnit_ToPortStopBits(SerialDriver_StopBits_t stopBits);
+
+//============================================================================
 // Public Function Implementations
 //============================================================================
 
@@ -38,12 +46,20 @@ SerialDriver_Status_t SerialDriverUnit_Init(const SerialDriver_Config_t *pConfig
     {
         return SERIAL_STATUS_ERROR;
     }
+    if (serialContext.initialized)
+    {
+        SerialPort_DeInit();
+    }
 
-    // TODO: Add vendor-specific HAL UART initialization here
+    (void)memset(&serialContext, 0, sizeof(serialContext));
+    if (!SerialPort_Init((uint32_t)pConfig->baudrate, SerialDriverUnit_ToPortParity(pConfig->parity),
+                         SerialDriverUnit_ToPortStopBits(pConfig->stopBits), (uint8_t)pConfig->dataBits))
+    {
+        return SERIAL_STATUS_ERROR;
+    }
+
     serialContext.config = *pConfig;
     serialContext.initialized = true;
-    serialContext.rxCallback = NULL;
-    serialContext.txCallback = NULL;
     return SERIAL_STATUS_OK;
 }
 
@@ -54,6 +70,11 @@ SerialDriver_Status_t SerialDriverUnit_Configure(SerialDriver_Baudrate_t baudrat
         return SERIAL_STATUS_ERROR;
     }
 
+    if (!SerialPort_Configure((uint32_t)baudrate, SerialDriverUnit_ToPortParity(parity),
+                              SerialDriverUnit_ToPortStopBits(stopBits), (uint8_t)dataBits))
+    {
+        return SERIAL_STATUS_ERROR;
+    }
     serialContext.config.baudrate = baudrate;
     serialContext.config.parity = parity;
     serialContext.config.stopBits = stopBits;
@@ -72,7 +93,10 @@ SerialDriver_Status_t SerialDriverUnit_Send(const uint8_t *pData, uint16_t lengt
         return SERIAL_STATUS_ERROR;
     }
 
-    // TODO: Add vendor-specific HAL UART transmit here
+    if (!SerialPort_Write(pData, length))
+    {
+        return SERIAL_STATUS_ERROR;
+    }
     if (serialContext.txCallback != NULL)
     {
         serialContext.txCallback();
@@ -82,11 +106,36 @@ SerialDriver_Status_t SerialDriverUnit_Send(const uint8_t *pData, uint16_t lengt
 
 SerialDriver_Status_t SerialDriverUnit_SendWithTimeout(const uint8_t *pData, uint16_t length, uint32_t timeoutMs)
 {
-    (void)timeoutMs;
-    return SerialDriverUnit_Send(pData, length);
+    if (!serialContext.initialized)
+    {
+        return SERIAL_STATUS_ERROR;
+    }
+    if (pData == NULL || length == 0 || length > SERIAL_MAX_BUFFER_SIZE)
+    {
+        return SERIAL_STATUS_ERROR;
+    }
+
+    if (!SerialPort_Write(pData, length))
+    {
+        return SERIAL_STATUS_ERROR;
+    }
+    if (!SerialPort_WaitTxDone(timeoutMs))
+    {
+        return SERIAL_STATUS_TIMEOUT;
+    }
+    if (serialContext.txCallback != NULL)
+    {
+        serialContext.txCallback();
+    }
+    return SERIAL_STATUS_OK;
 }
 
 SerialDriver_Status_t SerialDriverUnit_Receive(uint8_t *pData, uint16_t maxLength, uint16_t *pReceivedLength)
+{
+    return SerialDriverUnit_ReceiveWithTimeout(pData, maxLength, pReceivedLength, 0U);
+}
+
+SerialDriver_Status_t SerialDriverUnit_ReceiveWithTimeout(uint8_t *pData, uint16_t maxLength, uint16_t *pReceivedLength, uint32_t timeoutMs)
 {
     if (!serialContext.initialized)
     {
@@ -97,29 +146,30 @@ SerialDriver_Status_t SerialDriverUnit_Receive(uint8_t *pData, uint16_t maxLengt
         return SERIAL_STATUS_ERROR;
     }
 
-    // TODO: Add vendor-specific HAL UART receive here
-    *pReceivedLength = 0;
-    if (serialContext.rxCallback != NULL)
+    *pReceivedLength = 0U;
+    if (!SerialPort_Read(pData, maxLength, pReceivedLength, timeoutMs))
+    {
+        *pReceivedLength = 0U;
+        return SERIAL_STATUS_ERROR;
+    }
+    if (*pReceivedLength > 0U && serialContext.rxCallback != NULL)
     {
         serialContext.rxCallback(pData, *pReceivedLength);
     }
     return SERIAL_STATUS_OK;
 }
 
-SerialDriver_Status_t SerialDriverUnit_ReceiveWithTimeout(uint8_t *pData, uint16_t maxLength, uint16_t *pReceivedLength, uint32_t timeoutMs)
-{
-    (void)timeoutMs;
-    return SerialDriverUnit_Receive(pData, maxLength, pReceivedLength);
-}
-
 SerialDriver_Status_t SerialDriverUnit_GetAvailable(uint16_t *pAvailable)
 {
-    if (pAvailable == NULL)
+    if (!serialContext.initialized || pAvailable == NULL)
     {
         return SERIAL_STATUS_ERROR;
     }
 
-    *pAvailable = 0;
+    if (!SerialPort_GetAvailable(pAvailable))
+    {
+        return SERIAL_STATUS_ERROR;
+    }
     return SERIAL_STATUS_OK;
 }
 
@@ -129,6 +179,8 @@ SerialDriver_Status_t SerialDriverUnit_FlushRx(void)
     {
         return SERIAL_STATUS_ERROR;
     }
+
+    SerialPort_FlushRx();
     return SERIAL_STATUS_OK;
 }
 
@@ -138,6 +190,8 @@ SerialDriver_Status_t SerialDriverUnit_FlushTx(void)
     {
         return SERIAL_STATUS_ERROR;
     }
+
+    (void)SerialPort_WaitTxDone(SERIAL_CFG_TIMEOUT_MS);
     return SERIAL_STATUS_OK;
 }
 
@@ -173,7 +227,32 @@ SerialDriver_Status_t SerialDriverUnit_GetStatus(SerialDriver_Status_t *pStatus)
 
 SerialDriver_Status_t SerialDriverUnit_DeInit(void)
 {
-    // TODO: Add vendor-specific HAL deinitialization here
-    serialContext.initialized = false;
+    if (serialContext.initialized)
+    {
+        SerialPort_DeInit();
+    }
+    (void)memset(&serialContext, 0, sizeof(serialContext));
     return SERIAL_STATUS_OK;
+}
+
+//============================================================================
+// Local Function Implementations
+//============================================================================
+
+static SerialPort_Parity_t SerialDriverUnit_ToPortParity(SerialDriver_Parity_t parity)
+{
+    if (parity == SERIAL_PARITY_EVEN)
+    {
+        return SERIALPORT_PARITY_EVEN;
+    }
+    if (parity == SERIAL_PARITY_ODD)
+    {
+        return SERIALPORT_PARITY_ODD;
+    }
+    return SERIALPORT_PARITY_NONE;
+}
+
+static SerialPort_StopBits_t SerialDriverUnit_ToPortStopBits(SerialDriver_StopBits_t stopBits)
+{
+    return (stopBits == SERIAL_STOPBITS_2) ? SERIALPORT_STOPBITS_2 : SERIALPORT_STOPBITS_1;
 }

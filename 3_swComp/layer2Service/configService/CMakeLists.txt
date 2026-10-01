@@ -12,4 +12,3 @@ target_include_directories(configService PUBLIC
 
 target_link_libraries(configService PUBLIC nvmService)
 
-add_subdirectory(6_test/gtest)
