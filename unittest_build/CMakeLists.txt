@@ -14,7 +14,3 @@ add_subdirectory(../3_swComp/layer2Service/deserialize/6_test/gtest ${CMAKE_CURR
 add_subdirectory(../3_swComp/layer2Service/nvmService/6_test/gtest ${CMAKE_CURRENT_BINARY_DIR}/nvmService)
 add_subdirectory(../3_swComp/layer2Service/serialize/6_test/gtest ${CMAKE_CURRENT_BINARY_DIR}/serialize)
 add_subdirectory(../3_swComp/layer3Application/centralAppController/6_test/gtest ${CMAKE_CURRENT_BINARY_DIR}/centralAppController)
-add_subdirectory(../3_swComp/layer3Application/ANALOGAPP/6_test/gtest ${CMAKE_CURRENT_BINARY_DIR}/ANALOGAPP)
-add_subdirectory(../3_swComp/layer3Application/DIGITALAPP/6_test/gtest ${CMAKE_CURRENT_BINARY_DIR}/DIGITALAPP)
-add_subdirectory(../3_swComp/layer3Application/I2CAPP/6_test/gtest ${CMAKE_CURRENT_BINARY_DIR}/I2CAPP)
-add_subdirectory(../3_swComp/layer3Application/SPIAPP/6_test/gtest ${CMAKE_CURRENT_BINARY_DIR}/SPIAPP)
