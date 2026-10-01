@@ -23,10 +23,6 @@ Bico_Protocol_Brigde/
 │   ├── layer2Service/          # Business logic services
 │   └── layer3Application/      # Application logic
 ├── 4_addOn/                    # Add-on modules
-├── CMakeLists.txt              # Root build configuration
-├── BUILD_SUMMARY.txt           # Detailed build summary
-├── COMPONENT_STRUCTURE.md      # Component documentation
-└── QUICKSTART.md               # Quick start guide
 ```
 
 ## 🎯 Features
@@ -59,34 +55,17 @@ The project follows a 3-layer architecture:
 - SerialToI2C, SerialToSPI bridge applications
 - **Status**: Prototype created, application logic needed
 
+
 ## 🚀 Quick Start
+git clone https://github.com/LinhTrucVo/Bico_Protocol_Bridge.git
+cd Bico_Protocol_Bridge
+git submodule update --init --recursive --depth 1
+cd "7_1_esp32_workspace/esp_idf_bico_protocol_bridge"
+<esp-idf_path>\export.ps1
+idf.py build
 
-### Prerequisites
-- CMake 3.21 or higher
-- C/C++ compiler (GCC, Clang, MSVC)
-- Google Test (for unit testing)
 
-### Build
-
-```bash
-# Clone the repository
-cd Bico_Protocol_Brigde
-
-# Create build directory
-mkdir build
-cd build
-
-# Configure
-cmake ..
-
-# Build
-cmake --build .
-
-# Run tests
-ctest
-```
-
-### Component Template
+## Component Template
 
 Each component follows a standardized structure:
 - `1_swcReq/` - Requirements
@@ -98,48 +77,8 @@ Each component follows a standardized structure:
 - `7_tools/` - Tools
 - `8_misc/` - Miscellaneous
 
-## 📊 Implementation Status
-
-### ✅ Completed (As of 2026-02-01)
-- [x] 18 software components created
-- [x] Build system configured (CMake)
-- [x] Test infrastructure setup (GTest)
-- [x] Component interfaces defined
-- [x] Prototype implementations
-- [x] Documentation templates
-
-### ⚠️ TODO - Implementation Required
-
-#### Layer 1 Drivers
-All driver components have TODO markers for vendor-specific HAL code:
-```c
-// TODO: Add vendor-specific HAL initialization here
-```
-
-**Action Required**: Implement vendor MCU-specific peripheral access
-
-#### Layer 2 Services  
-Service logic placeholders need implementation:
-- Configuration management
-- Protocol serialization/deserialization
-- NVM operations
-
-**Action Required**: Implement business logic
-
-#### Layer 3 Applications
-Application state machines need implementation:
-- Serial command parsing
-- Protocol handling
-- State transitions
-- Error recovery
-
-**Action Required**: Implement application-specific logic
-
 ## 📝 Documentation
 
-- **[QUICKSTART.md](QUICKSTART.md)** - Quick reference guide
-- **[COMPONENT_STRUCTURE.md](COMPONENT_STRUCTURE.md)** - Detailed component docs
-- **[BUILD_SUMMARY.txt](BUILD_SUMMARY.txt)** - Build output summary
 - **Architecture diagrams** - In `2_architecture/fucntionView/`
 - **Component diagram** - `3_swComp/ComponentArchitecture.puml`
 
@@ -150,18 +89,6 @@ Each component includes:
 - Test CMakeLists.txt configuration
 - Mock/Fake/Stub infrastructure (in `6_test/gtest/`)
 
-Run all tests:
-```bash
-cd build
-ctest --verbose
-```
-
-Run specific component test:
-```bash
-./testAdcDriver
-./testSerialDriver
-# etc.
-```
 
 ## 🔧 Development Workflow
 
@@ -170,16 +97,9 @@ Run specific component test:
 3. **Review design** in `2_design/` folder
 4. **Implement logic** in `5_src/` files
 5. **Write tests** in `6_test/gtest/`
-6. **Build and test** using CMake
+6. **Build and test** (dependent on mcu build support)
 7. **Update documentation** as needed
 
-## 📦 Component Count
-
-- **Total Components**: 18
-- **Layer 1 (Drivers)**: 9 components
-- **Layer 2 (Services)**: 4 components
-- **Layer 3 (Applications)**: 5 components
-- **Total Files**: ~198 files
 
 ## 🎨 Coding Standards
 
@@ -192,7 +112,7 @@ Run specific component test:
 - **File Organization**:
   - One component per directory
   - Public APIs in `3_inc/`
-  - Implementation in `5_src/`
+  - Private APIs, Implementation for Component's Units (.c, .h files) in `5_src/`
   - Config in `4_config/`
 
 ## 🔗 Dependencies
@@ -202,24 +122,12 @@ Components are designed with clear layer dependencies:
 - Layer 2 → depends on → Layer 1  
 - Layer 1 → depends on → Hardware HAL (vendor-specific)
 
-Dependencies managed via CMake `target_link_libraries`.
-
-## 🛠️ Next Steps
-
-1. **Select target MCU** and set up vendor HAL
-2. **Implement Layer 1 drivers** with vendor-specific code
-3. **Implement Layer 2 services** with business logic
-4. **Implement Layer 3 applications** with protocols
-5. **Write comprehensive unit tests**
-6. **Perform integration testing**
-7. **Optimize and refine**
 
 ## 📞 Support
 
 For detailed information:
 - See component-specific documentation in each `1_swcReq/` and `2_design/` folder
 - Review architecture in `2_architecture/fucntionView/`
-- Check build summary in `BUILD_SUMMARY.txt`
 
 ## 📄 License
 
@@ -231,8 +139,8 @@ For detailed information:
 
 ---
 
-**Project Status**: Component structure complete, implementation in progress
+**Project Status**: 
 
-**Created**: 2026-02-01
+**Created**: 
 
-**Last Updated**: 2026-02-01
+**Last Updated**: 
