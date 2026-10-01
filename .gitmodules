@@ -1,0 +1,3 @@
+[submodule "components/arduino"]
+	path = 7_1_esp32_workspace/esp_idf_bico_protocol_bridge/components/arduino
+	url = https://github.com/espressif/arduino-esp32.git
