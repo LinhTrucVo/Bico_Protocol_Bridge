@@ -60,10 +60,11 @@ The project follows a 3-layer architecture:
 git clone https://github.com/LinhTrucVo/Bico_Protocol_Bridge.git
 cd Bico_Protocol_Bridge
 git submodule update --init --recursive --depth 1
-cd "7_1_esp32_workspace/esp_idf_bico_protocol_bridge"
+cd "7_1_esp32_workspace/esp32_bico_protocol_bridge"
 <esp-idf_path>\export.ps1
 idf.py build
 
+git clone --branch develop_on_esp32 --depth 1 --recurse-submodules --shallow-submodules https://github.com/LinhTrucVo/Bico_Protocol_Bridge.git
 
 ## Component Template
 
