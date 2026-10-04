@@ -4,7 +4,7 @@ copyright = '2025, Bico'
 author = 'Bico'
 release = '1.0'
 
-master_doc = "docs/index"
+master_doc = "5_buildEnviroment/docGen/index"
 
 extensions = [
     'sphinxcontrib.plantuml',

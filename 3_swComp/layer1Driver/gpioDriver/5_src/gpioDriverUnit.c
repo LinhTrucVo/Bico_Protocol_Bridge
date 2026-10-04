@@ -49,9 +49,9 @@ GpioDriver_Status_t GpioDriverUnit_Init(const GpioDriver_Config_t *pConfig)
     }
     if (gpioContext.initialized)
     {
-        GpioPort_DeInit();
+        // GpioPort_DeInit();
     }
-    if (!GpioPort_Init())
+    // if (!GpioPort_Init())
     {
         (void)memset(&gpioContext, 0, sizeof(gpioContext));
         return GPIO_STATUS_ERROR;
@@ -69,7 +69,7 @@ GpioDriver_Status_t GpioDriverUnit_Init(const GpioDriver_Config_t *pConfig)
         gpioContext.pinState[i] = GPIO_STATE_LOW;
         gpioContext.irqCallback[i] = NULL;
     }
-    GpioPort_SetInterruptHandler(GpioDriverUnit_OnPortInterrupt);
+    // GpioPort_SetInterruptHandler(GpioDriverUnit_OnPortInterrupt);
     return GPIO_STATUS_OK;
 }
 
@@ -148,7 +148,7 @@ GpioDriver_Status_t GpioDriverUnit_SetIOCapability(GpioDriver_Pin_t pin, GpioDri
         return GPIO_STATUS_INVALID_PIN;
     }
 
-    if (!GpioPort_SetDriveStrength(pin, (uint8_t)capability))
+    // if (!GpioPort_SetDriveStrength(pin, (uint8_t)capability))
     {
         return GPIO_STATUS_ERROR;
     }
@@ -167,7 +167,7 @@ GpioDriver_Status_t GpioDriverUnit_WritePin(GpioDriver_Pin_t pin, GpioDriver_Sta
         return GPIO_STATUS_INVALID_PIN;
     }
 
-    if (!GpioPort_Write(pin, state == GPIO_STATE_HIGH))
+    // if (!GpioPort_Write(pin, state == GPIO_STATE_HIGH))
     {
         return GPIO_STATUS_ERROR;
     }
@@ -187,7 +187,7 @@ GpioDriver_Status_t GpioDriverUnit_ReadPin(GpioDriver_Pin_t pin, GpioDriver_Stat
     }
 
     bool high = false;
-    if (!GpioPort_Read(pin, &high))
+    // if (!GpioPort_Read(pin, &high))
     {
         return GPIO_STATUS_ERROR;
     }
@@ -207,7 +207,7 @@ GpioDriver_Status_t GpioDriverUnit_TogglePin(GpioDriver_Pin_t pin)
     }
 
     bool high = false;
-    if (!GpioPort_Read(pin, &high))
+    // if (!GpioPort_Read(pin, &high))
     {
         return GPIO_STATUS_ERROR;
     }
@@ -236,7 +236,7 @@ GpioDriver_Status_t GpioDriverUnit_EnableInterrupt(GpioDriver_Pin_t pin, GpioDri
     }
 
     gpioContext.irqCallback[pin] = callback;
-    if (!GpioPort_EnableInterrupt(pin, portEdge))
+    // if (!GpioPort_EnableInterrupt(pin, portEdge))
     {
         gpioContext.irqCallback[pin] = NULL;
         return GPIO_STATUS_ERROR;
@@ -255,7 +255,7 @@ GpioDriver_Status_t GpioDriverUnit_DisableInterrupt(GpioDriver_Pin_t pin)
         return GPIO_STATUS_INVALID_PIN;
     }
 
-    GpioPort_DisableInterrupt(pin);
+    // GpioPort_DisableInterrupt(pin);
     gpioContext.irqCallback[pin] = NULL;
     return GPIO_STATUS_OK;
 }
@@ -268,10 +268,10 @@ GpioDriver_Status_t GpioDriverUnit_DeInit(void)
         {
             if (gpioContext.irqCallback[i] != NULL)
             {
-                GpioPort_DisableInterrupt(i);
+                // GpioPort_DisableInterrupt(i);
             }
         }
-        GpioPort_DeInit();
+        // GpioPort_DeInit();
     }
     (void)memset(&gpioContext, 0, sizeof(gpioContext));
     return GPIO_STATUS_OK;
@@ -310,7 +310,7 @@ static GpioDriver_Status_t GpioDriverUnit_ApplyPin(GpioDriver_Pin_t pin)
         pull = GPIOPORT_PULL_DOWN;
     }
 
-    if (!GpioPort_ConfigurePin(pin, mode, pull, (uint8_t)pCfg->ioCapability, gpioContext.pinState[pin] == GPIO_STATE_HIGH))
+    // if (!GpioPort_ConfigurePin(pin, mode, pull, (uint8_t)pCfg->ioCapability, gpioContext.pinState[pin] == GPIO_STATE_HIGH))
     {
         return GPIO_STATUS_ERROR;
     }
