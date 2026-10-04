@@ -11,13 +11,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Document
-        run: "5_buildEnviroment/docGen/docGen.sh"
+        run: "sudo 5_buildEnviroment/docGen/docGen.sh"
 
       - name: Upload docGen artifact
         uses: actions/upload-artifact@v4
         with:
           name: docGen
-          path: ./_build/docGen
+          path: ${{ github.workspace }}/_build/docGen
 
   unit_test:
     runs-on: ubuntu-latest
@@ -26,13 +26,13 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Unit Tests
-        run: "5_buildEnviroment/unitTestBuild/unitTestBuild.sh"
+        run: "sudo 5_buildEnviroment/unitTestBuild/unitTestBuild.sh"
 
       - name: Upload unitTestBuild artifact
         uses: actions/upload-artifact@v4
         with:
           name: unitTestBuild
-          path: ./_build/unitTestBuild
+          path: ${{ github.workspace }}/_build/unitTestBuild
           
   # zip_result:
   #   runs-on: ubuntu-latest
