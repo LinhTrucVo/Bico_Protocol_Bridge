@@ -4,6 +4,8 @@ copyright = '2025, Bico'
 author = 'Bico'
 release = '1.0'
 
+master_doc = "docs/index"
+
 extensions = [
     'sphinxcontrib.plantuml',
 ]
