@@ -18,4 +18,5 @@ build:
     - graphviz
   jobs:
     build:
-      - sphinx-build -b html -c 5_buildEnviroment/docGen . $READTHEDOCS_OUTPUT/html
+      html:
+        - sphinx-build -b html -c 5_buildEnviroment/docGen . $READTHEDOCS_OUTPUT/html
