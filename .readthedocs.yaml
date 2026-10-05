@@ -19,4 +19,4 @@ build:
   jobs:
     build:
       html:
-        - sphinx-build -b html -c 5_buildEnviroment/docGen . $READTHEDOCS_OUTPUT/html
+        - python -m sphinx -b html -c 5_buildEnviroment/docGen . $READTHEDOCS_OUTPUT/html
