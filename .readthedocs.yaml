@@ -4,10 +4,6 @@
 # Required
 version: 2
 
-python:
-   install:
-   - requirements: .readthedocsVenvRequirements.txt
-
 # Set the OS, Python version, and other tools you might need
 build:
   os: ubuntu-24.04
@@ -19,4 +15,5 @@ build:
   jobs:
     build:
       html:
+        - python -m pip install -r .readthedocsVenvRequirements.txt
         - python -m sphinx -b html -c 5_buildEnviroment/docGen . $READTHEDOCS_OUTPUT/html
