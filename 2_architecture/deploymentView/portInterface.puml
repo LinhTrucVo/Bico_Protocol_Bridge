@@ -1,0 +1,48 @@
+@startuml portInterface
+skinparam classAttributeIconSize 0
+hide empty members
+
+package "3_swComp/layer1Driver/adcDriver" {
+  class "adcDriverUnit.c" as ADC <<generic driver>> {
+    + AdcDriverUnit_Init()
+    + AdcDriverUnit_ReadValue()
+    + AdcDriverUnit_RegisterCallback()
+    --
+    parameter checks, state, callbacks
+  }
+  interface "adcDriverPorting.h" as PORT <<port>> {
+    + AdcPort_Init()
+    + AdcPort_ConfigChannel()
+    + AdcPort_ReadRaw()
+    + AdcPort_GetTimeUs()
+  }
+  ADC --> PORT
+}
+
+package "7_1_esp32_workspace" {
+  class "adcPortEsp32.c" as ESP {
+    uses esp_adc/adc_oneshot.h
+  }
+}
+
+package "7_2_stm32_workspace" {
+  class "adcPortStm32.c" as STM {
+    uses stm32xx_hal_adc.h
+  }
+}
+
+package "6_test/gtest/fake" {
+  class "adcPortFake.c" as FAKE {
+    FFF fakes, no hardware
+  }
+}
+
+ESP ..|> PORT
+STM ..|> PORT
+FAKE ..|> PORT
+
+note bottom of PORT
+  Standard C types only.
+  Exactly one implementation is linked per build.
+end note
+@enduml

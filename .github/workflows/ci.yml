@@ -4,64 +4,36 @@ name: Build and Test
 on: [push, pull_request]
 
 jobs:
-  unit_test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout this repo
-        uses: actions/checkout@v4
-
-      - name: Clone bico_gtest_docker
-        run: git clone https://github.com/LinhTrucVo/bico_gtest_docker.git
-
-      - name: Build Docker image
-        run: docker build -t bico_gtest -f bico_gtest_docker/.devcontainer/Dockerfile bico_gtest_docker/.devcontainer
-
-      - name: Run unit tests and copy results
-        run: |
-          CONTAINER_ID=$(docker create \
-            -v ${{ github.workspace }}/bico_gtest_docker:/workspaces/bico_gtest_docker \
-            -v ${{ github.workspace }}:/workspaces/bico_gtest_docker/project_under_test \
-            bico_gtest \
-            bash -c "sudo /workspaces/bico_gtest_docker/tool/coverage.sh")
-          docker start -a "$CONTAINER_ID"
-          docker cp "$CONTAINER_ID":/workspaces/bico_gtest_docker/_build ./ut_result
-          docker rm "$CONTAINER_ID"
-
-      - name: Upload ut_result artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ut_result
-          path: ./ut_result
-
   doc_gen:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v4
 
-      - name: Clone bico_rst_docker
-        run: git clone https://github.com/LinhTrucVo/bico_rst_docker.git
+      - name: Build Document
+        run: "5_buildEnviroment/docGen/docGen.sh"
 
-      - name: Build Docker image
-        run: docker build -t bico_rst -f bico_rst_docker/.devcontainer/Dockerfile bico_rst_docker/.devcontainer
-
-      - name: Run sphinx-build in container
-        run: |
-          CONTAINER_ID=$(docker create \
-            -v ${{ github.workspace }}/bico_rst_docker:/workspaces/bico_rst_docker \
-            -v ${{ github.workspace }}:/workspaces/bico_rst_docker/project_doc \
-            bico_rst \
-            bash -c "cd /workspaces/bico_rst_docker/project_doc && sudo sphinx-build -b html . /workspaces/bico_rst_docker/_build")
-          docker start -a "$CONTAINER_ID"
-          docker cp "$CONTAINER_ID":/workspaces/bico_rst_docker/_build ./doc_gen_artifact
-          docker rm "$CONTAINER_ID"
-
-      - name: Upload doc_gen_artifact
+      - name: Upload docGen artifact
         uses: actions/upload-artifact@v4
         with:
-          name: doc_gen_artifact
-          path: ./doc_gen_artifact
+          name: docGen
+          path: _build/docGen
 
+  unit_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+
+      - name: Build Unit Tests
+        run: "5_buildEnviroment/unitTestBuild/unitTestBuild.sh"
+
+      - name: Upload unitTestBuild artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: unitTestBuild
+          path: ${{ github.workspace }}/_build/unitTestBuild
+          
   # zip_result:
   #   runs-on: ubuntu-latest
   #   needs: [unit_test, doc_gen]

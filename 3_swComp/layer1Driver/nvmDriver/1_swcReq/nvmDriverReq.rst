@@ -31,3 +31,14 @@ Req-nvmDriver-005: The component shall calculate CRC for a memory region.
 
 Req-nvmDriver-006: The component shall support write protection enable/disable.
    Verification: EnableWriteProtection blocks writes and DisableWriteProtection allows writes.
+
+Variant Handling
+****************
+
+The component supports multiple hardware variant implementations through the CMake ``L1_VARIANT``
+build variable. The file ``nvmDriverUnitEsp32.c`` provides the ESP32-specific implementation
+of the driver interface and is compiled instead of the default ``nvmDriverUnit.c`` when
+``L1_VARIANT`` is set to ``Esp32``.
+The public interface defined in ``nvmDriverUnit.h`` remains unchanged across all variants,
+ensuring API consistency for all upper layers.
+

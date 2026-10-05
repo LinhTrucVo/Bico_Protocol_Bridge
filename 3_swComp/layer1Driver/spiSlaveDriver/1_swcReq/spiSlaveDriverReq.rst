@@ -28,3 +28,14 @@ Req-spiSlaveDriver-004: The component shall report selection status by the SPI m
 
 Req-spiSlaveDriver-005: The component shall support RX and TX completion callbacks.
    Verification: Registered callbacks are invoked on corresponding events.
+
+Variant Handling
+****************
+
+The component supports multiple hardware variant implementations through the CMake ``L1_VARIANT``
+build variable. The file ``spiSlaveDriverUnitEsp32.c`` provides the ESP32-specific implementation
+of the driver interface and is compiled instead of the default ``spiSlaveDriverUnit.c`` when
+``L1_VARIANT`` is set to ``Esp32``.
+The public interface defined in ``spiSlaveDriverUnit.h`` remains unchanged across all variants,
+ensuring API consistency for all upper layers.
+

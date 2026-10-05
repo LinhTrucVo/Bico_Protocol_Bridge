@@ -10,4 +10,3 @@ target_include_directories(centralAppController PUBLIC
     5_src
 )
 
-add_subdirectory(6_test/gtest)

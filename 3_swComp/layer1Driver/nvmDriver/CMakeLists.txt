@@ -7,4 +7,4 @@ target_include_directories(nvmDriver PUBLIC
     4_config
     5_src
 )
-add_subdirectory(6_test/gtest)
+target_link_libraries(nvmDriver PUBLIC bico_protocol_bridge_port)

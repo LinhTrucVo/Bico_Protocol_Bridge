@@ -14,4 +14,3 @@ target_link_libraries(comService PUBLIC
     serialDriver
 )
 
-add_subdirectory(6_test/gtest)

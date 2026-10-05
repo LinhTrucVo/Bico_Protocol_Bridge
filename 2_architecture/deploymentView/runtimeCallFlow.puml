@@ -1,0 +1,31 @@
+@startuml runtimeCallFlow
+autonumber
+actor "Host PC" as PC
+box "7_1_esp32_workspace" #LightYellow
+  participant "main.cpp\nloop()" as MAIN
+end box
+box "3_swComp" #LightBlue
+  participant "centralAppController" as CAC
+  participant "comService" as COM
+  participant "serialDriver /\nadcDriver (generic)" as DRV
+end box
+box "7_1_esp32_workspace" #LightYellow
+  participant "xxxPortEsp32.c" as PORT
+  participant "ESP-IDF" as IDF
+end box
+
+PC -> IDF : request frame (UART)
+MAIN -> COM : ComService_Run()
+COM -> DRV : SerialDriver_Read()
+DRV -> PORT : UartPort_Read()
+PORT -> IDF : uart_read_bytes()
+MAIN -> CAC : CentralAppController_Run()
+CAC -> DRV : AdcDriverUnit_ReadValue()
+DRV -> PORT : AdcPort_ReadRaw()
+PORT -> IDF : adc_oneshot_read()
+CAC -> COM : ComService_Write(response)
+COM -> DRV : SerialDriver_Write()
+DRV -> PORT : UartPort_Write()
+PORT -> IDF : uart_write_bytes()
+IDF -> PC : response frame
+@enduml

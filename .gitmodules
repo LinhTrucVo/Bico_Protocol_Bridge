@@ -1,0 +1,9 @@
+[submodule "7_1_esp32_workspace/esp32_bico_protocol_bridge"]
+	path = 7_1_esp32_workspace/esp32_bico_protocol_bridge
+	url = https://github.com/LinhTrucVo/esp32_bico_protocol_bridge.git
+[submodule "5_buildEnviroment/unitTestBuild/bico_gtest_docker"]
+	path = 5_buildEnviroment/unitTestBuild/bico_gtest_docker
+	url = https://github.com/LinhTrucVo/bico_gtest_docker
+[submodule "5_buildEnviroment/docGen/bico_rst_docker"]
+	path = 5_buildEnviroment/docGen/bico_rst_docker
+	url = https://github.com/LinhTrucVo/bico_rst_docker

@@ -1,6 +1,11 @@
 ﻿// NvmDriver Implementation
+#include <stddef.h>
+#include <string.h>
 #include "nvmDriver.h"
 #include "nvmDriverCfg.h"
+#include "nvmDriverPorting.h"
+
+#define NVM_CHECK_BUFFER_SIZE   32U
 
 typedef struct
 {
@@ -11,20 +16,10 @@ typedef struct
 } NvmDriver_Context_t;
 
 static NvmDriver_Context_t context = {0};
-static uint8_t nvmStorage[NVM_CFG_TOTAL_SIZE];
 
-static bool NvmDriver_IsAddressValid(NvmDriver_Address_t address, uint32_t length)
-{
-    if (address < context.config.baseAddress)
-    {
-        return false;
-    }
-    if ((address - context.config.baseAddress) + length > context.config.totalSize)
-    {
-        return false;
-    }
-    return true;
-}
+static bool NvmDriver_IsAddressValid(NvmDriver_Address_t address, uint32_t length);
+static NvmDriver_Status_t NvmDriver_Finish(bool done);
+static NvmDriver_Status_t NvmDriver_EraseRange(NvmDriver_Address_t address, uint32_t length);
 
 NvmDriver_Status_t NvmDriverUnit_Init(const NvmDriver_Config_t *pConfig)
 {
@@ -32,12 +27,20 @@ NvmDriver_Status_t NvmDriverUnit_Init(const NvmDriver_Config_t *pConfig)
     {
         return NVM_STATUS_ERROR;
     }
+    if (context.initialized)
+    {
+        NvmPort_DeInit();
+    }
 
-    // TODO: Add vendor-specific HAL initialization here
+    (void)memset(&context, 0, sizeof(context));
+    if (!NvmPort_Init())
+    {
+        return NVM_STATUS_ERROR;
+    }
+
     context.config = *pConfig;
     context.initialized = true;
     context.writeProtected = pConfig->enableWriteProtection;
-    context.callback = NULL;
     return NVM_STATUS_OK;
 }
 
@@ -56,12 +59,7 @@ NvmDriver_Status_t NvmDriverUnit_Read(NvmDriver_Address_t address, uint8_t *pDat
         return NVM_STATUS_INVALID_ADDRESS;
     }
 
-    uint32_t offset = address - context.config.baseAddress;
-    for (uint32_t i = 0; i < length; i++)
-    {
-        pData[i] = nvmStorage[offset + i];
-    }
-    return NVM_STATUS_OK;
+    return NvmPort_Read(address - context.config.baseAddress, pData, length) ? NVM_STATUS_OK : NVM_STATUS_ERROR;
 }
 
 NvmDriver_Status_t NvmDriverUnit_Write(NvmDriver_Address_t address, const uint8_t *pData, uint32_t length)
@@ -83,67 +81,22 @@ NvmDriver_Status_t NvmDriverUnit_Write(NvmDriver_Address_t address, const uint8_
         return NVM_STATUS_INVALID_ADDRESS;
     }
 
-    uint32_t offset = address - context.config.baseAddress;
-    for (uint32_t i = 0; i < length; i++)
-    {
-        nvmStorage[offset + i] = pData[i];
-    }
-    if (context.callback != NULL)
-    {
-        context.callback(NVM_STATUS_OK);
-    }
-    return NVM_STATUS_OK;
+    return NvmDriver_Finish(NvmPort_Write(address - context.config.baseAddress, pData, length));
 }
 
 NvmDriver_Status_t NvmDriverUnit_ErasePage(NvmDriver_Address_t address)
 {
-    if (!context.initialized)
-    {
-        return NVM_STATUS_NOT_INITIALIZED;
-    }
-    if (!NvmDriver_IsAddressValid(address, context.config.pageSize))
-    {
-        return NVM_STATUS_INVALID_ADDRESS;
-    }
-
-    uint32_t offset = address - context.config.baseAddress;
-    for (uint32_t i = 0; i < context.config.pageSize; i++)
-    {
-        nvmStorage[offset + i] = 0xFF;
-    }
-    return NVM_STATUS_OK;
+    return NvmDriver_EraseRange(address, context.config.pageSize);
 }
 
 NvmDriver_Status_t NvmDriverUnit_EraseSector(NvmDriver_Address_t address)
 {
-    if (!context.initialized)
-    {
-        return NVM_STATUS_NOT_INITIALIZED;
-    }
-    if (!NvmDriver_IsAddressValid(address, context.config.sectorSize))
-    {
-        return NVM_STATUS_INVALID_ADDRESS;
-    }
-
-    uint32_t offset = address - context.config.baseAddress;
-    for (uint32_t i = 0; i < context.config.sectorSize; i++)
-    {
-        nvmStorage[offset + i] = 0xFF;
-    }
-    return NVM_STATUS_OK;
+    return NvmDriver_EraseRange(address, context.config.sectorSize);
 }
 
 NvmDriver_Status_t NvmDriverUnit_EraseChip(void)
 {
-    if (!context.initialized)
-    {
-        return NVM_STATUS_NOT_INITIALIZED;
-    }
-    for (uint32_t i = 0; i < context.config.totalSize; i++)
-    {
-        nvmStorage[i] = 0xFF;
-    }
-    return NVM_STATUS_OK;
+    return NvmDriver_EraseRange(context.config.baseAddress, context.config.totalSize);
 }
 
 NvmDriver_Status_t NvmDriverUnit_WriteWithErase(NvmDriver_Address_t address, const uint8_t *pData, uint32_t length)
@@ -158,6 +111,10 @@ NvmDriver_Status_t NvmDriverUnit_WriteWithErase(NvmDriver_Address_t address, con
 
 NvmDriver_Status_t NvmDriverUnit_Verify(NvmDriver_Address_t address, const uint8_t *pData, uint32_t length, bool *pIsValid)
 {
+    if (!context.initialized)
+    {
+        return NVM_STATUS_NOT_INITIALIZED;
+    }
     if (pIsValid == NULL || pData == NULL)
     {
         return NVM_STATUS_ERROR;
@@ -167,21 +124,27 @@ NvmDriver_Status_t NvmDriverUnit_Verify(NvmDriver_Address_t address, const uint8
         return NVM_STATUS_INVALID_ADDRESS;
     }
 
-    uint32_t offset = address - context.config.baseAddress;
+    uint8_t buffer[NVM_CHECK_BUFFER_SIZE];
+    const uint32_t offset = address - context.config.baseAddress;
     *pIsValid = true;
-    for (uint32_t i = 0; i < length; i++)
+    for (uint32_t done = 0; (done < length) && *pIsValid; done += NVM_CHECK_BUFFER_SIZE)
     {
-        if (nvmStorage[offset + i] != pData[i])
+        const uint32_t chunk = ((length - done) < NVM_CHECK_BUFFER_SIZE) ? (length - done) : NVM_CHECK_BUFFER_SIZE;
+        if (!NvmPort_Read(offset + done, buffer, chunk))
         {
-            *pIsValid = false;
-            break;
+            return NVM_STATUS_ERROR;
         }
+        *pIsValid = (memcmp(buffer, &pData[done], chunk) == 0);
     }
     return NVM_STATUS_OK;
 }
 
 NvmDriver_Status_t NvmDriverUnit_CalculateCrc(NvmDriver_Address_t address, uint32_t length, uint32_t *pCrc)
 {
+    if (!context.initialized)
+    {
+        return NVM_STATUS_NOT_INITIALIZED;
+    }
     if (pCrc == NULL)
     {
         return NVM_STATUS_ERROR;
@@ -191,20 +154,29 @@ NvmDriver_Status_t NvmDriverUnit_CalculateCrc(NvmDriver_Address_t address, uint3
         return NVM_STATUS_INVALID_ADDRESS;
     }
 
+    uint8_t buffer[NVM_CHECK_BUFFER_SIZE];
+    const uint32_t offset = address - context.config.baseAddress;
     uint32_t crc = 0xFFFFFFFFU;
-    uint32_t offset = address - context.config.baseAddress;
-    for (uint32_t i = 0; i < length; i++)
+    for (uint32_t done = 0; done < length; done += NVM_CHECK_BUFFER_SIZE)
     {
-        crc ^= nvmStorage[offset + i];
-        for (uint8_t j = 0; j < 8; j++)
+        const uint32_t chunk = ((length - done) < NVM_CHECK_BUFFER_SIZE) ? (length - done) : NVM_CHECK_BUFFER_SIZE;
+        if (!NvmPort_Read(offset + done, buffer, chunk))
         {
-            if (crc & 1U)
+            return NVM_STATUS_ERROR;
+        }
+        for (uint32_t i = 0; i < chunk; i++)
+        {
+            crc ^= buffer[i];
+            for (uint8_t j = 0; j < 8; j++)
             {
-                crc = (crc >> 1U) ^ 0xEDB88320U;
-            }
-            else
-            {
-                crc >>= 1U;
+                if (crc & 1U)
+                {
+                    crc = (crc >> 1U) ^ 0xEDB88320U;
+                }
+                else
+                {
+                    crc >>= 1U;
+                }
             }
         }
     }
@@ -252,8 +224,51 @@ NvmDriver_Status_t NvmDriverUnit_RegisterCallback(NvmDriver_OperationCallback_t 
 
 NvmDriver_Status_t NvmDriverUnit_DeInit(void)
 {
-    // TODO: Add vendor-specific HAL deinitialization here
-    context.initialized = false;
-    context.callback = NULL;
+    if (context.initialized)
+    {
+        NvmPort_DeInit();
+    }
+    (void)memset(&context, 0, sizeof(context));
     return NVM_STATUS_OK;
+}
+
+static bool NvmDriver_IsAddressValid(NvmDriver_Address_t address, uint32_t length)
+{
+    if (address < context.config.baseAddress)
+    {
+        return false;
+    }
+    if ((address - context.config.baseAddress) + length > context.config.totalSize)
+    {
+        return false;
+    }
+    return true;
+}
+
+static NvmDriver_Status_t NvmDriver_Finish(bool done)
+{
+    const NvmDriver_Status_t status = done ? NVM_STATUS_OK : NVM_STATUS_ERROR;
+    if (context.callback != NULL)
+    {
+        context.callback(status);
+    }
+    return status;
+}
+
+static NvmDriver_Status_t NvmDriver_EraseRange(NvmDriver_Address_t address, uint32_t length)
+{
+    if (!context.initialized)
+    {
+        return NVM_STATUS_NOT_INITIALIZED;
+    }
+    if (context.writeProtected)
+    {
+        return NVM_STATUS_WRITE_PROTECTED;
+    }
+    if (!NvmDriver_IsAddressValid(address, length))
+    {
+        return NVM_STATUS_INVALID_ADDRESS;
+    }
+
+    return NvmDriver_Finish(NvmPort_Erase(address - context.config.baseAddress, length));
 }

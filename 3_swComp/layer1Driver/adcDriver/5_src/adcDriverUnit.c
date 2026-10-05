@@ -7,7 +7,7 @@
 #include <string.h>
 #include "adcDriver.h"
 #include "adcDriverCfg.h"
-#include "adcDriverUnit.h"
+#include "adcDriverPorting.h"
 
 //============================================================================
 // Local Macros
@@ -20,6 +20,7 @@ typedef struct
 {
     bool initialized;
     bool busy;
+    bool conversionComplete;
     AdcDriver_Config_t config;
     bool channelEnabled[ADC_MAX_CHANNELS];
     uint16_t lastValue[ADC_MAX_CHANNELS];
@@ -35,6 +36,7 @@ static AdcDriver_Context_t adcContext = {0};
 // Local Function Prototypes
 //============================================================================
 static bool AdcDriverUnit_IsValidChannel(AdcDriver_Channel_t channel);
+static void AdcDriverUnit_OnPortSample(uint8_t channel, uint16_t value);
 
 //============================================================================
 // Public Function Implementations
@@ -46,18 +48,21 @@ AdcDriver_Status_t AdcDriverUnit_Init(const AdcDriver_Config_t *pConfig)
     {
         return ADC_STATUS_INVALID_PARAM;
     }
+    if (adcContext.initialized)
+    {
+        AdcPort_StopPeriodicSampling();
+        AdcPort_DeInit();
+    }
 
-    // TODO: Add vendor-specific HAL initialization here
+    (void)memset(&adcContext, 0, sizeof(adcContext));
+    if (!AdcPort_Init())
+    {
+        return ADC_STATUS_ERROR;
+    }
 
     adcContext.config = *pConfig;
     adcContext.initialized = true;
-    adcContext.busy = false;
-    for (uint8_t i = 0; i < ADC_MAX_CHANNELS; i++)
-    {
-        adcContext.channelEnabled[i] = false;
-        adcContext.lastValue[i] = 0;
-    }
-    adcContext.callback = NULL;
+    AdcPort_SetSampleHandler(AdcDriverUnit_OnPortSample);
 
     return ADC_STATUS_OK;
 }
@@ -73,7 +78,10 @@ AdcDriver_Status_t AdcDriverUnit_ConfigureChannel(AdcDriver_Channel_t channel, b
         return ADC_STATUS_INVALID_PARAM;
     }
 
-    // TODO: Configure channel in vendor HAL
+    if (enable && !AdcPort_ConfigureChannel((uint8_t)channel))
+    {
+        return ADC_STATUS_ERROR;
+    }
     adcContext.channelEnabled[channel] = enable;
 
     return ADC_STATUS_OK;
@@ -131,16 +139,31 @@ AdcDriver_Status_t AdcDriverUnit_StartConversion(AdcDriver_Channel_t channel)
         return ADC_STATUS_BUSY;
     }
 
-    // TODO: Start conversion in vendor HAL
-    adcContext.busy = true;
-    adcContext.lastValue[channel] = 0;
+    adcContext.conversionComplete = false;
+
+    if ((adcContext.config.conversionMode == ADC_MODE_CONTINUOUS) && (adcContext.config.samplingFrequency > 0U))
+    {
+        if (!AdcPort_StartPeriodicSampling((uint8_t)channel, adcContext.config.samplingFrequency))
+        {
+            return ADC_STATUS_ERROR;
+        }
+        adcContext.busy = true;
+        return ADC_STATUS_OK;
+    }
+
+    uint16_t value = 0U;
+    if (!AdcPort_ReadRaw((uint8_t)channel, &value))
+    {
+        return ADC_STATUS_ERROR;
+    }
+    adcContext.lastValue[channel] = value;
+    adcContext.conversionComplete = true;
 
     if (adcContext.config.enableInterrupt && adcContext.callback != NULL)
     {
-        adcContext.callback(channel, adcContext.lastValue[channel]);
+        adcContext.callback(channel, value);
     }
 
-    adcContext.busy = false;
     return ADC_STATUS_OK;
 }
 
@@ -151,7 +174,7 @@ AdcDriver_Status_t AdcDriverUnit_StopConversion(void)
         return ADC_STATUS_NOT_INITIALIZED;
     }
 
-    // TODO: Stop conversion in vendor HAL
+    AdcPort_StopPeriodicSampling();
     adcContext.busy = false;
     return ADC_STATUS_OK;
 }
@@ -162,12 +185,18 @@ AdcDriver_Status_t AdcDriverUnit_ReadValue(AdcDriver_Channel_t channel, uint16_t
     {
         return ADC_STATUS_NOT_INITIALIZED;
     }
-    if (pValue == NULL || !AdcDriverUnit_IsValidChannel(channel))
+    if (pValue == NULL || !AdcDriverUnit_IsValidChannel(channel) || !adcContext.channelEnabled[channel])
     {
         return ADC_STATUS_INVALID_PARAM;
     }
 
-    *pValue = adcContext.lastValue[channel];
+    uint16_t value = 0U;
+    if (!AdcPort_ReadRaw((uint8_t)channel, &value))
+    {
+        return ADC_STATUS_ERROR;
+    }
+    adcContext.lastValue[channel] = value;
+    *pValue = value;
     return ADC_STATUS_OK;
 }
 
@@ -182,7 +211,7 @@ AdcDriver_Status_t AdcDriverUnit_IsConversionComplete(AdcDriver_Channel_t channe
         return ADC_STATUS_INVALID_PARAM;
     }
 
-    *pComplete = !adcContext.busy;
+    *pComplete = adcContext.conversionComplete;
     return ADC_STATUS_OK;
 }
 
@@ -222,8 +251,12 @@ AdcDriver_Status_t AdcDriverUnit_GetStatus(AdcDriver_Status_t *pStatus)
 
 AdcDriver_Status_t AdcDriverUnit_DeInit(void)
 {
-    // TODO: Add vendor-specific HAL deinitialization here
-    memset_s(&adcContext, sizeof(adcContext), 0, sizeof(adcContext));
+    if (adcContext.initialized)
+    {
+        AdcPort_StopPeriodicSampling();
+        AdcPort_DeInit();
+    }
+    (void)memset(&adcContext, 0, sizeof(adcContext));
     return ADC_STATUS_OK;
 }
 
@@ -234,4 +267,19 @@ AdcDriver_Status_t AdcDriverUnit_DeInit(void)
 static bool AdcDriverUnit_IsValidChannel(AdcDriver_Channel_t channel)
 {
     return (channel < ADC_MAX_CHANNELS);
+}
+
+static void AdcDriverUnit_OnPortSample(uint8_t channel, uint16_t value)
+{
+    if (channel >= ADC_MAX_CHANNELS)
+    {
+        return;
+    }
+
+    adcContext.lastValue[channel] = value;
+    adcContext.conversionComplete = true;
+    if (adcContext.callback != NULL)
+    {
+        adcContext.callback((AdcDriver_Channel_t)channel, value);
+    }
 }
