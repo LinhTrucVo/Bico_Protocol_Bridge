@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: unitTestBuild
-          path: _build/unitTestBuild
+          path: ${{ github.workspace }}/_build/unitTestBuild
           
   # zip_result:
   #   runs-on: ubuntu-latest

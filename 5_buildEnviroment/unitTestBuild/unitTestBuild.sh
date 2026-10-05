@@ -26,7 +26,7 @@ else
     -v $(pwd)/5_buildEnviroment/unitTestBuild/bico_gtest_docker:/workspaces/bico_gtest_docker \
     -v $(pwd):/workspaces/bico_gtest_docker/project_under_test \
     bico_gtest \
-    bash -c "/workspaces/bico_gtest_docker/tool/coverage.sh /workspaces/bico_gtest_docker/project_under_test/5_buildEnviroment/unitTestBuild"
+    bash -c "sudo /workspaces/bico_gtest_docker/tool/coverage.sh /workspaces/bico_gtest_docker/project_under_test/5_buildEnviroment/unitTestBuild"
 fi
 
 echo "${logging_prefix}Start Bico_Protocol_Bridge_unittestBuild container and build unittest"

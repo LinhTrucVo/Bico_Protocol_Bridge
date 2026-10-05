@@ -28,7 +28,7 @@ else
     bash -c "sudo sphinx-build  -b html  \
     -c /workspaces/5_buildEnviroment/docGen  \
     /workspaces  \
-    /workspaces/_build/docgen"
+    /workspaces/_build/docGen"
 fi
 
 echo "${logging_prefix}Start Bico_Protocol_Bridge_docGen container and build documentation"
