@@ -7,9 +7,9 @@ echo "${logging_prefix}Build bico_rst_docker image"
 
 IMAGE_NAME="bico_rst"
 if docker image inspect "$IMAGE_NAME" > /dev/null 2>&1; then
-    echo "Docker image '$IMAGE_NAME' already exists. Skipping build."
+    echo "${logging_prefix}Docker image '$IMAGE_NAME' already exists. Skipping build."
 else
-    echo "Docker image '$IMAGE_NAME' does not exist. Building..."
+    echo "${logging_prefix}Docker image '$IMAGE_NAME' does not exist. Building..."
     docker build \
         -t "$IMAGE_NAME" \
         -f ./5_buildEnviroment/docGen/bico_rst_docker/.devcontainer/Dockerfile \

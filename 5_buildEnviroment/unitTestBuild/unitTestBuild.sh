@@ -7,9 +7,9 @@ echo "${logging_prefix}Build bico_gtest_docker image"
 
 IMAGE_NAME="bico_gtest"
 if docker image inspect "$IMAGE_NAME" > /dev/null 2>&1; then
-    echo "Docker image '$IMAGE_NAME' already exists. Skipping build."
+    echo "${logging_prefix}Docker image '$IMAGE_NAME' already exists. Skipping build."
 else
-    echo "Docker image '$IMAGE_NAME' does not exist. Building..."
+    echo "${logging_prefix}Docker image '$IMAGE_NAME' does not exist. Building..."
     docker build \
         -t "$IMAGE_NAME" \
         -f ./5_buildEnviroment/unitTestBuild/bico_gtest_docker/.devcontainer/Dockerfile \
