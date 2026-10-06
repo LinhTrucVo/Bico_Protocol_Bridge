@@ -10,8 +10,9 @@ build:
   tools:
     python: "3.11"
   apt_packages:
-    - default-jre-headless
+    - default-jre
     - graphviz
+    - plantuml
   jobs:
     build:
       html:

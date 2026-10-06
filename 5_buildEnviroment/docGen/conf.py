@@ -11,7 +11,8 @@ extensions = [
 ]
 
 # Path to plantuml.jar
-plantuml = 'java -jar /usr/bin/plantuml.jar'
+# plantuml = 'java -jar /usr/bin/plantuml.jar'
+plantuml = 'plantuml'
 
 templates_path = ['_templates']
 exclude_patterns = []
