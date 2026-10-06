@@ -10,13 +10,11 @@ build:
   tools:
     python: "3.11"
   apt_packages:
-    - default-jre
+    - default-jre-headless
     - graphviz
-    - wget
   jobs:
     build:
       html:
         - python -m pip install -r .readthedocsVenvRequirements.txt
-        - wget -O /usr/bin/plantuml.jar https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
         - python -m sphinx -b html -c 5_buildEnviroment/docGen . $READTHEDOCS_OUTPUT/html
         - cp .readthedocsRootPage.html $READTHEDOCS_OUTPUT/html/index.html
