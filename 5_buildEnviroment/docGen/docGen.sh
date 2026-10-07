@@ -25,7 +25,7 @@ else
     docker create --name Bico_Protocol_Bridge_docGen \
     -v $(pwd):/workspaces \
     bico_rst \
-    bash -c "sudo sphinx-build  -b html  \
+    bash -c "sphinx-build  -b html  \
     -c /workspaces/5_buildEnviroment/docGen  \
     /workspaces  \
     /workspaces/_build/docGen"
