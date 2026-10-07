@@ -23,6 +23,7 @@ if [ $? -eq 0 ]; then
 else
     echo "${logging_prefix}Container does not exist, create container..."
     docker create --name Bico_Protocol_Bridge_docGen \
+    --user "$(id -u):$(id -g)" \
     -v $(pwd):/workspaces \
     bico_rst \
     bash -c "sphinx-build  -b html  \
