@@ -1,5 +1,20 @@
 # Bico Protocol Bridge
 
+## 💡 What Can Bico Protocol Bridge Do?
+
+Bico Protocol Bridge is an embedded software framework that **translates serial commands into hardware peripheral operations**. In plain terms, it lets you control hardware devices over a serial interface:
+
+| Capability | What it means |
+|---|---|
+| **Serial → Analog** | Send a command over serial to read/set analog voltage levels (ADC/PWM) |
+| **Serial → Digital** | Toggle GPIO pins or read digital input states via serial commands |
+| **Serial → I2C** | Use serial commands to read/write any I2C sensor or device on the bus |
+| **Serial → SPI** | Use serial commands to exchange data with any SPI peripheral |
+
+All four bridges share the same layered architecture (drivers → services → applications) so adding new protocol support follows a consistent, well-documented pattern.
+
+---
+
 ## Project Overview
 
 The Bico Protocol Bridge is an embedded software project that provides protocol bridging capabilities between serial interfaces and various hardware peripherals (Analog, Digital I/O, I2C, SPI).
