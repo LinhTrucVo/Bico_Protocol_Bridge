@@ -1,5 +1,5 @@
-﻿#ifndef SPI_SLAVEDRIVERUNIT_H
-#define SPI_SLAVEDRIVERUNIT_H
+﻿#ifndef BPB_SPI_SLAVEDRIVERUNIT_H
+#define BPB_SPI_SLAVEDRIVERUNIT_H
 
 //============================================================================
 // Dependencies
@@ -11,44 +11,44 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define SPI_SLAVE_CFG_DEFAULT_MODE     0
-#define SPI_SLAVE_CFG_DEFAULT_BITORDER 0
-#define SPI_SLAVE_CFG_MAX_BUFFER       512
-#define SPI_SLAVE_MAX_BUFFER           512
+#define BPB_SPI_SLAVE_CFG_DEFAULT_MODE     0
+#define BPB_SPI_SLAVE_CFG_DEFAULT_BITORDER 0
+#define BPB_SPI_SLAVE_CFG_MAX_BUFFER       512
+#define BPB_SPI_SLAVE_MAX_BUFFER           512
 
 //============================================================================
 // Status Enums
 //============================================================================
-#define SPI_SLAVE_STATUS_OK            SPISLAVEDRIVERSTATUS_OK
-#define SPI_SLAVE_STATUS_ERROR         SPISLAVEDRIVERSTATUS_ERROR
-#define SPI_SLAVE_STATUS_BUSY          SPISLAVEDRIVERSTATUS_BUSY
-#define SPI_SLAVE_STATUS_INVALID_PARAM SPISLAVEDRIVERSTATUS_INVALID_PARAM
-#define SPI_SLAVE_STATUS_NOT_INITIALIZED SPISLAVEDRIVERSTATUS_NOT_INITIALIZED
+#define BPB_SPI_SLAVE_STATUS_OK            BPB_SPISLAVEDRIVERSTATUS_OK
+#define BPB_SPI_SLAVE_STATUS_ERROR         BPB_SPISLAVEDRIVERSTATUS_ERROR
+#define BPB_SPI_SLAVE_STATUS_BUSY          BPB_SPISLAVEDRIVERSTATUS_BUSY
+#define BPB_SPI_SLAVE_STATUS_INVALID_PARAM BPB_SPISLAVEDRIVERSTATUS_INVALID_PARAM
+#define BPB_SPI_SLAVE_STATUS_NOT_INITIALIZED BPB_SPISLAVEDRIVERSTATUS_NOT_INITIALIZED
 
 //============================================================================
 // Public Types
 //============================================================================
 typedef enum
 {
-    SPISLAVEDRIVERSTATUS_OK = 0,
-    SPISLAVEDRIVERSTATUS_ERROR,
-    SPISLAVEDRIVERSTATUS_BUSY,
-    SPISLAVEDRIVERSTATUS_INVALID_PARAM,
-    SPISLAVEDRIVERSTATUS_NOT_INITIALIZED
+    BPB_SPISLAVEDRIVERSTATUS_OK = 0,
+    BPB_SPISLAVEDRIVERSTATUS_ERROR,
+    BPB_SPISLAVEDRIVERSTATUS_BUSY,
+    BPB_SPISLAVEDRIVERSTATUS_INVALID_PARAM,
+    BPB_SPISLAVEDRIVERSTATUS_NOT_INITIALIZED
 } SpiSlaveDriver_Status_t;
 
 typedef enum
 {
-    SPI_SLAVE_MODE_0 = 0,
-    SPI_SLAVE_MODE_1,
-    SPI_SLAVE_MODE_2,
-    SPI_SLAVE_MODE_3
+    BPB_SPI_SLAVE_MODE_0 = 0,
+    BPB_SPI_SLAVE_MODE_1,
+    BPB_SPI_SLAVE_MODE_2,
+    BPB_SPI_SLAVE_MODE_3
 } SpiSlaveDriver_Mode_t;
 
 typedef enum
 {
-    SPI_SLAVE_BITORDER_MSB_FIRST = 0,
-    SPI_SLAVE_BITORDER_LSB_FIRST
+    BPB_SPI_SLAVE_BITORDER_MSB_FIRST = 0,
+    BPB_SPI_SLAVE_BITORDER_LSB_FIRST
 } SpiSlaveDriver_BitOrder_t;
 
 typedef struct
@@ -74,4 +74,4 @@ SpiSlaveDriver_Status_t SpiSlaveDriverUnit_RegisterRxCallback(SpiSlaveDriver_RxC
 SpiSlaveDriver_Status_t SpiSlaveDriverUnit_RegisterTxCallback(SpiSlaveDriver_TxCallback_t callback);
 SpiSlaveDriver_Status_t SpiSlaveDriverUnit_DeInit(void);
 
-#endif /* SPI_SLAVEDRIVERUNIT_H */
+#endif /* BPB_SPI_SLAVEDRIVERUNIT_H */

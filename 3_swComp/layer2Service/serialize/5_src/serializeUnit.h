@@ -1,5 +1,5 @@
-﻿#ifndef SERIALIZEUNIT_H
-#define SERIALIZEUNIT_H
+﻿#ifndef BPB_SERIALIZEUNIT_H
+#define BPB_SERIALIZEUNIT_H
 #include <stdint.h>
 #include <stdbool.h>
 #include "serializeCfg.h"
@@ -7,32 +7,32 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define SERIALIZE_MAX_RESPONSE_SIZE      256U
+#define BPB_SERIALIZE_MAX_RESPONSE_SIZE      256U
 
 //============================================================================
 // UDS Response SID Offset
 //============================================================================
-#define SERIALIZE_POSITIVE_RESPONSE_OFFSET   0x40U
-#define SERIALIZE_NEGATIVE_RESPONSE_SID      0x7FU
+#define BPB_SERIALIZE_POSITIVE_RESPONSE_OFFSET   0x40U
+#define BPB_SERIALIZE_NEGATIVE_RESPONSE_SID      0x7FU
 
 //============================================================================
 // NRC (Negative Response Codes)
 //============================================================================
-#define SERIALIZE_NRC_SERVICE_NOT_SUPPORTED          0x11U
-#define SERIALIZE_NRC_INCORRECT_MSG_LENGTH           0x13U
-#define SERIALIZE_NRC_REQUEST_OUT_OF_RANGE           0x31U
-#define SERIALIZE_NRC_CONDITIONS_NOT_CORRECT         0x22U
-#define SERIALIZE_NRC_GENERAL_REJECT                 0x10U
+#define BPB_SERIALIZE_NRC_SERVICE_NOT_SUPPORTED          0x11U
+#define BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH           0x13U
+#define BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE           0x31U
+#define BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT         0x22U
+#define BPB_SERIALIZE_NRC_GENERAL_REJECT                 0x10U
 
 //============================================================================
 // Status Codes
 //============================================================================
 typedef enum
 {
-    SERIALIZE_STATUS_OK = 0,
-    SERIALIZE_STATUS_ERROR,
-    SERIALIZE_STATUS_INVALID_PARAM,
-    SERIALIZE_STATUS_BUFFER_OVERFLOW
+    BPB_SERIALIZE_STATUS_OK = 0,
+    BPB_SERIALIZE_STATUS_ERROR,
+    BPB_SERIALIZE_STATUS_INVALID_PARAM,
+    BPB_SERIALIZE_STATUS_BUFFER_OVERFLOW
 } Serialize_Status_t;
 
 //============================================================================
@@ -40,7 +40,7 @@ typedef enum
 //============================================================================
 typedef struct
 {
-    uint8_t buffer[SERIALIZE_MAX_RESPONSE_SIZE];
+    uint8_t buffer[BPB_SERIALIZE_MAX_RESPONSE_SIZE];
     uint16_t length;
 } Serialize_UdsResponse_t;
 
@@ -80,4 +80,4 @@ Serialize_Status_t SerializeUnit_BuildNegativeResponse(
     uint8_t nrc,
     Serialize_UdsResponse_t *pResponse);
 
-#endif /* SERIALIZEUNIT_H */
+#endif /* BPB_SERIALIZEUNIT_H */

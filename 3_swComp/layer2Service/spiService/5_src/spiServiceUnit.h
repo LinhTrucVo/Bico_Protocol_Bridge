@@ -1,5 +1,5 @@
-#ifndef SPISERVICEUNIT_H
-#define SPISERVICEUNIT_H
+#ifndef BPB_SPISERVICEUNIT_H
+#define BPB_SPISERVICEUNIT_H
 #include <stdint.h>
 #include <stdbool.h>
 #include "spiServiceCfg.h"
@@ -7,18 +7,18 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define SPI_SERVICE_CFG_MAX_TRANSFER     1024U
+#define BPB_SPI_SERVICE_CFG_MAX_TRANSFER     1024U
 
 //============================================================================
 // Type Definitions
 //============================================================================
 typedef enum
 {
-    SPISERVICE_STATUS_OK = 0,
-    SPISERVICE_STATUS_ERROR,
-    SPISERVICE_STATUS_INVALID_PARAM,
-    SPISERVICE_STATUS_NOT_INITIALIZED,
-    SPISERVICE_STATUS_BUS_ERROR
+    BPB_SPISERVICE_STATUS_OK = 0,
+    BPB_SPISERVICE_STATUS_ERROR,
+    BPB_SPISERVICE_STATUS_INVALID_PARAM,
+    BPB_SPISERVICE_STATUS_NOT_INITIALIZED,
+    BPB_SPISERVICE_STATUS_BUS_ERROR
 } SpiService_Status_t;
 
 //============================================================================
@@ -33,4 +33,4 @@ SpiService_Status_t SpiServiceUnit_Write(uint8_t device, const uint8_t *pData, u
 /* SPI Transceive: simultaneous transmit and receive (CS managed internally) */
 SpiService_Status_t SpiServiceUnit_Transceive(uint8_t device, const uint8_t *pTxData, uint16_t txLength, uint8_t *pRxData, uint16_t rxLength);
 
-#endif /* SPISERVICEUNIT_H */
+#endif /* BPB_SPISERVICEUNIT_H */

@@ -1,14 +1,14 @@
 // ADC Driver Configuration
 // This file contains feature enable/disable flags for the ADC driver
 
-#ifndef ADCDRIVERCFG_H
-#define ADCDRIVERCFG_H
+#ifndef BPB_ADCDRIVERCFG_H
+#define BPB_ADCDRIVERCFG_H
 
 //============================================================================
 // Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define ADC_CFG_ENABLE_DMA               true
-#define ADC_CFG_ENABLE_INTERRUPTS        true
-#define ADC_CFG_ENABLE_CALLBACKS         true
+#define BPB_ADC_CFG_ENABLE_DMA               true
+#define BPB_ADC_CFG_ENABLE_INTERRUPTS        true
+#define BPB_ADC_CFG_ENABLE_CALLBACKS         true
 
-#endif /* ADCDRIVERCFG_H */
+#endif /* BPB_ADCDRIVERCFG_H */

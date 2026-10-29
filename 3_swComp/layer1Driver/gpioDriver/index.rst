@@ -40,7 +40,7 @@ Public interfaces
 
         - **pConfig**: Pointer to GPIO driver configuration structure (enableInterrupts, enableCallbacks).
 
-        **Return values:** GPIO_STATUS_OK on success, GPIO_STATUS_INVALID_PIN for NULL config.
+        **Return values:** BPB_GPIO_STATUS_OK on success, BPB_GPIO_STATUS_INVALID_PIN for NULL config.
 
         **Restrictions:** Must be called before any other GPIO driver function.
 
@@ -54,7 +54,7 @@ Public interfaces
         - **pin**: The GPIO pin identifier to configure.
         - **pConfig**: Pointer to a pin configuration structure (mode, pull, speed, drive capability).
 
-        **Return values:** GPIO_STATUS_OK on success, GPIO_STATUS_INVALID_PIN for an invalid pin or NULL pointer.
+        **Return values:** BPB_GPIO_STATUS_OK on success, BPB_GPIO_STATUS_INVALID_PIN for an invalid pin or NULL pointer.
 
         **Restrictions:** None.
 
@@ -66,9 +66,9 @@ Public interfaces
         **Arguments:**
 
         - **pin**: The GPIO pin to configure.
-        - **mode**: Pin mode (GPIO_MODE_INPUT, GPIO_MODE_OUTPUT, GPIO_MODE_ALTERNATE, GPIO_MODE_ANALOG).
+        - **mode**: Pin mode (BPB_GPIO_MODE_INPUT, BPB_GPIO_MODE_OUTPUT, BPB_GPIO_MODE_ALTERNATE, BPB_GPIO_MODE_ANALOG).
 
-        **Return values:** GPIO_STATUS_OK on success, GPIO_STATUS_INVALID_PIN for an invalid pin.
+        **Return values:** BPB_GPIO_STATUS_OK on success, BPB_GPIO_STATUS_INVALID_PIN for an invalid pin.
 
         **Restrictions:** None.
 
@@ -80,9 +80,9 @@ Public interfaces
         **Arguments:**
 
         - **pin**: The GPIO pin to configure.
-        - **pull**: Pull resistor selection (GPIO_PULL_NONE, GPIO_PULL_UP, GPIO_PULL_DOWN).
+        - **pull**: Pull resistor selection (BPB_GPIO_PULL_NONE, BPB_GPIO_PULL_UP, BPB_GPIO_PULL_DOWN).
 
-        **Return values:** GPIO_STATUS_OK on success, GPIO_STATUS_INVALID_PIN for an invalid pin.
+        **Return values:** BPB_GPIO_STATUS_OK on success, BPB_GPIO_STATUS_INVALID_PIN for an invalid pin.
 
         **Restrictions:** None.
 
@@ -94,9 +94,9 @@ Public interfaces
         **Arguments:**
 
         - **pin**: The GPIO pin to configure.
-        - **speed**: Slew-rate speed selection (GPIO_SPEED_LOW, GPIO_SPEED_MEDIUM, GPIO_SPEED_HIGH, GPIO_SPEED_VERY_HIGH).
+        - **speed**: Slew-rate speed selection (BPB_GPIO_SPEED_LOW, BPB_GPIO_SPEED_MEDIUM, BPB_GPIO_SPEED_HIGH, BPB_GPIO_SPEED_VERY_HIGH).
 
-        **Return values:** GPIO_STATUS_OK on success, GPIO_STATUS_INVALID_PIN for an invalid pin.
+        **Return values:** BPB_GPIO_STATUS_OK on success, BPB_GPIO_STATUS_INVALID_PIN for an invalid pin.
 
         **Restrictions:** None.
 
@@ -110,7 +110,7 @@ Public interfaces
         - **pin**: The GPIO pin to configure.
         - **capability**: Drive strength selection.
 
-        **Return values:** GPIO_STATUS_OK on success, GPIO_STATUS_INVALID_PIN for an invalid pin.
+        **Return values:** BPB_GPIO_STATUS_OK on success, BPB_GPIO_STATUS_INVALID_PIN for an invalid pin.
 
         **Restrictions:** None.
 
@@ -122,9 +122,9 @@ Public interfaces
         **Arguments:**
 
         - **pin**: The GPIO output pin to write.
-        - **state**: Logical state to write (GPIO_STATE_LOW or GPIO_STATE_HIGH).
+        - **state**: Logical state to write (BPB_GPIO_STATE_LOW or BPB_GPIO_STATE_HIGH).
 
-        **Return values:** GPIO_STATUS_OK on success, GPIO_STATUS_INVALID_PIN for an invalid pin.
+        **Return values:** BPB_GPIO_STATUS_OK on success, BPB_GPIO_STATUS_INVALID_PIN for an invalid pin.
 
         **Restrictions:** The pin must be configured as output before calling this function.
 
@@ -136,9 +136,9 @@ Public interfaces
         **Arguments:**
 
         - **pin**: The GPIO pin to read.
-        - **pState**: Pointer to store the read state (GPIO_STATE_LOW or GPIO_STATE_HIGH).
+        - **pState**: Pointer to store the read state (BPB_GPIO_STATE_LOW or BPB_GPIO_STATE_HIGH).
 
-        **Return values:** GPIO_STATUS_OK on success, GPIO_STATUS_INVALID_PIN for an invalid pin or NULL pointer.
+        **Return values:** BPB_GPIO_STATUS_OK on success, BPB_GPIO_STATUS_INVALID_PIN for an invalid pin or NULL pointer.
 
         **Restrictions:** None.
 
@@ -151,7 +151,7 @@ Public interfaces
 
         - **pin**: The GPIO output pin to toggle.
 
-        **Return values:** GPIO_STATUS_OK on success, GPIO_STATUS_INVALID_PIN for an invalid pin.
+        **Return values:** BPB_GPIO_STATUS_OK on success, BPB_GPIO_STATUS_INVALID_PIN for an invalid pin.
 
         **Restrictions:** The pin must be configured as output before calling this function.
 
@@ -166,7 +166,7 @@ Public interfaces
         - **edge**: Edge trigger selection (GPIO_EDGE_RISING, GPIO_EDGE_FALLING, GPIO_EDGE_BOTH).
         - **callback**: Function pointer invoked when the interrupt fires. Pass NULL to clear the callback.
 
-        **Return values:** GPIO_STATUS_OK on success, GPIO_STATUS_INVALID_PIN for an invalid pin.
+        **Return values:** BPB_GPIO_STATUS_OK on success, BPB_GPIO_STATUS_INVALID_PIN for an invalid pin.
 
         **Restrictions:** GpioDriverUnit_Init() must have been called with enableInterrupts = true. Callback is invoked from interrupt context and must be short and non-blocking.
 
@@ -179,7 +179,7 @@ Public interfaces
 
         - **pin**: The GPIO pin whose interrupt shall be disabled.
 
-        **Return values:** GPIO_STATUS_OK on success, GPIO_STATUS_INVALID_PIN for an invalid pin.
+        **Return values:** BPB_GPIO_STATUS_OK on success, BPB_GPIO_STATUS_INVALID_PIN for an invalid pin.
 
         **Restrictions:** None.
 
@@ -190,7 +190,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** GPIO_STATUS_OK on success.
+        **Return values:** BPB_GPIO_STATUS_OK on success.
 
         **Restrictions:** None.
 

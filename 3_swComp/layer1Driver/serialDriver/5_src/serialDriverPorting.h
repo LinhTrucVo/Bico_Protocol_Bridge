@@ -1,7 +1,7 @@
 // Port interface of the serial driver. Implemented by the device workspace, called by serialDriverUnit.c.
 
-#ifndef SERIALDRIVERPORT_H
-#define SERIALDRIVERPORT_H
+#ifndef BPB_SERIALDRIVERPORT_H
+#define BPB_SERIALDRIVERPORT_H
 
 //============================================================================
 // Dependencies
@@ -14,15 +14,15 @@
 //============================================================================
 typedef enum
 {
-    SERIALPORT_PARITY_NONE = 0,
-    SERIALPORT_PARITY_EVEN,
-    SERIALPORT_PARITY_ODD
+    BPB_SERIALPORT_PARITY_NONE = 0,
+    BPB_SERIALPORT_PARITY_EVEN,
+    BPB_SERIALPORT_PARITY_ODD
 } SerialPort_Parity_t;
 
 typedef enum
 {
-    SERIALPORT_STOPBITS_1 = 0,
-    SERIALPORT_STOPBITS_2
+    BPB_SERIALPORT_STOPBITS_1 = 0,
+    BPB_SERIALPORT_STOPBITS_2
 } SerialPort_StopBits_t;
 
 //============================================================================
@@ -37,4 +37,4 @@ bool SerialPort_Read(uint8_t *pData, uint16_t maxLength, uint16_t *pReadLength, 
 bool SerialPort_GetAvailable(uint16_t *pAvailable);
 void SerialPort_FlushRx(void);
 
-#endif /* SERIALDRIVERPORT_H */
+#endif /* BPB_SERIALDRIVERPORT_H */

@@ -10,7 +10,7 @@
 //============================================================================
 typedef struct
 {
-    uint8_t  buffer[COMSERVICE_CFG_RX_BUFFER_SIZE];
+    uint8_t  buffer[BPB_COMSERVICE_CFG_RX_BUFFER_SIZE];
     uint16_t head;
     uint16_t tail;
     uint16_t count;
@@ -66,7 +66,7 @@ static void ComService_RxCallback(const uint8_t *pData, uint16_t length)
 {
     if ((pData != NULL) && (length > 0U))
     {
-        (void)RingBuffer_Write(&context.rx, COMSERVICE_CFG_RX_BUFFER_SIZE, pData, length);
+        (void)RingBuffer_Write(&context.rx, BPB_COMSERVICE_CFG_RX_BUFFER_SIZE, pData, length);
     }
 }
 
@@ -82,17 +82,17 @@ ComService_Status_t ComServiceUnit_Init(void)
 {
     /* Initialize the underlying Serial Driver */
     SerialDriver_Config_t serialCfg = {0};
-    serialCfg.baudrate = SERIAL_BAUDRATE_115200;
-    serialCfg.parity = SERIAL_PARITY_NONE;
-    serialCfg.stopBits = SERIAL_STOPBITS_1;
-    serialCfg.dataBits = SERIAL_DATABITS_8;
-    serialCfg.flowControl = SERIAL_FLOWCONTROL_NONE;
+    serialCfg.baudrate = BPB_SERIAL_BAUDRATE_115200;
+    serialCfg.parity = BPB_SERIAL_PARITY_NONE;
+    serialCfg.stopBits = BPB_SERIAL_STOPBITS_1;
+    serialCfg.dataBits = BPB_SERIAL_DATABITS_8;
+    serialCfg.flowControl = BPB_SERIAL_FLOWCONTROL_NONE;
     serialCfg.enableDMA = false;
     serialCfg.enableInterrupt = true;
 
-    if (SerialDriverUnit_Init(&serialCfg) != SERIALDRIVERSTATUS_OK)
+    if (SerialDriverUnit_Init(&serialCfg) != BPB_SERIALDRIVERSTATUS_OK)
     {
-        return COMSERVICE_STATUS_ERROR;
+        return BPB_COMSERVICE_STATUS_ERROR;
     }
 
     context.rx.head  = 0U;
@@ -108,7 +108,7 @@ ComService_Status_t ComServiceUnit_Init(void)
     (void)SerialDriverUnit_RegisterTxCallback(ComService_TxCallback);
 
     context.initialized = true;
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }
 
 ComService_Status_t ComServiceUnit_DeInit(void)
@@ -121,38 +121,38 @@ ComService_Status_t ComServiceUnit_DeInit(void)
     (void)SerialDriverUnit_DeInit();
 
     context.initialized = false;
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }
 
 ComService_Status_t ComServiceUnit_Run(void)
 {
     if (!context.initialized)
     {
-        return COMSERVICE_STATUS_NOT_INITIALIZED;
+        return BPB_COMSERVICE_STATUS_NOT_INITIALIZED;
     }
 
     /* Tx: Flush Tx ring-buffer to Serial Driver when not busy */
     if ((!context.txBusy) && (context.tx.count > 0U))
     {
-        uint8_t  txBuf[COMSERVICE_CFG_MAX_FRAME_SIZE];
-        uint16_t toSend = (context.tx.count > COMSERVICE_CFG_MAX_FRAME_SIZE) ? COMSERVICE_CFG_MAX_FRAME_SIZE : context.tx.count;
-        uint16_t sent = RingBuffer_Read(&context.tx, COMSERVICE_CFG_TX_BUFFER_SIZE, txBuf, toSend);
+        uint8_t  txBuf[BPB_COMSERVICE_CFG_MAX_FRAME_SIZE];
+        uint16_t toSend = (context.tx.count > BPB_COMSERVICE_CFG_MAX_FRAME_SIZE) ? BPB_COMSERVICE_CFG_MAX_FRAME_SIZE : context.tx.count;
+        uint16_t sent = RingBuffer_Read(&context.tx, BPB_COMSERVICE_CFG_TX_BUFFER_SIZE, txBuf, toSend);
 
         if (sent > 0U)
         {
-            if (SerialDriverUnit_Send(txBuf, sent) == SERIALDRIVERSTATUS_OK)
+            if (SerialDriverUnit_Send(txBuf, sent) == BPB_SERIALDRIVERSTATUS_OK)
             {
                 context.txBusy = true;
             }
             else
             {
                 /* Send failed, put data back (best effort - write back to buffer) */
-                (void)RingBuffer_Write(&context.tx, COMSERVICE_CFG_TX_BUFFER_SIZE, txBuf, sent);
+                (void)RingBuffer_Write(&context.tx, BPB_COMSERVICE_CFG_TX_BUFFER_SIZE, txBuf, sent);
             }
         }
     }
 
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }
 
 bool ComServiceUnit_IsRxDataAvailable(void)
@@ -168,35 +168,35 @@ ComService_Status_t ComServiceUnit_Read(uint8_t *pData, uint16_t maxLength, uint
 {
     if (!context.initialized)
     {
-        return COMSERVICE_STATUS_NOT_INITIALIZED;
+        return BPB_COMSERVICE_STATUS_NOT_INITIALIZED;
     }
     if (pData == NULL || pReadLength == NULL)
     {
-        return COMSERVICE_STATUS_INVALID_PARAM;
+        return BPB_COMSERVICE_STATUS_INVALID_PARAM;
     }
     if (context.rx.count == 0U)
     {
         *pReadLength = 0U;
-        return COMSERVICE_STATUS_BUFFER_EMPTY;
+        return BPB_COMSERVICE_STATUS_BUFFER_EMPTY;
     }
 
-    *pReadLength = RingBuffer_Read(&context.rx, COMSERVICE_CFG_RX_BUFFER_SIZE, pData, maxLength);
-    return COMSERVICE_STATUS_OK;
+    *pReadLength = RingBuffer_Read(&context.rx, BPB_COMSERVICE_CFG_RX_BUFFER_SIZE, pData, maxLength);
+    return BPB_COMSERVICE_STATUS_OK;
 }
 
 ComService_Status_t ComServiceUnit_Write(const uint8_t *pData, uint16_t length)
 {
     if (!context.initialized)
     {
-        return COMSERVICE_STATUS_NOT_INITIALIZED;
+        return BPB_COMSERVICE_STATUS_NOT_INITIALIZED;
     }
     if (pData == NULL || length == 0U)
     {
-        return COMSERVICE_STATUS_INVALID_PARAM;
+        return BPB_COMSERVICE_STATUS_INVALID_PARAM;
     }
-    if (!RingBuffer_Write(&context.tx, COMSERVICE_CFG_TX_BUFFER_SIZE, pData, length))
+    if (!RingBuffer_Write(&context.tx, BPB_COMSERVICE_CFG_TX_BUFFER_SIZE, pData, length))
     {
-        return COMSERVICE_STATUS_BUFFER_FULL;
+        return BPB_COMSERVICE_STATUS_BUFFER_FULL;
     }
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }

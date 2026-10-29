@@ -41,7 +41,7 @@ TEST_F(Deserialize, Deserialize_Init_Valid_ReturnsOK)
     Deserialize_Status_t status = call_DeserializeUnit_Init();
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_OK, status);
 }
 
 TEST_F(Deserialize, Deserialize_DeInit_Valid_ReturnsOK)
@@ -50,7 +50,7 @@ TEST_F(Deserialize, Deserialize_DeInit_Valid_ReturnsOK)
     Deserialize_Status_t status = call_DeserializeUnit_DeInit();
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ TEST_F(Deserialize, Deserialize_Parse_SID22_ValidFrame_ReturnsOK)
     Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_OK, status);
     EXPECT_EQ(0x22U, req.sid);
     EXPECT_EQ(0x1001U, req.id);
     EXPECT_EQ(nullptr, req.pPayload);
@@ -99,7 +99,7 @@ TEST_F(Deserialize, Deserialize_Parse_SID22_TooShort_ReturnsInvalidFrame)
     Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_INVALID_FRAME, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_INVALID_FRAME, status);
 }
 
 //------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ TEST_F(Deserialize, Deserialize_Parse_SID2E_ValidFrame_ReturnsOK)
     Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_OK, status);
     EXPECT_EQ(0x2EU, req.sid);
     EXPECT_EQ(0x1001U, req.id);
     EXPECT_EQ(&frame[3], req.pPayload);
@@ -134,7 +134,7 @@ TEST_F(Deserialize, Deserialize_Parse_SID2E_NoPayload_ReturnsInvalidFrame)
     Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_INVALID_FRAME, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_INVALID_FRAME, status);
 }
 
 //------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ TEST_F(Deserialize, Deserialize_Parse_SID31_ValidFrame_ReturnsOK)
     Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_OK, status);
     EXPECT_EQ(0x31U, req.sid);
     EXPECT_EQ(0x01U, req.routineControlType);
     EXPECT_EQ(0x0100U, req.id);
@@ -170,7 +170,7 @@ TEST_F(Deserialize, Deserialize_Parse_SID31_NoParams_ReturnsOK)
     Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_OK, status);
     EXPECT_EQ(0x0200U, req.id);
     EXPECT_EQ(nullptr, req.pPayload);
     EXPECT_EQ(0U, req.payloadLength);
@@ -187,7 +187,7 @@ TEST_F(Deserialize, Deserialize_Parse_SID31_TooShort_ReturnsInvalidFrame)
     Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_INVALID_FRAME, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_INVALID_FRAME, status);
 }
 
 //------------------------------------------------------------------------------
@@ -204,7 +204,7 @@ TEST_F(Deserialize, Deserialize_Parse_UnsupportedSID_ReturnsUnsupportedSID)
     Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_UNSUPPORTED_SID, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_UNSUPPORTED_SID, status);
 }
 
 TEST_F(Deserialize, Deserialize_Parse_NullFrame_ReturnsInvalidParam)
@@ -216,7 +216,7 @@ TEST_F(Deserialize, Deserialize_Parse_NullFrame_ReturnsInvalidParam)
     Deserialize_Status_t status = call_DeserializeUnit_Parse(nullptr, &req);
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_INVALID_PARAM, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_INVALID_PARAM, status);
 }
 
 TEST_F(Deserialize, Deserialize_Parse_NullRequest_ReturnsInvalidParam)
@@ -229,7 +229,7 @@ TEST_F(Deserialize, Deserialize_Parse_NullRequest_ReturnsInvalidParam)
     Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, nullptr);
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_INVALID_PARAM, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_INVALID_PARAM, status);
 }
 
 TEST_F(Deserialize, Deserialize_Parse_NotInitialized_ReturnsError)
@@ -244,5 +244,5 @@ TEST_F(Deserialize, Deserialize_Parse_NotInitialized_ReturnsError)
     Deserialize_Status_t status = call_DeserializeUnit_Parse(&f, &req);
 
     // Assert
-    EXPECT_EQ(DESERIALIZE_STATUS_ERROR, status);
+    EXPECT_EQ(BPB_DESERIALIZE_STATUS_ERROR, status);
 }

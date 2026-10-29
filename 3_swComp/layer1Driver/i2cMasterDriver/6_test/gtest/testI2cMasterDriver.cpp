@@ -36,8 +36,8 @@ TEST_F(I2cMasterDriver, I2cMasterDriver_Init_ValidConfig_ReturnsOK)
 {
     // Arrange
     I2cMasterDriver_Config_t cfg = {
-        I2C_SPEED_STANDARD,
-        I2C_ADDRESS_7BIT,
+        BPB_I2C_SPEED_STANDARD,
+        BPB_I2C_ADDRESS_7BIT,
         false,
         false,
         100
@@ -47,7 +47,7 @@ TEST_F(I2cMasterDriver, I2cMasterDriver_Init_ValidConfig_ReturnsOK)
     I2cMasterDriver_Status_t status = call_I2cMasterDriverUnit_Init(&cfg);
     
     // Assert
-    EXPECT_EQ(I2C_MASTER_STATUS_OK, status);
+    EXPECT_EQ(BPB_I2C_MASTER_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -57,8 +57,8 @@ TEST_F(I2cMasterDriver, I2cMasterDriver_Write_ValidData_ReturnsOK)
 {
     // Arrange
     I2cMasterDriver_Config_t cfg = {
-        I2C_SPEED_STANDARD,
-        I2C_ADDRESS_7BIT,
+        BPB_I2C_SPEED_STANDARD,
+        BPB_I2C_ADDRESS_7BIT,
         false,
         false,
         100
@@ -70,7 +70,7 @@ TEST_F(I2cMasterDriver, I2cMasterDriver_Write_ValidData_ReturnsOK)
     I2cMasterDriver_Status_t status = call_I2cMasterDriverUnit_Write(0x50, data, 2);
     
     // Assert
-    EXPECT_EQ(I2C_MASTER_STATUS_OK, status);
+    EXPECT_EQ(BPB_I2C_MASTER_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -80,8 +80,8 @@ TEST_F(I2cMasterDriver, I2cMasterDriver_Read_ValidAddress_ReturnsOK)
 {
     // Arrange
     I2cMasterDriver_Config_t cfg = {
-        I2C_SPEED_STANDARD,
-        I2C_ADDRESS_7BIT,
+        BPB_I2C_SPEED_STANDARD,
+        BPB_I2C_ADDRESS_7BIT,
         false,
         false,
         100
@@ -93,7 +93,7 @@ TEST_F(I2cMasterDriver, I2cMasterDriver_Read_ValidAddress_ReturnsOK)
     I2cMasterDriver_Status_t status = call_I2cMasterDriverUnit_Read(0x50, data, 2);
     
     // Assert
-    EXPECT_EQ(I2C_MASTER_STATUS_OK, status);
+    EXPECT_EQ(BPB_I2C_MASTER_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -108,5 +108,5 @@ TEST_F(I2cMasterDriver, I2cMasterDriver_DeInit_ValidState_ReturnsOK)
     I2cMasterDriver_Status_t status = call_I2cMasterDriverUnit_DeInit();
     
     // Assert
-    EXPECT_EQ(I2C_MASTER_STATUS_OK, status);
+    EXPECT_EQ(BPB_I2C_MASTER_STATUS_OK, status);
 }

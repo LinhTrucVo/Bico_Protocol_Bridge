@@ -40,7 +40,7 @@ Public interfaces
 
         - **pConfig**: Pointer to serial driver configuration structure (baudrate, parity, stopBits, dataBits).
 
-        **Return values:** SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** Must be called before any other serial driver function.
 
@@ -52,11 +52,11 @@ Public interfaces
         **Arguments:**
 
         - **baudrate**: Desired baud rate.
-        - **parity**: Parity mode (SERIAL_PARITY_NONE, SERIAL_PARITY_EVEN, SERIAL_PARITY_ODD).
-        - **stopBits**: Stop bit count (SERIAL_STOPBITS_1, SERIAL_STOPBITS_2).
-        - **dataBits**: Word length (SERIAL_DATABITS_7, SERIAL_DATABITS_8, SERIAL_DATABITS_9).
+        - **parity**: Parity mode (BPB_SERIAL_PARITY_NONE, BPB_SERIAL_PARITY_EVEN, BPB_SERIAL_PARITY_ODD).
+        - **stopBits**: Stop bit count (BPB_SERIAL_STOPBITS_1, BPB_SERIAL_STOPBITS_2).
+        - **dataBits**: Word length (BPB_SERIAL_DATABITS_7, BPB_SERIAL_DATABITS_8, BPB_SERIAL_DATABITS_9).
 
-        **Return values:** SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for unsupported parameter values.
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for unsupported parameter values.
 
         **Restrictions:** None.
 
@@ -70,7 +70,7 @@ Public interfaces
         - **pData**: Pointer to the data buffer to transmit.
         - **length**: Number of bytes to transmit.
 
-        **Return values:** SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer or zero length, SERIAL_STATUS_TIMEOUT on timeout.
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_SERIAL_STATUS_TIMEOUT on timeout.
 
         **Restrictions:** None.
 
@@ -85,7 +85,7 @@ Public interfaces
         - **length**: Number of bytes to transmit.
         - **timeoutMs**: Maximum time in milliseconds to wait for completion.
 
-        **Return values:** SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer or zero length, SERIAL_STATUS_TIMEOUT if the operation exceeded the timeout.
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_SERIAL_STATUS_TIMEOUT if the operation exceeded the timeout.
 
         **Restrictions:** None.
 
@@ -100,7 +100,7 @@ Public interfaces
         - **maxLength**: Maximum number of bytes the buffer can hold.
         - **pReceivedLength**: Pointer to store the actual number of bytes received.
 
-        **Return values:** SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for NULL pointers or zero maxLength, SERIAL_STATUS_TIMEOUT on timeout.
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for NULL pointers or zero maxLength, BPB_SERIAL_STATUS_TIMEOUT on timeout.
 
         **Restrictions:** None.
 
@@ -116,7 +116,7 @@ Public interfaces
         - **pReceivedLength**: Pointer to store the actual number of bytes received.
         - **timeoutMs**: Maximum time in milliseconds to wait for data.
 
-        **Return values:** SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for NULL pointers or zero maxLength, SERIAL_STATUS_TIMEOUT if the operation exceeded the timeout.
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for NULL pointers or zero maxLength, BPB_SERIAL_STATUS_TIMEOUT if the operation exceeded the timeout.
 
         **Restrictions:** None.
 
@@ -129,7 +129,7 @@ Public interfaces
 
         - **pAvailable**: Pointer to store the count of available bytes.
 
-        **Return values:** SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -140,7 +140,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** SERIAL_STATUS_OK on success.
+        **Return values:** BPB_SERIAL_STATUS_OK on success.
 
         **Restrictions:** None.
 
@@ -151,7 +151,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** SERIAL_STATUS_OK on success.
+        **Return values:** BPB_SERIAL_STATUS_OK on success.
 
         **Restrictions:** None.
 
@@ -164,7 +164,7 @@ Public interfaces
 
         - **callback**: Function pointer to the RX callback. Pass NULL to deregister.
 
-        **Return values:** SERIAL_STATUS_OK on success.
+        **Return values:** BPB_SERIAL_STATUS_OK on success.
 
         **Restrictions:** Callback is invoked from interrupt context and must be short and non-blocking.
 
@@ -177,7 +177,7 @@ Public interfaces
 
         - **callback**: Function pointer to the TX callback. Pass NULL to deregister.
 
-        **Return values:** SERIAL_STATUS_OK on success.
+        **Return values:** BPB_SERIAL_STATUS_OK on success.
 
         **Restrictions:** Callback is invoked from interrupt context and must be short and non-blocking.
 
@@ -190,7 +190,7 @@ Public interfaces
 
         - **pStatus**: Pointer to store the current driver status code.
 
-        **Return values:** SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -201,7 +201,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** SERIAL_STATUS_OK on success.
+        **Return values:** BPB_SERIAL_STATUS_OK on success.
 
         **Restrictions:** None.
 

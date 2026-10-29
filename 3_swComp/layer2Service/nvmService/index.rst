@@ -40,7 +40,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** NVM_SERVICE_STATUS_OK on success, NVM_SERVICE_STATUS_ERROR on failure.
+        **Return values:** BPB_NVM_SERVICE_STATUS_OK on success, BPB_NVM_SERVICE_STATUS_ERROR on failure.
 
         **Restrictions:** Must be called before any other NVM Service function.
 
@@ -51,7 +51,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** NVM_SERVICE_STATUS_OK on success.
+        **Return values:** BPB_NVM_SERVICE_STATUS_OK on success.
 
         **Restrictions:** None.
 
@@ -64,8 +64,8 @@ Public interfaces
 
         - **pBlob**: Pointer to the blob descriptor containing the key, data pointer, and data length.
 
-        **Return values:** NVM_SERVICE_STATUS_OK on success, NVM_SERVICE_STATUS_FULL if no space remains,
-        NVM_SERVICE_STATUS_INVALID_PARAM for NULL pointer or zero length.
+        **Return values:** BPB_NVM_SERVICE_STATUS_OK on success, BPB_NVM_SERVICE_STATUS_FULL if no space remains,
+        BPB_NVM_SERVICE_STATUS_INVALID_PARAM for NULL pointer or zero length.
 
         **Restrictions:** None.
 
@@ -76,13 +76,13 @@ Public interfaces
 
         **Arguments:**
 
-        - **key**: The key identifying the stored blob (e.g. NVM_SERVICE_KEY_SYSTEM_CONFIG).
+        - **key**: The key identifying the stored blob (e.g. BPB_NVM_SERVICE_KEY_SYSTEM_CONFIG).
         - **pData**: Pointer to the output buffer to receive the loaded data.
         - **maxLength**: Maximum number of bytes the output buffer can hold.
         - **pOutLength**: Pointer to receive the actual number of bytes loaded.
 
-        **Return values:** NVM_SERVICE_STATUS_OK on success, NVM_SERVICE_STATUS_NOT_FOUND if key does not exist,
-        NVM_SERVICE_STATUS_CRC_ERROR if stored data is corrupt, NVM_SERVICE_STATUS_INVALID_PARAM for NULL pointers.
+        **Return values:** BPB_NVM_SERVICE_STATUS_OK on success, BPB_NVM_SERVICE_STATUS_NOT_FOUND if key does not exist,
+        BPB_NVM_SERVICE_STATUS_CRC_ERROR if stored data is corrupt, BPB_NVM_SERVICE_STATUS_INVALID_PARAM for NULL pointers.
 
         **Restrictions:** None.
 
@@ -95,7 +95,7 @@ Public interfaces
 
         - **key**: The key identifying the blob to erase.
 
-        **Return values:** NVM_SERVICE_STATUS_OK on success, NVM_SERVICE_STATUS_NOT_FOUND if key does not exist.
+        **Return values:** BPB_NVM_SERVICE_STATUS_OK on success, BPB_NVM_SERVICE_STATUS_NOT_FOUND if key does not exist.
 
         **Restrictions:** None.
 
@@ -106,7 +106,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** NVM_SERVICE_STATUS_OK on success, NVM_SERVICE_STATUS_ERROR on failure.
+        **Return values:** BPB_NVM_SERVICE_STATUS_OK on success, BPB_NVM_SERVICE_STATUS_ERROR on failure.
 
         **Restrictions:** All stored data will be permanently lost.
 
@@ -120,7 +120,7 @@ Public interfaces
         - **key**: The key to search for.
         - **pExists**: Pointer to receive true if the key exists, false otherwise.
 
-        **Return values:** NVM_SERVICE_STATUS_OK on success, NVM_SERVICE_STATUS_INVALID_PARAM for NULL pointer.
+        **Return values:** BPB_NVM_SERVICE_STATUS_OK on success, BPB_NVM_SERVICE_STATUS_INVALID_PARAM for NULL pointer.
 
         **Restrictions:** None.
 
@@ -135,7 +135,7 @@ Public interfaces
         - **length**: Number of bytes to process.
         - **pCrc**: Pointer to receive the computed CRC-32 value.
 
-        **Return values:** NVM_SERVICE_STATUS_OK on success, NVM_SERVICE_STATUS_INVALID_PARAM for NULL pointers or zero length.
+        **Return values:** BPB_NVM_SERVICE_STATUS_OK on success, BPB_NVM_SERVICE_STATUS_INVALID_PARAM for NULL pointers or zero length.
 
         **Restrictions:** None.
 

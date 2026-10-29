@@ -1,4 +1,4 @@
-#ifndef ADDON1_H
-#define ADDON1_H
+#ifndef BPB_ADDON1_H
+#define BPB_ADDON1_H
 
-#endif // ADDON1_H
+#endif // BPB_ADDON1_H

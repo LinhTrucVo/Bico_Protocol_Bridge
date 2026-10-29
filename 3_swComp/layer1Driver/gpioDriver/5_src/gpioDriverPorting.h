@@ -1,7 +1,7 @@
 // Port interface of the GPIO driver. Implemented by the device workspace, called by gpioDriverUnit.c.
 
-#ifndef GPIODRIVERPORT_H
-#define GPIODRIVERPORT_H
+#ifndef BPB_GPIODRIVERPORT_H
+#define BPB_GPIODRIVERPORT_H
 
 //============================================================================
 // Dependencies
@@ -14,23 +14,23 @@
 //============================================================================
 typedef enum
 {
-    GPIOPORT_MODE_DISABLED = 0,
-    GPIOPORT_MODE_INPUT,
-    GPIOPORT_MODE_OUTPUT
+    BPB_GPIOPORT_MODE_DISABLED = 0,
+    BPB_GPIOPORT_MODE_INPUT,
+    BPB_GPIOPORT_MODE_OUTPUT
 } GpioPort_Mode_t;
 
 typedef enum
 {
-    GPIOPORT_PULL_NONE = 0,
-    GPIOPORT_PULL_UP,
-    GPIOPORT_PULL_DOWN
+    BPB_GPIOPORT_PULL_NONE = 0,
+    BPB_GPIOPORT_PULL_UP,
+    BPB_GPIOPORT_PULL_DOWN
 } GpioPort_Pull_t;
 
 typedef enum
 {
-    GPIOPORT_EDGE_RISING = 0,
-    GPIOPORT_EDGE_FALLING,
-    GPIOPORT_EDGE_BOTH
+    BPB_GPIOPORT_EDGE_RISING = 0,
+    BPB_GPIOPORT_EDGE_FALLING,
+    BPB_GPIOPORT_EDGE_BOTH
 } GpioPort_Edge_t;
 
 // Called by the port, possibly from interrupt context, when an enabled pin triggers.
@@ -49,4 +49,4 @@ bool GpioPort_EnableInterrupt(uint8_t pin, GpioPort_Edge_t edge);
 void GpioPort_DisableInterrupt(uint8_t pin);
 void GpioPort_SetInterruptHandler(GpioPort_InterruptHandler_t handler);
 
-#endif /* GPIODRIVERPORT_H */
+#endif /* BPB_GPIODRIVERPORT_H */

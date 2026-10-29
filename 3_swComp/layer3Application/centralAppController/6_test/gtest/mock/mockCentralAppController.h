@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for CentralAppController testing
 
-#ifndef MOCKCENTRALAPPCONTROLLER_H
-#define MOCKCENTRALAPPCONTROLLER_H
+#ifndef BPB_MOCKCENTRALAPPCONTROLLER_H
+#define BPB_MOCKCENTRALAPPCONTROLLER_H
 
 //============================================================================
 // Dependencies
@@ -22,4 +22,4 @@ CentralAppController_Status_t call_CentralAppControllerUnit_GetState(CentralAppC
 CentralAppController_Status_t call_CentralAppControllerUnit_Dispatch(const uint8_t *pRequestFrame, uint16_t requestLength, uint8_t *pResponseBuffer, uint16_t bufferSize, uint16_t *pResponseLength);
 CentralAppController_Status_t call_CentralAppControllerUnit_RegisterErrorCallback(CentralAppController_ErrorCallback_t callback);
 
-#endif /* MOCKCENTRALAPPCONTROLLER_H */
+#endif /* BPB_MOCKCENTRALAPPCONTROLLER_H */

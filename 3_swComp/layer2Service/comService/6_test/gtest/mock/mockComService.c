@@ -18,19 +18,19 @@ MockComService_Calls_t *MockComService_GetCalls(void)
 ComService_Status_t ComServiceUnit_Init(void)
 {
     mockCalls.initCalled++;
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }
 
 ComService_Status_t ComServiceUnit_DeInit(void)
 {
     mockCalls.deInitCalled++;
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }
 
 ComService_Status_t ComServiceUnit_Run(void)
 {
     mockCalls.runCalled++;
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }
 
 bool ComServiceUnit_IsRxDataAvailable(void)
@@ -47,10 +47,10 @@ ComService_Status_t ComServiceUnit_Read(uint8_t *pData, uint16_t maxLength, uint
         uint16_t len = (mockCalls.readDataLength < maxLength) ? mockCalls.readDataLength : maxLength;
         memcpy(pData, mockCalls.pReadData, len);
         *pReadLength = len;
-        return COMSERVICE_STATUS_OK;
+        return BPB_COMSERVICE_STATUS_OK;
     }
     *pReadLength = 0U;
-    return COMSERVICE_STATUS_BUFFER_EMPTY;
+    return BPB_COMSERVICE_STATUS_BUFFER_EMPTY;
 }
 
 ComService_Status_t ComServiceUnit_Write(const uint8_t *pData, uint16_t length)
@@ -61,5 +61,5 @@ ComService_Status_t ComServiceUnit_Write(const uint8_t *pData, uint16_t length)
     {
         memcpy(mockCalls.lastWriteData, pData, length);
     }
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }

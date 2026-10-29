@@ -41,7 +41,7 @@ TEST_F(PwmDriver, PwmDriver_Init_ValidConfig_ReturnsOK)
     PwmDriver_Status_t status = call_PwmDriverUnit_Init(&config);
     
     // Assert
-    EXPECT_EQ(PWM_STATUS_OK, status);
+    EXPECT_EQ(BPB_PWM_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -54,18 +54,18 @@ TEST_F(PwmDriver, PwmDriver_ConfigureChannel_ValidChannel_ReturnsOK)
     PwmDriver_ChannelConfig_t cfg = {
         1000,
         5000,
-        PWM_POLARITY_NORMAL,
-        PWM_ALIGNMENT_EDGE,
+        BPB_PWM_POLARITY_NORMAL,
+        BPB_PWM_ALIGNMENT_EDGE,
         false,
         0
     };
     call_PwmDriverUnit_Init(&config);
     
     // Act
-    PwmDriver_Status_t status = call_PwmDriverUnit_ConfigureChannel(PWM_CHANNEL_0, &cfg);
+    PwmDriver_Status_t status = call_PwmDriverUnit_ConfigureChannel(BPB_PWM_CHANNEL_0, &cfg);
     
     // Assert
-    EXPECT_EQ(PWM_STATUS_OK, status);
+    EXPECT_EQ(BPB_PWM_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -78,17 +78,17 @@ TEST_F(PwmDriver, PwmDriver_StartChannel_ValidChannel_ReturnsOK)
     PwmDriver_ChannelConfig_t cfg = {
         1000,
         5000,
-        PWM_POLARITY_NORMAL,
-        PWM_ALIGNMENT_EDGE,
+        BPB_PWM_POLARITY_NORMAL,
+        BPB_PWM_ALIGNMENT_EDGE,
         false,
         0
     };
     call_PwmDriverUnit_Init(&config);
-    call_PwmDriverUnit_ConfigureChannel(PWM_CHANNEL_0, &cfg);
+    call_PwmDriverUnit_ConfigureChannel(BPB_PWM_CHANNEL_0, &cfg);
     
     // Act
-    PwmDriver_Status_t status = call_PwmDriverUnit_StartChannel(PWM_CHANNEL_0);
+    PwmDriver_Status_t status = call_PwmDriverUnit_StartChannel(BPB_PWM_CHANNEL_0);
     
     // Assert
-    EXPECT_EQ(PWM_STATUS_OK, status);
+    EXPECT_EQ(BPB_PWM_STATUS_OK, status);
 }

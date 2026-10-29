@@ -1,10 +1,10 @@
-#ifndef DIGITAL_APPCFG_H
-#define DIGITAL_APPCFG_H
+#ifndef BPB_DIGITAL_APPCFG_H
+#define BPB_DIGITAL_APPCFG_H
 
 //============================================================================
 // Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define SERIAL_TO_DIGITAL_CFG_ENABLE_PWM    true
-#define SERIAL_TO_DIGITAL_CFG_ENABLE_GPIO   true
+#define BPB_SERIAL_TO_DIGITAL_CFG_ENABLE_PWM    true
+#define BPB_SERIAL_TO_DIGITAL_CFG_ENABLE_GPIO   true
 
-#endif /* DIGITAL_APPCFG_H */
+#endif /* BPB_DIGITAL_APPCFG_H */

@@ -41,7 +41,7 @@ TEST_F(ConfigService, ConfigService_Init_Valid_ReturnsOK)
     ConfigService_Status_t status = call_ConfigServiceUnit_Init();
     
     // Assert
-    EXPECT_EQ(CONFIG_SERVICE_STATUS_OK, status);
+    EXPECT_EQ(BPB_CONFIG_SERVICE_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ TEST_F(ConfigService, ConfigService_SetAnalogChannelConfig_ValidChannel_ReturnsO
     ConfigService_Status_t status = call_ConfigServiceUnit_SetAnalogChannelConfig(0, &cfg);
     
     // Assert
-    EXPECT_EQ(CONFIG_SERVICE_STATUS_OK, status);
+    EXPECT_EQ(BPB_CONFIG_SERVICE_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ TEST_F(ConfigService, ConfigService_GetAnalogChannelConfig_ValidChannel_ReturnsO
     ConfigService_Status_t status = call_ConfigServiceUnit_GetAnalogChannelConfig(0, &out);
     
     // Assert
-    EXPECT_EQ(CONFIG_SERVICE_STATUS_OK, status);
+    EXPECT_EQ(BPB_CONFIG_SERVICE_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -90,5 +90,5 @@ TEST_F(ConfigService, ConfigService_DeInit_Valid_ReturnsOK)
     ConfigService_Status_t status = call_ConfigServiceUnit_DeInit();
     
     // Assert
-    EXPECT_EQ(CONFIG_SERVICE_STATUS_OK, status);
+    EXPECT_EQ(BPB_CONFIG_SERVICE_STATUS_OK, status);
 }

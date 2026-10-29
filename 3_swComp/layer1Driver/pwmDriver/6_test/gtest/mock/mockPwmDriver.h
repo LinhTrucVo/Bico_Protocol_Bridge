@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for PwmDriver testing
 
-#ifndef MOCKPWMDRIVER_H
-#define MOCKPWMDRIVER_H
+#ifndef BPB_MOCKPWMDRIVER_H
+#define BPB_MOCKPWMDRIVER_H
 
 //============================================================================
 // Dependencies
@@ -32,4 +32,4 @@ PwmDriver_Status_t call_PwmDriverUnit_GetConfiguration(PwmDriver_Channel_t chann
 PwmDriver_Status_t call_PwmDriverUnit_IsChannelRunning(PwmDriver_Channel_t channel, bool *pIsRunning);
 PwmDriver_Status_t call_PwmDriverUnit_DeInit(void);
 
-#endif /* MOCKPWMDRIVER_H */
+#endif /* BPB_MOCKPWMDRIVER_H */

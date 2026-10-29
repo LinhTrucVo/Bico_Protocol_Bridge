@@ -1,5 +1,5 @@
-#ifndef NVM_SERVICEUNIT_H
-#define NVM_SERVICEUNIT_H
+#ifndef BPB_NVM_SERVICEUNIT_H
+#define BPB_NVM_SERVICEUNIT_H
 #include <stdint.h>
 #include <stdbool.h>
 #include "nvmServiceCfg.h"
@@ -7,18 +7,18 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define NVM_SERVICE_CFG_MAX_BLOB_SIZE      512
-#define NVM_SERVICE_CFG_MAX_KEYS           6
+#define BPB_NVM_SERVICE_CFG_MAX_BLOB_SIZE      512
+#define BPB_NVM_SERVICE_CFG_MAX_KEYS           6
 
 //============================================================================
 // NVM Service Keys
 //============================================================================
-#define NVM_SERVICE_KEY_SYSTEM_CONFIG      0x00000001U
-#define NVM_SERVICE_KEY_USER_DATA         0x00000002U
-#define NVM_SERVICE_KEY_CALIBRATION       0x00000003U
-#define NVM_SERVICE_KEY_STATE              0x00000004U
-#define NVM_SERVICE_KEY_SETTINGS           0x00000005U
-#define NVM_SERVICE_KEY_RESERVED           0x00000006U
+#define BPB_NVM_SERVICE_KEY_SYSTEM_CONFIG      0x00000001U
+#define BPB_NVM_SERVICE_KEY_USER_DATA         0x00000002U
+#define BPB_NVM_SERVICE_KEY_CALIBRATION       0x00000003U
+#define BPB_NVM_SERVICE_KEY_STATE              0x00000004U
+#define BPB_NVM_SERVICE_KEY_SETTINGS           0x00000005U
+#define BPB_NVM_SERVICE_KEY_RESERVED           0x00000006U
 
 //============================================================================
 // Type Definitions
@@ -34,13 +34,13 @@ typedef struct
 
 typedef enum
 {
-    NVM_SERVICE_STATUS_OK = 0,
-    NVM_SERVICE_STATUS_ERROR,
-    NVM_SERVICE_STATUS_NOT_FOUND,
-    NVM_SERVICE_STATUS_FULL,
-    NVM_SERVICE_STATUS_INVALID_PARAM,
-    NVM_SERVICE_STATUS_NOT_INITIALIZED,
-    NVM_SERVICE_STATUS_CRC_ERROR
+    BPB_NVM_SERVICE_STATUS_OK = 0,
+    BPB_NVM_SERVICE_STATUS_ERROR,
+    BPB_NVM_SERVICE_STATUS_NOT_FOUND,
+    BPB_NVM_SERVICE_STATUS_FULL,
+    BPB_NVM_SERVICE_STATUS_INVALID_PARAM,
+    BPB_NVM_SERVICE_STATUS_NOT_INITIALIZED,
+    BPB_NVM_SERVICE_STATUS_CRC_ERROR
 } NvmService_Status_t;
 
 //============================================================================

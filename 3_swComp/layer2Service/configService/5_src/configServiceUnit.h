@@ -1,5 +1,5 @@
-#ifndef CONFIG_SERVICEUNIT_H
-#define CONFIG_SERVICEUNIT_H
+#ifndef BPB_CONFIG_SERVICEUNIT_H
+#define BPB_CONFIG_SERVICEUNIT_H
 #include <stdint.h>
 #include <stdbool.h>
 #include "configServiceCfg.h"
@@ -7,23 +7,23 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define CONFIG_SERVICE_CFG_MAX_CHANNELS      8
-#define CONFIG_SERVICE_CFG_MAX_PINS          32
-#define CONFIG_SERVICE_CFG_MIN_SAMPLE_HZ     1
-#define CONFIG_SERVICE_CFG_MAX_SAMPLE_HZ     10000
-#define CONFIG_SERVICE_CFG_MIN_PWM_HZ        1
-#define CONFIG_SERVICE_CFG_MAX_PWM_HZ        100000
-#define CONFIG_SERVICE_CFG_MAX_DUTY          10000
+#define BPB_CONFIG_SERVICE_CFG_MAX_CHANNELS      8
+#define BPB_CONFIG_SERVICE_CFG_MAX_PINS          32
+#define BPB_CONFIG_SERVICE_CFG_MIN_SAMPLE_HZ     1
+#define BPB_CONFIG_SERVICE_CFG_MAX_SAMPLE_HZ     10000
+#define BPB_CONFIG_SERVICE_CFG_MIN_PWM_HZ        1
+#define BPB_CONFIG_SERVICE_CFG_MAX_PWM_HZ        100000
+#define BPB_CONFIG_SERVICE_CFG_MAX_DUTY          10000
 
 //============================================================================
 // Status Codes
 //============================================================================
 typedef enum
 {
-    CONFIG_SERVICE_STATUS_OK = 0,
-    CONFIG_SERVICE_STATUS_ERROR,
-    CONFIG_SERVICE_STATUS_INVALID_PARAM,
-    CONFIG_SERVICE_STATUS_NOT_INITIALIZED
+    BPB_CONFIG_SERVICE_STATUS_OK = 0,
+    BPB_CONFIG_SERVICE_STATUS_ERROR,
+    BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM,
+    BPB_CONFIG_SERVICE_STATUS_NOT_INITIALIZED
 } ConfigService_Status_t;
 
 //============================================================================

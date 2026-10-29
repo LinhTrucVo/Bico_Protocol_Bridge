@@ -40,7 +40,7 @@ Public interfaces
 
         - **pConfig**: Pointer to I2C slave driver configuration structure (own address, address mode).
 
-        **Return values:** I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** Must be called before any other I2C slave driver function.
 
@@ -53,7 +53,7 @@ Public interfaces
 
         - **address**: The 7-bit or 10-bit address this slave shall respond to.
 
-        **Return values:** I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for an out-of-range address.
+        **Return values:** BPB_I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for an out-of-range address.
 
         **Restrictions:** None.
 
@@ -66,7 +66,7 @@ Public interfaces
 
         - **pAddress**: Pointer to store the current slave address.
 
-        **Return values:** I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -80,7 +80,7 @@ Public interfaces
         - **pData**: Pointer to the data buffer to transmit.
         - **length**: Number of bytes available in the transmit buffer.
 
-        **Return values:** I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer or zero length.
+        **Return values:** BPB_I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer or zero length.
 
         **Restrictions:** The buffer must remain valid until the master read transaction is complete.
 
@@ -94,7 +94,7 @@ Public interfaces
         - **pData**: Pointer to the buffer for received data.
         - **maxLength**: Maximum number of bytes the buffer can hold.
 
-        **Return values:** I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer or zero length.
+        **Return values:** BPB_I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer or zero length.
 
         **Restrictions:** The buffer must remain valid until I2cSlaveDriverUnit_GetRxLength() is called and data is processed.
 
@@ -107,7 +107,7 @@ Public interfaces
 
         - **pLength**: Pointer to store the number of bytes received.
 
-        **Return values:** I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -120,7 +120,7 @@ Public interfaces
 
         - **pIsAddressed**: Pointer to store the result; set to ``true`` if the slave was addressed.
 
-        **Return values:** I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_I2C_SLAVE_STATUS_OK on success, I2C_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -133,7 +133,7 @@ Public interfaces
 
         - **callback**: Function pointer to the RX callback. Pass NULL to deregister.
 
-        **Return values:** I2C_SLAVE_STATUS_OK on success.
+        **Return values:** BPB_I2C_SLAVE_STATUS_OK on success.
 
         **Restrictions:** Callback is invoked from interrupt context and must be short and non-blocking.
 
@@ -146,7 +146,7 @@ Public interfaces
 
         - **callback**: Function pointer to the TX callback. Pass NULL to deregister.
 
-        **Return values:** I2C_SLAVE_STATUS_OK on success.
+        **Return values:** BPB_I2C_SLAVE_STATUS_OK on success.
 
         **Restrictions:** Callback is invoked from interrupt context; it must populate the TX buffer via I2cSlaveDriverUnit_SetTxBuffer() and be short and non-blocking.
 
@@ -159,7 +159,7 @@ Public interfaces
 
         - **callback**: Function pointer to the address-match callback. Pass NULL to deregister.
 
-        **Return values:** I2C_SLAVE_STATUS_OK on success.
+        **Return values:** BPB_I2C_SLAVE_STATUS_OK on success.
 
         **Restrictions:** Callback is invoked from interrupt context and must be short and non-blocking.
 
@@ -170,7 +170,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** I2C_SLAVE_STATUS_OK on success.
+        **Return values:** BPB_I2C_SLAVE_STATUS_OK on success.
 
         **Restrictions:** None.
 

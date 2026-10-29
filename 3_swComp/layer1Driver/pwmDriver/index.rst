@@ -40,7 +40,7 @@ Public interfaces
 
         - **pConfig**: Pointer to PWM driver configuration structure (enableDma, enableDeadTime).
 
-        **Return values:** PWM_STATUS_OK on success, PWM_STATUS_ERROR for NULL config.
+        **Return values:** BPB_PWM_STATUS_OK on success, BPB_PWM_STATUS_ERROR for NULL config.
 
         **Restrictions:** Must be called before any other PWM driver function.
 
@@ -54,7 +54,7 @@ Public interfaces
         - **channel**: The PWM channel to configure.
         - **pConfig**: Pointer to channel configuration structure (frequency, dutyCycle, polarity, alignment, deadTime).
 
-        **Return values:** PWM_STATUS_OK on success, PWM_STATUS_ERROR for NULL pointer or invalid channel.
+        **Return values:** BPB_PWM_STATUS_OK on success, BPB_PWM_STATUS_ERROR for NULL pointer or invalid channel.
 
         **Restrictions:** None.
 
@@ -68,7 +68,7 @@ Public interfaces
         - **channel**: The PWM channel to configure.
         - **frequency**: Desired PWM frequency in Hz.
 
-        **Return values:** PWM_STATUS_OK on success, PWM_STATUS_ERROR for an invalid channel or out-of-range frequency.
+        **Return values:** BPB_PWM_STATUS_OK on success, BPB_PWM_STATUS_ERROR for an invalid channel or out-of-range frequency.
 
         **Restrictions:** None.
 
@@ -82,7 +82,7 @@ Public interfaces
         - **channel**: The PWM channel to configure.
         - **dutyCycle**: Duty cycle value in units of 0.01% (0 = 0%, 10000 = 100%).
 
-        **Return values:** PWM_STATUS_OK on success, PWM_STATUS_ERROR for an invalid channel or out-of-range value.
+        **Return values:** BPB_PWM_STATUS_OK on success, BPB_PWM_STATUS_ERROR for an invalid channel or out-of-range value.
 
         **Restrictions:** None.
 
@@ -96,7 +96,7 @@ Public interfaces
         - **channel**: The PWM channel to configure.
         - **polarity**: Output polarity (PWM_POLARITY_HIGH or PWM_POLARITY_LOW).
 
-        **Return values:** PWM_STATUS_OK on success, PWM_STATUS_ERROR for an invalid channel.
+        **Return values:** BPB_PWM_STATUS_OK on success, BPB_PWM_STATUS_ERROR for an invalid channel.
 
         **Restrictions:** None.
 
@@ -109,7 +109,7 @@ Public interfaces
 
         - **channel**: The PWM channel to start.
 
-        **Return values:** PWM_STATUS_OK on success, PWM_STATUS_ERROR for an invalid channel.
+        **Return values:** BPB_PWM_STATUS_OK on success, BPB_PWM_STATUS_ERROR for an invalid channel.
 
         **Restrictions:** PwmDriverUnit_ConfigureChannel() must be called before starting.
 
@@ -122,7 +122,7 @@ Public interfaces
 
         - **channel**: The PWM channel to stop.
 
-        **Return values:** PWM_STATUS_OK on success, PWM_STATUS_ERROR for an invalid channel.
+        **Return values:** BPB_PWM_STATUS_OK on success, BPB_PWM_STATUS_ERROR for an invalid channel.
 
         **Restrictions:** None.
 
@@ -136,7 +136,7 @@ Public interfaces
         - **channel**: The PWM channel to query.
         - **pConfig**: Pointer to a channel configuration structure that receives the current settings.
 
-        **Return values:** PWM_STATUS_OK on success, PWM_STATUS_ERROR for an invalid channel or NULL pointer.
+        **Return values:** BPB_PWM_STATUS_OK on success, BPB_PWM_STATUS_ERROR for an invalid channel or NULL pointer.
 
         **Restrictions:** None.
 
@@ -150,7 +150,7 @@ Public interfaces
         - **channel**: The PWM channel to check.
         - **pIsRunning**: Pointer to store the result; set to ``true`` if the channel is running.
 
-        **Return values:** PWM_STATUS_OK on success, PWM_STATUS_ERROR for an invalid channel or NULL pointer.
+        **Return values:** BPB_PWM_STATUS_OK on success, BPB_PWM_STATUS_ERROR for an invalid channel or NULL pointer.
 
         **Restrictions:** None.
 
@@ -161,7 +161,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** PWM_STATUS_OK on success.
+        **Return values:** BPB_PWM_STATUS_OK on success.
 
         **Restrictions:** None.
 

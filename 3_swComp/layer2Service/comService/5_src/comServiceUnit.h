@@ -1,5 +1,5 @@
-#ifndef COMSERVICEUNIT_H
-#define COMSERVICEUNIT_H
+#ifndef BPB_COMSERVICEUNIT_H
+#define BPB_COMSERVICEUNIT_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -10,12 +10,12 @@
 //============================================================================
 typedef enum
 {
-    COMSERVICE_STATUS_OK = 0,
-    COMSERVICE_STATUS_ERROR,
-    COMSERVICE_STATUS_INVALID_PARAM,
-    COMSERVICE_STATUS_BUFFER_FULL,
-    COMSERVICE_STATUS_BUFFER_EMPTY,
-    COMSERVICE_STATUS_NOT_INITIALIZED
+    BPB_COMSERVICE_STATUS_OK = 0,
+    BPB_COMSERVICE_STATUS_ERROR,
+    BPB_COMSERVICE_STATUS_INVALID_PARAM,
+    BPB_COMSERVICE_STATUS_BUFFER_FULL,
+    BPB_COMSERVICE_STATUS_BUFFER_EMPTY,
+    BPB_COMSERVICE_STATUS_NOT_INITIALIZED
 } ComService_Status_t;
 
 //============================================================================
@@ -28,4 +28,4 @@ bool                ComServiceUnit_IsRxDataAvailable(void);
 ComService_Status_t ComServiceUnit_Read(uint8_t *pData, uint16_t maxLength, uint16_t *pReadLength);
 ComService_Status_t ComServiceUnit_Write(const uint8_t *pData, uint16_t length);
 
-#endif /* COMSERVICEUNIT_H */
+#endif /* BPB_COMSERVICEUNIT_H */

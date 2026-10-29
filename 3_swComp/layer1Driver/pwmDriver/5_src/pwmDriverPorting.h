@@ -1,7 +1,7 @@
 // Port interface of the PWM driver. Implemented by the device workspace, called by pwmDriverUnit.c.
 
-#ifndef PWMDRIVERPORT_H
-#define PWMDRIVERPORT_H
+#ifndef BPB_PWMDRIVERPORT_H
+#define BPB_PWMDRIVERPORT_H
 
 //============================================================================
 // Dependencies
@@ -13,7 +13,7 @@
 // Public Macros
 //============================================================================
 // Duty cycle unit of the port: 0..10000 equals 0..100 percent.
-#define PWMPORT_DUTY_MAX    10000U
+#define BPB_PWMPORT_DUTY_MAX    10000U
 
 //============================================================================
 // Public Functions
@@ -26,4 +26,4 @@ bool PwmPort_SetDuty(uint8_t channel, uint16_t duty);
 bool PwmPort_Start(uint8_t channel);
 bool PwmPort_Stop(uint8_t channel);
 
-#endif /* PWMDRIVERPORT_H */
+#endif /* BPB_PWMDRIVERPORT_H */

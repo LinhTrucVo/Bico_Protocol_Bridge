@@ -35,7 +35,7 @@ Req-serialize-005: The component shall encode DID/RID as 2-byte big-endian in th
    Verification: Identifier 0x0102 encodes as bytes [0x01, 0x02] in the response buffer.
 
 Req-serialize-006: The component shall return BUFFER_OVERFLOW if total response exceeds maximum size.
-   Verification: Build functions return SERIALIZE_STATUS_BUFFER_OVERFLOW without writing beyond buffer.
+   Verification: Build functions return BPB_SERIALIZE_STATUS_BUFFER_OVERFLOW without writing beyond buffer.
 
 Req-serialize-007: The component shall return INVALID_PARAM when output pointer is null.
    Verification: All build functions return INVALID_PARAM for null response pointer.

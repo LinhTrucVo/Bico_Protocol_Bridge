@@ -14,9 +14,9 @@
 //============================================================================
 // Local Macros
 //============================================================================
-#define I2C_MASTER_SCAN_FIRST_ADDRESS       0x08U
-#define I2C_MASTER_SCAN_LAST_ADDRESS        0x77U
-#define I2C_MASTER_SCAN_TIMEOUT_MS          10U
+#define BPB_I2C_MASTER_SCAN_FIRST_ADDRESS       0x08U
+#define BPB_I2C_MASTER_SCAN_LAST_ADDRESS        0x77U
+#define BPB_I2C_MASTER_SCAN_TIMEOUT_MS          10U
 
 //============================================================================
 // Local Types
@@ -48,7 +48,7 @@ I2cMasterDriver_Status_t I2cMasterDriverUnit_Init(const I2cMasterDriver_Config_t
 {
     if (pConfig == NULL)
     {
-        return I2C_MASTER_STATUS_INVALID_PARAM;
+        return BPB_I2C_MASTER_STATUS_INVALID_PARAM;
     }
     if (i2cMasterContext.initialized)
     {
@@ -58,27 +58,27 @@ I2cMasterDriver_Status_t I2cMasterDriverUnit_Init(const I2cMasterDriver_Config_t
     (void)memset(&i2cMasterContext, 0, sizeof(i2cMasterContext));
     if (!I2cMasterPort_Init((uint32_t)pConfig->speed))
     {
-        return I2C_MASTER_STATUS_ERROR;
+        return BPB_I2C_MASTER_STATUS_ERROR;
     }
 
     i2cMasterContext.config = *pConfig;
     i2cMasterContext.initialized = true;
-    return I2C_MASTER_STATUS_OK;
+    return BPB_I2C_MASTER_STATUS_OK;
 }
 
 I2cMasterDriver_Status_t I2cMasterDriverUnit_SetSpeed(I2cMasterDriver_Speed_t speed)
 {
     if (!i2cMasterContext.initialized)
     {
-        return I2C_MASTER_STATUS_ERROR;
+        return BPB_I2C_MASTER_STATUS_ERROR;
     }
 
     if (!I2cMasterPort_SetSpeed((uint32_t)speed))
     {
-        return I2C_MASTER_STATUS_ERROR;
+        return BPB_I2C_MASTER_STATUS_ERROR;
     }
     i2cMasterContext.config.speed = speed;
-    return I2C_MASTER_STATUS_OK;
+    return BPB_I2C_MASTER_STATUS_OK;
 }
 
 I2cMasterDriver_Status_t I2cMasterDriverUnit_Write(I2cMasterDriver_Address_t address, const uint8_t *pData, uint16_t length)
@@ -90,11 +90,11 @@ I2cMasterDriver_Status_t I2cMasterDriverUnit_WriteWithTimeout(I2cMasterDriver_Ad
 {
     if (!i2cMasterContext.initialized)
     {
-        return I2C_MASTER_STATUS_ERROR;
+        return BPB_I2C_MASTER_STATUS_ERROR;
     }
-    if (pData == NULL || length == 0 || length > I2C_MAX_TRANSFER_SIZE)
+    if (pData == NULL || length == 0 || length > BPB_I2C_MAX_TRANSFER_SIZE)
     {
-        return I2C_MASTER_STATUS_INVALID_PARAM;
+        return BPB_I2C_MASTER_STATUS_INVALID_PARAM;
     }
 
     i2cMasterContext.busy = true;
@@ -111,11 +111,11 @@ I2cMasterDriver_Status_t I2cMasterDriverUnit_ReadWithTimeout(I2cMasterDriver_Add
 {
     if (!i2cMasterContext.initialized)
     {
-        return I2C_MASTER_STATUS_ERROR;
+        return BPB_I2C_MASTER_STATUS_ERROR;
     }
-    if (pData == NULL || length == 0 || length > I2C_MAX_TRANSFER_SIZE)
+    if (pData == NULL || length == 0 || length > BPB_I2C_MAX_TRANSFER_SIZE)
     {
-        return I2C_MASTER_STATUS_INVALID_PARAM;
+        return BPB_I2C_MASTER_STATUS_INVALID_PARAM;
     }
 
     i2cMasterContext.busy = true;
@@ -127,12 +127,12 @@ I2cMasterDriver_Status_t I2cMasterDriverUnit_WriteRead(I2cMasterDriver_Address_t
 {
     if (!i2cMasterContext.initialized)
     {
-        return I2C_MASTER_STATUS_ERROR;
+        return BPB_I2C_MASTER_STATUS_ERROR;
     }
     if (pWriteData == NULL || pReadData == NULL || writeLength == 0 || readLength == 0 ||
-        writeLength > I2C_MAX_TRANSFER_SIZE || readLength > I2C_MAX_TRANSFER_SIZE)
+        writeLength > BPB_I2C_MAX_TRANSFER_SIZE || readLength > BPB_I2C_MAX_TRANSFER_SIZE)
     {
-        return I2C_MASTER_STATUS_INVALID_PARAM;
+        return BPB_I2C_MASTER_STATUS_INVALID_PARAM;
     }
 
     i2cMasterContext.busy = true;
@@ -145,14 +145,14 @@ I2cMasterDriver_Status_t I2cMasterDriverUnit_WriteRegister(I2cMasterDriver_Addre
 {
     if (!i2cMasterContext.initialized)
     {
-        return I2C_MASTER_STATUS_ERROR;
+        return BPB_I2C_MASTER_STATUS_ERROR;
     }
-    if (pData == NULL || length == 0 || length >= I2C_MAX_TRANSFER_SIZE)
+    if (pData == NULL || length == 0 || length >= BPB_I2C_MAX_TRANSFER_SIZE)
     {
-        return I2C_MASTER_STATUS_INVALID_PARAM;
+        return BPB_I2C_MASTER_STATUS_INVALID_PARAM;
     }
 
-    uint8_t frame[I2C_MAX_TRANSFER_SIZE];
+    uint8_t frame[BPB_I2C_MAX_TRANSFER_SIZE];
     frame[0] = regAddress;
     (void)memcpy(&frame[1], pData, length);
     return I2cMasterDriverUnit_Write(address, frame, (uint16_t)(length + 1U));
@@ -167,45 +167,45 @@ I2cMasterDriver_Status_t I2cMasterDriverUnit_ScanBus(I2cMasterDriver_Address_t *
 {
     if (pFoundAddresses == NULL || pNumFound == NULL)
     {
-        return I2C_MASTER_STATUS_INVALID_PARAM;
+        return BPB_I2C_MASTER_STATUS_INVALID_PARAM;
     }
     if (!i2cMasterContext.initialized)
     {
-        return I2C_MASTER_STATUS_ERROR;
+        return BPB_I2C_MASTER_STATUS_ERROR;
     }
 
     *pNumFound = 0;
-    for (uint16_t address = I2C_MASTER_SCAN_FIRST_ADDRESS;
-         (address <= I2C_MASTER_SCAN_LAST_ADDRESS) && (*pNumFound < maxAddresses);
+    for (uint16_t address = BPB_I2C_MASTER_SCAN_FIRST_ADDRESS;
+         (address <= BPB_I2C_MASTER_SCAN_LAST_ADDRESS) && (*pNumFound < maxAddresses);
          address++)
     {
-        if (I2cMasterPort_Probe(address, I2C_MASTER_SCAN_TIMEOUT_MS))
+        if (I2cMasterPort_Probe(address, BPB_I2C_MASTER_SCAN_TIMEOUT_MS))
         {
             pFoundAddresses[*pNumFound] = (I2cMasterDriver_Address_t)address;
             (*pNumFound)++;
         }
     }
-    return I2C_MASTER_STATUS_OK;
+    return BPB_I2C_MASTER_STATUS_OK;
 }
 
 I2cMasterDriver_Status_t I2cMasterDriverUnit_IsBusy(bool *pIsBusy)
 {
     if (pIsBusy == NULL)
     {
-        return I2C_MASTER_STATUS_INVALID_PARAM;
+        return BPB_I2C_MASTER_STATUS_INVALID_PARAM;
     }
     *pIsBusy = i2cMasterContext.busy;
-    return I2C_MASTER_STATUS_OK;
+    return BPB_I2C_MASTER_STATUS_OK;
 }
 
 I2cMasterDriver_Status_t I2cMasterDriverUnit_RegisterCallback(I2cMasterDriver_Callback_t callback)
 {
     if (!i2cMasterContext.initialized)
     {
-        return I2C_MASTER_STATUS_ERROR;
+        return BPB_I2C_MASTER_STATUS_ERROR;
     }
     i2cMasterContext.callback = callback;
-    return I2C_MASTER_STATUS_OK;
+    return BPB_I2C_MASTER_STATUS_OK;
 }
 
 I2cMasterDriver_Status_t I2cMasterDriverUnit_DeInit(void)
@@ -215,7 +215,7 @@ I2cMasterDriver_Status_t I2cMasterDriverUnit_DeInit(void)
         I2cMasterPort_DeInit();
     }
     (void)memset(&i2cMasterContext, 0, sizeof(i2cMasterContext));
-    return I2C_MASTER_STATUS_OK;
+    return BPB_I2C_MASTER_STATUS_OK;
 }
 
 //============================================================================
@@ -224,19 +224,19 @@ I2cMasterDriver_Status_t I2cMasterDriverUnit_DeInit(void)
 
 static uint32_t I2cMasterDriverUnit_DefaultTimeout(void)
 {
-    return (i2cMasterContext.config.timeoutMs != 0U) ? i2cMasterContext.config.timeoutMs : I2C_MASTER_CFG_TIMEOUT_MS;
+    return (i2cMasterContext.config.timeoutMs != 0U) ? i2cMasterContext.config.timeoutMs : BPB_I2C_MASTER_CFG_TIMEOUT_MS;
 }
 
 static I2cMasterDriver_Status_t I2cMasterDriverUnit_Complete(I2cMasterPort_Result_t result)
 {
-    I2cMasterDriver_Status_t status = I2C_MASTER_STATUS_ERROR;
-    if (result == I2CMASTERPORT_OK)
+    I2cMasterDriver_Status_t status = BPB_I2C_MASTER_STATUS_ERROR;
+    if (result == BPB_I2CMASTERPORT_OK)
     {
-        status = I2C_MASTER_STATUS_OK;
+        status = BPB_I2C_MASTER_STATUS_OK;
     }
-    else if (result == I2CMASTERPORT_TIMEOUT)
+    else if (result == BPB_I2CMASTERPORT_TIMEOUT)
     {
-        status = I2C_MASTER_STATUS_TIMEOUT;
+        status = BPB_I2C_MASTER_STATUS_TIMEOUT;
     }
 
     i2cMasterContext.busy = false;

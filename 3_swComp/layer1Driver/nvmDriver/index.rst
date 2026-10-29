@@ -40,7 +40,7 @@ Public interfaces
 
         - **pConfig**: Pointer to NVM driver configuration structure (base address, page size, sector size).
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** Must be called before any other NVM driver function.
 
@@ -55,7 +55,7 @@ Public interfaces
         - **pData**: Pointer to the destination buffer.
         - **length**: Number of bytes to read.
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer or zero length, NVM_STATUS_ERROR for an out-of-range address.
+        **Return values:** BPB_NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_NVM_STATUS_ERROR for an out-of-range address.
 
         **Restrictions:** None.
 
@@ -70,7 +70,7 @@ Public interfaces
         - **pData**: Pointer to the source data buffer.
         - **length**: Number of bytes to write.
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer or zero length, NVM_STATUS_ERROR if the target region is not erased or address is out of range.
+        **Return values:** BPB_NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_NVM_STATUS_ERROR if the target region is not erased or address is out of range.
 
         **Restrictions:** The target NVM region must be erased before writing.
 
@@ -83,7 +83,7 @@ Public interfaces
 
         - **address**: Any address within the page to erase.
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_ERROR for an out-of-range address or erase failure.
+        **Return values:** BPB_NVM_STATUS_OK on success, BPB_NVM_STATUS_ERROR for an out-of-range address or erase failure.
 
         **Restrictions:** All data in the page is permanently destroyed.
 
@@ -96,7 +96,7 @@ Public interfaces
 
         - **address**: Any address within the sector to erase.
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_ERROR for an out-of-range address or erase failure.
+        **Return values:** BPB_NVM_STATUS_OK on success, BPB_NVM_STATUS_ERROR for an out-of-range address or erase failure.
 
         **Restrictions:** All data in the sector is permanently destroyed.
 
@@ -107,7 +107,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_ERROR if the chip erase failed.
+        **Return values:** BPB_NVM_STATUS_OK on success, BPB_NVM_STATUS_ERROR if the chip erase failed.
 
         **Restrictions:** All stored data is permanently destroyed. This operation may take significant time.
 
@@ -122,7 +122,7 @@ Public interfaces
         - **pData**: Pointer to the source data buffer.
         - **length**: Number of bytes to write.
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer or zero length, NVM_STATUS_ERROR on erase or write failure.
+        **Return values:** BPB_NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_NVM_STATUS_ERROR on erase or write failure.
 
         **Restrictions:** This operation may take significant time due to the erase step.
 
@@ -138,7 +138,7 @@ Public interfaces
         - **length**: Number of bytes to compare.
         - **pIsValid**: Pointer to store the result; set to ``true`` if contents match.
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for NULL pointers or zero length.
+        **Return values:** BPB_NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for NULL pointers or zero length.
 
         **Restrictions:** None.
 
@@ -153,7 +153,7 @@ Public interfaces
         - **length**: Number of bytes to include in the CRC.
         - **pCrc**: Pointer to store the computed 32-bit CRC value.
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer or zero length.
+        **Return values:** BPB_NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer or zero length.
 
         **Restrictions:** None.
 
@@ -166,7 +166,7 @@ Public interfaces
 
         - **pIsBusy**: Pointer to store the result; set to ``true`` if an operation is in progress.
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -179,7 +179,7 @@ Public interfaces
 
         - **pConfig**: Pointer to a configuration structure that receives the memory geometry (base address, page size, sector size, total size).
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_NVM_STATUS_OK on success, NVM_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -190,7 +190,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_ERROR if write protection could not be activated.
+        **Return values:** BPB_NVM_STATUS_OK on success, BPB_NVM_STATUS_ERROR if write protection could not be activated.
 
         **Restrictions:** None.
 
@@ -201,7 +201,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** NVM_STATUS_OK on success, NVM_STATUS_ERROR if write protection could not be released.
+        **Return values:** BPB_NVM_STATUS_OK on success, BPB_NVM_STATUS_ERROR if write protection could not be released.
 
         **Restrictions:** None.
 
@@ -214,7 +214,7 @@ Public interfaces
 
         - **callback**: Function pointer to the callback. Pass NULL to deregister.
 
-        **Return values:** NVM_STATUS_OK on success.
+        **Return values:** BPB_NVM_STATUS_OK on success.
 
         **Restrictions:** Callbacks are invoked from interrupt context; they must be short and non-blocking.
 
@@ -225,7 +225,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** NVM_STATUS_OK on success.
+        **Return values:** BPB_NVM_STATUS_OK on success.
 
         **Restrictions:** None.
 

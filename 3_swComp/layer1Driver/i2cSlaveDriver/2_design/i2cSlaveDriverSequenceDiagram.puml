@@ -7,17 +7,17 @@ actor "App" as app
 app -> slave : Init(config)
 slave -> ctx : Initialize, copy config
 ctx --> slave : initialized=true
-slave --> app : I2C_SLAVE_STATUS_OK
+slave --> app : BPB_I2C_SLAVE_STATUS_OK
 
 app -> slave : SetRxBuffer(rxBuf, 256)
 slave -> ctx : pRxBuffer = rxBuf
 ctx --> slave : OK
-slave --> app : I2C_SLAVE_STATUS_OK
+slave --> app : BPB_I2C_SLAVE_STATUS_OK
 
 app -> slave : SetTxBuffer(txBuf, 10)
 slave -> ctx : pTxBuffer = txBuf
 ctx --> slave : OK
-slave --> app : I2C_SLAVE_STATUS_OK
+slave --> app : BPB_I2C_SLAVE_STATUS_OK
 
 master -> slave : Address match ISR
 slave -> ctx : Invoke addressCallback
@@ -38,5 +38,5 @@ slave -> slave : If txCallback: invoke
 app -> slave : GetRxLength()
 slave -> ctx : Get rxLength
 ctx --> slave : length value
-slave --> app : I2C_SLAVE_STATUS_OK + length
+slave --> app : BPB_I2C_SLAVE_STATUS_OK + length
 @enduml

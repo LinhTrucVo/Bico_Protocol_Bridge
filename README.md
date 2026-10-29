@@ -62,6 +62,7 @@ cd Bico_Protocol_Bridge
 git submodule update --init --recursive --depth 1
 cd "7_1_esp32_workspace/esp32_bico_protocol_bridge"
 <esp-idf_path>\export.ps1
+<!-- D:\vor5hc\.espressif\v5.4.3\esp-idf\export.ps1 -->
 idf.py build
 
 git clone --branch develop_on_esp32 --depth 1 --recurse-submodules --shallow-submodules https://github.com/LinhTrucVo/Bico_Protocol_Bridge.git

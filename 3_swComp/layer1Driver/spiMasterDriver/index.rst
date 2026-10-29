@@ -40,7 +40,7 @@ Public interfaces
 
         - **pConfig**: Pointer to SPI master driver configuration structure (clockSpeed, mode, bitOrder).
 
-        **Return values:** SPI_MASTER_STATUS_OK on success, SPI_MASTER_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_SPI_MASTER_STATUS_OK on success, BPB_SPI_MASTER_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** Must be called before any other SPI master driver function.
 
@@ -52,10 +52,10 @@ Public interfaces
         **Arguments:**
 
         - **clockSpeed**: Desired SPI clock speed in Hz.
-        - **mode**: SPI mode (SPI_MODE_0, SPI_MODE_1, SPI_MODE_2, SPI_MODE_3).
+        - **mode**: SPI mode (BPB_SPI_MODE_0, BPB_SPI_MODE_1, BPB_SPI_MODE_2, BPB_SPI_MODE_3).
         - **bitOrder**: Bit transmission order (SPI_BIT_ORDER_MSB_FIRST or SPI_BIT_ORDER_LSB_FIRST).
 
-        **Return values:** SPI_MASTER_STATUS_OK on success, SPI_MASTER_STATUS_INVALID_PARAM for unsupported values.
+        **Return values:** BPB_SPI_MASTER_STATUS_OK on success, BPB_SPI_MASTER_STATUS_INVALID_PARAM for unsupported values.
 
         **Restrictions:** None.
 
@@ -68,7 +68,7 @@ Public interfaces
 
         - **cs**: Chip-select identifier to assert.
 
-        **Return values:** SPI_MASTER_STATUS_OK on success, SPI_MASTER_STATUS_INVALID_PARAM for an invalid chip-select.
+        **Return values:** BPB_SPI_MASTER_STATUS_OK on success, BPB_SPI_MASTER_STATUS_INVALID_PARAM for an invalid chip-select.
 
         **Restrictions:** None.
 
@@ -81,7 +81,7 @@ Public interfaces
 
         - **cs**: Chip-select identifier to release.
 
-        **Return values:** SPI_MASTER_STATUS_OK on success, SPI_MASTER_STATUS_INVALID_PARAM for an invalid chip-select.
+        **Return values:** BPB_SPI_MASTER_STATUS_OK on success, BPB_SPI_MASTER_STATUS_INVALID_PARAM for an invalid chip-select.
 
         **Restrictions:** None.
 
@@ -95,7 +95,7 @@ Public interfaces
         - **pData**: Pointer to the data buffer to transmit.
         - **length**: Number of bytes to transmit.
 
-        **Return values:** SPI_MASTER_STATUS_OK on success, SPI_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, SPI_MASTER_STATUS_TIMEOUT on timeout.
+        **Return values:** BPB_SPI_MASTER_STATUS_OK on success, BPB_SPI_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_SPI_MASTER_STATUS_TIMEOUT on timeout.
 
         **Restrictions:** Chip-select must be asserted before calling this function.
 
@@ -109,7 +109,7 @@ Public interfaces
         - **pData**: Pointer to the buffer for received data.
         - **length**: Number of bytes to receive.
 
-        **Return values:** SPI_MASTER_STATUS_OK on success, SPI_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, SPI_MASTER_STATUS_TIMEOUT on timeout.
+        **Return values:** BPB_SPI_MASTER_STATUS_OK on success, BPB_SPI_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_SPI_MASTER_STATUS_TIMEOUT on timeout.
 
         **Restrictions:** Chip-select must be asserted before calling this function.
 
@@ -124,7 +124,7 @@ Public interfaces
         - **pRxData**: Pointer to the buffer for received data.
         - **length**: Number of bytes to transfer.
 
-        **Return values:** SPI_MASTER_STATUS_OK on success, SPI_MASTER_STATUS_INVALID_PARAM for NULL pointers or zero length, SPI_MASTER_STATUS_TIMEOUT on timeout.
+        **Return values:** BPB_SPI_MASTER_STATUS_OK on success, BPB_SPI_MASTER_STATUS_INVALID_PARAM for NULL pointers or zero length, BPB_SPI_MASTER_STATUS_TIMEOUT on timeout.
 
         **Restrictions:** Chip-select must be asserted before calling this function.
 
@@ -139,7 +139,7 @@ Public interfaces
         - **length**: Number of bytes to transmit.
         - **timeoutMs**: Maximum time in milliseconds to wait for completion.
 
-        **Return values:** SPI_MASTER_STATUS_OK on success, SPI_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, SPI_MASTER_STATUS_TIMEOUT if the operation exceeded the timeout.
+        **Return values:** BPB_SPI_MASTER_STATUS_OK on success, BPB_SPI_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_SPI_MASTER_STATUS_TIMEOUT if the operation exceeded the timeout.
 
         **Restrictions:** Chip-select must be asserted before calling this function.
 
@@ -152,7 +152,7 @@ Public interfaces
 
         - **pIsBusy**: Pointer to store the result; set to ``true`` if the bus is busy.
 
-        **Return values:** SPI_MASTER_STATUS_OK on success, SPI_MASTER_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_SPI_MASTER_STATUS_OK on success, BPB_SPI_MASTER_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -165,7 +165,7 @@ Public interfaces
 
         - **callback**: Function pointer to the callback. Pass NULL to deregister.
 
-        **Return values:** SPI_MASTER_STATUS_OK on success.
+        **Return values:** BPB_SPI_MASTER_STATUS_OK on success.
 
         **Restrictions:** Callbacks are invoked from interrupt context; they must be short and non-blocking.
 
@@ -176,7 +176,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** SPI_MASTER_STATUS_OK on success.
+        **Return values:** BPB_SPI_MASTER_STATUS_OK on success.
 
         **Restrictions:** None.
 

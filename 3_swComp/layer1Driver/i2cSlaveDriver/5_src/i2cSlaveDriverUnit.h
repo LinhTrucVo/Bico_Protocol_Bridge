@@ -1,8 +1,8 @@
 ﻿// This file is used to define the public interface of the component unit.
 // It contains public macros, types, variables, and function prototypes that shall be included in component headers file (i2cSlaveDriver.h)
 
-#ifndef I2C_SLAVEDRIVERUNIT_H
-#define I2C_SLAVEDRIVERUNIT_H
+#ifndef BPB_I2C_SLAVEDRIVERUNIT_H
+#define BPB_I2C_SLAVEDRIVERUNIT_H
 
 //============================================================================
 // Dependencies
@@ -14,20 +14,20 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define I2C_SLAVE_CFG_ADDRESS         0x10
-#define I2C_SLAVE_CFG_ADDRESS_MODE    0   // 0=7bit
-#define I2C_SLAVE_CFG_MAX_BUFFER      256
-#define I2C_SLAVE_MAX_BUFFER_SIZE     256
+#define BPB_I2C_SLAVE_CFG_ADDRESS         0x10
+#define BPB_I2C_SLAVE_CFG_ADDRESS_MODE    0   // 0=7bit
+#define BPB_I2C_SLAVE_CFG_MAX_BUFFER      256
+#define BPB_I2C_SLAVE_MAX_BUFFER_SIZE     256
 
 //============================================================================
 // Status Enums
 //============================================================================
-#define I2C_SLAVE_STATUS_OK             I2CSLAVEDRIVERSTATUS_OK
-#define I2C_SLAVE_STATUS_ERROR          I2CSLAVEDRIVERSTATUS_ERROR
-#define I2C_SLAVE_STATUS_BUSY           I2CSLAVEDRIVERSTATUS_BUSY
-#define I2C_SLAVE_STATUS_BUFFER_OVERFLOW I2CSLAVEDRIVERSTATUS_BUFFER_OVERFLOW
-#define I2C_SLAVE_STATUS_BUS_ERROR      I2CSLAVEDRIVERSTATUS_BUS_ERROR
-#define I2C_SLAVE_STATUS_NOT_INITIALIZED I2CSLAVEDRIVERSTATUS_NOT_INITIALIZED
+#define BPB_I2C_SLAVE_STATUS_OK             BPB_I2CSLAVEDRIVERSTATUS_OK
+#define BPB_I2C_SLAVE_STATUS_ERROR          BPB_I2CSLAVEDRIVERSTATUS_ERROR
+#define BPB_I2C_SLAVE_STATUS_BUSY           BPB_I2CSLAVEDRIVERSTATUS_BUSY
+#define BPB_I2C_SLAVE_STATUS_BUFFER_OVERFLOW BPB_I2CSLAVEDRIVERSTATUS_BUFFER_OVERFLOW
+#define BPB_I2C_SLAVE_STATUS_BUS_ERROR      BPB_I2CSLAVEDRIVERSTATUS_BUS_ERROR
+#define BPB_I2C_SLAVE_STATUS_NOT_INITIALIZED BPB_I2CSLAVEDRIVERSTATUS_NOT_INITIALIZED
 
 //============================================================================
 // Public Macros
@@ -38,18 +38,18 @@
 //============================================================================
 typedef enum
 {
-    I2CSLAVEDRIVERSTATUS_OK = 0,
-    I2CSLAVEDRIVERSTATUS_ERROR,
-    I2CSLAVEDRIVERSTATUS_BUSY,
-    I2CSLAVEDRIVERSTATUS_BUFFER_OVERFLOW,
-    I2CSLAVEDRIVERSTATUS_BUS_ERROR,
-    I2CSLAVEDRIVERSTATUS_NOT_INITIALIZED
+    BPB_I2CSLAVEDRIVERSTATUS_OK = 0,
+    BPB_I2CSLAVEDRIVERSTATUS_ERROR,
+    BPB_I2CSLAVEDRIVERSTATUS_BUSY,
+    BPB_I2CSLAVEDRIVERSTATUS_BUFFER_OVERFLOW,
+    BPB_I2CSLAVEDRIVERSTATUS_BUS_ERROR,
+    BPB_I2CSLAVEDRIVERSTATUS_NOT_INITIALIZED
 } I2cSlaveDriver_Status_t;
 
 typedef enum
 {
-    I2C_SLAVE_ADDRESS_7BIT = 0,
-    I2C_SLAVE_ADDRESS_10BIT
+    BPB_I2C_SLAVE_ADDRESS_7BIT = 0,
+    BPB_I2C_SLAVE_ADDRESS_10BIT
 } I2cSlaveDriver_AddressMode_t;
 
 typedef uint16_t I2cSlaveDriver_Address_t;
@@ -82,4 +82,4 @@ I2cSlaveDriver_Status_t I2cSlaveDriverUnit_RegisterTxCallback(I2cSlaveDriver_TxC
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_RegisterAddressMatchCallback(I2cSlaveDriver_AddressMatchCallback_t callback);
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_DeInit(void);
 
-#endif /* I2C_SLAVEDRIVERUNIT_H */
+#endif /* BPB_I2C_SLAVEDRIVERUNIT_H */

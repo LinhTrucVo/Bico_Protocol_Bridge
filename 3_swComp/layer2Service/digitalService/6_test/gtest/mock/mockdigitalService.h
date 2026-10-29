@@ -1,5 +1,5 @@
-#ifndef MOCKDIGITALAPP_H
-#define MOCKDIGITALAPP_H
+#ifndef BPB_MOCKDIGITALAPP_H
+#define BPB_MOCKDIGITALAPP_H
 #include "fff.h"
 #include "digitalService.h"
 #include "digitalServiceUnit.h"
@@ -11,4 +11,4 @@ DigitalService_Status_t call_DigitalServiceUnit_ReadGpio(uint8_t pin, uint8_t *p
 DigitalService_Status_t call_DigitalServiceUnit_StartPwm(uint8_t channel);
 DigitalService_Status_t call_DigitalServiceUnit_StopPwm(uint8_t channel);
 
-#endif /* MOCKDIGITALAPP_H */
+#endif /* BPB_MOCKDIGITALAPP_H */

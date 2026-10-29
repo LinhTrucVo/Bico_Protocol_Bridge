@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for I2cSlaveDriver testing
 
-#ifndef MOCKI2CSLAVEDRIVER_H
-#define MOCKI2CSLAVEDRIVER_H
+#ifndef BPB_MOCKI2CSLAVEDRIVER_H
+#define BPB_MOCKI2CSLAVEDRIVER_H
 
 //============================================================================
 // Dependencies
@@ -33,5 +33,5 @@ I2cSlaveDriver_Status_t call_I2cSlaveDriverUnit_RegisterTxCallback(I2cSlaveDrive
 I2cSlaveDriver_Status_t call_I2cSlaveDriverUnit_RegisterAddressMatchCallback(I2cSlaveDriver_AddressMatchCallback_t callback);
 I2cSlaveDriver_Status_t call_I2cSlaveDriverUnit_DeInit(void);
 
-#endif /* MOCKI2CSLAVEDRIVER_H */
+#endif /* BPB_MOCKI2CSLAVEDRIVER_H */
 

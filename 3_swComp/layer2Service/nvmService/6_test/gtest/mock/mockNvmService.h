@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for NvmService testing
 
-#ifndef MOCKNVMSERVICE_H
-#define MOCKNVMSERVICE_H
+#ifndef BPB_MOCKNVMSERVICE_H
+#define BPB_MOCKNVMSERVICE_H
 
 //============================================================================
 // Dependencies
@@ -30,4 +30,4 @@ NvmService_Status_t call_NvmServiceUnit_EraseAll(void);
 NvmService_Status_t call_NvmServiceUnit_Exists(NvmService_Key_t key, bool *pExists);
 NvmService_Status_t call_NvmServiceUnit_ComputeCrc(const uint8_t *pData, uint16_t length, uint32_t *pCrc);
 
-#endif /* MOCKNVMSERVICE_H */
+#endif /* BPB_MOCKNVMSERVICE_H */

@@ -40,7 +40,7 @@ Public interfaces
 
         - **pConfig**: Pointer to SPI slave driver configuration structure (mode, bitOrder, dataFrameSize).
 
-        **Return values:** SPI_SLAVE_STATUS_OK on success, SPI_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_SPI_SLAVE_STATUS_OK on success, BPB_SPI_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** Must be called before any other SPI slave driver function.
 
@@ -54,7 +54,7 @@ Public interfaces
         - **pData**: Pointer to the data buffer to transmit.
         - **length**: Number of bytes available in the transmit buffer.
 
-        **Return values:** SPI_SLAVE_STATUS_OK on success, SPI_SLAVE_STATUS_INVALID_PARAM for a NULL pointer or zero length.
+        **Return values:** BPB_SPI_SLAVE_STATUS_OK on success, BPB_SPI_SLAVE_STATUS_INVALID_PARAM for a NULL pointer or zero length.
 
         **Restrictions:** The buffer must remain valid until the master read transaction is complete.
 
@@ -68,7 +68,7 @@ Public interfaces
         - **pData**: Pointer to the buffer for received data.
         - **maxLength**: Maximum number of bytes the buffer can hold.
 
-        **Return values:** SPI_SLAVE_STATUS_OK on success, SPI_SLAVE_STATUS_INVALID_PARAM for a NULL pointer or zero length.
+        **Return values:** BPB_SPI_SLAVE_STATUS_OK on success, BPB_SPI_SLAVE_STATUS_INVALID_PARAM for a NULL pointer or zero length.
 
         **Restrictions:** The buffer must remain valid until SpiSlaveDriverUnit_GetRxLength() is called and data is processed.
 
@@ -81,7 +81,7 @@ Public interfaces
 
         - **pLength**: Pointer to store the number of bytes received.
 
-        **Return values:** SPI_SLAVE_STATUS_OK on success, SPI_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_SPI_SLAVE_STATUS_OK on success, BPB_SPI_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -94,7 +94,7 @@ Public interfaces
 
         - **pIsSelected**: Pointer to store the result; set to ``true`` if chip-select is asserted.
 
-        **Return values:** SPI_SLAVE_STATUS_OK on success, SPI_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_SPI_SLAVE_STATUS_OK on success, BPB_SPI_SLAVE_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -107,7 +107,7 @@ Public interfaces
 
         - **callback**: Function pointer to the RX callback. Pass NULL to deregister.
 
-        **Return values:** SPI_SLAVE_STATUS_OK on success.
+        **Return values:** BPB_SPI_SLAVE_STATUS_OK on success.
 
         **Restrictions:** Callback is invoked from interrupt context and must be short and non-blocking.
 
@@ -120,7 +120,7 @@ Public interfaces
 
         - **callback**: Function pointer to the TX callback. Pass NULL to deregister.
 
-        **Return values:** SPI_SLAVE_STATUS_OK on success.
+        **Return values:** BPB_SPI_SLAVE_STATUS_OK on success.
 
         **Restrictions:** Callback is invoked from interrupt context; it must populate the TX buffer via SpiSlaveDriverUnit_SetTxBuffer() and be short and non-blocking.
 
@@ -131,7 +131,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** SPI_SLAVE_STATUS_OK on success.
+        **Return values:** BPB_SPI_SLAVE_STATUS_OK on success.
 
         **Restrictions:** None.
 

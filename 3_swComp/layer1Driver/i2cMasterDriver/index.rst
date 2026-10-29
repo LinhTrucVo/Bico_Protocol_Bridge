@@ -40,7 +40,7 @@ Public interfaces
 
         - **pConfig**: Pointer to I2C master driver configuration structure (bus speed, address mode, timeout).
 
-        **Return values:** I2C_MASTER_STATUS_OK on success, I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success, BPB_I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** Must be called before any other I2C master driver function.
 
@@ -51,9 +51,9 @@ Public interfaces
 
         **Arguments:**
 
-        - **speed**: Desired bus speed (I2C_SPEED_STANDARD, I2C_SPEED_FAST, I2C_SPEED_FAST_PLUS, I2C_SPEED_HIGH).
+        - **speed**: Desired bus speed (BPB_I2C_SPEED_STANDARD, BPB_I2C_SPEED_FAST, BPB_I2C_SPEED_FAST_PLUS, I2C_SPEED_HIGH).
 
-        **Return values:** I2C_MASTER_STATUS_OK on success, I2C_MASTER_STATUS_INVALID_PARAM for an unsupported speed value.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success, BPB_I2C_MASTER_STATUS_INVALID_PARAM for an unsupported speed value.
 
         **Restrictions:** None.
 
@@ -68,7 +68,7 @@ Public interfaces
         - **pData**: Pointer to the data buffer to transmit.
         - **length**: Number of bytes to transmit.
 
-        **Return values:** I2C_MASTER_STATUS_OK on success, I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, I2C_MASTER_STATUS_NACK if the slave did not acknowledge, I2C_MASTER_STATUS_TIMEOUT on timeout.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success, BPB_I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_I2C_MASTER_STATUS_NACK if the slave did not acknowledge, BPB_I2C_MASTER_STATUS_TIMEOUT on timeout.
 
         **Restrictions:** None.
 
@@ -84,7 +84,7 @@ Public interfaces
         - **length**: Number of bytes to transmit.
         - **timeoutMs**: Maximum time in milliseconds to wait for completion.
 
-        **Return values:** I2C_MASTER_STATUS_OK on success, I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, I2C_MASTER_STATUS_NACK if the slave did not acknowledge, I2C_MASTER_STATUS_TIMEOUT if the operation exceeded the timeout.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success, BPB_I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_I2C_MASTER_STATUS_NACK if the slave did not acknowledge, BPB_I2C_MASTER_STATUS_TIMEOUT if the operation exceeded the timeout.
 
         **Restrictions:** None.
 
@@ -99,7 +99,7 @@ Public interfaces
         - **pData**: Pointer to the buffer for received data.
         - **length**: Number of bytes to receive.
 
-        **Return values:** I2C_MASTER_STATUS_OK on success, I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, I2C_MASTER_STATUS_NACK if no slave acknowledged, I2C_MASTER_STATUS_TIMEOUT on timeout.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success, BPB_I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_I2C_MASTER_STATUS_NACK if no slave acknowledged, BPB_I2C_MASTER_STATUS_TIMEOUT on timeout.
 
         **Restrictions:** None.
 
@@ -115,7 +115,7 @@ Public interfaces
         - **length**: Number of bytes to receive.
         - **timeoutMs**: Maximum time in milliseconds to wait for completion.
 
-        **Return values:** I2C_MASTER_STATUS_OK on success, I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, I2C_MASTER_STATUS_NACK if no slave acknowledged, I2C_MASTER_STATUS_TIMEOUT if the operation exceeded the timeout.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success, BPB_I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_I2C_MASTER_STATUS_NACK if no slave acknowledged, BPB_I2C_MASTER_STATUS_TIMEOUT if the operation exceeded the timeout.
 
         **Restrictions:** None.
 
@@ -132,7 +132,7 @@ Public interfaces
         - **pReadData**: Pointer to the buffer for received data.
         - **readLength**: Number of bytes to read.
 
-        **Return values:** I2C_MASTER_STATUS_OK on success, I2C_MASTER_STATUS_INVALID_PARAM for NULL pointers or zero lengths, I2C_MASTER_STATUS_NACK if no acknowledge was received.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success, BPB_I2C_MASTER_STATUS_INVALID_PARAM for NULL pointers or zero lengths, BPB_I2C_MASTER_STATUS_NACK if no acknowledge was received.
 
         **Restrictions:** None.
 
@@ -148,7 +148,7 @@ Public interfaces
         - **pData**: Pointer to the data buffer to write.
         - **length**: Number of data bytes to write.
 
-        **Return values:** I2C_MASTER_STATUS_OK on success, I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, I2C_MASTER_STATUS_NACK if no acknowledge was received.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success, BPB_I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_I2C_MASTER_STATUS_NACK if no acknowledge was received.
 
         **Restrictions:** None.
 
@@ -164,7 +164,7 @@ Public interfaces
         - **pData**: Pointer to the buffer for received data.
         - **length**: Number of data bytes to read.
 
-        **Return values:** I2C_MASTER_STATUS_OK on success, I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, I2C_MASTER_STATUS_NACK if no acknowledge was received.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success, BPB_I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_I2C_MASTER_STATUS_NACK if no acknowledge was received.
 
         **Restrictions:** None.
 
@@ -179,7 +179,7 @@ Public interfaces
         - **maxAddresses**: Maximum number of addresses the array can hold.
         - **pNumFound**: Pointer to store the actual number of responding devices found.
 
-        **Return values:** I2C_MASTER_STATUS_OK on success, I2C_MASTER_STATUS_INVALID_PARAM for NULL pointers or zero maxAddresses.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success, BPB_I2C_MASTER_STATUS_INVALID_PARAM for NULL pointers or zero maxAddresses.
 
         **Restrictions:** May take significant time proportional to the address range scanned.
 
@@ -192,7 +192,7 @@ Public interfaces
 
         - **pIsBusy**: Pointer to store the result; set to ``true`` if the bus is busy.
 
-        **Return values:** I2C_MASTER_STATUS_OK on success, I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success, BPB_I2C_MASTER_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -205,7 +205,7 @@ Public interfaces
 
         - **callback**: Function pointer to the callback. Pass NULL to deregister.
 
-        **Return values:** I2C_MASTER_STATUS_OK on success.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success.
 
         **Restrictions:** Callbacks are invoked from interrupt context; they must be short and non-blocking.
 
@@ -216,7 +216,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** I2C_MASTER_STATUS_OK on success.
+        **Return values:** BPB_I2C_MASTER_STATUS_OK on success.
 
         **Restrictions:** None.
 

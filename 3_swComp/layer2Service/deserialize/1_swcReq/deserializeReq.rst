@@ -31,7 +31,7 @@ Req-deserialize-005: The component shall decode DID/RID as 2-byte big-endian uns
    Verification: Bytes [0x01, 0x02] decode to identifier value 0x0102.
 
 Req-deserialize-006: The component shall return UNSUPPORTED_SID for any SID not in {0x22, 0x2E, 0x31}.
-   Verification: Unknown SID returns DESERIALIZE_STATUS_UNSUPPORTED_SID.
+   Verification: Unknown SID returns BPB_DESERIALIZE_STATUS_UNSUPPORTED_SID.
 
 Req-deserialize-007: The component shall return INVALID_PARAM when input pointers are null.
    Verification: Parse returns INVALID_PARAM for null frame or request pointers.

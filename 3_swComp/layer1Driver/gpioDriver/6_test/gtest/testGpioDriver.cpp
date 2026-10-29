@@ -41,7 +41,7 @@ TEST_F(GpioDriver, GpioDriver_Init_ValidConfig_ReturnsOK)
     GpioDriver_Status_t status = call_GpioDriverUnit_Init(&config);
     
     // Assert
-    EXPECT_EQ(GPIO_STATUS_OK, status);
+    EXPECT_EQ(BPB_GPIO_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -51,17 +51,17 @@ TEST_F(GpioDriver, GpioDriver_ConfigurePin_ValidPin_ReturnsOK)
 {
     // Arrange
     GpioDriver_PinConfig_t config = {
-        GPIO_MODE_OUTPUT,
-        GPIO_PULL_NONE,
-        GPIO_SPEED_HIGH,
-        GPIO_STATE_LOW
+        BPB_GPIO_MODE_OUTPUT,
+        BPB_GPIO_PULL_NONE,
+        BPB_GPIO_SPEED_HIGH,
+        BPB_GPIO_STATE_LOW
     };
     
     // Act
     GpioDriver_Status_t status = call_GpioDriverUnit_ConfigurePin(0, &config);
     
     // Assert
-    EXPECT_EQ(GPIO_STATUS_OK, status);
+    EXPECT_EQ(BPB_GPIO_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -71,18 +71,18 @@ TEST_F(GpioDriver, GpioDriver_WritePin_ValidPin_ReturnsOK)
 {
     // Arrange
     GpioDriver_PinConfig_t config = {
-        GPIO_MODE_OUTPUT,
-        GPIO_PULL_NONE,
-        GPIO_SPEED_HIGH,
-        GPIO_STATE_LOW
+        BPB_GPIO_MODE_OUTPUT,
+        BPB_GPIO_PULL_NONE,
+        BPB_GPIO_SPEED_HIGH,
+        BPB_GPIO_STATE_LOW
     };
     call_GpioDriverUnit_ConfigurePin(0, &config);
     
     // Act
-    GpioDriver_Status_t status = call_GpioDriverUnit_WritePin(0, GPIO_STATE_HIGH);
+    GpioDriver_Status_t status = call_GpioDriverUnit_WritePin(0, BPB_GPIO_STATE_HIGH);
     
     // Assert
-    EXPECT_EQ(GPIO_STATUS_OK, status);
+    EXPECT_EQ(BPB_GPIO_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -91,13 +91,13 @@ TEST_F(GpioDriver, GpioDriver_WritePin_ValidPin_ReturnsOK)
 TEST_F(GpioDriver, GpioDriver_ReadPin_ValidPin_ReturnsOK)
 {
     // Arrange
-    GpioDriver_State_t state = GPIO_STATE_LOW;
+    GpioDriver_State_t state = BPB_GPIO_STATE_LOW;
     
     // Act
     GpioDriver_Status_t status = call_GpioDriverUnit_ReadPin(0, &state);
     
     // Assert
-    EXPECT_EQ(GPIO_STATUS_OK, status);
+    EXPECT_EQ(BPB_GPIO_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -110,10 +110,10 @@ TEST_F(GpioDriver, GpioDriver_SetIOCapability_ValidPin_ReturnsOK)
     call_GpioDriverUnit_Init(&config);
     
     // Act
-    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(0, GPIO_IO_DRIVE_CAP_LV4);
+    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(0, BPB_GPIO_IO_DRIVE_CAP_LV4);
     
     // Assert
-    EXPECT_EQ(GPIO_STATUS_OK, status);
+    EXPECT_EQ(BPB_GPIO_STATUS_OK, status);
 }
 
 TEST_F(GpioDriver, GpioDriver_SetIOCapability_InvalidPin_ReturnsInvalid)
@@ -123,10 +123,10 @@ TEST_F(GpioDriver, GpioDriver_SetIOCapability_InvalidPin_ReturnsInvalid)
     call_GpioDriverUnit_Init(&config);
     
     // Act
-    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(GPIO_MAX_PINS, GPIO_IO_DRIVE_CAP_LV4);
+    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(BPB_GPIO_MAX_PINS, BPB_GPIO_IO_DRIVE_CAP_LV4);
     
     // Assert
-    EXPECT_EQ(GPIO_STATUS_INVALID_PIN, status);
+    EXPECT_EQ(BPB_GPIO_STATUS_INVALID_PIN, status);
 }
 
 TEST_F(GpioDriver, GpioDriver_SetIOCapability_NotInitialized_ReturnsNotInit)
@@ -135,10 +135,10 @@ TEST_F(GpioDriver, GpioDriver_SetIOCapability_NotInitialized_ReturnsNotInit)
     // No Init call
     
     // Act
-    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(0, GPIO_IO_DRIVE_CAP_LV7);
+    GpioDriver_Status_t status = call_GpioDriverUnit_SetIOCapability(0, BPB_GPIO_IO_DRIVE_CAP_LV7);
     
     // Assert
-    EXPECT_EQ(GPIO_STATUS_NOT_INITIALIZED, status);
+    EXPECT_EQ(BPB_GPIO_STATUS_NOT_INITIALIZED, status);
 }
 
 //------------------------------------------------------------------------------
@@ -153,5 +153,5 @@ TEST_F(GpioDriver, GpioDriver_DeInit_ValidState_ReturnsOK)
     GpioDriver_Status_t status = call_GpioDriverUnit_DeInit();
     
     // Assert
-    EXPECT_EQ(GPIO_STATUS_OK, status);
+    EXPECT_EQ(BPB_GPIO_STATUS_OK, status);
 }

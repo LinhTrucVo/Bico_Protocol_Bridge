@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for Serialize testing
 
-#ifndef MOCKSERIALIZE_H
-#define MOCKSERIALIZE_H
+#ifndef BPB_MOCKSERIALIZE_H
+#define BPB_MOCKSERIALIZE_H
 
 //============================================================================
 // Dependencies
@@ -22,4 +22,4 @@ Serialize_Status_t call_SerializeUnit_BuildWriteResponse(uint16_t did, Serialize
 Serialize_Status_t call_SerializeUnit_BuildRoutineResponse(uint8_t routineControlType, uint16_t rid, const uint8_t *pStatusRecord, uint16_t statusLength, Serialize_UdsResponse_t *pResponse);
 Serialize_Status_t call_SerializeUnit_BuildNegativeResponse(uint8_t requestSid, uint8_t nrc, Serialize_UdsResponse_t *pResponse);
 
-#endif /* MOCKSERIALIZE_H */
+#endif /* BPB_MOCKSERIALIZE_H */

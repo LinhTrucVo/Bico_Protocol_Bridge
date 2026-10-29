@@ -1,7 +1,7 @@
 // Port interface of the ADC driver. Implemented by the device workspace, called by adcDriverUnit.c.
 
-#ifndef ADCDRIVERPORT_H
-#define ADCDRIVERPORT_H
+#ifndef BPB_ADCDRIVERPORT_H
+#define BPB_ADCDRIVERPORT_H
 
 //============================================================================
 // Dependencies
@@ -26,4 +26,4 @@ bool AdcPort_StartPeriodicSampling(uint8_t channel, uint32_t frequencyHz);
 void AdcPort_StopPeriodicSampling(void);
 void AdcPort_SetSampleHandler(AdcPort_SampleHandler_t handler);
 
-#endif /* ADCDRIVERPORT_H */
+#endif /* BPB_ADCDRIVERPORT_H */

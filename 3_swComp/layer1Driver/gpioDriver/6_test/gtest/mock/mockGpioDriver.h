@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for GpioDriver testing
 
-#ifndef MOCKGPIODRIVER_H
-#define MOCKGPIODRIVER_H
+#ifndef BPB_MOCKGPIODRIVER_H
+#define BPB_MOCKGPIODRIVER_H
 
 //============================================================================
 // Dependencies
@@ -34,4 +34,4 @@ GpioDriver_Status_t call_GpioDriverUnit_EnableInterrupt(GpioDriver_Pin_t pin, Gp
 GpioDriver_Status_t call_GpioDriverUnit_DisableInterrupt(GpioDriver_Pin_t pin);
 GpioDriver_Status_t call_GpioDriverUnit_DeInit(void);
 
-#endif /* MOCKGPIODRIVER_H */
+#endif /* BPB_MOCKGPIODRIVER_H */

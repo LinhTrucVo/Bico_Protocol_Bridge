@@ -9,14 +9,14 @@ ser -> ser : resp.buffer[1] = (did >> 8) & 0xFF
 ser -> ser : resp.buffer[2] = did & 0xFF
 ser -> ser : memcpy(&buffer[3], pData, dataLen)
 ser -> ser : resp.length = 3 + dataLen
-ser --> CAC : SERIALIZE_STATUS_OK
+ser --> CAC : BPB_SERIALIZE_STATUS_OK
 
 == Positive Write Response ==
 CAC -> ser : SerializeUnit_BuildWriteResponse(did, pResp)
 ser -> ser : resp.buffer[0] = 0x6E
 ser -> ser : resp.buffer[1..2] = DID big-endian
 ser -> ser : resp.length = 3
-ser --> CAC : SERIALIZE_STATUS_OK
+ser --> CAC : BPB_SERIALIZE_STATUS_OK
 
 == Positive Routine Response ==
 CAC -> ser : SerializeUnit_BuildRoutineResponse(routineControlType, rid, pStatusRecord, statusLen, pResp)
@@ -25,7 +25,7 @@ ser -> ser : resp.buffer[1] = routineControlType
 ser -> ser : resp.buffer[2..3] = RID big-endian
 ser -> ser : memcpy(&buffer[4], pStatusRecord, statusLen)
 ser -> ser : resp.length = 4 + statusLen
-ser --> CAC : SERIALIZE_STATUS_OK
+ser --> CAC : BPB_SERIALIZE_STATUS_OK
 
 == Negative Response ==
 CAC -> ser : SerializeUnit_BuildNegativeResponse(requestSid, nrc, pResp)
@@ -33,5 +33,5 @@ ser -> ser : resp.buffer[0] = 0x7F
 ser -> ser : resp.buffer[1] = requestSid
 ser -> ser : resp.buffer[2] = nrc
 ser -> ser : resp.length = 3
-ser --> CAC : SERIALIZE_STATUS_OK
+ser --> CAC : BPB_SERIALIZE_STATUS_OK
 @enduml

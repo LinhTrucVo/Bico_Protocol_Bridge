@@ -36,7 +36,7 @@ TEST_F(NvmDriver, NvmDriver_Init_ValidConfig_ReturnsOK)
 {
     // Arrange
     NvmDriver_Config_t cfg = {
-        NVM_TYPE_FLASH,
+        BPB_NVM_TYPE_FLASH,
         0x00000000U,
         0x00010000U,
         256,
@@ -48,7 +48,7 @@ TEST_F(NvmDriver, NvmDriver_Init_ValidConfig_ReturnsOK)
     NvmDriver_Status_t status = call_NvmDriverUnit_Init(&cfg);
     
     // Assert
-    EXPECT_EQ(NVM_STATUS_OK, status);
+    EXPECT_EQ(BPB_NVM_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ TEST_F(NvmDriver, NvmDriver_Write_ValidData_ReturnsOK)
 {
     // Arrange
     NvmDriver_Config_t cfg = {
-        NVM_TYPE_FLASH,
+        BPB_NVM_TYPE_FLASH,
         0x00000000U,
         0x00010000U,
         256,
@@ -72,7 +72,7 @@ TEST_F(NvmDriver, NvmDriver_Write_ValidData_ReturnsOK)
     NvmDriver_Status_t status = call_NvmDriverUnit_Write(0, data, 2);
     
     // Assert
-    EXPECT_EQ(NVM_STATUS_OK, status);
+    EXPECT_EQ(BPB_NVM_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ TEST_F(NvmDriver, NvmDriver_Read_ValidData_ReturnsOK)
 {
     // Arrange
     NvmDriver_Config_t cfg = {
-        NVM_TYPE_FLASH,
+        BPB_NVM_TYPE_FLASH,
         0x00000000U,
         0x00010000U,
         256,
@@ -98,5 +98,5 @@ TEST_F(NvmDriver, NvmDriver_Read_ValidData_ReturnsOK)
     NvmDriver_Status_t status = call_NvmDriverUnit_Read(0, out, 2);
     
     // Assert
-    EXPECT_EQ(NVM_STATUS_OK, status);
+    EXPECT_EQ(BPB_NVM_STATUS_OK, status);
 }

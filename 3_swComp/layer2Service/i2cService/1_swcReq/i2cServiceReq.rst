@@ -26,10 +26,10 @@ Req-I2cService-003: The component shall perform I2C read transactions from a tar
    Verification: Read(addr, buffer, len) retrieves data bytes from the I2C slave.
 
 Req-I2cService-004: The component shall return NACK status if the slave does not acknowledge.
-   Verification: NACK from driver propagates as I2CSERVICE_STATUS_NACK.
+   Verification: NACK from driver propagates as BPB_I2CSERVICE_STATUS_NACK.
 
 Req-I2cService-005: The component shall return BUS_ERROR on I2C bus errors or timeout.
-   Verification: Bus errors propagate as I2CSERVICE_STATUS_BUS_ERROR.
+   Verification: Bus errors propagate as BPB_I2CSERVICE_STATUS_BUS_ERROR.
 
 Req-I2cService-006: The component shall return INVALID_PARAM for null pointers or oversized transfers.
    Verification: Invalid inputs return error without hardware action.

@@ -40,7 +40,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_ERROR on failure.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_ERROR on failure.
 
         **Restrictions:** Must be called before any other Config Service function.
 
@@ -51,7 +51,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success.
 
         **Restrictions:** None.
 
@@ -64,7 +64,7 @@ Public interfaces
 
         - **pConfig**: Pointer to the serial configuration structure to store.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL or invalid parameters.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL or invalid parameters.
 
         **Restrictions:** None.
 
@@ -77,7 +77,7 @@ Public interfaces
 
         - **pConfig**: Pointer to the structure to receive the serial configuration.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL pointer.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL pointer.
 
         **Restrictions:** None.
 
@@ -88,10 +88,10 @@ Public interfaces
 
         **Arguments:**
 
-        - **channelId**: Analog channel index (0 to CONFIG_SERVICE_CFG_MAX_CHANNELS-1).
+        - **channelId**: Analog channel index (0 to BPB_CONFIG_SERVICE_CFG_MAX_CHANNELS-1).
         - **pConfig**: Pointer to the analog channel configuration structure.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid channel or NULL pointer.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid channel or NULL pointer.
 
         **Restrictions:** None.
 
@@ -102,10 +102,10 @@ Public interfaces
 
         **Arguments:**
 
-        - **channelId**: Analog channel index (0 to CONFIG_SERVICE_CFG_MAX_CHANNELS-1).
+        - **channelId**: Analog channel index (0 to BPB_CONFIG_SERVICE_CFG_MAX_CHANNELS-1).
         - **pConfig**: Pointer to the structure to receive the analog channel configuration.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid channel or NULL pointer.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid channel or NULL pointer.
 
         **Restrictions:** None.
 
@@ -116,10 +116,10 @@ Public interfaces
 
         **Arguments:**
 
-        - **pinId**: Digital pin index (0 to CONFIG_SERVICE_CFG_MAX_PINS-1).
+        - **pinId**: Digital pin index (0 to BPB_CONFIG_SERVICE_CFG_MAX_PINS-1).
         - **pConfig**: Pointer to the digital pin configuration structure.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid pin or NULL pointer.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid pin or NULL pointer.
 
         **Restrictions:** None.
 
@@ -130,10 +130,10 @@ Public interfaces
 
         **Arguments:**
 
-        - **pinId**: Digital pin index (0 to CONFIG_SERVICE_CFG_MAX_PINS-1).
+        - **pinId**: Digital pin index (0 to BPB_CONFIG_SERVICE_CFG_MAX_PINS-1).
         - **pConfig**: Pointer to the structure to receive the digital pin configuration.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid pin or NULL pointer.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid pin or NULL pointer.
 
         **Restrictions:** None.
 
@@ -144,10 +144,10 @@ Public interfaces
 
         **Arguments:**
 
-        - **channelId**: PWM channel index (0 to CONFIG_SERVICE_CFG_MAX_CHANNELS-1).
+        - **channelId**: PWM channel index (0 to BPB_CONFIG_SERVICE_CFG_MAX_CHANNELS-1).
         - **pConfig**: Pointer to the PWM configuration structure.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid channel or NULL pointer.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid channel or NULL pointer.
 
         **Restrictions:** None.
 
@@ -158,10 +158,10 @@ Public interfaces
 
         **Arguments:**
 
-        - **channelId**: PWM channel index (0 to CONFIG_SERVICE_CFG_MAX_CHANNELS-1).
+        - **channelId**: PWM channel index (0 to BPB_CONFIG_SERVICE_CFG_MAX_CHANNELS-1).
         - **pConfig**: Pointer to the structure to receive the PWM configuration.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid channel or NULL pointer.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for invalid channel or NULL pointer.
 
         **Restrictions:** None.
 
@@ -174,7 +174,7 @@ Public interfaces
 
         - **pConfig**: Pointer to the I2C configuration structure.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL or invalid parameters.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL or invalid parameters.
 
         **Restrictions:** None.
 
@@ -187,7 +187,7 @@ Public interfaces
 
         - **pConfig**: Pointer to the structure to receive the I2C configuration.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL pointer.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL pointer.
 
         **Restrictions:** None.
 
@@ -200,7 +200,7 @@ Public interfaces
 
         - **pConfig**: Pointer to the SPI configuration structure.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL or invalid parameters.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL or invalid parameters.
 
         **Restrictions:** None.
 
@@ -213,7 +213,7 @@ Public interfaces
 
         - **pConfig**: Pointer to the structure to receive the SPI configuration.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK on success, CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL pointer.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK on success, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM for NULL pointer.
 
         **Restrictions:** None.
 
@@ -226,7 +226,7 @@ Public interfaces
 
         - **pConfig**: Pointer to the analog channel configuration to validate.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK if valid, CONFIG_SERVICE_STATUS_INVALID_PARAM if any field is out of range.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK if valid, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM if any field is out of range.
 
         **Restrictions:** None.
 
@@ -239,7 +239,7 @@ Public interfaces
 
         - **pConfig**: Pointer to the PWM configuration to validate.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK if valid, CONFIG_SERVICE_STATUS_INVALID_PARAM if any field is out of range.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK if valid, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM if any field is out of range.
 
         **Restrictions:** None.
 
@@ -252,7 +252,7 @@ Public interfaces
 
         - **pConfig**: Pointer to the I2C configuration to validate.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK if valid, CONFIG_SERVICE_STATUS_INVALID_PARAM if any field is out of range.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK if valid, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM if any field is out of range.
 
         **Restrictions:** None.
 
@@ -265,7 +265,7 @@ Public interfaces
 
         - **pConfig**: Pointer to the SPI configuration to validate.
 
-        **Return values:** CONFIG_SERVICE_STATUS_OK if valid, CONFIG_SERVICE_STATUS_INVALID_PARAM if any field is out of range.
+        **Return values:** BPB_CONFIG_SERVICE_STATUS_OK if valid, BPB_CONFIG_SERVICE_STATUS_INVALID_PARAM if any field is out of range.
 
         **Restrictions:** None.
 

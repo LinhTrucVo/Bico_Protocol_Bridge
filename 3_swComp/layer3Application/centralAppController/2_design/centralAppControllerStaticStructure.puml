@@ -12,25 +12,25 @@ package "centralAppController" {
     }
 
     class CAC_DID_Map <<static>> {
-        + CAC_DID_ADC_SAMPLE_RATE = 0x1001
-        + CAC_DID_ADC_RESOLUTION = 0x1002
-        + CAC_DID_GPIO_CONFIG = 0x2001
-        + CAC_DID_PWM_CONFIG = 0x3001
-        + CAC_DID_I2C_CONFIG = 0x4001
-        + CAC_DID_SPI_CONFIG = 0x5001
-        + CAC_DID_SERIAL_CONFIG = 0x6001
+        + BPB_CAC_DID_ADC_SAMPLE_RATE = 0x1001
+        + BPB_CAC_DID_ADC_RESOLUTION = 0x1002
+        + BPB_CAC_DID_GPIO_CONFIG = 0x2001
+        + BPB_CAC_DID_PWM_CONFIG = 0x3001
+        + BPB_CAC_DID_I2C_CONFIG = 0x4001
+        + BPB_CAC_DID_SPI_CONFIG = 0x5001
+        + BPB_CAC_DID_SERIAL_CONFIG = 0x6001
     }
 
     class CAC_RID_Map <<static>> {
-        + CAC_RID_ADC_READ = 0x0100
-        + CAC_RID_GPIO_WRITE = 0x0200
-        + CAC_RID_GPIO_READ = 0x0201
-        + CAC_RID_PWM_START = 0x0300
-        + CAC_RID_PWM_STOP = 0x0301
-        + CAC_RID_I2C_WRITE = 0x0400
-        + CAC_RID_I2C_READ = 0x0401
-        + CAC_RID_SPI_WRITE = 0x0500
-        + CAC_RID_SPI_TRANSCEIVE = 0x0501
+        + BPB_CAC_RID_ADC_READ = 0x0100
+        + BPB_CAC_RID_GPIO_WRITE = 0x0200
+        + BPB_CAC_RID_GPIO_READ = 0x0201
+        + BPB_CAC_RID_PWM_START = 0x0300
+        + BPB_CAC_RID_PWM_STOP = 0x0301
+        + BPB_CAC_RID_I2C_WRITE = 0x0400
+        + BPB_CAC_RID_I2C_READ = 0x0401
+        + BPB_CAC_RID_SPI_WRITE = 0x0500
+        + BPB_CAC_RID_SPI_TRANSCEIVE = 0x0501
     }
 
     class CentralAppController_Context_t {

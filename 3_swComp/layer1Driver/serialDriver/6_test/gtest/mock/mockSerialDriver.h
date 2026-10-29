@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for SerialDriver testing
 
-#ifndef MOCKSERIALDRIVER_H
-#define MOCKSERIALDRIVER_H
+#ifndef BPB_MOCKSERIALDRIVER_H
+#define BPB_MOCKSERIALDRIVER_H
 
 //============================================================================
 // Dependencies
@@ -35,4 +35,4 @@ SerialDriver_Status_t call_SerialDriverUnit_RegisterTxCallback(SerialDriver_TxCa
 SerialDriver_Status_t call_SerialDriverUnit_GetStatus(SerialDriver_Status_t *pStatus);
 SerialDriver_Status_t call_SerialDriverUnit_DeInit(void);
 
-#endif /* MOCKSERIALDRIVER_H */
+#endif /* BPB_MOCKSERIALDRIVER_H */

@@ -1,5 +1,5 @@
-﻿#ifndef NVMDRIVERUNIT_H
-#define NVMDRIVERUNIT_H
+﻿#ifndef BPB_NVMDRIVERUNIT_H
+#define BPB_NVMDRIVERUNIT_H
 
 //============================================================================
 // Dependencies
@@ -11,16 +11,16 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define NVM_CFG_TOTAL_SIZE              4096
+#define BPB_NVM_CFG_TOTAL_SIZE              4096
 
 //============================================================================
 // Type Definitions
 //============================================================================
 typedef enum
 {
-    NVM_TYPE_FLASH,
-    NVM_TYPE_EEPROM,
-    NVM_TYPE_SRAM
+    BPB_NVM_TYPE_FLASH,
+    BPB_NVM_TYPE_EEPROM,
+    BPB_NVM_TYPE_SRAM
 } NvmDriver_Type_t;
 
 typedef struct
@@ -35,29 +35,29 @@ typedef struct
 
 typedef enum
 {
-    NVMDRIVER_OK,
-    NVMDRIVER_ERROR,
-    NVMDRIVER_BUSY,
-    NVMDRIVER_INVALID_ADDRESS,
-    NVMDRIVER_INVALID_LENGTH,
-    NVMDRIVER_WRITE_PROTECTED,
-    NVMDRIVER_VERIFY_FAILED,
-    NVMDRIVER_TIMEOUT,
-    NVMDRIVER_NOT_INITIALIZED
+    BPB_NVMDRIVER_OK,
+    BPB_NVMDRIVER_ERROR,
+    BPB_NVMDRIVER_BUSY,
+    BPB_NVMDRIVER_INVALID_ADDRESS,
+    BPB_NVMDRIVER_INVALID_LENGTH,
+    BPB_NVMDRIVER_WRITE_PROTECTED,
+    BPB_NVMDRIVER_VERIFY_FAILED,
+    BPB_NVMDRIVER_TIMEOUT,
+    BPB_NVMDRIVER_NOT_INITIALIZED
 } NvmDriver_Status_t;
 
 //============================================================================
 // Status Enum Mappings
 //============================================================================
-#define NVM_STATUS_OK                   NVMDRIVER_OK
-#define NVM_STATUS_ERROR                NVMDRIVER_ERROR
-#define NVM_STATUS_BUSY                 NVMDRIVER_BUSY
-#define NVM_STATUS_INVALID_ADDRESS      NVMDRIVER_INVALID_ADDRESS
-#define NVM_STATUS_INVALID_LENGTH       NVMDRIVER_INVALID_LENGTH
-#define NVM_STATUS_WRITE_PROTECTED      NVMDRIVER_WRITE_PROTECTED
-#define NVM_STATUS_VERIFY_FAILED        NVMDRIVER_VERIFY_FAILED
-#define NVM_STATUS_TIMEOUT              NVMDRIVER_TIMEOUT
-#define NVM_STATUS_NOT_INITIALIZED      NVMDRIVER_NOT_INITIALIZED
+#define BPB_NVM_STATUS_OK                   BPB_NVMDRIVER_OK
+#define BPB_NVM_STATUS_ERROR                BPB_NVMDRIVER_ERROR
+#define BPB_NVM_STATUS_BUSY                 BPB_NVMDRIVER_BUSY
+#define BPB_NVM_STATUS_INVALID_ADDRESS      BPB_NVMDRIVER_INVALID_ADDRESS
+#define BPB_NVM_STATUS_INVALID_LENGTH       BPB_NVMDRIVER_INVALID_LENGTH
+#define BPB_NVM_STATUS_WRITE_PROTECTED      BPB_NVMDRIVER_WRITE_PROTECTED
+#define BPB_NVM_STATUS_VERIFY_FAILED        BPB_NVMDRIVER_VERIFY_FAILED
+#define BPB_NVM_STATUS_TIMEOUT              BPB_NVMDRIVER_TIMEOUT
+#define BPB_NVM_STATUS_NOT_INITIALIZED      BPB_NVMDRIVER_NOT_INITIALIZED
 
 typedef uint32_t NvmDriver_Address_t;
 typedef void (*NvmDriver_OperationCallback_t)(NvmDriver_Status_t status);
@@ -81,4 +81,4 @@ NvmDriver_Status_t NvmDriverUnit_DisableWriteProtection(void);
 NvmDriver_Status_t NvmDriverUnit_RegisterCallback(NvmDriver_OperationCallback_t callback);
 NvmDriver_Status_t NvmDriverUnit_DeInit(void);
 
-#endif /* NVMDRIVERUNIT_H */
+#endif /* BPB_NVMDRIVERUNIT_H */

@@ -35,13 +35,13 @@ TEST_F(Serialize, Serialize_Init_Valid_ReturnsOK)
 {
     call_SerializeUnit_DeInit();
     Serialize_Status_t status = call_SerializeUnit_Init();
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_SERIALIZE_STATUS_OK, status);
 }
 
 TEST_F(Serialize, Serialize_DeInit_Valid_ReturnsOK)
 {
     Serialize_Status_t status = call_SerializeUnit_DeInit();
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_SERIALIZE_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ TEST_F(Serialize, Serialize_BuildReadResponse_Valid_ReturnsOK)
     Serialize_Status_t status = call_SerializeUnit_BuildReadResponse(0x1001, data, 2, &resp);
 
     // Assert
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_SERIALIZE_STATUS_OK, status);
     EXPECT_EQ(5U, resp.length); // 0x62 + DID(2) + data(2)
     EXPECT_EQ(0x62U, resp.buffer[0]);
     EXPECT_EQ(0x10U, resp.buffer[1]);
@@ -70,7 +70,7 @@ TEST_F(Serialize, Serialize_BuildReadResponse_NullResponse_ReturnsInvalidParam)
 {
     uint8_t data[] = {0x01};
     Serialize_Status_t status = call_SerializeUnit_BuildReadResponse(0x1001, data, 1, nullptr);
-    EXPECT_EQ(SERIALIZE_STATUS_INVALID_PARAM, status);
+    EXPECT_EQ(BPB_SERIALIZE_STATUS_INVALID_PARAM, status);
 }
 
 TEST_F(Serialize, Serialize_BuildReadResponse_NotInitialized_ReturnsError)
@@ -79,7 +79,7 @@ TEST_F(Serialize, Serialize_BuildReadResponse_NotInitialized_ReturnsError)
     uint8_t data[] = {0x01};
     Serialize_UdsResponse_t resp = {0};
     Serialize_Status_t status = call_SerializeUnit_BuildReadResponse(0x1001, data, 1, &resp);
-    EXPECT_EQ(SERIALIZE_STATUS_ERROR, status);
+    EXPECT_EQ(BPB_SERIALIZE_STATUS_ERROR, status);
 }
 
 //------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ TEST_F(Serialize, Serialize_BuildWriteResponse_Valid_ReturnsOK)
     Serialize_Status_t status = call_SerializeUnit_BuildWriteResponse(0x1001, &resp);
 
     // Assert
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_SERIALIZE_STATUS_OK, status);
     EXPECT_EQ(3U, resp.length); // 0x6E + DID(2)
     EXPECT_EQ(0x6EU, resp.buffer[0]);
     EXPECT_EQ(0x10U, resp.buffer[1]);
@@ -104,7 +104,7 @@ TEST_F(Serialize, Serialize_BuildWriteResponse_Valid_ReturnsOK)
 TEST_F(Serialize, Serialize_BuildWriteResponse_NullResponse_ReturnsInvalidParam)
 {
     Serialize_Status_t status = call_SerializeUnit_BuildWriteResponse(0x1001, nullptr);
-    EXPECT_EQ(SERIALIZE_STATUS_INVALID_PARAM, status);
+    EXPECT_EQ(BPB_SERIALIZE_STATUS_INVALID_PARAM, status);
 }
 
 //------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ TEST_F(Serialize, Serialize_BuildRoutineResponse_Valid_ReturnsOK)
     Serialize_Status_t status = call_SerializeUnit_BuildRoutineResponse(0x01, 0x0100, statusRec, 2, &resp);
 
     // Assert
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_SERIALIZE_STATUS_OK, status);
     EXPECT_EQ(6U, resp.length); // 0x71 + type(1) + RID(2) + status(2)
     EXPECT_EQ(0x71U, resp.buffer[0]);
     EXPECT_EQ(0x01U, resp.buffer[1]); // routineControlType
@@ -134,7 +134,7 @@ TEST_F(Serialize, Serialize_BuildRoutineResponse_NoStatus_ReturnsOK)
 {
     Serialize_UdsResponse_t resp = {0};
     Serialize_Status_t status = call_SerializeUnit_BuildRoutineResponse(0x01, 0x0200, nullptr, 0, &resp);
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_SERIALIZE_STATUS_OK, status);
     EXPECT_EQ(4U, resp.length);
 }
 
@@ -150,7 +150,7 @@ TEST_F(Serialize, Serialize_BuildNegativeResponse_Valid_ReturnsOK)
     Serialize_Status_t status = call_SerializeUnit_BuildNegativeResponse(0x22, 0x31, &resp);
 
     // Assert
-    EXPECT_EQ(SERIALIZE_STATUS_OK, status);
+    EXPECT_EQ(BPB_SERIALIZE_STATUS_OK, status);
     EXPECT_EQ(3U, resp.length);
     EXPECT_EQ(0x7FU, resp.buffer[0]);
     EXPECT_EQ(0x22U, resp.buffer[1]); // requestSID
@@ -160,5 +160,5 @@ TEST_F(Serialize, Serialize_BuildNegativeResponse_Valid_ReturnsOK)
 TEST_F(Serialize, Serialize_BuildNegativeResponse_NullResponse_ReturnsInvalidParam)
 {
     Serialize_Status_t status = call_SerializeUnit_BuildNegativeResponse(0x22, 0x31, nullptr);
-    EXPECT_EQ(SERIALIZE_STATUS_INVALID_PARAM, status);
+    EXPECT_EQ(BPB_SERIALIZE_STATUS_INVALID_PARAM, status);
 }

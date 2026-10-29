@@ -1,5 +1,5 @@
-﻿#ifndef PWMDRIVERUNIT_H
-#define PWMDRIVERUNIT_H
+﻿#ifndef BPB_PWMDRIVERUNIT_H
+#define BPB_PWMDRIVERUNIT_H
 
 //============================================================================
 // Dependencies
@@ -11,58 +11,58 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define PWM_CFG_MAX_CHANNELS        8
-#define PWM_CFG_DEFAULT_FREQ_HZ     1000
-#define PWM_CFG_DEFAULT_DUTY        5000
-#define PWM_MAX_CHANNELS            PWM_CFG_MAX_CHANNELS
-#define PWM_MIN_FREQUENCY           100
-#define PWM_MAX_FREQUENCY           100000
-#define PWM_MAX_DUTY_CYCLE          10000
+#define BPB_PWM_CFG_MAX_CHANNELS        8
+#define BPB_PWM_CFG_DEFAULT_FREQ_HZ     1000
+#define BPB_PWM_CFG_DEFAULT_DUTY        5000
+#define BPB_PWM_MAX_CHANNELS            BPB_PWM_CFG_MAX_CHANNELS
+#define BPB_PWM_MIN_FREQUENCY           100
+#define BPB_PWM_MAX_FREQUENCY           100000
+#define BPB_PWM_MAX_DUTY_CYCLE          10000
 
 //============================================================================
 // Status Enums
 //============================================================================
-#define PWM_STATUS_OK               PWMDRIVER_OK
-#define PWM_STATUS_ERROR            PWMDRIVER_ERROR
-#define PWM_STATUS_INVALID_CHANNEL  PWMDRIVER_INVALID_CHANNEL
-#define PWM_STATUS_INVALID_FREQUENCY PWMDRIVER_INVALID_FREQUENCY
-#define PWM_STATUS_INVALID_PARAM    PWMDRIVER_ERROR
-#define PWM_STATUS_NOT_INITIALIZED  PWMDRIVER_NOT_INITIALIZED
+#define BPB_PWM_STATUS_OK               BPB_PWMDRIVER_OK
+#define BPB_PWM_STATUS_ERROR            BPB_PWMDRIVER_ERROR
+#define BPB_PWM_STATUS_INVALID_CHANNEL  BPB_PWMDRIVER_INVALID_CHANNEL
+#define BPB_PWM_STATUS_INVALID_FREQUENCY BPB_PWMDRIVER_INVALID_FREQUENCY
+#define BPB_PWM_STATUS_INVALID_PARAM    BPB_PWMDRIVER_ERROR
+#define BPB_PWM_STATUS_NOT_INITIALIZED  BPB_PWMDRIVER_NOT_INITIALIZED
 
 //============================================================================
 // Public Types
 //============================================================================
 typedef enum
 {
-    PWMDRIVER_OK = 0,
-    PWMDRIVER_ERROR,
-    PWMDRIVER_INVALID_CHANNEL,
-    PWMDRIVER_INVALID_FREQUENCY,
-    PWMDRIVER_NOT_INITIALIZED
+    BPB_PWMDRIVER_OK = 0,
+    BPB_PWMDRIVER_ERROR,
+    BPB_PWMDRIVER_INVALID_CHANNEL,
+    BPB_PWMDRIVER_INVALID_FREQUENCY,
+    BPB_PWMDRIVER_NOT_INITIALIZED
 } PwmDriver_Status_t;
 
 typedef enum
 {
-    PWM_CHANNEL_0 = 0,
-    PWM_CHANNEL_1,
-    PWM_CHANNEL_2,
-    PWM_CHANNEL_3,
-    PWM_CHANNEL_4,
-    PWM_CHANNEL_5,
-    PWM_CHANNEL_6,
-    PWM_CHANNEL_7
+    BPB_PWM_CHANNEL_0 = 0,
+    BPB_PWM_CHANNEL_1,
+    BPB_PWM_CHANNEL_2,
+    BPB_PWM_CHANNEL_3,
+    BPB_PWM_CHANNEL_4,
+    BPB_PWM_CHANNEL_5,
+    BPB_PWM_CHANNEL_6,
+    BPB_PWM_CHANNEL_7
 } PwmDriver_Channel_t;
 
 typedef enum
 {
-    PWM_POLARITY_NORMAL = 0,
-    PWM_POLARITY_INVERTED
+    BPB_PWM_POLARITY_NORMAL = 0,
+    BPB_PWM_POLARITY_INVERTED
 } PwmDriver_Polarity_t;
 
 typedef enum
 {
-    PWM_ALIGNMENT_EDGE = 0,
-    PWM_ALIGNMENT_CENTER
+    BPB_PWM_ALIGNMENT_EDGE = 0,
+    BPB_PWM_ALIGNMENT_CENTER
 } PwmDriver_Alignment_t;
 
 typedef struct
@@ -97,4 +97,4 @@ PwmDriver_Status_t PwmDriverUnit_GetConfiguration(PwmDriver_Channel_t channel, P
 PwmDriver_Status_t PwmDriverUnit_IsChannelRunning(PwmDriver_Channel_t channel, bool *pIsRunning);
 PwmDriver_Status_t PwmDriverUnit_DeInit(void);
 
-#endif /* PWMDRIVERUNIT_H */
+#endif /* BPB_PWMDRIVERUNIT_H */

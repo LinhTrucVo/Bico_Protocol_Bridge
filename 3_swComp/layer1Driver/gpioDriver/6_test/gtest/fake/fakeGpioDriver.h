@@ -1,11 +1,11 @@
 ﻿// Fake implementation header for GpioDriver testing
 // This file provides fake implementations to simulate hardware/dependencies
 
-#ifndef FAKEGPIODRIVER_H
-#define FAKEGPIODRIVER_H
+#ifndef BPB_FAKEGPIODRIVER_H
+#define BPB_FAKEGPIODRIVER_H
 
 #include <stdint.h>
 
 // Add fake function declarations here as needed for testing
 
-#endif /* FAKEGPIODRIVER_H */
+#endif /* BPB_FAKEGPIODRIVER_H */

@@ -5,7 +5,7 @@
 #include "i2cSlaveDriverUnit.h"
 #include "i2cSlaveDriverPorting.h"
 
-#define I2C_SLAVE_WRITE_TIMEOUT_MS  100U
+#define BPB_I2C_SLAVE_WRITE_TIMEOUT_MS  100U
 
 typedef struct
 {
@@ -32,7 +32,7 @@ I2cSlaveDriver_Status_t I2cSlaveDriverUnit_Init(const I2cSlaveDriver_Config_t *p
 {
     if (pConfig == NULL)
     {
-        return I2C_SLAVE_STATUS_ERROR;
+        return BPB_I2C_SLAVE_STATUS_ERROR;
     }
     if (context.initialized)
     {
@@ -42,19 +42,19 @@ I2cSlaveDriver_Status_t I2cSlaveDriverUnit_Init(const I2cSlaveDriver_Config_t *p
     (void)memset(&context, 0, sizeof(context));
     if (!I2cSlaveDriverUnit_StartPort(pConfig->ownAddress))
     {
-        return I2C_SLAVE_STATUS_ERROR;
+        return BPB_I2C_SLAVE_STATUS_ERROR;
     }
 
     context.config = *pConfig;
     context.initialized = true;
-    return I2C_SLAVE_STATUS_OK;
+    return BPB_I2C_SLAVE_STATUS_OK;
 }
 
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_SetAddress(I2cSlaveDriver_Address_t address)
 {
     if (!context.initialized)
     {
-        return I2C_SLAVE_STATUS_NOT_INITIALIZED;
+        return BPB_I2C_SLAVE_STATUS_NOT_INITIALIZED;
     }
 
     // The address is fixed when the port is started, so the port is restarted.
@@ -62,101 +62,101 @@ I2cSlaveDriver_Status_t I2cSlaveDriverUnit_SetAddress(I2cSlaveDriver_Address_t a
     if (!I2cSlaveDriverUnit_StartPort(address))
     {
         context.initialized = false;
-        return I2C_SLAVE_STATUS_ERROR;
+        return BPB_I2C_SLAVE_STATUS_ERROR;
     }
     context.config.ownAddress = address;
-    return I2C_SLAVE_STATUS_OK;
+    return BPB_I2C_SLAVE_STATUS_OK;
 }
 
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_GetAddress(I2cSlaveDriver_Address_t *pAddress)
 {
     if (pAddress == NULL)
     {
-        return I2C_SLAVE_STATUS_ERROR;
+        return BPB_I2C_SLAVE_STATUS_ERROR;
     }
     *pAddress = context.config.ownAddress;
-    return I2C_SLAVE_STATUS_OK;
+    return BPB_I2C_SLAVE_STATUS_OK;
 }
 
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_SetTxBuffer(const uint8_t *pData, uint16_t length)
 {
     if (!context.initialized)
     {
-        return I2C_SLAVE_STATUS_NOT_INITIALIZED;
+        return BPB_I2C_SLAVE_STATUS_NOT_INITIALIZED;
     }
-    if (pData == NULL || length == 0 || length > I2C_SLAVE_MAX_BUFFER_SIZE)
+    if (pData == NULL || length == 0 || length > BPB_I2C_SLAVE_MAX_BUFFER_SIZE)
     {
-        return I2C_SLAVE_STATUS_ERROR;
+        return BPB_I2C_SLAVE_STATUS_ERROR;
     }
     context.pTxBuffer = pData;
     context.txLength = length;
-    return I2C_SLAVE_STATUS_OK;
+    return BPB_I2C_SLAVE_STATUS_OK;
 }
 
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_SetRxBuffer(uint8_t *pData, uint16_t maxLength)
 {
     if (!context.initialized)
     {
-        return I2C_SLAVE_STATUS_NOT_INITIALIZED;
+        return BPB_I2C_SLAVE_STATUS_NOT_INITIALIZED;
     }
     if (pData == NULL || maxLength == 0)
     {
-        return I2C_SLAVE_STATUS_ERROR;
+        return BPB_I2C_SLAVE_STATUS_ERROR;
     }
     context.pRxBuffer = pData;
     context.rxMaxLength = maxLength;
     context.rxLength = 0;
-    return I2C_SLAVE_STATUS_OK;
+    return BPB_I2C_SLAVE_STATUS_OK;
 }
 
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_GetRxLength(uint16_t *pLength)
 {
     if (pLength == NULL)
     {
-        return I2C_SLAVE_STATUS_ERROR;
+        return BPB_I2C_SLAVE_STATUS_ERROR;
     }
     *pLength = context.rxLength;
-    return I2C_SLAVE_STATUS_OK;
+    return BPB_I2C_SLAVE_STATUS_OK;
 }
 
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_IsAddressed(bool *pIsAddressed)
 {
     if (pIsAddressed == NULL)
     {
-        return I2C_SLAVE_STATUS_ERROR;
+        return BPB_I2C_SLAVE_STATUS_ERROR;
     }
     *pIsAddressed = context.addressed;
-    return I2C_SLAVE_STATUS_OK;
+    return BPB_I2C_SLAVE_STATUS_OK;
 }
 
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_RegisterRxCallback(I2cSlaveDriver_RxCallback_t callback)
 {
     if (!context.initialized)
     {
-        return I2C_SLAVE_STATUS_NOT_INITIALIZED;
+        return BPB_I2C_SLAVE_STATUS_NOT_INITIALIZED;
     }
     context.rxCallback = callback;
-    return I2C_SLAVE_STATUS_OK;
+    return BPB_I2C_SLAVE_STATUS_OK;
 }
 
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_RegisterTxCallback(I2cSlaveDriver_TxCallback_t callback)
 {
     if (!context.initialized)
     {
-        return I2C_SLAVE_STATUS_NOT_INITIALIZED;
+        return BPB_I2C_SLAVE_STATUS_NOT_INITIALIZED;
     }
     context.txCallback = callback;
-    return I2C_SLAVE_STATUS_OK;
+    return BPB_I2C_SLAVE_STATUS_OK;
 }
 
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_RegisterAddressMatchCallback(I2cSlaveDriver_AddressMatchCallback_t callback)
 {
     if (!context.initialized)
     {
-        return I2C_SLAVE_STATUS_NOT_INITIALIZED;
+        return BPB_I2C_SLAVE_STATUS_NOT_INITIALIZED;
     }
     context.addressCallback = callback;
-    return I2C_SLAVE_STATUS_OK;
+    return BPB_I2C_SLAVE_STATUS_OK;
 }
 
 I2cSlaveDriver_Status_t I2cSlaveDriverUnit_DeInit(void)
@@ -166,7 +166,7 @@ I2cSlaveDriver_Status_t I2cSlaveDriverUnit_DeInit(void)
         I2cSlavePort_DeInit();
     }
     (void)memset(&context, 0, sizeof(context));
-    return I2C_SLAVE_STATUS_OK;
+    return BPB_I2C_SLAVE_STATUS_OK;
 }
 
 static bool I2cSlaveDriverUnit_StartPort(I2cSlaveDriver_Address_t address)
@@ -211,24 +211,24 @@ static void I2cSlaveDriverUnit_OnPortRequest(void)
         context.addressCallback(context.config.ownAddress);
     }
 
-    uint8_t scratch[I2C_SLAVE_MAX_BUFFER_SIZE];
+    uint8_t scratch[BPB_I2C_SLAVE_MAX_BUFFER_SIZE];
     const uint8_t *pSource = context.pTxBuffer;
     uint16_t length = context.txLength;
 
     if (context.txCallback != NULL)
     {
-        length = I2C_SLAVE_MAX_BUFFER_SIZE;
+        length = BPB_I2C_SLAVE_MAX_BUFFER_SIZE;
         context.txCallback(scratch, &length);
         pSource = scratch;
-        if (length > I2C_SLAVE_MAX_BUFFER_SIZE)
+        if (length > BPB_I2C_SLAVE_MAX_BUFFER_SIZE)
         {
-            length = I2C_SLAVE_MAX_BUFFER_SIZE;
+            length = BPB_I2C_SLAVE_MAX_BUFFER_SIZE;
         }
     }
 
     if (pSource != NULL && length > 0U)
     {
-        (void)I2cSlavePort_Write(pSource, length, I2C_SLAVE_WRITE_TIMEOUT_MS);
+        (void)I2cSlavePort_Write(pSource, length, BPB_I2C_SLAVE_WRITE_TIMEOUT_MS);
     }
     context.addressed = false;
 }

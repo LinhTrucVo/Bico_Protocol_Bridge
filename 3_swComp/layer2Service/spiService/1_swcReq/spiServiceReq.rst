@@ -30,7 +30,7 @@ Req-SpiService-004: The component shall manage CS pin assertion/deassertion for 
    Verification: CS is asserted before transfer and deasserted after (even on error).
 
 Req-SpiService-005: The component shall return BUS_ERROR on SPI driver errors.
-   Verification: Driver errors propagate as SPISERVICE_STATUS_BUS_ERROR.
+   Verification: Driver errors propagate as BPB_SPISERVICE_STATUS_BUS_ERROR.
 
 Req-SpiService-006: The component shall return INVALID_PARAM for null pointers or oversized transfers.
    Verification: Invalid inputs return error without hardware action.

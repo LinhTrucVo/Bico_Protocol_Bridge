@@ -1,11 +1,11 @@
 ﻿// Fake implementation header for AdcDriver testing
 // This file provides fake implementations to simulate hardware/dependencies
 
-#ifndef FAKEADCDRIVER_H
-#define FAKEADCDRIVER_H
+#ifndef BPB_FAKEADCDRIVER_H
+#define BPB_FAKEADCDRIVER_H
 
 #include <stdint.h>
 
 // Add fake function declarations here as needed for testing
 
-#endif /* FAKEADCDRIVER_H */
+#endif /* BPB_FAKEADCDRIVER_H */

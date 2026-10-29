@@ -39,7 +39,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** ANALOGSERVICE_STATUS_OK on success, ANALOGSERVICE_STATUS_ERROR on failure.
+        **Return values:** BPB_ANALOGSERVICE_STATUS_OK on success, BPB_ANALOGSERVICE_STATUS_ERROR on failure.
 
         **Restrictions:** Must be called before any other Analog Service function.
 
@@ -50,7 +50,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** ANALOGSERVICE_STATUS_OK on success.
+        **Return values:** BPB_ANALOGSERVICE_STATUS_OK on success.
 
         **Restrictions:** None.
 
@@ -61,7 +61,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** ANALOGSERVICE_STATUS_OK on success, ANALOGSERVICE_STATUS_NOT_INITIALIZED if called before Init.
+        **Return values:** BPB_ANALOGSERVICE_STATUS_OK on success, BPB_ANALOGSERVICE_STATUS_NOT_INITIALIZED if called before Init.
 
         **Restrictions:** Must be called periodically from the main loop when continuous sampling is active.
 
@@ -78,8 +78,8 @@ Public interfaces
         - **pResponse**: Pointer to the output buffer for the serialized response.
         - **pResponseLength**: Pointer to receive the number of bytes written to the response buffer.
 
-        **Return values:** ANALOGSERVICE_STATUS_OK on success, ANALOGSERVICE_STATUS_INVALID_PARAM for NULL pointers or zero length,
-        ANALOGSERVICE_STATUS_ERROR on ADC or serialization failure.
+        **Return values:** BPB_ANALOGSERVICE_STATUS_OK on success, BPB_ANALOGSERVICE_STATUS_INVALID_PARAM for NULL pointers or zero length,
+        BPB_ANALOGSERVICE_STATUS_ERROR on ADC or serialization failure.
 
         **Restrictions:** The response buffer must be large enough to hold the maximum response frame.
 

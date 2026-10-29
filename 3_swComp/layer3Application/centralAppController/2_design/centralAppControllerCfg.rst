@@ -5,8 +5,8 @@ Defines compile-time feature flags for the Central Application Controller:
 
 - ``CAC_CFG_ENABLE_ERROR_LOGGING``: Enables error logging on dispatch failures.
 - ``CAC_CFG_ENABLE_NRC_DETAIL``: Enables detailed NRC reporting (specific NRC per failure mode).
-- ``CENTRAL_APP_CFG_MAX_FRAME_SIZE``: Maximum request/response frame size (default 256 bytes).
-- ``CENTRAL_APP_CFG_RESPONSE_TIMEOUT_MS``: Response timeout in ms (default 10).
+- ``BPB_CENTRAL_APP_CFG_MAX_FRAME_SIZE``: Maximum request/response frame size (default 256 bytes).
+- ``BPB_CENTRAL_APP_CFG_RESPONSE_TIMEOUT_MS``: Response timeout in ms (default 10).
 
 DID Allocation:
 - 0x1001 = ADC Sample Rate

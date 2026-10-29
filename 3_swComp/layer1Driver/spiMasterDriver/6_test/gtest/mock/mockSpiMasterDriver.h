@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for SpiMasterDriver testing
 
-#ifndef MOCKSPIMASTERDRIVER_H
-#define MOCKSPIMASTERDRIVER_H
+#ifndef BPB_MOCKSPIMASTERDRIVER_H
+#define BPB_MOCKSPIMASTERDRIVER_H
 
 //============================================================================
 // Dependencies
@@ -33,4 +33,4 @@ SpiMasterDriver_Status_t call_SpiMasterDriverUnit_IsBusy(bool *pIsBusy);
 SpiMasterDriver_Status_t call_SpiMasterDriverUnit_RegisterCallback(SpiMasterDriver_Callback_t callback);
 SpiMasterDriver_Status_t call_SpiMasterDriverUnit_DeInit(void);
 
-#endif /* MOCKSPIMASTERDRIVER_H */
+#endif /* BPB_MOCKSPIMASTERDRIVER_H */

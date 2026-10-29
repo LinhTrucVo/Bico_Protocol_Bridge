@@ -1,8 +1,8 @@
 // This file is used to include the public interface of the component units.
 // It contains public macros, types, variables, and function prototypes of Units in this component.
 
-#ifndef DESERIALIZE_H
-#define DESERIALIZE_H
+#ifndef BPB_DESERIALIZE_H
+#define BPB_DESERIALIZE_H
 
 //============================================================================
 // Dependencies, Component configuration, and Unit headers
@@ -10,4 +10,4 @@
 #include "deserializeCfg.h"
 #include "deserializeUnit.h"
 
-#endif /* DESERIALIZE_H */
+#endif /* BPB_DESERIALIZE_H */

@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for AdcDriver testing
 
-#ifndef MOCKADCDRIVER_H
-#define MOCKADCDRIVER_H
+#ifndef BPB_MOCKADCDRIVER_H
+#define BPB_MOCKADCDRIVER_H
 
 //============================================================================
 // Dependencies
@@ -31,4 +31,4 @@ AdcDriver_Status_t call_AdcDriverUnit_RegisterCallback(AdcDriver_ConversionCallb
 AdcDriver_Status_t call_AdcDriverUnit_GetStatus(AdcDriver_Status_t *pStatus);
 AdcDriver_Status_t call_AdcDriverUnit_DeInit(void);
 
-#endif /* MOCKADCDRIVER_H */
+#endif /* BPB_MOCKADCDRIVER_H */

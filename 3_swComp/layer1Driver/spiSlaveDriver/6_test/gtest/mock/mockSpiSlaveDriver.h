@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for SpiSlaveDriver testing
 
-#ifndef MOCKSPISLAVEDRIVER_H
-#define MOCKSPISLAVEDRIVER_H
+#ifndef BPB_MOCKSPISLAVEDRIVER_H
+#define BPB_MOCKSPISLAVEDRIVER_H
 
 //============================================================================
 // Dependencies
@@ -30,4 +30,4 @@ SpiSlaveDriver_Status_t call_SpiSlaveDriverUnit_RegisterRxCallback(SpiSlaveDrive
 SpiSlaveDriver_Status_t call_SpiSlaveDriverUnit_RegisterTxCallback(SpiSlaveDriver_TxCallback_t callback);
 SpiSlaveDriver_Status_t call_SpiSlaveDriverUnit_DeInit(void);
 
-#endif /* MOCKSPISLAVEDRIVER_H */
+#endif /* BPB_MOCKSPISLAVEDRIVER_H */

@@ -37,7 +37,7 @@ TEST_F(I2cSlaveDriver, I2cSlaveDriver_Init_ValidConfig_ReturnsOK)
     // Arrange
     I2cSlaveDriver_Config_t cfg = {
         0x10,
-        I2C_SLAVE_ADDRESS_7BIT,
+        BPB_I2C_SLAVE_ADDRESS_7BIT,
         false,
         false,
         false
@@ -47,7 +47,7 @@ TEST_F(I2cSlaveDriver, I2cSlaveDriver_Init_ValidConfig_ReturnsOK)
     I2cSlaveDriver_Status_t status = call_I2cSlaveDriverUnit_Init(&cfg);
     
     // Assert
-    EXPECT_EQ(I2C_SLAVE_STATUS_OK, status);
+    EXPECT_EQ(BPB_I2C_SLAVE_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ TEST_F(I2cSlaveDriver, I2cSlaveDriver_SetRxBuffer_ValidBuffer_ReturnsOK)
     // Arrange
     I2cSlaveDriver_Config_t cfg = {
         0x10,
-        I2C_SLAVE_ADDRESS_7BIT,
+        BPB_I2C_SLAVE_ADDRESS_7BIT,
         false,
         false,
         false
@@ -70,7 +70,7 @@ TEST_F(I2cSlaveDriver, I2cSlaveDriver_SetRxBuffer_ValidBuffer_ReturnsOK)
     I2cSlaveDriver_Status_t status = call_I2cSlaveDriverUnit_SetRxBuffer(rx, sizeof(rx));
     
     // Assert
-    EXPECT_EQ(I2C_SLAVE_STATUS_OK, status);
+    EXPECT_EQ(BPB_I2C_SLAVE_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ TEST_F(I2cSlaveDriver, I2cSlaveDriver_SetTxBuffer_ValidBuffer_ReturnsOK)
     // Arrange
     I2cSlaveDriver_Config_t cfg = {
         0x10,
-        I2C_SLAVE_ADDRESS_7BIT,
+        BPB_I2C_SLAVE_ADDRESS_7BIT,
         false,
         false,
         false
@@ -93,5 +93,5 @@ TEST_F(I2cSlaveDriver, I2cSlaveDriver_SetTxBuffer_ValidBuffer_ReturnsOK)
     I2cSlaveDriver_Status_t status = call_I2cSlaveDriverUnit_SetTxBuffer(tx, sizeof(tx));
     
     // Assert
-    EXPECT_EQ(I2C_SLAVE_STATUS_OK, status);
+    EXPECT_EQ(BPB_I2C_SLAVE_STATUS_OK, status);
 }

@@ -1,7 +1,7 @@
 // Port interface of the NVM driver. Implemented by the device workspace, called by nvmDriverUnit.c.
 
-#ifndef NVMDRIVERPORT_H
-#define NVMDRIVERPORT_H
+#ifndef BPB_NVMDRIVERPORT_H
+#define BPB_NVMDRIVERPORT_H
 
 //============================================================================
 // Dependencies
@@ -20,4 +20,4 @@ bool NvmPort_Read(uint32_t offset, uint8_t *pData, uint32_t length);
 bool NvmPort_Write(uint32_t offset, const uint8_t *pData, uint32_t length);
 bool NvmPort_Erase(uint32_t offset, uint32_t length);
 
-#endif /* NVMDRIVERPORT_H */
+#endif /* BPB_NVMDRIVERPORT_H */

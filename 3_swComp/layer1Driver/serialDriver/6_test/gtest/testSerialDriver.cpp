@@ -36,11 +36,11 @@ TEST_F(SerialDriver, SerialDriver_Init_ValidConfig_ReturnsOK)
 {
     // Arrange
     SerialDriver_Config_t cfg = {
-        SERIAL_BAUDRATE_115200,
-        SERIAL_PARITY_NONE,
-        SERIAL_STOPBITS_1,
-        SERIAL_DATABITS_8,
-        SERIAL_FLOWCONTROL_NONE,
+        BPB_SERIAL_BAUDRATE_115200,
+        BPB_SERIAL_PARITY_NONE,
+        BPB_SERIAL_STOPBITS_1,
+        BPB_SERIAL_DATABITS_8,
+        BPB_SERIAL_FLOWCONTROL_NONE,
         false,
         false
     };
@@ -49,7 +49,7 @@ TEST_F(SerialDriver, SerialDriver_Init_ValidConfig_ReturnsOK)
     SerialDriver_Status_t status = call_SerialDriverUnit_Init(&cfg);
     
     // Assert
-    EXPECT_EQ(SERIAL_STATUS_OK, status);
+    EXPECT_EQ(BPB_SERIAL_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -59,11 +59,11 @@ TEST_F(SerialDriver, SerialDriver_Send_ValidData_ReturnsOK)
 {
     // Arrange
     SerialDriver_Config_t cfg = {
-        SERIAL_BAUDRATE_115200,
-        SERIAL_PARITY_NONE,
-        SERIAL_STOPBITS_1,
-        SERIAL_DATABITS_8,
-        SERIAL_FLOWCONTROL_NONE,
+        BPB_SERIAL_BAUDRATE_115200,
+        BPB_SERIAL_PARITY_NONE,
+        BPB_SERIAL_STOPBITS_1,
+        BPB_SERIAL_DATABITS_8,
+        BPB_SERIAL_FLOWCONTROL_NONE,
         false,
         false
     };
@@ -74,7 +74,7 @@ TEST_F(SerialDriver, SerialDriver_Send_ValidData_ReturnsOK)
     SerialDriver_Status_t status = call_SerialDriverUnit_Send(data, 2);
     
     // Assert
-    EXPECT_EQ(SERIAL_STATUS_OK, status);
+    EXPECT_EQ(BPB_SERIAL_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -84,19 +84,19 @@ TEST_F(SerialDriver, SerialDriver_Configure_ValidParams_ReturnsOK)
 {
     // Arrange
     SerialDriver_Config_t cfg = {
-        SERIAL_BAUDRATE_115200,
-        SERIAL_PARITY_NONE,
-        SERIAL_STOPBITS_1,
-        SERIAL_DATABITS_8,
-        SERIAL_FLOWCONTROL_NONE,
+        BPB_SERIAL_BAUDRATE_115200,
+        BPB_SERIAL_PARITY_NONE,
+        BPB_SERIAL_STOPBITS_1,
+        BPB_SERIAL_DATABITS_8,
+        BPB_SERIAL_FLOWCONTROL_NONE,
         false,
         false
     };
     call_SerialDriverUnit_Init(&cfg);
     
     // Act
-    SerialDriver_Status_t status = call_SerialDriverUnit_Configure(SERIAL_BAUDRATE_115200, SERIAL_PARITY_NONE, SERIAL_STOPBITS_1, SERIAL_DATABITS_8);
+    SerialDriver_Status_t status = call_SerialDriverUnit_Configure(BPB_SERIAL_BAUDRATE_115200, BPB_SERIAL_PARITY_NONE, BPB_SERIAL_STOPBITS_1, BPB_SERIAL_DATABITS_8);
     
     // Assert
-    EXPECT_EQ(SERIAL_STATUS_OK, status);
+    EXPECT_EQ(BPB_SERIAL_STATUS_OK, status);
 }

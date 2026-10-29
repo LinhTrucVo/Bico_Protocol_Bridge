@@ -39,7 +39,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** DESERIALIZE_STATUS_OK on success, DESERIALIZE_STATUS_ERROR on failure.
+        **Return values:** BPB_DESERIALIZE_STATUS_OK on success, BPB_DESERIALIZE_STATUS_ERROR on failure.
 
         **Restrictions:** Must be called before any other Deserialize function.
 
@@ -50,7 +50,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** DESERIALIZE_STATUS_OK on success.
+        **Return values:** BPB_DESERIALIZE_STATUS_OK on success.
 
         **Restrictions:** None.
 
@@ -64,8 +64,8 @@ Public interfaces
 
         - **pFrame**: Pointer to the frame descriptor containing the raw byte buffer and its length.
 
-        **Return values:** DESERIALIZE_STATUS_OK if valid, DESERIALIZE_STATUS_INVALID_FRAME for structural errors,
-        DESERIALIZE_STATUS_CRC_ERROR for CRC mismatch, DESERIALIZE_STATUS_INVALID_PARAM for NULL pointer.
+        **Return values:** BPB_DESERIALIZE_STATUS_OK if valid, BPB_DESERIALIZE_STATUS_INVALID_FRAME for structural errors,
+        DESERIALIZE_STATUS_CRC_ERROR for CRC mismatch, BPB_DESERIALIZE_STATUS_INVALID_PARAM for NULL pointer.
 
         **Restrictions:** None.
 
@@ -80,8 +80,8 @@ Public interfaces
         - **pFrame**: Pointer to the frame descriptor of the validated raw frame.
         - **pRequest**: Pointer to the request structure to populate.
 
-        **Return values:** DESERIALIZE_STATUS_OK on success, DESERIALIZE_STATUS_UNSUPPORTED_CMD for unknown command,
-        DESERIALIZE_STATUS_INVALID_PARAM for NULL pointers.
+        **Return values:** BPB_DESERIALIZE_STATUS_OK on success, DESERIALIZE_STATUS_UNSUPPORTED_CMD for unknown command,
+        BPB_DESERIALIZE_STATUS_INVALID_PARAM for NULL pointers.
 
         **Restrictions:** Call ``DeserializeUnit_ValidateFrame()`` before calling this function.
 
@@ -96,7 +96,7 @@ Public interfaces
         - **length**: Number of bytes to process.
         - **pCrc**: Pointer to the variable to receive the computed CRC value.
 
-        **Return values:** DESERIALIZE_STATUS_OK on success, DESERIALIZE_STATUS_INVALID_PARAM for NULL pointers or zero length.
+        **Return values:** BPB_DESERIALIZE_STATUS_OK on success, BPB_DESERIALIZE_STATUS_INVALID_PARAM for NULL pointers or zero length.
 
         **Restrictions:** None.
 

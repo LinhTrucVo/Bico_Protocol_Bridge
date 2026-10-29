@@ -36,9 +36,9 @@ TEST_F(AdcDriver, AdcDriver_Init_ValidConfig_ReturnsOK)
 {
     // Arrange
     AdcDriver_Config_t cfg = {
-        ADC_RESOLUTION_12BIT,
-        ADC_VREF_3V3,
-        ADC_MODE_SINGLE,
+        BPB_ADC_RESOLUTION_12BIT,
+        BPB_ADC_VREF_3V3,
+        BPB_ADC_MODE_SINGLE,
         1000,
         false,
         false
@@ -48,7 +48,7 @@ TEST_F(AdcDriver, AdcDriver_Init_ValidConfig_ReturnsOK)
     AdcDriver_Status_t status = call_AdcDriverUnit_Init(&cfg);
     
     // Assert
-    EXPECT_EQ(ADC_STATUS_OK, status);
+    EXPECT_EQ(BPB_ADC_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -58,9 +58,9 @@ TEST_F(AdcDriver, AdcDriver_ConfigureChannel_ValidChannel_ReturnsOK)
 {
     // Arrange
     AdcDriver_Config_t cfg = {
-        ADC_RESOLUTION_12BIT,
-        ADC_VREF_3V3,
-        ADC_MODE_SINGLE,
+        BPB_ADC_RESOLUTION_12BIT,
+        BPB_ADC_VREF_3V3,
+        BPB_ADC_MODE_SINGLE,
         1000,
         false,
         false
@@ -68,10 +68,10 @@ TEST_F(AdcDriver, AdcDriver_ConfigureChannel_ValidChannel_ReturnsOK)
     call_AdcDriverUnit_Init(&cfg);
     
     // Act
-    AdcDriver_Status_t status = call_AdcDriverUnit_ConfigureChannel(ADC_CHANNEL_0, true);
+    AdcDriver_Status_t status = call_AdcDriverUnit_ConfigureChannel(BPB_ADC_CHANNEL_0, true);
     
     // Assert
-    EXPECT_EQ(ADC_STATUS_OK, status);
+    EXPECT_EQ(BPB_ADC_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -81,21 +81,21 @@ TEST_F(AdcDriver, AdcDriver_StartConversion_ValidChannel_ReturnsOK)
 {
     // Arrange
     AdcDriver_Config_t cfg = {
-        ADC_RESOLUTION_12BIT,
-        ADC_VREF_3V3,
-        ADC_MODE_SINGLE,
+        BPB_ADC_RESOLUTION_12BIT,
+        BPB_ADC_VREF_3V3,
+        BPB_ADC_MODE_SINGLE,
         1000,
         false,
         false
     };
     call_AdcDriverUnit_Init(&cfg);
-    call_AdcDriverUnit_ConfigureChannel(ADC_CHANNEL_0, true);
+    call_AdcDriverUnit_ConfigureChannel(BPB_ADC_CHANNEL_0, true);
     
     // Act
-    AdcDriver_Status_t status = call_AdcDriverUnit_StartConversion(ADC_CHANNEL_0);
+    AdcDriver_Status_t status = call_AdcDriverUnit_StartConversion(BPB_ADC_CHANNEL_0);
     
     // Assert
-    EXPECT_EQ(ADC_STATUS_OK, status);
+    EXPECT_EQ(BPB_ADC_STATUS_OK, status);
 }
 
 //------------------------------------------------------------------------------
@@ -105,9 +105,9 @@ TEST_F(AdcDriver, AdcDriver_ReadValue_NullPointer_ReturnsFails)
 {
     // Arrange
     AdcDriver_Config_t cfg = {
-        ADC_RESOLUTION_12BIT,
-        ADC_VREF_3V3,
-        ADC_MODE_SINGLE,
+        BPB_ADC_RESOLUTION_12BIT,
+        BPB_ADC_VREF_3V3,
+        BPB_ADC_MODE_SINGLE,
         1000,
         false,
         false
@@ -115,8 +115,8 @@ TEST_F(AdcDriver, AdcDriver_ReadValue_NullPointer_ReturnsFails)
     call_AdcDriverUnit_Init(&cfg);
     
     // Act
-    AdcDriver_Status_t status = call_AdcDriverUnit_ReadValue(ADC_CHANNEL_0, NULL);
+    AdcDriver_Status_t status = call_AdcDriverUnit_ReadValue(BPB_ADC_CHANNEL_0, NULL);
     
     // Assert
-    EXPECT_EQ(ADC_STATUS_INVALID_PARAM, status);
+    EXPECT_EQ(BPB_ADC_STATUS_INVALID_PARAM, status);
 }

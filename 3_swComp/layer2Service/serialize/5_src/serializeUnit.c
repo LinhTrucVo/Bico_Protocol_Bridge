@@ -8,9 +8,9 @@
 //============================================================================
 // UDS Response SIDs (requestSID + 0x40)
 //============================================================================
-#define RESPONSE_SID_READ_DATA_BY_ID    0x62U  /* 0x22 + 0x40 */
-#define RESPONSE_SID_WRITE_DATA_BY_ID   0x6EU  /* 0x2E + 0x40 */
-#define RESPONSE_SID_ROUTINE_CONTROL    0x71U  /* 0x31 + 0x40 */
+#define BPB_RESPONSE_SID_READ_DATA_BY_ID    0x62U  /* 0x22 + 0x40 */
+#define BPB_RESPONSE_SID_WRITE_DATA_BY_ID   0x6EU  /* 0x2E + 0x40 */
+#define BPB_RESPONSE_SID_ROUTINE_CONTROL    0x71U  /* 0x31 + 0x40 */
 
 typedef struct
 {
@@ -22,13 +22,13 @@ static Serialize_Context_t context = {false};
 Serialize_Status_t SerializeUnit_Init(void)
 {
     context.initialized = true;
-    return SERIALIZE_STATUS_OK;
+    return BPB_SERIALIZE_STATUS_OK;
 }
 
 Serialize_Status_t SerializeUnit_DeInit(void)
 {
     context.initialized = false;
-    return SERIALIZE_STATUS_OK;
+    return BPB_SERIALIZE_STATUS_OK;
 }
 
 Serialize_Status_t SerializeUnit_BuildReadResponse(
@@ -39,20 +39,20 @@ Serialize_Status_t SerializeUnit_BuildReadResponse(
 {
     if (!context.initialized)
     {
-        return SERIALIZE_STATUS_ERROR;
+        return BPB_SERIALIZE_STATUS_ERROR;
     }
     if (pResponse == NULL || (dataLength > 0U && pData == NULL))
     {
-        return SERIALIZE_STATUS_INVALID_PARAM;
+        return BPB_SERIALIZE_STATUS_INVALID_PARAM;
     }
 
     uint16_t totalLength = 3U + dataLength; /* responseSID(1) + DID(2) + data */
-    if (totalLength > SERIALIZE_MAX_RESPONSE_SIZE)
+    if (totalLength > BPB_SERIALIZE_MAX_RESPONSE_SIZE)
     {
-        return SERIALIZE_STATUS_BUFFER_OVERFLOW;
+        return BPB_SERIALIZE_STATUS_BUFFER_OVERFLOW;
     }
 
-    pResponse->buffer[0] = RESPONSE_SID_READ_DATA_BY_ID; /* 0x62 */
+    pResponse->buffer[0] = BPB_RESPONSE_SID_READ_DATA_BY_ID; /* 0x62 */
     pResponse->buffer[1] = (uint8_t)(did >> 8U);
     pResponse->buffer[2] = (uint8_t)(did & 0xFFU);
 
@@ -62,7 +62,7 @@ Serialize_Status_t SerializeUnit_BuildReadResponse(
     }
 
     pResponse->length = totalLength;
-    return SERIALIZE_STATUS_OK;
+    return BPB_SERIALIZE_STATUS_OK;
 }
 
 Serialize_Status_t SerializeUnit_BuildWriteResponse(
@@ -71,19 +71,19 @@ Serialize_Status_t SerializeUnit_BuildWriteResponse(
 {
     if (!context.initialized)
     {
-        return SERIALIZE_STATUS_ERROR;
+        return BPB_SERIALIZE_STATUS_ERROR;
     }
     if (pResponse == NULL)
     {
-        return SERIALIZE_STATUS_INVALID_PARAM;
+        return BPB_SERIALIZE_STATUS_INVALID_PARAM;
     }
 
-    pResponse->buffer[0] = RESPONSE_SID_WRITE_DATA_BY_ID; /* 0x6E */
+    pResponse->buffer[0] = BPB_RESPONSE_SID_WRITE_DATA_BY_ID; /* 0x6E */
     pResponse->buffer[1] = (uint8_t)(did >> 8U);
     pResponse->buffer[2] = (uint8_t)(did & 0xFFU);
     pResponse->length = 3U;
 
-    return SERIALIZE_STATUS_OK;
+    return BPB_SERIALIZE_STATUS_OK;
 }
 
 Serialize_Status_t SerializeUnit_BuildRoutineResponse(
@@ -95,20 +95,20 @@ Serialize_Status_t SerializeUnit_BuildRoutineResponse(
 {
     if (!context.initialized)
     {
-        return SERIALIZE_STATUS_ERROR;
+        return BPB_SERIALIZE_STATUS_ERROR;
     }
     if (pResponse == NULL || (statusLength > 0U && pStatusRecord == NULL))
     {
-        return SERIALIZE_STATUS_INVALID_PARAM;
+        return BPB_SERIALIZE_STATUS_INVALID_PARAM;
     }
 
     uint16_t totalLength = 4U + statusLength; /* responseSID(1) + type(1) + RID(2) + statusRecord */
-    if (totalLength > SERIALIZE_MAX_RESPONSE_SIZE)
+    if (totalLength > BPB_SERIALIZE_MAX_RESPONSE_SIZE)
     {
-        return SERIALIZE_STATUS_BUFFER_OVERFLOW;
+        return BPB_SERIALIZE_STATUS_BUFFER_OVERFLOW;
     }
 
-    pResponse->buffer[0] = RESPONSE_SID_ROUTINE_CONTROL; /* 0x71 */
+    pResponse->buffer[0] = BPB_RESPONSE_SID_ROUTINE_CONTROL; /* 0x71 */
     pResponse->buffer[1] = routineControlType;
     pResponse->buffer[2] = (uint8_t)(rid >> 8U);
     pResponse->buffer[3] = (uint8_t)(rid & 0xFFU);
@@ -119,7 +119,7 @@ Serialize_Status_t SerializeUnit_BuildRoutineResponse(
     }
 
     pResponse->length = totalLength;
-    return SERIALIZE_STATUS_OK;
+    return BPB_SERIALIZE_STATUS_OK;
 }
 
 Serialize_Status_t SerializeUnit_BuildNegativeResponse(
@@ -129,17 +129,17 @@ Serialize_Status_t SerializeUnit_BuildNegativeResponse(
 {
     if (!context.initialized)
     {
-        return SERIALIZE_STATUS_ERROR;
+        return BPB_SERIALIZE_STATUS_ERROR;
     }
     if (pResponse == NULL)
     {
-        return SERIALIZE_STATUS_INVALID_PARAM;
+        return BPB_SERIALIZE_STATUS_INVALID_PARAM;
     }
 
-    pResponse->buffer[0] = SERIALIZE_NEGATIVE_RESPONSE_SID; /* 0x7F */
+    pResponse->buffer[0] = BPB_SERIALIZE_NEGATIVE_RESPONSE_SID; /* 0x7F */
     pResponse->buffer[1] = requestSid;
     pResponse->buffer[2] = nrc;
     pResponse->length = 3U;
 
-    return SERIALIZE_STATUS_OK;
+    return BPB_SERIALIZE_STATUS_OK;
 }

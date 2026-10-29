@@ -40,7 +40,7 @@ Public interfaces
 
         - **pConfig**: Pointer to ADC driver configuration structure.
 
-        **Return values:** ADC_STATUS_OK on success, ADC_STATUS_INVALID_PARAM for invalid parameters.
+        **Return values:** BPB_ADC_STATUS_OK on success, BPB_ADC_STATUS_INVALID_PARAM for invalid parameters.
 
         **Restrictions:** Must be called before any other ADC driver function.
 
@@ -54,7 +54,7 @@ Public interfaces
         - **channel**: The ADC channel to configure.
         - **enable**: ``true`` to enable the channel; ``false`` to disable it.
 
-        **Return values:** ADC_STATUS_OK on success, ADC_STATUS_INVALID_PARAM for an invalid channel.
+        **Return values:** BPB_ADC_STATUS_OK on success, BPB_ADC_STATUS_INVALID_PARAM for an invalid channel.
 
         **Restrictions:** None.
 
@@ -67,7 +67,7 @@ Public interfaces
 
         - **resolution**: Desired ADC resolution (e.g. 8-bit, 10-bit, 12-bit, 16-bit).
 
-        **Return values:** ADC_STATUS_OK on success, ADC_STATUS_INVALID_PARAM for an unsupported resolution.
+        **Return values:** BPB_ADC_STATUS_OK on success, BPB_ADC_STATUS_INVALID_PARAM for an unsupported resolution.
 
         **Restrictions:** None.
 
@@ -80,7 +80,7 @@ Public interfaces
 
         - **voltageRef**: Voltage reference source selection (internal or external).
 
-        **Return values:** ADC_STATUS_OK on success, ADC_STATUS_INVALID_PARAM for an unsupported reference.
+        **Return values:** BPB_ADC_STATUS_OK on success, BPB_ADC_STATUS_INVALID_PARAM for an unsupported reference.
 
         **Restrictions:** None.
 
@@ -93,7 +93,7 @@ Public interfaces
 
         - **frequency**: Desired sampling frequency in Hz.
 
-        **Return values:** ADC_STATUS_OK on success, ADC_STATUS_INVALID_PARAM if the frequency is out of range.
+        **Return values:** BPB_ADC_STATUS_OK on success, BPB_ADC_STATUS_INVALID_PARAM if the frequency is out of range.
 
         **Restrictions:** None.
 
@@ -106,7 +106,7 @@ Public interfaces
 
         - **channel**: The ADC channel to start conversion on.
 
-        **Return values:** ADC_STATUS_OK on success, ADC_STATUS_INVALID_PARAM for an invalid channel, ADC_STATUS_ERROR if already running.
+        **Return values:** BPB_ADC_STATUS_OK on success, BPB_ADC_STATUS_INVALID_PARAM for an invalid channel, BPB_ADC_STATUS_ERROR if already running.
 
         **Restrictions:** The channel must be enabled via AdcDriverUnit_ConfigureChannel() before calling this function.
 
@@ -117,7 +117,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** ADC_STATUS_OK on success.
+        **Return values:** BPB_ADC_STATUS_OK on success.
 
         **Restrictions:** None.
 
@@ -131,7 +131,7 @@ Public interfaces
         - **channel**: The ADC channel to read from.
         - **pValue**: Pointer to store the conversion result.
 
-        **Return values:** ADC_STATUS_OK on success, ADC_STATUS_INVALID_PARAM for a NULL pointer or invalid channel, ADC_STATUS_ERROR if conversion is not complete.
+        **Return values:** BPB_ADC_STATUS_OK on success, BPB_ADC_STATUS_INVALID_PARAM for a NULL pointer or invalid channel, BPB_ADC_STATUS_ERROR if conversion is not complete.
 
         **Restrictions:** AdcDriverUnit_IsConversionComplete() should confirm completion before calling this function.
 
@@ -145,7 +145,7 @@ Public interfaces
         - **channel**: The ADC channel to check.
         - **pComplete**: Pointer to store the result; set to ``true`` when conversion is done.
 
-        **Return values:** ADC_STATUS_OK on success, ADC_STATUS_INVALID_PARAM for a NULL pointer or invalid channel.
+        **Return values:** BPB_ADC_STATUS_OK on success, BPB_ADC_STATUS_INVALID_PARAM for a NULL pointer or invalid channel.
 
         **Restrictions:** None.
 
@@ -158,7 +158,7 @@ Public interfaces
 
         - **callback**: Function pointer to the callback. Pass NULL to deregister.
 
-        **Return values:** ADC_STATUS_OK on success.
+        **Return values:** BPB_ADC_STATUS_OK on success.
 
         **Restrictions:** Callbacks are invoked from interrupt context; they must be short and non-blocking.
 
@@ -171,7 +171,7 @@ Public interfaces
 
         - **pStatus**: Pointer to store the current driver status code.
 
-        **Return values:** ADC_STATUS_OK on success, ADC_STATUS_INVALID_PARAM for a NULL pointer.
+        **Return values:** BPB_ADC_STATUS_OK on success, BPB_ADC_STATUS_INVALID_PARAM for a NULL pointer.
 
         **Restrictions:** None.
 
@@ -182,7 +182,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** ADC_STATUS_OK on success.
+        **Return values:** BPB_ADC_STATUS_OK on success.
 
         **Restrictions:** None.
 

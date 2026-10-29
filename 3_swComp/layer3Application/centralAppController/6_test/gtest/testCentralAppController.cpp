@@ -40,14 +40,14 @@ TEST_F(CentralAppController, CentralAppController_Init_Valid_ReturnsOK)
 {
     call_CentralAppControllerUnit_DeInit();
     CentralAppController_Status_t status = call_CentralAppControllerUnit_Init();
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_OK, status);
 }
 
 TEST_F(CentralAppController, CentralAppController_GetState_AfterInit_ReturnsIdle)
 {
     CentralAppController_State_t state;
     call_CentralAppControllerUnit_GetState(&state);
-    EXPECT_EQ(CentralAppController_STATE_IDLE, state);
+    EXPECT_EQ(BPB_CentralAppController_STATE_IDLE, state);
 }
 
 //------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_SID22_DID1001_Returns
         frame, sizeof(frame), responseBuffer, sizeof(responseBuffer), &responseLength);
 
     // Assert
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_GT(responseLength, 0U);
     EXPECT_EQ(0x62U, responseBuffer[0]); // Positive response SID
     EXPECT_EQ(0x10U, responseBuffer[1]); // DID high
@@ -80,7 +80,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_SID22_UnknownDID_Retu
         frame, sizeof(frame), responseBuffer, sizeof(responseBuffer), &responseLength);
 
     // Assert
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_EQ(3U, responseLength);
     EXPECT_EQ(0x7FU, responseBuffer[0]); // Negative response
     EXPECT_EQ(0x22U, responseBuffer[1]); // Request SID
@@ -100,7 +100,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_SID2E_DID1001_Returns
         frame, sizeof(frame), responseBuffer, sizeof(responseBuffer), &responseLength);
 
     // Assert
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_EQ(3U, responseLength);
     EXPECT_EQ(0x6EU, responseBuffer[0]); // Positive response SID
     EXPECT_EQ(0x10U, responseBuffer[1]);
@@ -117,7 +117,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_SID2E_InsufficientPay
         frame, sizeof(frame), responseBuffer, sizeof(responseBuffer), &responseLength);
 
     // Assert - Should get incorrectMessageLength since SID 0x2E needs >=4 bytes
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_EQ(0x7FU, responseBuffer[0]);
 }
 
@@ -134,7 +134,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_SID31_ADCRead_Returns
         frame, sizeof(frame), responseBuffer, sizeof(responseBuffer), &responseLength);
 
     // Assert
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_EQ(0x71U, responseBuffer[0]); // Positive routine response
     EXPECT_EQ(0x01U, responseBuffer[1]); // routineControlType
     EXPECT_EQ(0x01U, responseBuffer[2]); // RID high
@@ -151,7 +151,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_SID31_GPIOWrite_Retur
         frame, sizeof(frame), responseBuffer, sizeof(responseBuffer), &responseLength);
 
     // Assert
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_EQ(0x71U, responseBuffer[0]);
 }
 
@@ -165,7 +165,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_SID31_GPIORead_Return
         frame, sizeof(frame), responseBuffer, sizeof(responseBuffer), &responseLength);
 
     // Assert
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_EQ(0x71U, responseBuffer[0]);
 }
 
@@ -179,7 +179,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_SID31_UnknownRID_Retu
         frame, sizeof(frame), responseBuffer, sizeof(responseBuffer), &responseLength);
 
     // Assert
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_EQ(0x7FU, responseBuffer[0]);
     EXPECT_EQ(0x31U, responseBuffer[1]); // Request SID
     EXPECT_EQ(0x31U, responseBuffer[2]); // NRC: requestOutOfRange
@@ -198,7 +198,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_UnsupportedSID_Return
         frame, sizeof(frame), responseBuffer, sizeof(responseBuffer), &responseLength);
 
     // Assert
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_EQ(0x7FU, responseBuffer[0]);
     EXPECT_EQ(0x99U, responseBuffer[1]);
     EXPECT_EQ(0x11U, responseBuffer[2]); // NRC: serviceNotSupported
@@ -208,7 +208,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_NullInput_ReturnsInva
 {
     CentralAppController_Status_t status = call_CentralAppControllerUnit_Dispatch(
         nullptr, 3, responseBuffer, sizeof(responseBuffer), &responseLength);
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_INVALID_PARAM, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_INVALID_PARAM, status);
 }
 
 TEST_F(CentralAppController, CentralAppController_Dispatch_NotInitialized_ReturnsNotInitialized)
@@ -217,7 +217,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_NotInitialized_Return
     uint8_t frame[] = {0x22, 0x10, 0x01};
     CentralAppController_Status_t status = call_CentralAppControllerUnit_Dispatch(
         frame, sizeof(frame), responseBuffer, sizeof(responseBuffer), &responseLength);
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED, status);
 }
 
 TEST_F(CentralAppController, CentralAppController_Dispatch_FrameTooShort_ReturnsNegative)
@@ -230,7 +230,7 @@ TEST_F(CentralAppController, CentralAppController_Dispatch_FrameTooShort_Returns
         frame, sizeof(frame), responseBuffer, sizeof(responseBuffer), &responseLength);
 
     // Assert
-    EXPECT_EQ(CENTRAL_APP_CONTROLLER_STATUS_OK, status);
+    EXPECT_EQ(BPB_CENTRAL_APP_CONTROLLER_STATUS_OK, status);
     EXPECT_EQ(0x7FU, responseBuffer[0]);
     EXPECT_EQ(0x13U, responseBuffer[2]); // NRC: incorrectMessageLength
 }

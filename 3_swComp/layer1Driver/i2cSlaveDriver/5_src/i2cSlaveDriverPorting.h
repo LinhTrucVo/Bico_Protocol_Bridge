@@ -1,7 +1,7 @@
 // Port interface of the I2C slave driver. Implemented by the device workspace, called by i2cSlaveDriverUnit.c.
 
-#ifndef I2CSLAVEDRIVERPORT_H
-#define I2CSLAVEDRIVERPORT_H
+#ifndef BPB_I2CSLAVEDRIVERPORT_H
+#define BPB_I2CSLAVEDRIVERPORT_H
 
 //============================================================================
 // Dependencies
@@ -28,4 +28,4 @@ bool I2cSlavePort_Write(const uint8_t *pData, uint16_t length, uint32_t timeoutM
 void I2cSlavePort_SetReceiveHandler(I2cSlavePort_ReceiveHandler_t handler);
 void I2cSlavePort_SetRequestHandler(I2cSlavePort_RequestHandler_t handler);
 
-#endif /* I2CSLAVEDRIVERPORT_H */
+#endif /* BPB_I2CSLAVEDRIVERPORT_H */

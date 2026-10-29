@@ -5,7 +5,7 @@ participant "Context" as ctx
 
 CAC -> des : DeserializeUnit_Init()
 des -> ctx : initialized = true
-des --> CAC : DESERIALIZE_STATUS_OK
+des --> CAC : BPB_DESERIALIZE_STATUS_OK
 
 CAC -> des : DeserializeUnit_Parse(pFrame, pRequest)
 des -> des : Check initialized
@@ -27,8 +27,8 @@ else SID == 0x31 (RoutineControl)
     des -> des : Decode RID = (byte[2] << 8) | byte[3]
     des -> des : pPayload = &byte[4] (if length > 4)
 else Unknown SID
-    des --> CAC : DESERIALIZE_STATUS_UNSUPPORTED_SID
+    des --> CAC : BPB_DESERIALIZE_STATUS_UNSUPPORTED_SID
 end
 
-des --> CAC : DESERIALIZE_STATUS_OK + populated request
+des --> CAC : BPB_DESERIALIZE_STATUS_OK + populated request
 @enduml

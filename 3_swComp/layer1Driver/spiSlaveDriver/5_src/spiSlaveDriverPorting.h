@@ -1,7 +1,7 @@
 // Port interface of the SPI slave driver. Implemented by the device workspace, called by spiSlaveDriverUnit.c.
 
-#ifndef SPISLAVEDRIVERPORT_H
-#define SPISLAVEDRIVERPORT_H
+#ifndef BPB_SPISLAVEDRIVERPORT_H
+#define BPB_SPISLAVEDRIVERPORT_H
 
 //============================================================================
 // Dependencies
@@ -13,7 +13,7 @@
 // Public Macros
 //============================================================================
 // Largest transfer the port can queue.
-#define SPISLAVEPORT_MAX_TRANSFER_SIZE  512U
+#define BPB_SPISLAVEPORT_MAX_TRANSFER_SIZE  512U
 
 //============================================================================
 // Public Types
@@ -36,4 +36,4 @@ bool SpiSlavePort_QueueTransfer(const uint8_t *pTxData, uint16_t txLength, uint1
 void SpiSlavePort_SetSelectHandler(SpiSlavePort_SelectHandler_t handler);
 void SpiSlavePort_SetTransferHandler(SpiSlavePort_TransferHandler_t handler);
 
-#endif /* SPISLAVEDRIVERPORT_H */
+#endif /* BPB_SPISLAVEDRIVERPORT_H */

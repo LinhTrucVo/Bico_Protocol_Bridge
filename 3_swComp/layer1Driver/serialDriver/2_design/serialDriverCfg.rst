@@ -6,9 +6,9 @@ Defines compile-time feature flags and tuning parameters for the Serial Driver.
 Feature Flags
 *************
 
-- ``SERIAL_CFG_ENABLE_DMA``: Enables DMA-based transmit and receive transfers. When disabled, interrupt mode is used.
-- ``SERIAL_CFG_ENABLE_CALLBACKS``: Enables RX and TX complete callback registration for asynchronous notification.
-- ``SERIAL_CFG_ENABLE_FLOW_CONTROL``: Enables hardware (RTS/CTS) and software (XON/XOFF) flow control.
+- ``BPB_SERIAL_CFG_ENABLE_DMA``: Enables DMA-based transmit and receive transfers. When disabled, interrupt mode is used.
+- ``BPB_SERIAL_CFG_ENABLE_CALLBACKS``: Enables RX and TX complete callback registration for asynchronous notification.
+- ``BPB_SERIAL_CFG_ENABLE_FLOW_CONTROL``: Enables hardware (RTS/CTS) and software (XON/XOFF) flow control.
 - ``SERIAL_CFG_ENABLE_ERROR_CALLBACK``: Enables error event callback for overrun, framing, and parity errors.
 
 Timing Configuration

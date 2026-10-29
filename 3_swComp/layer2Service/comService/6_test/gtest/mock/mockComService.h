@@ -1,5 +1,5 @@
-#ifndef MOCKCOMSERVICE_H
-#define MOCKCOMSERVICE_H
+#ifndef BPB_MOCKCOMSERVICE_H
+#define BPB_MOCKCOMSERVICE_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -23,4 +23,4 @@ typedef struct
 void MockComService_Reset(void);
 MockComService_Calls_t *MockComService_GetCalls(void);
 
-#endif /* MOCKCOMSERVICE_H */
+#endif /* BPB_MOCKCOMSERVICE_H */

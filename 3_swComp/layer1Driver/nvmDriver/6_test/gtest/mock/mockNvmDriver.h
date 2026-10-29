@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for NvmDriver testing
 
-#ifndef MOCKNVMDRIVER_H
-#define MOCKNVMDRIVER_H
+#ifndef BPB_MOCKNVMDRIVER_H
+#define BPB_MOCKNVMDRIVER_H
 
 //============================================================================
 // Dependencies
@@ -37,4 +37,4 @@ NvmDriver_Status_t call_NvmDriverUnit_DisableWriteProtection(void);
 NvmDriver_Status_t call_NvmDriverUnit_RegisterCallback(NvmDriver_OperationCallback_t callback);
 NvmDriver_Status_t call_NvmDriverUnit_DeInit(void);
 
-#endif /* MOCKNVMDRIVER_H */
+#endif /* BPB_MOCKNVMDRIVER_H */

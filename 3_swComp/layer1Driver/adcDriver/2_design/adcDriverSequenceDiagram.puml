@@ -6,17 +6,17 @@ participant "Context" as ctx
 Client -> adc : Init(pConfig)
 adc -> ctx : Initialize context\ncopy config
 ctx --> adc : initialized=true, busy=false
-adc --> Client : ADC_STATUS_OK
+adc --> Client : BPB_ADC_STATUS_OK
 
 Client -> adc : ConfigureChannel(ch=0, enable=true)
 adc -> ctx : channelEnabled[0] = true
 ctx --> adc : OK
-adc --> Client : ADC_STATUS_OK
+adc --> Client : BPB_ADC_STATUS_OK
 
-Client -> adc : SetResolution(ADC_RESOLUTION_12BIT)
+Client -> adc : SetResolution(BPB_ADC_RESOLUTION_12BIT)
 adc -> ctx : config.resolution = 12BIT
 ctx --> adc : OK
-adc --> Client : ADC_STATUS_OK
+adc --> Client : BPB_ADC_STATUS_OK
 
 Client -> adc : StartConversion(ch=0)
 adc -> adc : Validate channel enabled
@@ -24,20 +24,20 @@ adc -> ctx : busy = true\nlastValue[0] = 0
 ctx --> adc : Conversion started
 adc -> adc : If callback registered:\nInvoke callback()
 adc -> ctx : busy = false
-adc --> Client : ADC_STATUS_OK
+adc --> Client : BPB_ADC_STATUS_OK
 
 Client -> adc : ReadValue(ch=0)
 adc -> ctx : Get lastValue[0]
 ctx --> adc : value=0
-adc --> Client : ADC_STATUS_OK + value
+adc --> Client : BPB_ADC_STATUS_OK + value
 
 Client -> adc : IsConversionComplete(ch=0)
 adc -> ctx : Get !busy flag
 ctx --> adc : complete=true
-adc --> Client : ADC_STATUS_OK + complete
+adc --> Client : BPB_ADC_STATUS_OK + complete
 
 Client -> adc : DeInit()
 adc -> ctx : Clear all context
 ctx --> adc : OK
-adc --> Client : ADC_STATUS_OK
+adc --> Client : BPB_ADC_STATUS_OK
 @enduml

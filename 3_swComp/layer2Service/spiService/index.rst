@@ -40,7 +40,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** SPISERVICE_STATUS_OK on success, SPISERVICE_STATUS_ERROR on failure.
+        **Return values:** BPB_SPISERVICE_STATUS_OK on success, BPB_SPISERVICE_STATUS_ERROR on failure.
 
         **Restrictions:** Must be called before any other SPI Service function.
 
@@ -51,7 +51,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** SPISERVICE_STATUS_OK on success.
+        **Return values:** BPB_SPISERVICE_STATUS_OK on success.
 
         **Restrictions:** None.
 
@@ -62,7 +62,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** SPISERVICE_STATUS_OK on success, SPISERVICE_STATUS_NOT_INITIALIZED if called before Init.
+        **Return values:** BPB_SPISERVICE_STATUS_OK on success, BPB_SPISERVICE_STATUS_NOT_INITIALIZED if called before Init.
 
         **Restrictions:** Must be called periodically from the main loop when asynchronous SPI transfers are in use.
 
@@ -79,8 +79,8 @@ Public interfaces
         - **pResponse**: Pointer to the output buffer for the serialized response.
         - **pResponseLength**: Pointer to receive the number of bytes written to the response buffer.
 
-        **Return values:** SPISERVICE_STATUS_OK on success, SPISERVICE_STATUS_INVALID_PARAM for NULL pointers or zero length,
-        SPISERVICE_STATUS_ERROR on SPI transfer or serialization failure.
+        **Return values:** BPB_SPISERVICE_STATUS_OK on success, BPB_SPISERVICE_STATUS_INVALID_PARAM for NULL pointers or zero length,
+        BPB_SPISERVICE_STATUS_ERROR on SPI transfer or serialization failure.
 
         **Restrictions:** The response buffer must be large enough to hold the maximum response frame.
 

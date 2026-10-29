@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for I2cMasterDriver testing
 
-#ifndef MOCKI2CMASTERDRIVER_H
-#define MOCKI2CMASTERDRIVER_H
+#ifndef BPB_MOCKI2CMASTERDRIVER_H
+#define BPB_MOCKI2CMASTERDRIVER_H
 
 //============================================================================
 // Dependencies
@@ -35,4 +35,4 @@ I2cMasterDriver_Status_t call_I2cMasterDriverUnit_IsBusy(bool *pIsBusy);
 I2cMasterDriver_Status_t call_I2cMasterDriverUnit_RegisterCallback(I2cMasterDriver_Callback_t callback);
 I2cMasterDriver_Status_t call_I2cMasterDriverUnit_DeInit(void);
 
-#endif /* MOCKI2CMASTERDRIVER_H */
+#endif /* BPB_MOCKI2CMASTERDRIVER_H */

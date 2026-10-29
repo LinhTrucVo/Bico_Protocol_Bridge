@@ -1,8 +1,8 @@
 // This file is used to define the public interface of the component unit.
 // It contains public macros, types, variables, and function prototypes that shall be included in component headers file (serialDriver.h)
 
-#ifndef SERIALDRIVERUNIT_H
-#define SERIALDRIVERUNIT_H
+#ifndef BPB_SERIALDRIVERUNIT_H
+#define BPB_SERIALDRIVERUNIT_H
 
 //============================================================================
 // Dependencies
@@ -14,25 +14,25 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define SERIAL_CFG_DEFAULT_BAUDRATE     115200
-#define SERIAL_CFG_DEFAULT_PARITY       0
-#define SERIAL_CFG_DEFAULT_STOPBITS     1
-#define SERIAL_CFG_DEFAULT_DATABITS     8
-#define SERIAL_CFG_TIMEOUT_MS           1000
-#define SERIAL_CFG_MAX_BUFFER_SIZE      256
-#define SERIAL_MAX_BUFFER_SIZE          256
+#define BPB_SERIAL_CFG_DEFAULT_BAUDRATE     115200
+#define BPB_SERIAL_CFG_DEFAULT_PARITY       0
+#define BPB_SERIAL_CFG_DEFAULT_STOPBITS     1
+#define BPB_SERIAL_CFG_DEFAULT_DATABITS     8
+#define BPB_SERIAL_CFG_TIMEOUT_MS           1000
+#define BPB_SERIAL_CFG_MAX_BUFFER_SIZE      256
+#define BPB_SERIAL_MAX_BUFFER_SIZE          256
 
 //============================================================================
 // Status Enums
 //============================================================================
-#define SERIAL_STATUS_OK               SERIALDRIVERSTATUS_OK
-#define SERIAL_STATUS_ERROR            SERIALDRIVERSTATUS_ERROR
-#define SERIAL_STATUS_BUSY             SERIALDRIVERSTATUS_BUSY
-#define SERIAL_STATUS_TIMEOUT          SERIALDRIVERSTATUS_TIMEOUT
-#define SERIAL_STATUS_PARITY_ERROR     SERIALDRIVERSTATUS_PARITY_ERROR
-#define SERIAL_STATUS_FRAMING_ERROR    SERIALDRIVERSTATUS_FRAMING_ERROR
-#define SERIAL_STATUS_OVERRUN_ERROR    SERIALDRIVERSTATUS_OVERRUN_ERROR
-#define SERIAL_STATUS_BUFFER_FULL      SERIALDRIVERSTATUS_BUFFER_FULL
+#define BPB_SERIAL_STATUS_OK               BPB_SERIALDRIVERSTATUS_OK
+#define BPB_SERIAL_STATUS_ERROR            BPB_SERIALDRIVERSTATUS_ERROR
+#define BPB_SERIAL_STATUS_BUSY             BPB_SERIALDRIVERSTATUS_BUSY
+#define BPB_SERIAL_STATUS_TIMEOUT          BPB_SERIALDRIVERSTATUS_TIMEOUT
+#define BPB_SERIAL_STATUS_PARITY_ERROR     BPB_SERIALDRIVERSTATUS_PARITY_ERROR
+#define BPB_SERIAL_STATUS_FRAMING_ERROR    BPB_SERIALDRIVERSTATUS_FRAMING_ERROR
+#define BPB_SERIAL_STATUS_OVERRUN_ERROR    BPB_SERIALDRIVERSTATUS_OVERRUN_ERROR
+#define BPB_SERIAL_STATUS_BUFFER_FULL      BPB_SERIALDRIVERSTATUS_BUFFER_FULL
 
 //============================================================================
 // Public Macros
@@ -43,53 +43,53 @@
 //============================================================================
 typedef enum
 {
-    SERIALDRIVERSTATUS_OK = 0,
-    SERIALDRIVERSTATUS_ERROR,
-    SERIALDRIVERSTATUS_BUSY,
-    SERIALDRIVERSTATUS_TIMEOUT,
-    SERIALDRIVERSTATUS_PARITY_ERROR,
-    SERIALDRIVERSTATUS_FRAMING_ERROR,
-    SERIALDRIVERSTATUS_OVERRUN_ERROR,
-    SERIALDRIVERSTATUS_BUFFER_FULL
+    BPB_SERIALDRIVERSTATUS_OK = 0,
+    BPB_SERIALDRIVERSTATUS_ERROR,
+    BPB_SERIALDRIVERSTATUS_BUSY,
+    BPB_SERIALDRIVERSTATUS_TIMEOUT,
+    BPB_SERIALDRIVERSTATUS_PARITY_ERROR,
+    BPB_SERIALDRIVERSTATUS_FRAMING_ERROR,
+    BPB_SERIALDRIVERSTATUS_OVERRUN_ERROR,
+    BPB_SERIALDRIVERSTATUS_BUFFER_FULL
 } SerialDriver_Status_t;
 
 typedef enum
 {
-    SERIAL_BAUDRATE_9600 = 9600,
-    SERIAL_BAUDRATE_19200 = 19200,
-    SERIAL_BAUDRATE_38400 = 38400,
-    SERIAL_BAUDRATE_57600 = 57600,
-    SERIAL_BAUDRATE_115200 = 115200,
-    SERIAL_BAUDRATE_230400 = 230400,
-    SERIAL_BAUDRATE_460800 = 460800,
-    SERIAL_BAUDRATE_921600 = 921600
+    BPB_SERIAL_BAUDRATE_9600 = 9600,
+    BPB_SERIAL_BAUDRATE_19200 = 19200,
+    BPB_SERIAL_BAUDRATE_38400 = 38400,
+    BPB_SERIAL_BAUDRATE_57600 = 57600,
+    BPB_SERIAL_BAUDRATE_115200 = 115200,
+    BPB_SERIAL_BAUDRATE_230400 = 230400,
+    BPB_SERIAL_BAUDRATE_460800 = 460800,
+    BPB_SERIAL_BAUDRATE_921600 = 921600
 } SerialDriver_Baudrate_t;
 
 typedef enum
 {
-    SERIAL_PARITY_NONE = 0,
-    SERIAL_PARITY_EVEN,
-    SERIAL_PARITY_ODD
+    BPB_SERIAL_PARITY_NONE = 0,
+    BPB_SERIAL_PARITY_EVEN,
+    BPB_SERIAL_PARITY_ODD
 } SerialDriver_Parity_t;
 
 typedef enum
 {
-    SERIAL_STOPBITS_1 = 0,
-    SERIAL_STOPBITS_2
+    BPB_SERIAL_STOPBITS_1 = 0,
+    BPB_SERIAL_STOPBITS_2
 } SerialDriver_StopBits_t;
 
 typedef enum
 {
-    SERIAL_DATABITS_7 = 7,
-    SERIAL_DATABITS_8 = 8,
-    SERIAL_DATABITS_9 = 9
+    BPB_SERIAL_DATABITS_7 = 7,
+    BPB_SERIAL_DATABITS_8 = 8,
+    BPB_SERIAL_DATABITS_9 = 9
 } SerialDriver_DataBits_t;
 
 typedef enum
 {
-    SERIAL_FLOWCONTROL_NONE = 0,
-    SERIAL_FLOWCONTROL_RTS_CTS,
-    SERIAL_FLOWCONTROL_XON_XOFF
+    BPB_SERIAL_FLOWCONTROL_NONE = 0,
+    BPB_SERIAL_FLOWCONTROL_RTS_CTS,
+    BPB_SERIAL_FLOWCONTROL_XON_XOFF
 } SerialDriver_FlowControl_t;
 
 typedef struct
@@ -127,4 +127,4 @@ SerialDriver_Status_t SerialDriverUnit_RegisterTxCallback(SerialDriver_TxCallbac
 SerialDriver_Status_t SerialDriverUnit_GetStatus(SerialDriver_Status_t *pStatus);
 SerialDriver_Status_t SerialDriverUnit_DeInit(void);
 
-#endif /* SERIALDRIVERUNIT_H */
+#endif /* BPB_SERIALDRIVERUNIT_H */

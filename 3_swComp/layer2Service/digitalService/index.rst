@@ -40,7 +40,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** DIGITALSERVICE_STATUS_OK on success, DIGITALSERVICE_STATUS_ERROR on failure.
+        **Return values:** BPB_DIGITALSERVICE_STATUS_OK on success, BPB_DIGITALSERVICE_STATUS_ERROR on failure.
 
         **Restrictions:** Must be called before any other Digital Service function.
 
@@ -51,7 +51,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** DIGITALSERVICE_STATUS_OK on success.
+        **Return values:** BPB_DIGITALSERVICE_STATUS_OK on success.
 
         **Restrictions:** None.
 
@@ -62,7 +62,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** DIGITALSERVICE_STATUS_OK on success, DIGITALSERVICE_STATUS_NOT_INITIALIZED if called before Init.
+        **Return values:** BPB_DIGITALSERVICE_STATUS_OK on success, BPB_DIGITALSERVICE_STATUS_NOT_INITIALIZED if called before Init.
 
         **Restrictions:** Must be called periodically from the main loop.
 
@@ -79,8 +79,8 @@ Public interfaces
         - **pResponse**: Pointer to the output buffer for the serialized response.
         - **pResponseLength**: Pointer to receive the number of bytes written to the response buffer.
 
-        **Return values:** DIGITALSERVICE_STATUS_OK on success, DIGITALSERVICE_STATUS_INVALID_PARAM for NULL pointers or zero length,
-        DIGITALSERVICE_STATUS_ERROR on GPIO/PWM or serialization failure.
+        **Return values:** BPB_DIGITALSERVICE_STATUS_OK on success, BPB_DIGITALSERVICE_STATUS_INVALID_PARAM for NULL pointers or zero length,
+        BPB_DIGITALSERVICE_STATUS_ERROR on GPIO/PWM or serialization failure.
 
         **Restrictions:** The response buffer must be large enough to hold the maximum response frame.
 

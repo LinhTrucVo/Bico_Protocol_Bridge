@@ -17,7 +17,7 @@ typedef struct
     bool selected;
     SpiSlaveDriver_RxCallback_t rxCallback;
     SpiSlaveDriver_TxCallback_t txCallback;
-    uint8_t txScratch[SPI_SLAVE_MAX_BUFFER];
+    uint8_t txScratch[BPB_SPI_SLAVE_MAX_BUFFER];
 } SpiSlaveDriver_Context_t;
 
 static SpiSlaveDriver_Context_t context = {0};
@@ -30,7 +30,7 @@ SpiSlaveDriver_Status_t SpiSlaveDriverUnit_Init(const SpiSlaveDriver_Config_t *p
 {
     if (pConfig == NULL)
     {
-        return SPI_SLAVE_STATUS_ERROR;
+        return BPB_SPI_SLAVE_STATUS_ERROR;
     }
     if (context.initialized)
     {
@@ -38,90 +38,90 @@ SpiSlaveDriver_Status_t SpiSlaveDriverUnit_Init(const SpiSlaveDriver_Config_t *p
     }
 
     (void)memset(&context, 0, sizeof(context));
-    if (!SpiSlavePort_Init((uint8_t)pConfig->mode, pConfig->bitOrder == SPI_SLAVE_BITORDER_LSB_FIRST))
+    if (!SpiSlavePort_Init((uint8_t)pConfig->mode, pConfig->bitOrder == BPB_SPI_SLAVE_BITORDER_LSB_FIRST))
     {
-        return SPI_SLAVE_STATUS_ERROR;
+        return BPB_SPI_SLAVE_STATUS_ERROR;
     }
     SpiSlavePort_SetSelectHandler(SpiSlaveDriverUnit_OnPortSelect);
     SpiSlavePort_SetTransferHandler(SpiSlaveDriverUnit_OnPortTransfer);
 
     context.config = *pConfig;
     context.initialized = true;
-    return SPI_SLAVE_STATUS_OK;
+    return BPB_SPI_SLAVE_STATUS_OK;
 }
 
 SpiSlaveDriver_Status_t SpiSlaveDriverUnit_SetTxBuffer(const uint8_t *pData, uint16_t length)
 {
     if (!context.initialized)
     {
-        return SPI_SLAVE_STATUS_NOT_INITIALIZED;
+        return BPB_SPI_SLAVE_STATUS_NOT_INITIALIZED;
     }
-    if (pData == NULL || length == 0 || length > SPI_SLAVE_MAX_BUFFER)
+    if (pData == NULL || length == 0 || length > BPB_SPI_SLAVE_MAX_BUFFER)
     {
-        return SPI_SLAVE_STATUS_ERROR;
+        return BPB_SPI_SLAVE_STATUS_ERROR;
     }
     context.pTxBuffer = pData;
     context.txLength = length;
     SpiSlaveDriverUnit_Arm();
-    return SPI_SLAVE_STATUS_OK;
+    return BPB_SPI_SLAVE_STATUS_OK;
 }
 
 SpiSlaveDriver_Status_t SpiSlaveDriverUnit_SetRxBuffer(uint8_t *pData, uint16_t maxLength)
 {
     if (!context.initialized)
     {
-        return SPI_SLAVE_STATUS_NOT_INITIALIZED;
+        return BPB_SPI_SLAVE_STATUS_NOT_INITIALIZED;
     }
     if (pData == NULL || maxLength == 0)
     {
-        return SPI_SLAVE_STATUS_ERROR;
+        return BPB_SPI_SLAVE_STATUS_ERROR;
     }
     context.pRxBuffer = pData;
     context.rxMaxLength = maxLength;
     context.rxLength = 0;
     SpiSlaveDriverUnit_Arm();
-    return SPI_SLAVE_STATUS_OK;
+    return BPB_SPI_SLAVE_STATUS_OK;
 }
 
 SpiSlaveDriver_Status_t SpiSlaveDriverUnit_GetRxLength(uint16_t *pLength)
 {
     if (pLength == NULL)
     {
-        return SPI_SLAVE_STATUS_ERROR;
+        return BPB_SPI_SLAVE_STATUS_ERROR;
     }
     *pLength = context.rxLength;
-    return SPI_SLAVE_STATUS_OK;
+    return BPB_SPI_SLAVE_STATUS_OK;
 }
 
 SpiSlaveDriver_Status_t SpiSlaveDriverUnit_IsSelected(bool *pIsSelected)
 {
     if (pIsSelected == NULL)
     {
-        return SPI_SLAVE_STATUS_ERROR;
+        return BPB_SPI_SLAVE_STATUS_ERROR;
     }
     *pIsSelected = context.selected;
-    return SPI_SLAVE_STATUS_OK;
+    return BPB_SPI_SLAVE_STATUS_OK;
 }
 
 SpiSlaveDriver_Status_t SpiSlaveDriverUnit_RegisterRxCallback(SpiSlaveDriver_RxCallback_t callback)
 {
     if (!context.initialized)
     {
-        return SPI_SLAVE_STATUS_NOT_INITIALIZED;
+        return BPB_SPI_SLAVE_STATUS_NOT_INITIALIZED;
     }
     context.rxCallback = callback;
-    return SPI_SLAVE_STATUS_OK;
+    return BPB_SPI_SLAVE_STATUS_OK;
 }
 
 SpiSlaveDriver_Status_t SpiSlaveDriverUnit_RegisterTxCallback(SpiSlaveDriver_TxCallback_t callback)
 {
     if (!context.initialized)
     {
-        return SPI_SLAVE_STATUS_NOT_INITIALIZED;
+        return BPB_SPI_SLAVE_STATUS_NOT_INITIALIZED;
     }
     context.txCallback = callback;
     SpiSlaveDriverUnit_Arm();
-    return SPI_SLAVE_STATUS_OK;
+    return BPB_SPI_SLAVE_STATUS_OK;
 }
 
 SpiSlaveDriver_Status_t SpiSlaveDriverUnit_DeInit(void)
@@ -131,7 +131,7 @@ SpiSlaveDriver_Status_t SpiSlaveDriverUnit_DeInit(void)
         SpiSlavePort_DeInit();
     }
     (void)memset(&context, 0, sizeof(context));
-    return SPI_SLAVE_STATUS_OK;
+    return BPB_SPI_SLAVE_STATUS_OK;
 }
 
 // Queues the next transfer. The data of an already queued transfer is not changed, new data is used for the next one.
@@ -146,19 +146,19 @@ static void SpiSlaveDriverUnit_Arm(void)
     uint16_t txLength = context.txLength;
     if (context.txCallback != NULL)
     {
-        txLength = SPI_SLAVE_MAX_BUFFER;
+        txLength = BPB_SPI_SLAVE_MAX_BUFFER;
         context.txCallback(context.txScratch, &txLength);
         pTxData = context.txScratch;
-        if (txLength > SPI_SLAVE_MAX_BUFFER)
+        if (txLength > BPB_SPI_SLAVE_MAX_BUFFER)
         {
-            txLength = SPI_SLAVE_MAX_BUFFER;
+            txLength = BPB_SPI_SLAVE_MAX_BUFFER;
         }
     }
 
     uint16_t maxLength = (txLength > context.rxMaxLength) ? txLength : context.rxMaxLength;
     if (maxLength == 0U)
     {
-        maxLength = SPI_SLAVE_MAX_BUFFER;
+        maxLength = BPB_SPI_SLAVE_MAX_BUFFER;
     }
     if (pTxData == NULL)
     {

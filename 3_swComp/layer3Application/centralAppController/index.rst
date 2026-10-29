@@ -40,7 +40,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** CENTRAL_APP_CONTROLLER_STATUS_OK on success, CENTRAL_APP_CONTROLLER_STATUS_ERROR on failure.
+        **Return values:** BPB_CENTRAL_APP_CONTROLLER_STATUS_OK on success, BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR on failure.
 
         **Restrictions:** Must be called before any other Central App Controller function.
 
@@ -51,7 +51,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** CENTRAL_APP_CONTROLLER_STATUS_OK on success.
+        **Return values:** BPB_CENTRAL_APP_CONTROLLER_STATUS_OK on success.
 
         **Restrictions:** None.
 
@@ -63,9 +63,9 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** CENTRAL_APP_CONTROLLER_STATUS_OK when the cycle completes without error,
-        CENTRAL_APP_CONTROLLER_STATUS_ERROR on a processing fault,
-        CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED if called before Init.
+        **Return values:** BPB_CENTRAL_APP_CONTROLLER_STATUS_OK when the cycle completes without error,
+        BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR on a processing fault,
+        BPB_CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED if called before Init.
 
         **Restrictions:** Must be called periodically from the main loop or a scheduler task.
 
@@ -78,7 +78,7 @@ Public interfaces
 
         - **pState**: Pointer to receive the current state value.
 
-        **Return values:** CENTRAL_APP_CONTROLLER_STATUS_OK on success, CENTRAL_APP_CONTROLLER_STATUS_INVALID_PARAM for NULL pointer.
+        **Return values:** BPB_CENTRAL_APP_CONTROLLER_STATUS_OK on success, BPB_CENTRAL_APP_CONTROLLER_STATUS_INVALID_PARAM for NULL pointer.
 
         **Restrictions:** None.
 
@@ -94,10 +94,10 @@ Public interfaces
         - **pOutFrame**: Pointer to the output frame descriptor (buffer pointer and buffer size).
         - **pOutLength**: Pointer to receive the number of bytes written to the output buffer.
 
-        **Return values:** CENTRAL_APP_CONTROLLER_STATUS_OK on success, CENTRAL_APP_CONTROLLER_STATUS_TIMEOUT if the
-        handler did not complete within the configured timeout, CENTRAL_APP_CONTROLLER_STATUS_INVALID_PARAM for NULL pointers.
+        **Return values:** BPB_CENTRAL_APP_CONTROLLER_STATUS_OK on success, BPB_CENTRAL_APP_CONTROLLER_STATUS_TIMEOUT if the
+        handler did not complete within the configured timeout, BPB_CENTRAL_APP_CONTROLLER_STATUS_INVALID_PARAM for NULL pointers.
 
-        **Restrictions:** The output frame buffer must be at least CENTRAL_APP_CFG_MAX_FRAME_SIZE bytes.
+        **Restrictions:** The output frame buffer must be at least BPB_CENTRAL_APP_CFG_MAX_FRAME_SIZE bytes.
 
     ..  sw-ifelement:: CentralAppControllerUnit_RegisterErrorCallback()
         :arguments:     return: CentralAppController_Status_t;    callback: CentralAppController_ErrorCallback_t;
@@ -108,7 +108,7 @@ Public interfaces
 
         - **callback**: Function pointer to the error callback; receives the error code as argument.
 
-        **Return values:** CENTRAL_APP_CONTROLLER_STATUS_OK on success, CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED if called before Init.
+        **Return values:** BPB_CENTRAL_APP_CONTROLLER_STATUS_OK on success, BPB_CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED if called before Init.
 
         **Restrictions:** None.
 

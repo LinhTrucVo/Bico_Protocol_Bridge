@@ -18,16 +18,16 @@
 //============================================================================
 typedef enum
 {
-    FRAME_PARSE_STATE_WAIT_PREFIX_HIGH = 0,
-    FRAME_PARSE_STATE_WAIT_PREFIX_LOW,
-    FRAME_PARSE_STATE_RECEIVE_PAYLOAD,
-    FRAME_PARSE_STATE_FRAME_COMPLETE
+    BPB_FRAME_PARSE_STATE_WAIT_PREFIX_HIGH = 0,
+    BPB_FRAME_PARSE_STATE_WAIT_PREFIX_LOW,
+    BPB_FRAME_PARSE_STATE_RECEIVE_PAYLOAD,
+    BPB_FRAME_PARSE_STATE_FRAME_COMPLETE
 } FrameParseState_t;
 
 typedef struct
 {
     FrameParseState_t state;
-    uint8_t           frameBuffer[CENTRAL_APP_CFG_MAX_FRAME_SIZE];
+    uint8_t           frameBuffer[BPB_CENTRAL_APP_CFG_MAX_FRAME_SIZE];
     uint16_t          frameIndex;
     bool              frameReady;
 } FrameParser_t;
@@ -66,9 +66,9 @@ CentralAppController_Status_t CentralAppControllerUnit_Init(void)
     FrameParser_Reset(&context.parser);
 
     context.initialized = true;
-    context.currentState = CentralAppController_STATE_IDLE;
+    context.currentState = BPB_CentralAppController_STATE_IDLE;
     context.errorCallback = NULL;
-    return CENTRAL_APP_CONTROLLER_STATUS_OK;
+    return BPB_CENTRAL_APP_CONTROLLER_STATUS_OK;
 }
 
 CentralAppController_Status_t CentralAppControllerUnit_DeInit(void)
@@ -85,24 +85,24 @@ CentralAppController_Status_t CentralAppControllerUnit_DeInit(void)
     (void)ComServiceUnit_DeInit();
 
     context.initialized = false;
-    context.currentState = CentralAppController_STATE_IDLE;
-    return CENTRAL_APP_CONTROLLER_STATUS_OK;
+    context.currentState = BPB_CentralAppController_STATE_IDLE;
+    return BPB_CENTRAL_APP_CONTROLLER_STATUS_OK;
 }
 
 CentralAppController_Status_t CentralAppControllerUnit_Run(void)
 {
     if (!context.initialized)
     {
-        return CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED;
+        return BPB_CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED;
     }
 
     /* Read available bytes from ComService and feed to frame parser */
     if (ComServiceUnit_IsRxDataAvailable())
     {
-        uint8_t  rxBuf[CENTRAL_APP_CFG_MAX_FRAME_SIZE];
+        uint8_t  rxBuf[BPB_CENTRAL_APP_CFG_MAX_FRAME_SIZE];
         uint16_t rxLen = 0U;
 
-        if (ComServiceUnit_Read(rxBuf, sizeof(rxBuf), &rxLen) == COMSERVICE_STATUS_OK)
+        if (ComServiceUnit_Read(rxBuf, sizeof(rxBuf), &rxLen) == BPB_COMSERVICE_STATUS_OK)
         {
             for (uint16_t i = 0U; i < rxLen; i++)
             {
@@ -111,7 +111,7 @@ CentralAppController_Status_t CentralAppControllerUnit_Run(void)
                 if (context.parser.frameReady)
                 {
                     /* Complete frame received - dispatch UDS request */
-                    uint8_t  responseBuffer[CENTRAL_APP_CFG_MAX_FRAME_SIZE];
+                    uint8_t  responseBuffer[BPB_CENTRAL_APP_CFG_MAX_FRAME_SIZE];
                     uint16_t responseLength = 0U;
 
                     (void)CentralAppControllerUnit_Dispatch(
@@ -133,27 +133,27 @@ CentralAppController_Status_t CentralAppControllerUnit_Run(void)
         }
     }
 
-    return CENTRAL_APP_CONTROLLER_STATUS_OK;
+    return BPB_CENTRAL_APP_CONTROLLER_STATUS_OK;
 }
 
 CentralAppController_Status_t CentralAppControllerUnit_GetState(CentralAppController_State_t *pState)
 {
     if (pState == NULL)
     {
-        return CENTRAL_APP_CONTROLLER_STATUS_INVALID_PARAM;
+        return BPB_CENTRAL_APP_CONTROLLER_STATUS_INVALID_PARAM;
     }
     *pState = context.currentState;
-    return CENTRAL_APP_CONTROLLER_STATUS_OK;
+    return BPB_CENTRAL_APP_CONTROLLER_STATUS_OK;
 }
 
 CentralAppController_Status_t CentralAppControllerUnit_RegisterErrorCallback(CentralAppController_ErrorCallback_t callback)
 {
     if (!context.initialized)
     {
-        return CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED;
+        return BPB_CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED;
     }
     context.errorCallback = callback;
-    return CENTRAL_APP_CONTROLLER_STATUS_OK;
+    return BPB_CENTRAL_APP_CONTROLLER_STATUS_OK;
 }
 
 CentralAppController_Status_t CentralAppControllerUnit_Dispatch(
@@ -165,14 +165,14 @@ CentralAppController_Status_t CentralAppControllerUnit_Dispatch(
 {
     if (!context.initialized)
     {
-        return CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED;
+        return BPB_CENTRAL_APP_CONTROLLER_STATUS_NOT_INITIALIZED;
     }
     if (pRequestFrame == NULL || pResponseBuffer == NULL || pResponseLength == NULL)
     {
-        return CENTRAL_APP_CONTROLLER_STATUS_INVALID_PARAM;
+        return BPB_CENTRAL_APP_CONTROLLER_STATUS_INVALID_PARAM;
     }
 
-    context.currentState = CentralAppController_STATE_PROCESSING;
+    context.currentState = BPB_CentralAppController_STATE_PROCESSING;
 
     /* Parse UDS request */
     Deserialize_Frame_t frame = { pRequestFrame, requestLength };
@@ -181,15 +181,15 @@ CentralAppController_Status_t CentralAppControllerUnit_Dispatch(
 
     Serialize_UdsResponse_t response = {0};
 
-    if (dStatus != DESERIALIZE_STATUS_OK)
+    if (dStatus != BPB_DESERIALIZE_STATUS_OK)
     {
         /* Build negative response: serviceNotSupported or incorrectMessageLength */
-        uint8_t nrc = (dStatus == DESERIALIZE_STATUS_UNSUPPORTED_SID)
-            ? SERIALIZE_NRC_SERVICE_NOT_SUPPORTED
-            : SERIALIZE_NRC_INCORRECT_MSG_LENGTH;
+        uint8_t nrc = (dStatus == BPB_DESERIALIZE_STATUS_UNSUPPORTED_SID)
+            ? BPB_SERIALIZE_NRC_SERVICE_NOT_SUPPORTED
+            : BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH;
         uint8_t sid = (requestLength > 0U) ? pRequestFrame[0] : 0U;
         (void)SerializeUnit_BuildNegativeResponse(sid, nrc, &response);
-        context.currentState = CentralAppController_STATE_ERROR;
+        context.currentState = BPB_CentralAppController_STATE_ERROR;
         if (context.errorCallback != NULL)
         {
             context.errorCallback(nrc);
@@ -200,35 +200,35 @@ CentralAppController_Status_t CentralAppControllerUnit_Dispatch(
         CentralAppController_Status_t status;
         switch (request.sid)
         {
-            case DESERIALIZE_SID_READ_DATA_BY_ID:
+            case BPB_DESERIALIZE_SID_READ_DATA_BY_ID:
                 status = HandleReadDataById(&request, &response);
                 break;
-            case DESERIALIZE_SID_WRITE_DATA_BY_ID:
+            case BPB_DESERIALIZE_SID_WRITE_DATA_BY_ID:
                 status = HandleWriteDataById(&request, &response);
                 break;
-            case DESERIALIZE_SID_ROUTINE_CONTROL:
+            case BPB_DESERIALIZE_SID_ROUTINE_CONTROL:
                 status = HandleRoutineControl(&request, &response);
                 break;
             default:
-                (void)SerializeUnit_BuildNegativeResponse(request.sid, SERIALIZE_NRC_SERVICE_NOT_SUPPORTED, &response);
-                status = CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(request.sid, BPB_SERIALIZE_NRC_SERVICE_NOT_SUPPORTED, &response);
+                status = BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
                 break;
         }
-        context.currentState = (status == CENTRAL_APP_CONTROLLER_STATUS_OK)
-            ? CentralAppController_STATE_IDLE
-            : CentralAppController_STATE_ERROR;
+        context.currentState = (status == BPB_CENTRAL_APP_CONTROLLER_STATUS_OK)
+            ? BPB_CentralAppController_STATE_IDLE
+            : BPB_CentralAppController_STATE_ERROR;
     }
 
     /* Copy response to output buffer */
     if (response.length > bufferSize)
     {
         *pResponseLength = 0U;
-        return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+        return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
     }
     (void)memcpy(pResponseBuffer, response.buffer, response.length);
     *pResponseLength = response.length;
 
-    return CENTRAL_APP_CONTROLLER_STATUS_OK;
+    return BPB_CENTRAL_APP_CONTROLLER_STATUS_OK;
 }
 
 /*============================================================================
@@ -241,10 +241,10 @@ static CentralAppController_Status_t HandleReadDataById(const Deserialize_UdsReq
 
     switch (pReq->id)
     {
-        case CAC_DID_ADC_SAMPLE_RATE:
+        case BPB_CAC_DID_ADC_SAMPLE_RATE:
         {
             ConfigService_AnalogChannelConfig_t cfg = {0};
-            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) == CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) == BPB_CONFIG_SERVICE_STATUS_OK)
             {
                 uint32_t rate = cfg.samplingFrequency;
                 data[0] = (uint8_t)((rate >> 24U) & 0xFFU);
@@ -255,30 +255,30 @@ static CentralAppController_Status_t HandleReadDataById(const Deserialize_UdsReq
             }
             else
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_ADC_RESOLUTION:
+        case BPB_CAC_DID_ADC_RESOLUTION:
         {
             ConfigService_AnalogChannelConfig_t cfg = {0};
-            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) == CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) == BPB_CONFIG_SERVICE_STATUS_OK)
             {
                 data[0] = cfg.resolutionBits;
                 dataLen = 1U;
             }
             else
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_GPIO_CONFIG:
+        case BPB_CAC_DID_GPIO_CONFIG:
         {
             ConfigService_DigitalPinConfig_t cfg = {0};
-            if (ConfigServiceUnit_GetDigitalPinConfig(0U, &cfg) == CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_GetDigitalPinConfig(0U, &cfg) == BPB_CONFIG_SERVICE_STATUS_OK)
             {
                 data[0] = cfg.pinId;
                 data[1] = cfg.direction;
@@ -287,15 +287,15 @@ static CentralAppController_Status_t HandleReadDataById(const Deserialize_UdsReq
             }
             else
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_PWM_CONFIG:
+        case BPB_CAC_DID_PWM_CONFIG:
         {
             ConfigService_PwmConfig_t cfg = {0};
-            if (ConfigServiceUnit_GetPwmConfig(0U, &cfg) == CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_GetPwmConfig(0U, &cfg) == BPB_CONFIG_SERVICE_STATUS_OK)
             {
                 data[0] = cfg.channelId;
                 data[1] = (uint8_t)((cfg.frequency >> 24U) & 0xFFU);
@@ -308,15 +308,15 @@ static CentralAppController_Status_t HandleReadDataById(const Deserialize_UdsReq
             }
             else
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_I2C_CONFIG:
+        case BPB_CAC_DID_I2C_CONFIG:
         {
             ConfigService_I2cConfig_t cfg = {0};
-            if (ConfigServiceUnit_GetI2cConfig(&cfg) == CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_GetI2cConfig(&cfg) == BPB_CONFIG_SERVICE_STATUS_OK)
             {
                 data[0] = (uint8_t)((cfg.speed >> 24U) & 0xFFU);
                 data[1] = (uint8_t)((cfg.speed >> 16U) & 0xFFU);
@@ -329,15 +329,15 @@ static CentralAppController_Status_t HandleReadDataById(const Deserialize_UdsReq
             }
             else
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_SPI_CONFIG:
+        case BPB_CAC_DID_SPI_CONFIG:
         {
             ConfigService_SpiConfig_t cfg = {0};
-            if (ConfigServiceUnit_GetSpiConfig(&cfg) == CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_GetSpiConfig(&cfg) == BPB_CONFIG_SERVICE_STATUS_OK)
             {
                 data[0] = (uint8_t)((cfg.clockSpeed >> 24U) & 0xFFU);
                 data[1] = (uint8_t)((cfg.clockSpeed >> 16U) & 0xFFU);
@@ -349,15 +349,15 @@ static CentralAppController_Status_t HandleReadDataById(const Deserialize_UdsReq
             }
             else
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_SERIAL_CONFIG:
+        case BPB_CAC_DID_SERIAL_CONFIG:
         {
             ConfigService_SerialConfig_t cfg = {0};
-            if (ConfigServiceUnit_GetSerialConfig(&cfg) == CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_GetSerialConfig(&cfg) == BPB_CONFIG_SERVICE_STATUS_OK)
             {
                 data[0] = (uint8_t)((cfg.baudrate >> 24U) & 0xFFU);
                 data[1] = (uint8_t)((cfg.baudrate >> 16U) & 0xFFU);
@@ -370,18 +370,18 @@ static CentralAppController_Status_t HandleReadDataById(const Deserialize_UdsReq
             }
             else
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
         default:
-            (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-            return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+            return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
     }
 
     (void)SerializeUnit_BuildReadResponse(pReq->id, data, dataLen, pResp);
-    return CENTRAL_APP_CONTROLLER_STATUS_OK;
+    return BPB_CENTRAL_APP_CONTROLLER_STATUS_OK;
 }
 
 /*============================================================================
@@ -391,75 +391,75 @@ static CentralAppController_Status_t HandleWriteDataById(const Deserialize_UdsRe
 {
     switch (pReq->id)
     {
-        case CAC_DID_ADC_SAMPLE_RATE:
+        case BPB_CAC_DID_ADC_SAMPLE_RATE:
         {
             if (pReq->payloadLength < 4U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             ConfigService_AnalogChannelConfig_t cfg = {0};
-            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) != CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) != BPB_CONFIG_SERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             cfg.samplingFrequency = ((uint32_t)pReq->pPayload[0] << 24U)
                                   | ((uint32_t)pReq->pPayload[1] << 16U)
                                   | ((uint32_t)pReq->pPayload[2] << 8U)
                                   | (uint32_t)pReq->pPayload[3];
-            if (ConfigServiceUnit_SetAnalogChannelConfig(0U, &cfg) != CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_SetAnalogChannelConfig(0U, &cfg) != BPB_CONFIG_SERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_ADC_RESOLUTION:
+        case BPB_CAC_DID_ADC_RESOLUTION:
         {
             if (pReq->payloadLength < 1U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             ConfigService_AnalogChannelConfig_t cfg = {0};
-            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) != CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_GetAnalogChannelConfig(0U, &cfg) != BPB_CONFIG_SERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             cfg.resolutionBits = pReq->pPayload[0];
-            if (ConfigServiceUnit_SetAnalogChannelConfig(0U, &cfg) != CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_SetAnalogChannelConfig(0U, &cfg) != BPB_CONFIG_SERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_GPIO_CONFIG:
+        case BPB_CAC_DID_GPIO_CONFIG:
         {
             if (pReq->payloadLength < 3U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             ConfigService_DigitalPinConfig_t cfg = {0};
             cfg.pinId = pReq->pPayload[0];
             cfg.direction = pReq->pPayload[1];
             cfg.initialState = pReq->pPayload[2];
-            if (ConfigServiceUnit_SetDigitalPinConfig(cfg.pinId, &cfg) != CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_SetDigitalPinConfig(cfg.pinId, &cfg) != BPB_CONFIG_SERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_PWM_CONFIG:
+        case BPB_CAC_DID_PWM_CONFIG:
         {
             if (pReq->payloadLength < 7U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             ConfigService_PwmConfig_t cfg = {0};
             cfg.channelId = pReq->pPayload[0];
@@ -469,19 +469,19 @@ static CentralAppController_Status_t HandleWriteDataById(const Deserialize_UdsRe
                           | (uint32_t)pReq->pPayload[4];
             cfg.dutyCycle = ((uint16_t)pReq->pPayload[5] << 8U)
                           | (uint16_t)pReq->pPayload[6];
-            if (ConfigServiceUnit_SetPwmConfig(cfg.channelId, &cfg) != CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_SetPwmConfig(cfg.channelId, &cfg) != BPB_CONFIG_SERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_I2C_CONFIG:
+        case BPB_CAC_DID_I2C_CONFIG:
         {
             if (pReq->payloadLength < 7U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             ConfigService_I2cConfig_t cfg = {0};
             cfg.speed = ((uint32_t)pReq->pPayload[0] << 24U)
@@ -491,19 +491,19 @@ static CentralAppController_Status_t HandleWriteDataById(const Deserialize_UdsRe
             cfg.addressMode = pReq->pPayload[4];
             cfg.timeoutMs = ((uint16_t)pReq->pPayload[5] << 8U)
                           | (uint16_t)pReq->pPayload[6];
-            if (ConfigServiceUnit_SetI2cConfig(&cfg) != CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_SetI2cConfig(&cfg) != BPB_CONFIG_SERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_SPI_CONFIG:
+        case BPB_CAC_DID_SPI_CONFIG:
         {
             if (pReq->payloadLength < 6U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             ConfigService_SpiConfig_t cfg = {0};
             cfg.clockSpeed = ((uint32_t)pReq->pPayload[0] << 24U)
@@ -512,19 +512,19 @@ static CentralAppController_Status_t HandleWriteDataById(const Deserialize_UdsRe
                            | (uint32_t)pReq->pPayload[3];
             cfg.mode = pReq->pPayload[4];
             cfg.bitOrder = pReq->pPayload[5];
-            if (ConfigServiceUnit_SetSpiConfig(&cfg) != CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_SetSpiConfig(&cfg) != BPB_CONFIG_SERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
-        case CAC_DID_SERIAL_CONFIG:
+        case BPB_CAC_DID_SERIAL_CONFIG:
         {
             if (pReq->payloadLength < 7U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             ConfigService_SerialConfig_t cfg = {0};
             cfg.baudrate = ((uint32_t)pReq->pPayload[0] << 24U)
@@ -534,20 +534,20 @@ static CentralAppController_Status_t HandleWriteDataById(const Deserialize_UdsRe
             cfg.dataBits = pReq->pPayload[4];
             cfg.stopBits = pReq->pPayload[5];
             cfg.parity = pReq->pPayload[6];
-            if (ConfigServiceUnit_SetSerialConfig(&cfg) != CONFIG_SERVICE_STATUS_OK)
+            if (ConfigServiceUnit_SetSerialConfig(&cfg) != BPB_CONFIG_SERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             break;
         }
         default:
-            (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-            return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+            return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
     }
 
     (void)SerializeUnit_BuildWriteResponse(pReq->id, pResp);
-    return CENTRAL_APP_CONTROLLER_STATUS_OK;
+    return BPB_CENTRAL_APP_CONTROLLER_STATUS_OK;
 }
 
 /*============================================================================
@@ -555,26 +555,26 @@ static CentralAppController_Status_t HandleWriteDataById(const Deserialize_UdsRe
  *===========================================================================*/
 static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsRequest_t *pReq, Serialize_UdsResponse_t *pResp)
 {
-    uint8_t statusRecord[CENTRAL_APP_CFG_MAX_FRAME_SIZE];
+    uint8_t statusRecord[BPB_CENTRAL_APP_CFG_MAX_FRAME_SIZE];
     uint16_t statusLen = 0U;
 
     switch (pReq->id)
     {
-        case CAC_RID_ADC_READ:
+        case BPB_CAC_RID_ADC_READ:
         {
             /* params[0] = channel */
             if (pReq->payloadLength < 1U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint8_t channel = pReq->pPayload[0];
             uint16_t rawValue = 0U;
             AnalogService_Status_t aStatus = AnalogServiceUnit_ReadAdc(channel, &rawValue);
-            if (aStatus != ANALOGSERVICE_STATUS_OK)
+            if (aStatus != BPB_ANALOGSERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             statusRecord[0] = (uint8_t)(rawValue >> 8U);
             statusRecord[1] = (uint8_t)(rawValue & 0xFFU);
@@ -582,164 +582,164 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             break;
         }
 
-        case CAC_RID_GPIO_WRITE:
+        case BPB_CAC_RID_GPIO_WRITE:
         {
             /* params[0] = pin, params[1] = state */
             if (pReq->payloadLength < 2U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint8_t pin = pReq->pPayload[0];
             uint8_t state = pReq->pPayload[1];
             DigitalService_Status_t dStatus = DigitalServiceUnit_WriteGpio(pin, state);
-            if (dStatus != DIGITALSERVICE_STATUS_OK)
+            if (dStatus != BPB_DIGITALSERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             statusRecord[0] = 0x00U; /* success */
             statusLen = 1U;
             break;
         }
 
-        case CAC_RID_GPIO_READ:
+        case BPB_CAC_RID_GPIO_READ:
         {
             /* params[0] = pin */
             if (pReq->payloadLength < 1U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint8_t pin = pReq->pPayload[0];
             uint8_t pinState = 0U;
             DigitalService_Status_t dStatus = DigitalServiceUnit_ReadGpio(pin, &pinState);
-            if (dStatus != DIGITALSERVICE_STATUS_OK)
+            if (dStatus != BPB_DIGITALSERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             statusRecord[0] = pinState;
             statusLen = 1U;
             break;
         }
 
-        case CAC_RID_PWM_START:
+        case BPB_CAC_RID_PWM_START:
         {
             /* params[0] = channel */
             if (pReq->payloadLength < 1U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint8_t channel = pReq->pPayload[0];
             DigitalService_Status_t dStatus = DigitalServiceUnit_StartPwm(channel);
-            if (dStatus != DIGITALSERVICE_STATUS_OK)
+            if (dStatus != BPB_DIGITALSERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             statusRecord[0] = 0x00U;
             statusLen = 1U;
             break;
         }
 
-        case CAC_RID_PWM_STOP:
+        case BPB_CAC_RID_PWM_STOP:
         {
             /* params[0] = channel */
             if (pReq->payloadLength < 1U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint8_t channel = pReq->pPayload[0];
             DigitalService_Status_t dStatus = DigitalServiceUnit_StopPwm(channel);
-            if (dStatus != DIGITALSERVICE_STATUS_OK)
+            if (dStatus != BPB_DIGITALSERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             statusRecord[0] = 0x00U;
             statusLen = 1U;
             break;
         }
 
-        case CAC_RID_I2C_WRITE:
+        case BPB_CAC_RID_I2C_WRITE:
         {
             /* params[0] = addr, params[1..N] = data */
             if (pReq->payloadLength < 2U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint16_t addr = (uint16_t)pReq->pPayload[0];
             const uint8_t *pData = &pReq->pPayload[1];
             uint16_t len = pReq->payloadLength - 1U;
             I2cService_Status_t iStatus = I2cServiceUnit_Write(addr, pData, len);
-            if (iStatus != I2CSERVICE_STATUS_OK)
+            if (iStatus != BPB_I2CSERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             statusRecord[0] = 0x00U;
             statusLen = 1U;
             break;
         }
 
-        case CAC_RID_I2C_READ:
+        case BPB_CAC_RID_I2C_READ:
         {
             /* params[0] = addr, params[1] = length */
             if (pReq->payloadLength < 2U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint16_t addr = (uint16_t)pReq->pPayload[0];
             uint16_t readLen = (uint16_t)pReq->pPayload[1];
             if (readLen > sizeof(statusRecord))
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             I2cService_Status_t iStatus = I2cServiceUnit_Read(addr, statusRecord, readLen);
-            if (iStatus != I2CSERVICE_STATUS_OK)
+            if (iStatus != BPB_I2CSERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             statusLen = readLen;
             break;
         }
 
-        case CAC_RID_SPI_WRITE:
+        case BPB_CAC_RID_SPI_WRITE:
         {
             /* params[0] = dev, params[1..N] = data */
             if (pReq->payloadLength < 2U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint8_t dev = pReq->pPayload[0];
             const uint8_t *pData = &pReq->pPayload[1];
             uint16_t len = pReq->payloadLength - 1U;
             SpiService_Status_t sStatus = SpiServiceUnit_Write(dev, pData, len);
-            if (sStatus != SPISERVICE_STATUS_OK)
+            if (sStatus != BPB_SPISERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             statusRecord[0] = 0x00U;
             statusLen = 1U;
             break;
         }
 
-        case CAC_RID_SPI_TRANSCEIVE:
+        case BPB_CAC_RID_SPI_TRANSCEIVE:
         {
             /* params[0] = dev, params[1] = rx_len, params[2..N] = tx_data */
             if (pReq->payloadLength < 3U)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_INCORRECT_MSG_LENGTH, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             uint8_t dev = pReq->pPayload[0];
             uint16_t rxLen = (uint16_t)pReq->pPayload[1];
@@ -747,26 +747,26 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
             uint16_t txLen = pReq->payloadLength - 2U;
             if (rxLen > sizeof(statusRecord))
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             SpiService_Status_t sStatus = SpiServiceUnit_Transceive(dev, pTx, txLen, statusRecord, rxLen);
-            if (sStatus != SPISERVICE_STATUS_OK)
+            if (sStatus != BPB_SPISERVICE_STATUS_OK)
             {
-                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
-                return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+                (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_CONDITIONS_NOT_CORRECT, pResp);
+                return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
             }
             statusLen = rxLen;
             break;
         }
 
         default:
-            (void)SerializeUnit_BuildNegativeResponse(pReq->sid, SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
-            return CENTRAL_APP_CONTROLLER_STATUS_ERROR;
+            (void)SerializeUnit_BuildNegativeResponse(pReq->sid, BPB_SERIALIZE_NRC_REQUEST_OUT_OF_RANGE, pResp);
+            return BPB_CENTRAL_APP_CONTROLLER_STATUS_ERROR;
     }
 
     (void)SerializeUnit_BuildRoutineResponse(pReq->routineControlType, pReq->id, statusRecord, statusLen, pResp);
-    return CENTRAL_APP_CONTROLLER_STATUS_OK;
+    return BPB_CENTRAL_APP_CONTROLLER_STATUS_OK;
 }
 
 /*============================================================================
@@ -775,7 +775,7 @@ static CentralAppController_Status_t HandleRoutineControl(const Deserialize_UdsR
  *===========================================================================*/
 static void FrameParser_Reset(FrameParser_t *pParser)
 {
-    pParser->state = FRAME_PARSE_STATE_WAIT_PREFIX_HIGH;
+    pParser->state = BPB_FRAME_PARSE_STATE_WAIT_PREFIX_HIGH;
     pParser->frameIndex = 0U;
     pParser->frameReady = false;
 }
@@ -784,47 +784,47 @@ static void FrameParser_ProcessByte(FrameParser_t *pParser, uint8_t byte)
 {
     switch (pParser->state)
     {
-        case FRAME_PARSE_STATE_WAIT_PREFIX_HIGH:
-            if (byte == CENTRAL_APP_CFG_FRAME_PREFIX_HIGH)
+        case BPB_FRAME_PARSE_STATE_WAIT_PREFIX_HIGH:
+            if (byte == BPB_CENTRAL_APP_CFG_FRAME_PREFIX_HIGH)
             {
-                pParser->state = FRAME_PARSE_STATE_WAIT_PREFIX_LOW;
+                pParser->state = BPB_FRAME_PARSE_STATE_WAIT_PREFIX_LOW;
             }
             break;
 
-        case FRAME_PARSE_STATE_WAIT_PREFIX_LOW:
-            if (byte == CENTRAL_APP_CFG_FRAME_PREFIX_LOW)
+        case BPB_FRAME_PARSE_STATE_WAIT_PREFIX_LOW:
+            if (byte == BPB_CENTRAL_APP_CFG_FRAME_PREFIX_LOW)
             {
                 /* Full prefix detected, start collecting payload */
-                pParser->state = FRAME_PARSE_STATE_RECEIVE_PAYLOAD;
+                pParser->state = BPB_FRAME_PARSE_STATE_RECEIVE_PAYLOAD;
                 pParser->frameIndex = 0U;
             }
-            else if (byte == CENTRAL_APP_CFG_FRAME_PREFIX_HIGH)
+            else if (byte == BPB_CENTRAL_APP_CFG_FRAME_PREFIX_HIGH)
             {
                 /* Could be start of a new prefix, stay in this state */
-                pParser->state = FRAME_PARSE_STATE_WAIT_PREFIX_LOW;
+                pParser->state = BPB_FRAME_PARSE_STATE_WAIT_PREFIX_LOW;
             }
             else
             {
                 /* Not a valid prefix, go back to waiting */
-                pParser->state = FRAME_PARSE_STATE_WAIT_PREFIX_HIGH;
+                pParser->state = BPB_FRAME_PARSE_STATE_WAIT_PREFIX_HIGH;
             }
             break;
 
-        case FRAME_PARSE_STATE_RECEIVE_PAYLOAD:
+        case BPB_FRAME_PARSE_STATE_RECEIVE_PAYLOAD:
             /* Check for postfix pattern */
             if ((pParser->frameIndex >= 1U) &&
-                (pParser->frameBuffer[pParser->frameIndex - 1U] == CENTRAL_APP_CFG_FRAME_POSTFIX_HIGH) &&
-                (byte == CENTRAL_APP_CFG_FRAME_POSTFIX_LOW))
+                (pParser->frameBuffer[pParser->frameIndex - 1U] == BPB_CENTRAL_APP_CFG_FRAME_POSTFIX_HIGH) &&
+                (byte == BPB_CENTRAL_APP_CFG_FRAME_POSTFIX_LOW))
             {
                 /* Postfix detected - remove the postfix high byte from payload */
                 pParser->frameIndex -= 1U;
                 pParser->frameReady = true;
-                pParser->state = FRAME_PARSE_STATE_FRAME_COMPLETE;
+                pParser->state = BPB_FRAME_PARSE_STATE_FRAME_COMPLETE;
             }
             else
             {
                 /* Store payload byte */
-                if (pParser->frameIndex < CENTRAL_APP_CFG_MAX_FRAME_SIZE)
+                if (pParser->frameIndex < BPB_CENTRAL_APP_CFG_MAX_FRAME_SIZE)
                 {
                     pParser->frameBuffer[pParser->frameIndex] = byte;
                     pParser->frameIndex++;
@@ -837,7 +837,7 @@ static void FrameParser_ProcessByte(FrameParser_t *pParser, uint8_t byte)
             }
             break;
 
-        case FRAME_PARSE_STATE_FRAME_COMPLETE:
+        case BPB_FRAME_PARSE_STATE_FRAME_COMPLETE:
             /* Waiting for caller to process and reset */
             break;
 
@@ -852,8 +852,8 @@ static void FrameParser_ProcessByte(FrameParser_t *pParser, uint8_t byte)
  *===========================================================================*/
 static void SendFramedResponse(const uint8_t *pData, uint16_t length)
 {
-    uint8_t framedBuffer[CENTRAL_APP_CFG_MAX_FRAME_SIZE + (2U * CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE)];
-    uint16_t totalLength = length + (2U * CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE);
+    uint8_t framedBuffer[BPB_CENTRAL_APP_CFG_MAX_FRAME_SIZE + (2U * BPB_CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE)];
+    uint16_t totalLength = length + (2U * BPB_CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE);
 
     if (totalLength > sizeof(framedBuffer))
     {
@@ -861,15 +861,15 @@ static void SendFramedResponse(const uint8_t *pData, uint16_t length)
     }
 
     /* Prefix */
-    framedBuffer[0] = CENTRAL_APP_CFG_FRAME_PREFIX_HIGH;
-    framedBuffer[1] = CENTRAL_APP_CFG_FRAME_PREFIX_LOW;
+    framedBuffer[0] = BPB_CENTRAL_APP_CFG_FRAME_PREFIX_HIGH;
+    framedBuffer[1] = BPB_CENTRAL_APP_CFG_FRAME_PREFIX_LOW;
 
     /* Payload */
-    (void)memcpy(&framedBuffer[CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE], pData, length);
+    (void)memcpy(&framedBuffer[BPB_CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE], pData, length);
 
     /* Postfix */
-    framedBuffer[CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE + length]      = CENTRAL_APP_CFG_FRAME_POSTFIX_HIGH;
-    framedBuffer[CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE + length + 1U] = CENTRAL_APP_CFG_FRAME_POSTFIX_LOW;
+    framedBuffer[BPB_CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE + length]      = BPB_CENTRAL_APP_CFG_FRAME_POSTFIX_HIGH;
+    framedBuffer[BPB_CENTRAL_APP_CFG_FRAME_DELIMITER_SIZE + length + 1U] = BPB_CENTRAL_APP_CFG_FRAME_POSTFIX_LOW;
 
     (void)ComServiceUnit_Write(framedBuffer, totalLength);
 }

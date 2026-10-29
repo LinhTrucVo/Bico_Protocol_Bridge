@@ -36,18 +36,18 @@ ComService_Status_t ComServiceUnit_Init(void)
 {
     FakeComService_Reset();
     fakeInitialized = true;
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }
 
 ComService_Status_t ComServiceUnit_DeInit(void)
 {
     fakeInitialized = false;
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }
 
 ComService_Status_t ComServiceUnit_Run(void)
 {
-    return fakeInitialized ? COMSERVICE_STATUS_OK : COMSERVICE_STATUS_NOT_INITIALIZED;
+    return fakeInitialized ? BPB_COMSERVICE_STATUS_OK : BPB_COMSERVICE_STATUS_NOT_INITIALIZED;
 }
 
 bool ComServiceUnit_IsRxDataAvailable(void)
@@ -57,9 +57,9 @@ bool ComServiceUnit_IsRxDataAvailable(void)
 
 ComService_Status_t ComServiceUnit_Read(uint8_t *pData, uint16_t maxLength, uint16_t *pReadLength)
 {
-    if (!fakeInitialized) return COMSERVICE_STATUS_NOT_INITIALIZED;
-    if (pData == NULL || pReadLength == NULL) return COMSERVICE_STATUS_INVALID_PARAM;
-    if (fakeRxCount == 0U) { *pReadLength = 0U; return COMSERVICE_STATUS_BUFFER_EMPTY; }
+    if (!fakeInitialized) return BPB_COMSERVICE_STATUS_NOT_INITIALIZED;
+    if (pData == NULL || pReadLength == NULL) return BPB_COMSERVICE_STATUS_INVALID_PARAM;
+    if (fakeRxCount == 0U) { *pReadLength = 0U; return BPB_COMSERVICE_STATUS_BUFFER_EMPTY; }
 
     uint16_t len = (fakeRxCount < maxLength) ? fakeRxCount : maxLength;
     memcpy(pData, fakeRxBuffer, len);
@@ -67,16 +67,16 @@ ComService_Status_t ComServiceUnit_Read(uint8_t *pData, uint16_t maxLength, uint
     fakeRxCount -= len;
     memmove(fakeRxBuffer, &fakeRxBuffer[len], fakeRxCount);
     *pReadLength = len;
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }
 
 ComService_Status_t ComServiceUnit_Write(const uint8_t *pData, uint16_t length)
 {
-    if (!fakeInitialized) return COMSERVICE_STATUS_NOT_INITIALIZED;
-    if (pData == NULL || length == 0U) return COMSERVICE_STATUS_INVALID_PARAM;
-    if (fakeTxCount + length > sizeof(fakeTxBuffer)) return COMSERVICE_STATUS_BUFFER_FULL;
+    if (!fakeInitialized) return BPB_COMSERVICE_STATUS_NOT_INITIALIZED;
+    if (pData == NULL || length == 0U) return BPB_COMSERVICE_STATUS_INVALID_PARAM;
+    if (fakeTxCount + length > sizeof(fakeTxBuffer)) return BPB_COMSERVICE_STATUS_BUFFER_FULL;
 
     memcpy(&fakeTxBuffer[fakeTxCount], pData, length);
     fakeTxCount += length;
-    return COMSERVICE_STATUS_OK;
+    return BPB_COMSERVICE_STATUS_OK;
 }

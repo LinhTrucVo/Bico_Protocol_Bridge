@@ -1,10 +1,10 @@
-#ifndef I2CMASTERDRIVERCFG_H
-#define I2CMASTERDRIVERCFG_H
+#ifndef BPB_I2CMASTERDRIVERCFG_H
+#define BPB_I2CMASTERDRIVERCFG_H
 
 //============================================================================
 // Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define I2C_MASTER_CFG_ENABLE_DMA        true
-#define I2C_MASTER_CFG_ENABLE_TIMEOUT    true
+#define BPB_I2C_MASTER_CFG_ENABLE_DMA        true
+#define BPB_I2C_MASTER_CFG_ENABLE_TIMEOUT    true
 
-#endif /* I2CMASTERDRIVERCFG_H */
+#endif /* BPB_I2CMASTERDRIVERCFG_H */

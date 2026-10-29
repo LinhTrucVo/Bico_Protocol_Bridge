@@ -40,7 +40,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** SERIALIZE_STATUS_OK on success, SERIALIZE_STATUS_ERROR on failure.
+        **Return values:** BPB_SERIALIZE_STATUS_OK on success, BPB_SERIALIZE_STATUS_ERROR on failure.
 
         **Restrictions:** Must be called before any other Serialize function.
 
@@ -51,7 +51,7 @@ Public interfaces
 
         **Arguments:** None.
 
-        **Return values:** SERIALIZE_STATUS_OK on success.
+        **Return values:** BPB_SERIALIZE_STATUS_OK on success.
 
         **Restrictions:** None.
 
@@ -66,8 +66,8 @@ Public interfaces
         - **pOutBuffer**: Pointer to the output buffer descriptor (buffer pointer and buffer length).
         - **pFrameLength**: Pointer to receive the number of bytes written to the output buffer.
 
-        **Return values:** SERIALIZE_STATUS_OK on success, SERIALIZE_STATUS_BUFFER_TOO_SMALL if the output buffer is insufficient,
-        SERIALIZE_STATUS_INVALID_PARAM for NULL pointers.
+        **Return values:** BPB_SERIALIZE_STATUS_OK on success, SERIALIZE_STATUS_BUFFER_TOO_SMALL if the output buffer is insufficient,
+        BPB_SERIALIZE_STATUS_INVALID_PARAM for NULL pointers.
 
         **Restrictions:** The output buffer must be at least SERIALIZE_CFG_MAX_FRAME_SIZE bytes.
 
@@ -84,8 +84,8 @@ Public interfaces
         - **pOutBuffer**: Pointer to the output buffer descriptor.
         - **pFrameLength**: Pointer to receive the number of bytes written.
 
-        **Return values:** SERIALIZE_STATUS_OK on success, SERIALIZE_STATUS_BUFFER_TOO_SMALL if the output buffer is insufficient,
-        SERIALIZE_STATUS_INVALID_PARAM for NULL pointer.
+        **Return values:** BPB_SERIALIZE_STATUS_OK on success, SERIALIZE_STATUS_BUFFER_TOO_SMALL if the output buffer is insufficient,
+        BPB_SERIALIZE_STATUS_INVALID_PARAM for NULL pointer.
 
         **Restrictions:** None.
 
@@ -102,8 +102,8 @@ Public interfaces
         - **pOutBuffer**: Pointer to the output buffer descriptor.
         - **pFrameLength**: Pointer to receive the number of bytes written.
 
-        **Return values:** SERIALIZE_STATUS_OK on success, SERIALIZE_STATUS_BUFFER_OVERFLOW if sample data exceeds the frame size,
-        SERIALIZE_STATUS_INVALID_PARAM for NULL pointers or zero sample count.
+        **Return values:** BPB_SERIALIZE_STATUS_OK on success, BPB_SERIALIZE_STATUS_BUFFER_OVERFLOW if sample data exceeds the frame size,
+        BPB_SERIALIZE_STATUS_INVALID_PARAM for NULL pointers or zero sample count.
 
         **Restrictions:** None.
 
@@ -119,8 +119,8 @@ Public interfaces
         - **pOutBuffer**: Pointer to the output buffer descriptor.
         - **pFrameLength**: Pointer to receive the number of bytes written.
 
-        **Return values:** SERIALIZE_STATUS_OK on success, SERIALIZE_STATUS_BUFFER_TOO_SMALL if the output buffer is insufficient,
-        SERIALIZE_STATUS_INVALID_PARAM for NULL pointer.
+        **Return values:** BPB_SERIALIZE_STATUS_OK on success, SERIALIZE_STATUS_BUFFER_TOO_SMALL if the output buffer is insufficient,
+        BPB_SERIALIZE_STATUS_INVALID_PARAM for NULL pointer.
 
         **Restrictions:** None.
 
@@ -137,8 +137,8 @@ Public interfaces
         - **pOutBuffer**: Pointer to the output buffer descriptor.
         - **pFrameLength**: Pointer to receive the number of bytes written.
 
-        **Return values:** SERIALIZE_STATUS_OK on success, SERIALIZE_STATUS_BUFFER_OVERFLOW if data exceeds the frame size,
-        SERIALIZE_STATUS_INVALID_PARAM for NULL pointers or zero length.
+        **Return values:** BPB_SERIALIZE_STATUS_OK on success, BPB_SERIALIZE_STATUS_BUFFER_OVERFLOW if data exceeds the frame size,
+        BPB_SERIALIZE_STATUS_INVALID_PARAM for NULL pointers or zero length.
 
         **Restrictions:** None.
 
@@ -155,8 +155,8 @@ Public interfaces
         - **pOutBuffer**: Pointer to the output buffer descriptor.
         - **pFrameLength**: Pointer to receive the number of bytes written.
 
-        **Return values:** SERIALIZE_STATUS_OK on success, SERIALIZE_STATUS_BUFFER_OVERFLOW if data exceeds the frame size,
-        SERIALIZE_STATUS_INVALID_PARAM for NULL pRxData or zero length.
+        **Return values:** BPB_SERIALIZE_STATUS_OK on success, BPB_SERIALIZE_STATUS_BUFFER_OVERFLOW if data exceeds the frame size,
+        BPB_SERIALIZE_STATUS_INVALID_PARAM for NULL pRxData or zero length.
 
         **Restrictions:** None.
 
@@ -171,7 +171,7 @@ Public interfaces
         - **length**: Number of bytes to process.
         - **pCrc**: Pointer to receive the computed CRC-16 value.
 
-        **Return values:** SERIALIZE_STATUS_OK on success, SERIALIZE_STATUS_INVALID_PARAM for NULL pointers or zero length.
+        **Return values:** BPB_SERIALIZE_STATUS_OK on success, BPB_SERIALIZE_STATUS_INVALID_PARAM for NULL pointers or zero length.
 
         **Restrictions:** None.
 

@@ -14,28 +14,28 @@ static Deserialize_Context_t context = {false};
 Deserialize_Status_t DeserializeUnit_Init(void)
 {
     context.initialized = true;
-    return DESERIALIZE_STATUS_OK;
+    return BPB_DESERIALIZE_STATUS_OK;
 }
 
 Deserialize_Status_t DeserializeUnit_DeInit(void)
 {
     context.initialized = false;
-    return DESERIALIZE_STATUS_OK;
+    return BPB_DESERIALIZE_STATUS_OK;
 }
 
 Deserialize_Status_t DeserializeUnit_Parse(const Deserialize_Frame_t *pFrame, Deserialize_UdsRequest_t *pRequest)
 {
     if (!context.initialized)
     {
-        return DESERIALIZE_STATUS_ERROR;
+        return BPB_DESERIALIZE_STATUS_ERROR;
     }
     if (pFrame == NULL || pFrame->pData == NULL || pRequest == NULL)
     {
-        return DESERIALIZE_STATUS_INVALID_PARAM;
+        return BPB_DESERIALIZE_STATUS_INVALID_PARAM;
     }
-    if (pFrame->length < DESERIALIZE_MIN_FRAME_SIZE)
+    if (pFrame->length < BPB_DESERIALIZE_MIN_FRAME_SIZE)
     {
-        return DESERIALIZE_STATUS_INVALID_FRAME;
+        return BPB_DESERIALIZE_STATUS_INVALID_FRAME;
     }
 
     const uint8_t *pBuf = pFrame->pData;
@@ -49,24 +49,24 @@ Deserialize_Status_t DeserializeUnit_Parse(const Deserialize_Frame_t *pFrame, De
 
     switch (sid)
     {
-        case DESERIALIZE_SID_READ_DATA_BY_ID: /* 0x22 */
+        case BPB_DESERIALIZE_SID_READ_DATA_BY_ID: /* 0x22 */
         {
             /* Frame: [SID(1), DID_HI(1), DID_LO(1)] */
             if (pFrame->length < 3U)
             {
-                return DESERIALIZE_STATUS_INVALID_FRAME;
+                return BPB_DESERIALIZE_STATUS_INVALID_FRAME;
             }
             pRequest->id = ((uint16_t)pBuf[1] << 8U) | (uint16_t)pBuf[2];
             /* No payload for read request */
             break;
         }
 
-        case DESERIALIZE_SID_WRITE_DATA_BY_ID: /* 0x2E */
+        case BPB_DESERIALIZE_SID_WRITE_DATA_BY_ID: /* 0x2E */
         {
             /* Frame: [SID(1), DID_HI(1), DID_LO(1), Data...] */
             if (pFrame->length < 4U) /* At least 1 byte of data required */
             {
-                return DESERIALIZE_STATUS_INVALID_FRAME;
+                return BPB_DESERIALIZE_STATUS_INVALID_FRAME;
             }
             pRequest->id = ((uint16_t)pBuf[1] << 8U) | (uint16_t)pBuf[2];
             pRequest->pPayload = &pBuf[3];
@@ -74,12 +74,12 @@ Deserialize_Status_t DeserializeUnit_Parse(const Deserialize_Frame_t *pFrame, De
             break;
         }
 
-        case DESERIALIZE_SID_ROUTINE_CONTROL: /* 0x31 */
+        case BPB_DESERIALIZE_SID_ROUTINE_CONTROL: /* 0x31 */
         {
             /* Frame: [SID(1), routineControlType(1), RID_HI(1), RID_LO(1), params...] */
             if (pFrame->length < 4U)
             {
-                return DESERIALIZE_STATUS_INVALID_FRAME;
+                return BPB_DESERIALIZE_STATUS_INVALID_FRAME;
             }
             pRequest->routineControlType = pBuf[1];
             pRequest->id = ((uint16_t)pBuf[2] << 8U) | (uint16_t)pBuf[3];
@@ -92,8 +92,8 @@ Deserialize_Status_t DeserializeUnit_Parse(const Deserialize_Frame_t *pFrame, De
         }
 
         default:
-            return DESERIALIZE_STATUS_UNSUPPORTED_SID;
+            return BPB_DESERIALIZE_STATUS_UNSUPPORTED_SID;
     }
 
-    return DESERIALIZE_STATUS_OK;
+    return BPB_DESERIALIZE_STATUS_OK;
 }

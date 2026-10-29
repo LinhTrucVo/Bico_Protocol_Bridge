@@ -1,10 +1,10 @@
-#ifndef ANALOG_APPCFG_H
-#define ANALOG_APPCFG_H
+#ifndef BPB_ANALOG_APPCFG_H
+#define BPB_ANALOG_APPCFG_H
 
 //============================================================================
 // Configuration - Feature Enable/Disable Flags
 //============================================================================
-#define SERIAL_TO_ANALOG_CFG_ENABLE_AVERAGING    true
-#define SERIAL_TO_ANALOG_CFG_ENABLE_FILTERING    true
+#define BPB_SERIAL_TO_ANALOG_CFG_ENABLE_AVERAGING    true
+#define BPB_SERIAL_TO_ANALOG_CFG_ENABLE_FILTERING    true
 
-#endif /* ANALOG_APPCFG_H */
+#endif /* BPB_ANALOG_APPCFG_H */

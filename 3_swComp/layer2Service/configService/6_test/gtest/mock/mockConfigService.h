@@ -1,7 +1,7 @@
 ﻿// This file declares the FFF for functions and MOCK functions for ConfigService testing
 
-#ifndef MOCKCONFIGSERVICE_H
-#define MOCKCONFIGSERVICE_H
+#ifndef BPB_MOCKCONFIGSERVICE_H
+#define BPB_MOCKCONFIGSERVICE_H
 
 //============================================================================
 // Dependencies
@@ -40,4 +40,4 @@ ConfigService_Status_t call_ConfigServiceUnit_ValidatePwmConfig(const ConfigServ
 ConfigService_Status_t call_ConfigServiceUnit_ValidateI2cConfig(const ConfigService_I2cConfig_t *pConfig);
 ConfigService_Status_t call_ConfigServiceUnit_ValidateSpiConfig(const ConfigService_SpiConfig_t *pConfig);
 
-#endif /* MOCKCONFIGSERVICE_H */
+#endif /* BPB_MOCKCONFIGSERVICE_H */

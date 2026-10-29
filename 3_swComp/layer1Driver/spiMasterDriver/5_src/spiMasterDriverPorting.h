@@ -1,7 +1,7 @@
 // Port interface of the SPI master driver. Implemented by the device workspace, called by spiMasterDriverUnit.c.
 
-#ifndef SPIMASTERDRIVERPORT_H
-#define SPIMASTERDRIVERPORT_H
+#ifndef BPB_SPIMASTERDRIVERPORT_H
+#define BPB_SPIMASTERDRIVERPORT_H
 
 //============================================================================
 // Dependencies
@@ -22,4 +22,4 @@ bool SpiMasterPort_Transfer(const uint8_t *pTxData, uint8_t *pRxData, uint16_t l
 bool SpiMasterPort_AcquireBus(void);
 void SpiMasterPort_ReleaseBus(void);
 
-#endif /* SPIMASTERDRIVERPORT_H */
+#endif /* BPB_SPIMASTERDRIVERPORT_H */

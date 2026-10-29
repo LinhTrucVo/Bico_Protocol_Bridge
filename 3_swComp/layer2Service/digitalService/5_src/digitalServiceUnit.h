@@ -1,5 +1,5 @@
-#ifndef DIGITALSERVICEUNIT_H
-#define DIGITALSERVICEUNIT_H
+#ifndef BPB_DIGITALSERVICEUNIT_H
+#define BPB_DIGITALSERVICEUNIT_H
 #include <stdint.h>
 #include <stdbool.h>
 #include "digitalServiceCfg.h"
@@ -7,18 +7,18 @@
 //============================================================================
 // Configuration Macros
 //============================================================================
-#define DIGITAL_SERVICE_CFG_MAX_PINS        32U
-#define DIGITAL_SERVICE_CFG_MAX_PWM_CH      8U
+#define BPB_DIGITAL_SERVICE_CFG_MAX_PINS        32U
+#define BPB_DIGITAL_SERVICE_CFG_MAX_PWM_CH      8U
 
 //============================================================================
 // Type Definitions
 //============================================================================
 typedef enum
 {
-    DIGITALSERVICE_STATUS_OK = 0,
-    DIGITALSERVICE_STATUS_ERROR,
-    DIGITALSERVICE_STATUS_INVALID_PARAM,
-    DIGITALSERVICE_STATUS_NOT_INITIALIZED
+    BPB_DIGITALSERVICE_STATUS_OK = 0,
+    BPB_DIGITALSERVICE_STATUS_ERROR,
+    BPB_DIGITALSERVICE_STATUS_INVALID_PARAM,
+    BPB_DIGITALSERVICE_STATUS_NOT_INITIALIZED
 } DigitalService_Status_t;
 
 //============================================================================
@@ -35,4 +35,4 @@ DigitalService_Status_t DigitalServiceUnit_ReadGpio(uint8_t pin, uint8_t *pState
 DigitalService_Status_t DigitalServiceUnit_StartPwm(uint8_t channel);
 DigitalService_Status_t DigitalServiceUnit_StopPwm(uint8_t channel);
 
-#endif /* DIGITALSERVICEUNIT_H */
+#endif /* BPB_DIGITALSERVICEUNIT_H */
