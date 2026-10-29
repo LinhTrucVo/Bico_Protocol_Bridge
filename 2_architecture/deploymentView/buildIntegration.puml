@@ -4,10 +4,10 @@ start
 :Project CMakeLists.txt\n(ESP-IDF project.cmake);
 fork
   :main/bico_protocol_bridge_swcomp/CMakeLists.txt;
-  :include(${BICO_ROOT}/3_swComp/bicoSwComp.cmake);
+  :include(${BICO_ROOT}/3_1_swComp/bicoSwComp.cmake);
   :idf_component_register(\n  SRCS ${BICO_SWCOMP_SOURCES}\n  INCLUDE_DIRS config ${BICO_SWCOMP_INCLUDE_DIRS}\n  REQUIRES bico_protocol_bridge_port_esp32);
   note right
-    3_swComp sources are compiled in place,
+    3_1_swComp sources are compiled in place,
     never copied. BICO_BUILD_TESTS is OFF.
   end note
 fork again

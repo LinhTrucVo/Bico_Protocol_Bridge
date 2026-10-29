@@ -3,7 +3,7 @@ skinparam componentStyle rectangle
 skinparam packageStyle folder
 left to right direction
 
-package "3_swComp (hardware independent)" as SW {
+package "3_1_swComp (hardware independent)" as SW {
   component "layer3Application\ncentralAppController" as L3
   component "layer2Service\ncomService, configService,\nserialize, deserialize, ..." as L2
   component "layer1Driver (generic)\nadcDriver, gpioDriver, serialDriver, ..." as L1

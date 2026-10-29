@@ -20,4 +20,4 @@ The project is organized into three main sections:
 
    ../../1_requirement/index
    ../../2_architecture/index
-   ../../3_swComp/index
+   ../../3_1_swComp/index

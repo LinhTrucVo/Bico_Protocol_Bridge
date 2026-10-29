@@ -18,11 +18,11 @@ Bico_Protocol_Brigde/
 │       ├── layer1Driver/
 │       ├── layer2Service/
 │       └── layer3Application/
-├── 3_swComp/                   # Software components (MAIN IMPLEMENTATION)
+├── 3_1_swComp/                   # Software components (MAIN IMPLEMENTATION)
 │   ├── layer1Driver/           # Hardware abstraction drivers
 │   ├── layer2Service/          # Business logic services
 │   └── layer3Application/      # Application logic
-├── 4_addOn/                    # Add-on modules
+├── 3_2_thirdPartiesSwComp/                    # Add-on modules
 ```
 
 ## 🎯 Features
@@ -82,7 +82,7 @@ Each component follows a standardized structure:
 ## 📝 Documentation
 
 - **Architecture diagrams** - In `2_architecture/fucntionView/`
-- **Component diagram** - `3_swComp/ComponentArchitecture.puml`
+- **Component diagram** - `3_1_swComp/ComponentArchitecture.puml`
 
 ## 🧪 Testing
 

@@ -2,10 +2,10 @@ Deployment View
 ###############
 
 .. What is the Deployment View:
-.. How the hardware independent software in 3_swComp is integrated into a hardware specific device workspace.
+.. How the hardware independent software in 3_1_swComp is integrated into a hardware specific device workspace.
 
-The software in ``3_swComp`` is **hardware independent**. It is deployed to a concrete device by a
-**device workspace** ``7_x_<platform>_workspace``, which collects the ``3_swComp`` sources for the
+The software in ``3_1_swComp`` is **hardware independent**. It is deployed to a concrete device by a
+**device workspace** ``7_x_<platform>_workspace``, which collects the ``3_1_swComp`` sources for the
 build and adds everything that depends on the hardware.
 
 - ``7_1_esp32_workspace``: ESP32 (ESP-IDF + Arduino), used as the example in this document
@@ -15,20 +15,20 @@ build and adds everything that depends on the hardware.
 Principles
 **********
 
-#. ``3_swComp`` contains no hardware dependent code. No vendor header (``esp_*``, ``driver/*``,
-   ``nvs*``, ``Arduino.h``, ``freertos/*``, ``stm32*``) is included anywhere in ``3_swComp``.
-#. Each layer1 driver is split into a **generic driver** (in ``3_swComp``) and a **port** (in the
+#. ``3_1_swComp`` contains no hardware dependent code. No vendor header (``esp_*``, ``driver/*``,
+   ``nvs*``, ``Arduino.h``, ``freertos/*``, ``stm32*``) is included anywhere in ``3_1_swComp``.
+#. Each layer1 driver is split into a **generic driver** (in ``3_1_swComp``) and a **port** (in the
    device workspace). The generic driver owns parameter checks, state handling, buffering and callback
    dispatch. It calls a small port interface ``xxxPort.h`` (3-6 functions, standard C types only).
-#. The device workspace **compiles the 3_swComp sources in place** and never copies them. There is a single source of truth.
+#. The device workspace **compiles the 3_1_swComp sources in place** and never copies them. There is a single source of truth.
 #. Exactly one port implementation is linked per build: the ESP32 port, the STM32 port or the fake port
    for host unit tests.
-#. Default configuration lives in ``3_swComp/<comp>/4_config``. A device workspace may override it
+#. Default configuration lives in ``3_1_swComp/<comp>/4_config``. A device workspace may override it
    by placing its own ``xxxCfg.h`` earlier in the include path.
 
 Overview
 ********
-.. Relation between 3_swComp, the device workspaces and the host unit test build
+.. Relation between 3_1_swComp, the device workspaces and the host unit test build
 
 ..  uml:: deploymentOverview.puml
 
@@ -40,7 +40,7 @@ Port interface
 
 Build integration
 *****************
-.. How the ESP32 workspace collects 3_swComp for the build
+.. How the ESP32 workspace collects 3_1_swComp for the build
 
 ..  uml:: buildIntegration.puml
 
@@ -56,7 +56,7 @@ Folder layout
 .. code-block:: text
 
    Bico_Protocol_Bridge/
-   ├── 3_swComp/                          # hardware independent
+   ├── 3_1_swComp/                          # hardware independent
    │   ├── bicoSwComp.cmake               # exports BICO_SWCOMP_SOURCES / _INCLUDE_DIRS
    │   ├── layer1Driver/<drv>/
    │   │   ├── 3_inc/<drv>.h, <drv>Port.h # public API + port interface

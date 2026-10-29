@@ -9,7 +9,7 @@
 - File names use camel case. Names and macros in device workspace use the prefix `bico_protocol_bridge` / `BICO_PROTOCOL_BRIDGE`.
 - Work order: complete Phase 1 and Phase 2 for the ADC driver first, run the build (Verification), then repeat for the other 8 drivers.
 
-## Phase 1 - Clean up `3_swComp`
+## Phase 1 - Clean up `3_1_swComp`
 
 This phase blocks Phase 2. Apply it to each of the 9 layer1 drivers.
 
@@ -20,14 +20,14 @@ This phase blocks Phase 2. Apply it to each of the 9 layer1 drivers.
    - Move the driver logic (validation, state, callbacks, error mapping) out of `<drv>UnitEsp32.c` into the generic file.
    - Replace the `TODO: Add vendor-specific HAL` stubs with port calls.
    - Replace `memset_s` in `adcDriverUnit.c` with `memset`, because ESP-IDF does not provide `memset_s`.
-3. Move `5_src/<drv>UnitEsp32.c` out of `3_swComp` and reduce it to a port implementation in device wworkspace `<drv>PortEsp32.c` (see Phase 2). Delete the original.
+3. Move `5_src/<drv>UnitEsp32.c` out of `3_1_swComp` and reduce it to a port implementation in device wworkspace `<drv>PortEsp32.c` (see Phase 2). Delete the original.
 4. In each component `CMakeLists.txt`:
    - Replace the `# Add vendor HAL dependencies here` placeholder with `target_link_libraries(<drv> PUBLIC bico_protocol_bridge_port)`. The integrator supplies `bico_protocol_bridge_port`. ESP-IDF does not read these files.
    - Remove `add_subdirectory(6_test/gtest)`.
-5. Add `3_swComp/bicoProtocolBridgeSwComp.cmake`, which exports `BICO_PROTOCOL_BRIDGE_SWCOMP_SOURCES` and `BICO_PROTOCOL_BRIDGE_SWCOMP_INCLUDE_DIRS`:
+5. Add `3_1_swComp/bicoProtocolBridgeSwComp.cmake`, which exports `BICO_PROTOCOL_BRIDGE_SWCOMP_SOURCES` and `BICO_PROTOCOL_BRIDGE_SWCOMP_INCLUDE_DIRS`:
    - Paths are built from `CMAKE_CURRENT_LIST_DIR`.
    - It lists the `5_src/*.c` files and the `3_inc`, `4_config`, `5_src` include directories of the 9 drivers, the 9 services and `centralAppController`.
-   - It excludes `_function1`, all `6_test` folders, and `4_addOn/addon1` (its prebuilt `libdebug_logging.a` is a host library).
+   - It excludes `_function1`, all `6_test` folders, and `3_2_thirdPartiesSwComp/addon1` (its prebuilt `libdebug_logging.a` is a host library).
 
 ## Phase 2 - Device workspace (ESP32 example)
 
@@ -57,7 +57,7 @@ This phase depends on Phase 1.
 
 ## Verification
 
-1. Searching `3_swComp` for `#include .*(esp_|driver/|nvs|Arduino|freertos)` returns no match.
+1. Searching `3_1_swComp` for `#include .*(esp_|driver/|nvs|Arduino|freertos)` returns no match.
 2. Delete the stale `build/` folder of the workspace (or run `idf.py fullclean`), because it still holds the old folder path.
 3. Compile the ESP32 code:
 

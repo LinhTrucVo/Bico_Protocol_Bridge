@@ -4,7 +4,7 @@ actor "Host PC" as PC
 box "7_1_esp32_workspace" #LightYellow
   participant "main.cpp\nloop()" as MAIN
 end box
-box "3_swComp" #LightBlue
+box "3_1_swComp" #LightBlue
   participant "centralAppController" as CAC
   participant "comService" as COM
   participant "serialDriver /\nadcDriver (generic)" as DRV

@@ -2,7 +2,7 @@
 skinparam classAttributeIconSize 0
 hide empty members
 
-package "3_swComp/layer1Driver/adcDriver" {
+package "3_1_swComp/layer1Driver/adcDriver" {
   class "adcDriverUnit.c" as ADC <<generic driver>> {
     + AdcDriverUnit_Init()
     + AdcDriverUnit_ReadValue()
