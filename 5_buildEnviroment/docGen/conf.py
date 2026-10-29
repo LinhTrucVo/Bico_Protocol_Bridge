@@ -1,3 +1,4 @@
+from aspice_config import *
 
 project = 'Bico Protocol Bridge'
 copyright = '2025, Bico'
@@ -8,6 +9,7 @@ master_doc = "5_buildEnviroment/docGen/index"
 
 extensions = [
     'sphinxcontrib.plantuml',
+    'sphinx_needs'
 ]
 
 # Path to plantuml.jar
