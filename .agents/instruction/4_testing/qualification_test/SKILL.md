@@ -1,0 +1,1 @@
+The HIL enviroment iss not prepared yet, therefore the qualification tests cannot be executed at this moment.

@@ -1,0 +1,1 @@
+the ticket is the initial request from user, and it shall be deleted after the implementation is done (including sw requirement arch, sw component and test)
