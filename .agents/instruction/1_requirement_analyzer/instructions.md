@@ -31,7 +31,6 @@ Read `AGENTS.md` first. Start only when the user requests it.
    - One "shall" statement per requirement: singular, unambiguous, verifiable, free of implementation.
    - Give values with units and ranges (baud rate, pin range, timing).
 4. Give every requirement a verification criterion that a qualification test (SWE.6) can check.
-5. When a requirement changes, list the affected `sw_arch` items in the answer so SWE.2 can update them.
 
 ## Traceability
 

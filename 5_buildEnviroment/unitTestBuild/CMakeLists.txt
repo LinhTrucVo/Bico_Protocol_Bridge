@@ -1,3 +1,5 @@
+# TODO: add MISRA C:2012 static analysis of 3_1_swComp once bico_gtest_docker provides an analyzer.
+
 # JSON library for the HAL fakes (halFake)
 include(FetchContent)
 FetchContent_Declare(nlohmann_json

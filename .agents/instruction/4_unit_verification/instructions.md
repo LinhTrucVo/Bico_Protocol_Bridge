@@ -15,7 +15,8 @@ Read `AGENTS.md` first.
 
 ## Inputs
 
-- `3_1_swComp/<layer>/<comp>/1_swcReq`, `2_design` (`sw_detail`), `3_inc`, `4_config`, `5_src` (`sw_unit`)
+- `3_1_swComp/<layer>/<comp>/1_swcReq`, `2_design` (`sw_detail`, `sw_unit` IDs), `3_inc`, `4_config`, frozen at gate G3
+- Do not read `5_src`: tests are written from the design, in parallel with the code, and must not copy its behaviour
 
 ## Outputs
 
@@ -26,7 +27,7 @@ Read `AGENTS.md` first.
 | `6_test/gtest/fake/fake<Drv>Port.cpp` | HAL fake (layer1 drivers only) |
 | `6_test/gtest/fake/data/<Suite>_<Case>.json` | Expected HAL calls and injected return values |
 | `6_test/gtest/CMakeLists.txt` | Test executable |
-| `5_buildEnviroment/unitTestBuild/CMakeLists.txt` | `add_subdirectory` of the test (one line per component) |
+| `5_buildEnviroment/unitTestBuild/CMakeLists.txt` | `add_subdirectory` of the test (one line per component); shared file, edit only if LEADER granted it |
 
 `<Suite>_<Case>_actual.json` is written by the test run and ignored by git.
 
@@ -127,5 +128,5 @@ Test names: `TEST_F(<Comp>Test, <Function>_<Condition>_<ExpectedResult>)`.
 ## Done criteria
 
 - Every `sw_unit` is verified by at least one `sw_unit_test`.
-- `5_buildEnviroment/unitTestBuild/unitTestBuild.sh` passes all tests. Statement and branch coverage of the changed unit in `_build/unitTestBuild` are reported to the user.
+- `5_buildEnviroment/unitTestBuild/unitTestBuild.sh` passes all tests. Line and branch coverage of the changed unit in `_build/unitTestBuild` are at least 90 % and are reported.
 - `5_buildEnviroment/docGen/docGen.sh` builds without new warnings.

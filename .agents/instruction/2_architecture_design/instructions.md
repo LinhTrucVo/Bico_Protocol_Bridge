@@ -25,11 +25,10 @@ Read `AGENTS.md` first.
 
 ## Steps
 
-1. List the `sw_req` needs that are new or changed.
+1. Find the `sw_req` needs added, changed or removed by SWE.1: `git diff -U1000 <base> -- 1_requirement`, where `<base>` is the commit of the previous gate given by LEADER (`HEAD` if SWE.1 is not committed). Note the `:id:` of the enclosing `sw_req` block of every change. Every `swe1_requirement_without_architecture` warning of `docGen.sh` is also a `sw_req` to handle.
 2. Allocate each one to components following ISO/IEC/IEEE 42010. Respect the layers: `layer3Application` -> `layer2Service` -> `layer1Driver` -> `<Drv>Port_*`. A layer calls only the layer directly below.
 3. For each affected component, update `index.rst` with: Description, Static view, Information flow, Dynamic behaviour, Timing behaviour, Resource consumption, and the interfaces it provides and uses.
 4. For a layer1 driver, name the HAL operations it needs (e.g. GPIO: init/configure, read, write, toggle) as port interface, using standard C types only.
-5. List the affected components in the answer so SWE.3 can update them.
 
 ## Traceability
 

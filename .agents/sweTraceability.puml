@@ -1,0 +1,23 @@
+@startuml
+title ASPICE SWE traceability (Sphinx-Needs)
+
+left to right direction
+
+rectangle "sw_req\nSWREQ_\n(SWE.1)" as REQ
+rectangle "sw_arch\nSWARCH_\n(SWE.2)" as ARCH
+rectangle "sw_detail\nSWDD_\n(SWE.3)" as DD
+rectangle "sw_unit\nSWUNIT_\n(SWE.3)" as UNIT
+
+rectangle "sw_qualification_test\nSWQT_\n(SWE.6)" as QT
+rectangle "sw_integration_test\nSWIT_\n(SWE.5)" as IT
+rectangle "sw_unit_test\nSWUT_\n(SWE.4)" as UT
+
+ARCH --> REQ : realizes
+DD --> ARCH : refines
+UNIT --> DD : implements
+
+UT --> UNIT : verifies
+IT --> ARCH : verifies
+QT --> REQ : verifies
+
+@enduml

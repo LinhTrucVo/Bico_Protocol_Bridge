@@ -44,7 +44,7 @@ A new component also creates `6_test/gtest/{fake,mock,stub}/`, `7_tools/index.rs
 3. Minimal and generic: the smallest set of operations every target can provide. Parameter checks, state, buffering and callback dispatch stay in `<drv>Unit.c`.
 4. Every function returns a status (`bool` or a `BPB_` enum) unless it cannot fail.
 5. Callbacks that may run in interrupt context are documented as such in a one-line comment.
-6. A change to `<drv>Porting.h` is an interface change for every hardware workspace: state it in the answer to the user.
+6. A change to `<drv>Porting.h` is an interface change for every hardware workspace: state it in the report.
 
 ## Coding rules
 
@@ -52,15 +52,23 @@ A new component also creates `6_test/gtest/{fake,mock,stub}/`, `7_tools/index.rs
 - A layer includes only `3_inc` headers of the layer directly below.
 - No dynamic memory allocation. Static buffers sized by `4_config` macros.
 - Public functions validate pointers and ranges and return an error status instead of crashing.
+- Code follows MISRA C:2012. A deviation needs a one-line comment `MISRA deviation: <rule> - <reason>`.
 
 ## Steps
 
-1. List the `sw_arch` items that are new or changed and the components that refine them.
+The step has two phases. The design phase ends with gate G3: `3_inc` and `4_config` are frozen and the code phase starts.
+
+**Design phase (DESIGNER)**
+
+1. Find the changed `sw_arch` items: `git diff -U1000 <base> -- 2_architecture` (`<base>` given by LEADER), and the components that refine them.
 2. Update `1_swcReq/<comp>Req.rst` (interface, constraints, error codes).
-3. Update `2_design` (`sw_detail`): units, data types, state machine, sequence for every public function.
-4. Update headers (`3_inc`, `4_config`), then `5_src`.
-5. Register a new component (`bicoProtocolBridgeSwComp.cmake`, toctree).
-6. Continue with SWE.4 for the unit tests of the changed units.
+3. Update `2_design` (`sw_detail`, `sw_unit` IDs): units, data types, state machine, sequence for every public function.
+4. Update `3_inc` and `4_config`. They must be final: tests and code are written against them in parallel.
+5. A new component needs registration (`bicoProtocolBridgeSwComp.cmake`, toctree): edit only if LEADER granted the file, otherwise request it.
+
+**Code phase (CODER)**
+
+6. Implement `5_src` from `2_design`, `3_inc` and `4_config`. Do not change them; return an interface change request instead.
 
 ## Traceability
 

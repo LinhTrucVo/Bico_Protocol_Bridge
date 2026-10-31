@@ -1,0 +1,32 @@
+@startuml
+title Agent team and responsibilities
+
+actor "User" as USER
+
+rectangle "VS Code Chat (.github/agents)" {
+  agent "LEADER\n--\ncoordinates, gates, commits" as LEADER
+  agent "ARCHITECT\n--\nSWE.1, SWE.2" as ARCHITECT
+  agent "DESIGNER\n--\nSWE.3 design, SWE.4" as DESIGNER
+  agent "CODER\n--\nSWE.3 code" as CODER
+  agent "INTEGRATOR\n--\nSWE.5, builds" as INTEGRATOR
+}
+
+USER --> LEADER : ticket, G1 approval
+LEADER --> USER : report, open questions
+
+LEADER --> ARCHITECT : task
+LEADER --> DESIGNER : task
+LEADER --> CODER : task
+LEADER --> INTEGRATOR : task
+
+ARCHITECT ..> LEADER : report
+DESIGNER ..> LEADER : report
+CODER ..> LEADER : report
+INTEGRATOR ..> LEADER : report
+
+DESIGNER ..> ARCHITECT : <<review G2>>\nrequirements, architecture
+ARCHITECT ..> DESIGNER : <<review G3>>\ndesign
+ARCHITECT ..> CODER : <<review G4>>\ncode
+LEADER ..> INTEGRATOR : <<review G5>>\nbuild results
+
+@enduml

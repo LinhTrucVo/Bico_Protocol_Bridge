@@ -1,0 +1,50 @@
+@startuml
+title Ticket workflow with gates G1 - G5
+
+start
+:User gives ticket ""0_ticket/<id>.rst"" to LEADER;
+:LEADER creates branch ""ticket/<id>"";
+
+repeat
+  :ARCHITECT: SWE.1 requirements;
+repeat while (G1: user approves requirements?) is (changes requested) not (approved)
+:LEADER commits ""G1 <id>: requirements"";
+
+repeat
+  :ARCHITECT: SWE.2 architecture;
+  :DESIGNER: feasibility review;
+repeat while (G2: findings?) is (yes, ARCHITECT fixes\nmax 2 rounds, then ask user) not (no)
+:LEADER commits ""G2 <id>: architecture"";
+
+repeat
+  :DESIGNER: SWE.3 design per component\n(1_swcReq, 2_design, 3_inc, 4_config);
+  :ARCHITECT: design review;
+repeat while (G3: findings?) is (yes, DESIGNER fixes) not (no)
+:LEADER commits ""G3 <id>: interfaces frozen"";
+note right: 3_inc and 4_config are frozen.\nPorting.h change is reported to the user.
+
+fork
+  :CODER: SWE.3 code (5_src);
+fork again
+  :DESIGNER: SWE.4 unit tests (6_test);
+fork again
+  :INTEGRATOR: SWE.5 scenarios\nand JSON data;
+end fork
+
+repeat
+  :INTEGRATOR: run unitTestBuild.sh;
+  :ARCHITECT: code review;
+repeat while (G4: failures or findings?) is (yes, LEADER assigns fix:\ncode -> CODER, test or design -> DESIGNER) not (no)
+:LEADER commits ""G4 <id>: units verified"";
+
+repeat
+  :INTEGRATOR: run integration tests,\nfull docGen.sh and unitTestBuild.sh;
+  :LEADER: review build results;
+repeat while (G5: tests fail, coverage < 90 %\nor new Sphinx-Needs warnings?) is (yes, LEADER assigns fix) not (no)
+:LEADER commits ""G5 <id>: integrated"";
+
+:LEADER reports to the user;
+:LEADER asks whether to delete the ticket;
+stop
+
+@enduml

@@ -12,6 +12,7 @@ Read `AGENTS.md` first. The fake rules are those of SWE.4 (`.agents/instruction/
 - Do not read or write `7_1_esp32_workspace` or any `7_x_*` hardware workspace.
 - Integrate the real sources of all components listed in `3_1_swComp/bicoProtocolBridgeSwComp.cmake`. Only the HAL (`<Drv>Port_*`) is faked.
 - Tests run on the host in the `bico_gtest_docker` image.
+- Timing: test cases and JSON data are written after gate G3 (interfaces frozen), in parallel with the code. Build and run after gate G4 (code and unit tests done).
 
 ## Inputs
 
@@ -26,8 +27,8 @@ Read `AGENTS.md` first. The fake rules are those of SWE.4 (`.agents/instruction/
 | `4_1_integrationTest/gtest/integrationTest<Scope>.cpp` | Test cases, one file per architecture scope (e.g. `SerialToDigital`) |
 | `4_1_integrationTest/gtest/data/<Suite>_<Case>.json` | Expected HAL calls and injected return values (SWE.4 JSON format) |
 | `4_1_integrationTest/gtest/CMakeLists.txt` | Test executable |
-| `4_1_integrationTest/index.rst` | `sw_integration_test` needs; add `../../4_1_integrationTest/index` to the toctree in `5_buildEnviroment/docGen/index.rst` if missing |
-| `5_buildEnviroment/unitTestBuild/CMakeLists.txt` | `add_subdirectory` of `4_1_integrationTest/gtest` |
+| `4_1_integrationTest/index.rst` | `sw_integration_test` needs; add `../../4_1_integrationTest/index` to the toctree in `5_buildEnviroment/docGen/index.rst` if missing (shared file, only if LEADER granted it) |
+| `5_buildEnviroment/unitTestBuild/CMakeLists.txt` | `add_subdirectory` of `4_1_integrationTest/gtest` (shared file, only if LEADER granted it) |
 
 ## Build
 

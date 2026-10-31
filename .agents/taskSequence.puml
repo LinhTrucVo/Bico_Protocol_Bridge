@@ -1,0 +1,25 @@
+@startuml
+title One delegated task (any step)
+
+participant "LEADER" as LEADER
+participant "Subagent\n(ARCHITECT, DESIGNER,\nCODER or INTEGRATOR)" as AGENT
+database "Git repository" as GIT
+
+LEADER -> AGENT : task\n(role, step, instructions.md, ticket,\ncomponents, input base commit,\nwritable folders, granted shared files)
+AGENT -> GIT : git diff <input base> -- <input folder>
+GIT --> AGENT : changed artefacts
+AGENT -> AGENT : read AGENTS.md and\n.agents/instruction/<step>/instructions.md
+AGENT -> GIT : write only the granted folders and files
+AGENT --> LEADER : report\n(status, files, need IDs, findings,\nshared file requests, open questions)
+
+alt shared file request
+  LEADER -> AGENT : later task with the shared file granted\n(one agent per shared file at a time)
+end
+
+alt interface change request (after G3)
+  LEADER -> LEADER : send DESIGNER a design fix,\nrepeat G3 for the component
+end
+
+LEADER -> GIT : commit at the gate\n"Gx <ticket id>: <title>"
+
+@enduml

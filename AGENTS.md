@@ -51,9 +51,26 @@ Read the skill of the step before starting it. Traceability uses the Sphinx-Need
 - **Documentation:** reStructuredText and PlantUML; each new folder has an `index.rst` included in its parent toctree.
 - **Change rule:** when an artefact changes, update the linked downstream artefacts (architecture, design, code, tests) in the same task.
 
+## Team workflow
+
+A ticket is processed by the custom agents in `.github/agents/`. Select **LEADER** in the chat agent picker and give it the ticket file.
+
+| Agent | Work | Reviews |
+|---|---|---|
+| LEADER | Coordinates, gates G1-G5, one local commit per gate on `ticket/<id>`, grants shared files | Build results (G5) |
+| ARCHITECT | SWE.1, SWE.2 | Design (G3), code (G4) |
+| DESIGNER | SWE.3 design (`1_swcReq`, `2_design`, `3_inc`, `4_config`), SWE.4 | Requirements and architecture feasibility (G2) |
+| CODER | SWE.3 code (`5_src`), MISRA C:2012 | - |
+| INTEGRATOR | SWE.5, runs `docGen.sh` and `unitTestBuild.sh` | - |
+
+- The user approves the requirements at G1.
+- `3_inc` and `4_config` are frozen at G3. After that, code, unit tests and integration tests are written in parallel.
+- Shared files (`3_1_swComp/bicoProtocolBridgeSwComp.cmake`, `5_buildEnviroment/unitTestBuild/CMakeLists.txt`, toctree `index.rst`) are edited only by the agent LEADER granted them to.
+- Each step finds its input changes with `git diff <previous gate commit> -- <input folder>`.
+
 ## Verification
 
-Both scripts run in Docker (Linux) and in CI (`.github/workflows/ci.yml`), from the repository root:
+Both scripts run in Docker (Linux) and in CI (`.github/workflows/ci.yml`), from the repository root. On Windows, run them with `wsl bash <script>`:
 
 - Documentation: `5_buildEnviroment/docGen/docGen.sh` -> `_build/docGen`. No new Sphinx-Needs warnings.
 - Unit tests and coverage: `5_buildEnviroment/unitTestBuild/unitTestBuild.sh` -> `_build/unitTestBuild`. No test failed and coverage should over 90%
