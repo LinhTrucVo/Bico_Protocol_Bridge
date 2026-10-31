@@ -32,13 +32,9 @@ Req-i2cMasterDriver-005: The component shall support timeout-based transfers.
 Req-i2cMasterDriver-006: The component shall provide bus scan and busy status APIs.
    Verification: ScanBus finds valid devices and IsBusy reports bus state.
 
-Variant Handling
-****************
+Hardware Access
+***************
 
-The component supports multiple hardware variant implementations through the CMake ``L1_VARIANT``
-build variable. The file ``i2cMasterDriverUnitEsp32.c`` provides the ESP32-specific implementation
-of the driver interface and is compiled instead of the default ``i2cMasterDriverUnit.c`` when
-``L1_VARIANT`` is set to ``Esp32``.
-The public interface defined in ``i2cMasterDriverUnit.h`` remains unchanged across all variants,
-ensuring API consistency for all upper layers.
+The component is hardware independent. It accesses the hardware only through the port API
+declared in ``i2cMasterDriverPorting.h``. Each hardware workspace implements this declaration.
 

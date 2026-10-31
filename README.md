@@ -7,22 +7,28 @@ The Bico Protocol Bridge is an embedded software project that provides protocol 
 ## 📁 Project Structure
 
 ```
-Bico_Protocol_Brigde/
+Bico_Protocol_Bridge/
+├── 0_ticket/                   # Change requests
 ├── 1_requirement/              # Feature requirements
 │   ├── SerialToAnalog/
 │   ├── SerialToDigital/
 │   ├── SerialToI2C/
 │   └── SerialToSPI/
 ├── 2_architecture/             # Architecture documentation
-│   └── fucntionView/
-│       ├── layer1Driver/
-│       ├── layer2Service/
-│       └── layer3Application/
-├── 3_1_swComp/                   # Software components (MAIN IMPLEMENTATION)
-│   ├── layer1Driver/           # Hardware abstraction drivers
+│   ├── fucntionView/
+│   │   ├── layer1Driver/
+│   │   ├── layer2Service/
+│   │   └── layer3Application/
+│   └── deploymentView/
+├── 3_1_swComp/                 # Software components (hardware independent)
+│   ├── layer1Driver/           # Drivers, each declares its HAL API in 3_inc/<drv>Porting.h
 │   ├── layer2Service/          # Business logic services
 │   └── layer3Application/      # Application logic
-├── 3_2_thirdPartiesSwComp/                    # Add-on modules
+├── 3_2_thirdPartiesSwComp/     # Third-party components
+├── 4_1_integrationTest/        # Software integration tests
+├── 4_2_qualificationTest/      # Software qualification tests
+├── 5_buildEnviroment/          # Doc generation, unit test build
+└── 7_1_esp32_workspace/        # ESP32 hardware workspace (implements the HAL API)
 ```
 
 ## 🎯 Features
@@ -108,8 +114,8 @@ Each component includes:
 - **Naming Convention**: 
   - Types: `ComponentName_TypeName_t`
   - Functions: `ComponentName_FunctionName()`
-  - Enums: `COMPONENT_NAME_ENUM_VALUE`
-  - Macros: `COMPONENT_MACRO_NAME`
+  - Enums: `BPB_COMPONENT_NAME_ENUM_VALUE`
+  - Macros: `BPB_COMPONENT_MACRO_NAME`
 
 - **File Organization**:
   - One component per directory
@@ -122,7 +128,7 @@ Each component includes:
 Components are designed with clear layer dependencies:
 - Layer 3 → depends on → Layer 2
 - Layer 2 → depends on → Layer 1  
-- Layer 1 → depends on → Hardware HAL (vendor-specific)
+- Layer 1 → depends on → its own HAL API `3_inc/<drv>Porting.h`, implemented by each hardware workspace
 
 
 ## 📞 Support

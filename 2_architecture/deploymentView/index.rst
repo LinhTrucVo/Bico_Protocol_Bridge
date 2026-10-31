@@ -19,7 +19,7 @@ Principles
    ``nvs*``, ``Arduino.h``, ``freertos/*``, ``stm32*``) is included anywhere in ``3_1_swComp``.
 #. Each layer1 driver is split into a **generic driver** (in ``3_1_swComp``) and a **port** (in the
    device workspace). The generic driver owns parameter checks, state handling, buffering and callback
-   dispatch. It calls a small port interface ``xxxPort.h`` (3-6 functions, standard C types only).
+   dispatch. It calls a small port interface ``3_inc/<drv>Porting.h`` (standard C types only).
 #. The device workspace **compiles the 3_1_swComp sources in place** and never copies them. There is a single source of truth.
 #. Exactly one port implementation is linked per build: the ESP32 port, the STM32 port or the fake port
    for host unit tests.
@@ -57,15 +57,15 @@ Folder layout
 
    Bico_Protocol_Bridge/
    ├── 3_1_swComp/                          # hardware independent
-   │   ├── bicoSwComp.cmake               # exports BICO_SWCOMP_SOURCES / _INCLUDE_DIRS
+   │   ├── bicoProtocolBridgeSwComp.cmake # exports BICO_PROTOCOL_BRIDGE_SWCOMP_SOURCES / _INCLUDE_DIRS
    │   ├── layer1Driver/<drv>/
-   │   │   ├── 3_inc/<drv>.h, <drv>Port.h # public API + port interface
+   │   │   ├── 3_inc/<drv>.h, <drv>Porting.h # public API + port interface
    │   │   ├── 4_config/<drv>Cfg.h        # default configuration
-   │   │   ├── 5_src/<drv>Unit.c          # generic driver, calls <drv>Port_*
+   │   │   ├── 5_src/<drv>Unit.c          # generic driver, calls <Drv>Port_*
    │   │   └── 6_test/gtest/fake/         # fake port for host tests
    │   ├── layer2Service/...
    │   └── layer3Application/...
-   ├── 6_ut/                              # host build, BICO_BUILD_TESTS=ON
+   ├── 5_buildEnviroment/unitTestBuild/   # host unit test build
    ├── 7_1_esp32_workspace/<project>/     # hardware dependent (ESP32)
    │   ├── CMakeLists.txt                 # ESP-IDF project
    │   ├── main/main.cpp                  # setup()/loop() -> Init/Run

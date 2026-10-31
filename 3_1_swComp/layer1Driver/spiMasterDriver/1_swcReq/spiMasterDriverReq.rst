@@ -29,13 +29,9 @@ Req-spiMasterDriver-004: The component shall provide timeout-based transmission.
 Req-spiMasterDriver-005: The component shall provide busy status and callback registration.
    Verification: IsBusy reflects transfer state and callbacks fire on completion.
 
-Variant Handling
-****************
+Hardware Access
+***************
 
-The component supports multiple hardware variant implementations through the CMake ``L1_VARIANT``
-build variable. The file ``spiMasterDriverUnitEsp32.c`` provides the ESP32-specific implementation
-of the driver interface and is compiled instead of the default ``spiMasterDriverUnit.c`` when
-``L1_VARIANT`` is set to ``Esp32``.
-The public interface defined in ``spiMasterDriverUnit.h`` remains unchanged across all variants,
-ensuring API consistency for all upper layers.
+The component is hardware independent. It accesses the hardware only through the port API
+declared in ``spiMasterDriverPorting.h``. Each hardware workspace implements this declaration.
 

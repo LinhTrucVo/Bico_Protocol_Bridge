@@ -7,7 +7,7 @@ package "3_1_swComp (hardware independent)" as SW {
   component "layer3Application\ncentralAppController" as L3
   component "layer2Service\ncomService, configService,\nserialize, deserialize, ..." as L2
   component "layer1Driver (generic)\nadcDriver, gpioDriver, serialDriver, ..." as L1
-  interface "xxxPort.h\n(port interfaces)" as PORT
+  interface "<drv>Porting.h\n(port interfaces)" as PORT
   artifact "bicoSwComp.cmake\n(source + include list)" as LIST
   L3 --> L2
   L2 --> L1

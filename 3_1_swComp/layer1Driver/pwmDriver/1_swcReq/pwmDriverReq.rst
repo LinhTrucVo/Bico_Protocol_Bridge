@@ -29,13 +29,9 @@ Req-pwmDriver-004: The component shall start and stop PWM outputs.
 Req-pwmDriver-005: The component shall report channel running status and configuration.
    Verification: IsChannelRunning and GetConfiguration return correct values.
 
-Variant Handling
-****************
+Hardware Access
+***************
 
-The component supports multiple hardware variant implementations through the CMake ``L1_VARIANT``
-build variable. The file ``pwmDriverUnitEsp32.c`` provides the ESP32-specific implementation
-of the driver interface and is compiled instead of the default ``pwmDriverUnit.c`` when
-``L1_VARIANT`` is set to ``Esp32``.
-The public interface defined in ``pwmDriverUnit.h`` remains unchanged across all variants,
-ensuring API consistency for all upper layers.
+The component is hardware independent. It accesses the hardware only through the port API
+declared in ``pwmDriverPorting.h``. Each hardware workspace implements this declaration.
 

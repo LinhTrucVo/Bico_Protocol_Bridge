@@ -32,13 +32,9 @@ Req-serialDriver-005: The component shall provide RX/TX callback registration.
 Req-serialDriver-006: The component shall provide buffer flush functions.
    Verification: FlushRx and FlushTx clear pending buffers.
 
-Variant Handling
-****************
+Hardware Access
+***************
 
-The component supports multiple hardware variant implementations through the CMake ``L1_VARIANT``
-build variable. The file ``serialDriverUnitEsp32.c`` provides the ESP32-specific implementation
-of the driver interface and is compiled instead of the default ``serialDriverUnit.c`` when
-``L1_VARIANT`` is set to ``Esp32``.
-The public interface defined in ``serialDriverUnit.h`` remains unchanged across all variants,
-ensuring API consistency for all upper layers.
+The component is hardware independent. It accesses the hardware only through the port API
+declared in ``serialDriverPorting.h``. Each hardware workspace implements this declaration.
 
