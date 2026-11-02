@@ -1,6 +1,6 @@
 ---
 name: swe2-architecture-design
-description: Use when software requirements in 1_requirement are new or changed and the software architecture in 2_architecture must be created or updated (ASPICE SWE.2).
+description: Use when software requirements in 1_requirement are new or changed and the software architecture in 2_architecture and the component requirements in 3_1_swComp/<layer>/<comp>/1_swcReq must be created or updated (ASPICE SWE.2).
 ---
 
 # SWE.2 Software Architectural Design
@@ -22,13 +22,15 @@ Read `AGENTS.md` first.
 - `2_architecture/fucntionView/<layer>/<comp>/` with `index.rst`, `staticView.puml`, `informationFlow.puml`, `dynamicBehaviour.puml`
 - `2_architecture/deploymentView/` only when the port boundary or build integration changes
 - A new component is added to the toctree in `2_architecture/fucntionView/index.rst`
+- `3_1_swComp/<layer>/<comp>/1_swcReq/<comp>Req.rst`: component requirements (interface, constraints, error behaviour). For a new component create only the `1_swcReq/` folder; DESIGNER creates the rest of the component
 
 ## Steps
 
 1. Find the `sw_req` needs added, changed or removed by SWE.1: `git diff -U1000 <base> -- 1_requirement`, where `<base>` is the commit of the previous gate given by LEADER (`HEAD` if SWE.1 is not committed). Note the `:id:` of the enclosing `sw_req` block of every change. Every `swe1_requirement_without_architecture` warning of `docGen.sh` is also a `sw_req` to handle.
-2. Allocate each one to components following ISO/IEC/IEEE 42010. Respect the layers: `layer3Application` -> `layer2Service` -> `layer1Driver` -> `<Drv>Port_*`. A layer calls only the layer directly below.
+2. The architechture following arc42. Respect the layers: `layer3Application` -> `layer2Service` -> `layer1Driver` -> `<Drv>Port_*`. A layer calls only the layer directly below.
 3. For each affected component, update `index.rst` with: Description, Static view, Information flow, Dynamic behaviour, Timing behaviour, Resource consumption, and the interfaces it provides and uses.
 4. For a layer1 driver, name the HAL operations it needs (e.g. GPIO: init/configure, read, write, toggle) as port interface, using standard C types only.
+5. After the architecture of a component is complete, write its component requirements in `1_swcReq/<comp>Req.rst` from the `sw_req` needs and the component `sw_arch`: provided and used interface, constraints, error behaviour and error codes. Each requirement is concrete and verifiable, and does not name a microcontroller, SDK or vendor API.
 
 ## Traceability
 
@@ -44,4 +46,5 @@ Read `AGENTS.md` first.
 ## Done criteria
 
 - Every new or changed `sw_req` is realized by at least one `sw_arch`.
+- Every component with a new or changed `sw_arch` has up-to-date component requirements in `1_swcReq`.
 - `5_buildEnviroment/docGen/docGen.sh` builds without errors and without the warnings `swe1_requirement_without_architecture` and `swe2_architecture_without_requirement`. `swe2_architecture_without_detailed_design` is expected until SWE.3 is done.

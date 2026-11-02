@@ -70,12 +70,12 @@ Agent team
      - Build results (G5)
    * - ARCHITECT
      - SWE.1, SWE.2
-     - ``1_requirement/``, ``2_architecture/``
+     - ``1_requirement/``, ``2_architecture/``, ``<comp>/1_swcReq``
      - Design (G3), code (G4) against the architecture
    * - DESIGNER
      - SWE.3 design, SWE.4
-     - ``<comp>/1_swcReq``, ``2_design``, ``3_inc``, ``4_config``, ``6_test``
-     - Requirements and architecture feasibility (G2)
+     - ``<comp>/2_design``, ``3_inc``, ``4_config``, ``6_test``
+     - Requirements, architecture and component requirements feasibility (G2)
    * - CODER
      - SWE.3 code
      - ``<comp>/5_src`` (MISRA C:2012)
@@ -111,7 +111,7 @@ Gates
    * - G2
      - Architecture feasible
      - DESIGNER
-     - Requirements are implementable above the HAL, not contradictory, concrete; every ``sw_req`` is realized by an ``sw_arch``.
+     - Requirements are implementable above the HAL, not contradictory, concrete; every ``sw_req`` is realized by an ``sw_arch``; component requirements in ``1_swcReq`` are consistent and concrete.
        After 2 rounds without agreement, LEADER asks the user.
      - ``G2 <id>: architecture``
    * - G3

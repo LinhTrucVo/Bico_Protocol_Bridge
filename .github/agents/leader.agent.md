@@ -21,8 +21,8 @@ Read `AGENTS.md` before starting.
 
 | Agent | SWE steps | Writes | Reviews |
 |---|---|---|---|
-| ARCHITECT | SWE.1, SWE.2 | `1_requirement/`, `2_architecture/` | Design (G3), code (G4) against the architecture |
-| DESIGNER | SWE.3 design, SWE.4 | `<comp>/1_swcReq`, `2_design`, `3_inc`, `4_config`, `6_test` | Requirements and architecture feasibility (G2) |
+| ARCHITECT | SWE.1, SWE.2 | `1_requirement/`, `2_architecture/`, `<comp>/1_swcReq` | Design (G3), code (G4) against the architecture |
+| DESIGNER | SWE.3 design, SWE.4 | `<comp>/2_design`, `3_inc`, `4_config`, `6_test` | Requirements, architecture and component requirements feasibility (G2) |
 | CODER | SWE.3 code | `<comp>/5_src` | - |
 | INTEGRATOR | SWE.5, builds | `4_1_integrationTest/` | Build and test results |
 
@@ -34,8 +34,8 @@ Track every step with the todo list. Create the branch `ticket/<ticket id>` at s
 
 1. **SWE.1** - ARCHITECT writes the requirements.
    **G1:** show the changed `sw_req` to the user and wait for approval. Commit `G1 <ticket id>: requirements`.
-2. **SWE.2** - ARCHITECT writes the architecture.
-   **G2:** DESIGNER reviews requirements and architecture for feasibility. On findings, ARCHITECT fixes; after 2 rounds without agreement, ask the user. Commit `G2 <ticket id>: architecture`.
+2. **SWE.2** - ARCHITECT writes the architecture and the component requirements (`1_swcReq`).
+   **G2:** DESIGNER reviews requirements, architecture and component requirements for feasibility. On findings, ARCHITECT fixes; after 2 rounds without agreement, ask the user. Commit `G2 <ticket id>: architecture`.
 3. **SWE.3 design** - DESIGNER, one task per affected component (independent components in the same turn).
    **G3:** ARCHITECT reviews the design. On findings, DESIGNER fixes. Commit `G3 <ticket id>: interfaces frozen`. If a `*Porting.h` changed, tell the user it is an interface change for the hardware workspaces (no stop).
 4. **Parallel, per component** (same turn): CODER implements `5_src`; DESIGNER writes the unit tests (SWE.4); INTEGRATOR writes integration scenarios and JSON data (SWE.5).

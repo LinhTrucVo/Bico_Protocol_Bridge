@@ -20,7 +20,7 @@ The tools that build the work products are in `5_buildEnviroment`.
 | `0_ticket/` | Change requests `<yymmdd>_<hhmmss>.rst`, format in `0_ticket/ticket_template.rst`. Deleted after the implementation is done (ask the user first). | User |
 | `1_requirement/<Feature>/` | Software requirements | SWE.1 |
 | `2_architecture/` | Software architecture (`fucntionView`, `deploymentView`) | SWE.2 |
-| `3_1_swComp/<layer>/<comp>/` | Detailed design, code, unit tests | SWE.3, SWE.4 |
+| `3_1_swComp/<layer>/<comp>/` | Component requirements, detailed design, code, unit tests | SWE.2 (`1_swcReq`), SWE.3, SWE.4 |
 | `3_2_thirdPartiesSwComp/` | Third-party components (read-only, no unit test) | - |
 | `4_1_integrationTest/` | Software integration tests | SWE.5 |
 | `4_2_qualificationTest/` | Software qualification tests | SWE.6 |
@@ -35,8 +35,8 @@ Read the instruction of the step before starting it. Traceability uses the Sphin
 | Step | Instruction | Input | Output | Need type | Link |
 |---|---|---|---|---|---|
 | SWE.1 | `.agents/instruction/1_requirement_analyzer/instructions.md` | `0_ticket` | `1_requirement` | `sw_req` | - |
-| SWE.2 | `.agents/instruction/2_architecture_design/instructions.md` | `1_requirement` | `2_architecture` | `sw_arch` | `realizes` -> `sw_req` |
-| SWE.3 | `.agents/instruction/3_detailed_design_unit_construction/instructions.md` | `1_requirement`, `2_architecture` | `3_1_swComp/<comp>/1_swcReq..5_src` | `sw_detail`, `sw_unit` | `refines` -> `sw_arch`, `implements` -> `sw_detail` |
+| SWE.2 | `.agents/instruction/2_architecture_design/instructions.md` | `1_requirement` | `2_architecture`, `3_1_swComp/<comp>/1_swcReq` | `sw_arch` | `realizes` -> `sw_req` |
+| SWE.3 | `.agents/instruction/3_detailed_design_unit_construction/instructions.md` | `1_requirement`, `2_architecture`, `3_1_swComp/<comp>/1_swcReq` | `3_1_swComp/<comp>/2_design..5_src` | `sw_detail`, `sw_unit` | `refines` -> `sw_arch`, `implements` -> `sw_detail` |
 | SWE.4 | `.agents/instruction/4_unit_verification/instructions.md` | `3_1_swComp/<comp>` | `3_1_swComp/<comp>/6_test/gtest` | `sw_unit_test` | `verifies` -> `sw_detail` |
 | SWE.5 | `.agents/instruction/5_integration_test/instructions.md` | `2_architecture`, `3_1_swComp/<comp>/2_design` | `4_1_integrationTest` | `sw_integration_test` | `verifies` -> `sw_arch` |
 | SWE.6 | `.agents/instruction/6_qualification_test/instructions.md` | `1_requirement` | `4_2_qualificationTest` | `sw_qualification_test` | `verifies` -> `sw_req` |
@@ -58,8 +58,8 @@ A ticket is processed by the custom agents in `.github/agents/`. Select **LEADER
 | Agent | Work | Reviews |
 |---|---|---|
 | LEADER | Coordinates, gates G1-G5, one local commit per gate on `ticket/<id>`, grants shared files | Build results (G5) |
-| ARCHITECT | SWE.1, SWE.2 | Design (G3), code (G4) |
-| DESIGNER | SWE.3 design (`1_swcReq`, `2_design`, `3_inc`, `4_config`), SWE.4 | Requirements and architecture feasibility (G2) |
+| ARCHITECT | SWE.1, SWE.2 (incl. component requirements `1_swcReq`) | Design (G3), code (G4) |
+| DESIGNER | SWE.3 design (`2_design`, `3_inc`, `4_config`), SWE.4 | Requirements, architecture and component requirements feasibility (G2) |
 | CODER | SWE.3 code (`5_src`), MISRA C:2012 | - |
 | INTEGRATOR | SWE.5, runs `docGen.sh` and `unitTestBuild.sh` | - |
 

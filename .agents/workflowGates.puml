@@ -11,13 +11,13 @@ repeat while (G1: user approves requirements?) is (changes requested) not (appro
 :LEADER commits ""G1 <id>: requirements"";
 
 repeat
-  :ARCHITECT: SWE.2 architecture;
+  :ARCHITECT: SWE.2 architecture\nand component requirements (1_swcReq);
   :DESIGNER: feasibility review;
 repeat while (G2: findings?) is (yes, ARCHITECT fixes\nmax 2 rounds, then ask user) not (no)
 :LEADER commits ""G2 <id>: architecture"";
 
 repeat
-  :DESIGNER: SWE.3 design per component\n(1_swcReq, 2_design, 3_inc, 4_config);
+  :DESIGNER: SWE.3 design per component\n(2_design, 3_inc, 4_config);
   :ARCHITECT: design review;
 repeat while (G3: findings?) is (yes, DESIGNER fixes) not (no)
 :LEADER commits ""G3 <id>: interfaces frozen"";

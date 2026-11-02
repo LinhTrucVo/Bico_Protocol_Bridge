@@ -16,7 +16,7 @@ ARCH --> REQ : realizes
 DD --> ARCH : refines
 UNIT --> DD : implements
 
-UT --> UNIT : verifies
+UT --> DD : verifies
 IT --> ARCH : verifies
 QT --> REQ : verifies
 

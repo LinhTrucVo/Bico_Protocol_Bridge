@@ -1,6 +1,6 @@
 ---
 name: swe3-detailed-design-unit-construction
-description: Use when the architecture in 2_architecture is new or changed and a software component in 3_1_swComp must be designed or coded - component requirements, detailed design, HAL (port) API declaration and C source (ASPICE SWE.3).
+description: Use when the architecture in 2_architecture is new or changed and a software component in 3_1_swComp must be designed or coded - detailed design, HAL (port) API declaration and C source (ASPICE SWE.3).
 ---
 
 # SWE.3 Software Detailed Design and Unit Construction
@@ -18,6 +18,7 @@ Read `AGENTS.md` first. Unit tests are written with the SWE.4 instruction (`.age
 
 - `1_requirement/<Feature>/index.rst` (`sw_req`)
 - `2_architecture/fucntionView/<layer>/<comp>/` (`sw_arch`)
+- `3_1_swComp/<layer>/<comp>/1_swcReq/<comp>Req.rst` (component requirements written by SWE.2; read-only here)
 - Existing `3_1_swComp/<layer>/<comp>/`
 
 ## Outputs
@@ -26,7 +27,6 @@ In `3_1_swComp/<layer>/<comp>/` (`<layer>` is `layer1Driver`, `layer2Service` or
 
 | Path | Content |
 |---|---|
-| `1_swcReq/<comp>Req.rst` | Component requirements: interface, constraints, error behaviour |
 | `2_design/<comp>Comp.rst`, `<comp>Unit.rst`, `<comp>Cfg.rst` | Detailed design (`sw_detail`) |
 | `2_design/<comp>StaticStructure.puml`, `<comp>StateMachine.puml`, `<comp>SequenceDiagram.puml` | Design diagrams |
 | `3_inc/<comp>.h` | Public API for the layer above |
@@ -35,7 +35,7 @@ In `3_1_swComp/<layer>/<comp>/` (`<layer>` is `layer1Driver`, `layer2Service` or
 | `5_src/<comp>Unit.c`, `5_src/<comp>Unit.h` | Implementation (`sw_unit`) |
 | `CMakeLists.txt`, `index.rst` | Library target, documentation entry |
 
-A new component also creates `6_test/gtest/{fake,mock,stub}/`, `7_tools/index.rst`, `8_misc/index.rst`, is added to `3_1_swComp/bicoProtocolBridgeSwComp.cmake` and to the toctree in `3_1_swComp/index.rst`.
+A new component also creates `1_swcReq/` (if SWE.2 has not), `6_test/gtest/{fake,mock,stub}/`, `7_tools/index.rst`, `8_misc/index.rst`, is added to `3_1_swComp/bicoProtocolBridgeSwComp.cmake` and to the toctree in `3_1_swComp/index.rst`.
 
 ## HAL (port) API rules (layer1 drivers)
 
@@ -50,7 +50,7 @@ A new component also creates `6_test/gtest/{fake,mock,stub}/`, `7_tools/index.rs
 
 - Every macro and enum value starts with `BPB_`. Include guards: `BPB_<FILE>_H`.
 - A layer includes only `3_inc` headers of the layer directly below.
-- No dynamic memory allocation. Static buffers sized by `4_config` macros.
+- Every macors must be in `4_config`.
 - Public functions validate pointers and ranges and return an error status instead of crashing.
 - Code follows MISRA C:2012. A deviation needs a one-line comment `MISRA deviation: <rule> - <reason>`.
 
@@ -61,8 +61,8 @@ The step has two phases. The design phase ends with gate G3: `3_inc` and `4_conf
 **Design phase (DESIGNER)**
 
 1. Find the changed `sw_arch` items: `git diff -U1000 <base> -- 2_architecture` (`<base>` given by LEADER), and the components that refine them.
-2. Update `1_swcReq/<comp>Req.rst` (interface, constraints, error codes).
-3. Update `2_design` (`sw_detail`, `sw_unit` IDs): units, data types, state machine, sequence for every public function.
+2. Read `1_swcReq/<comp>Req.rst`. Do not change it; if a component requirement is wrong or incomplete, return a finding for ARCHITECT.
+3. Update `2_design` (`sw_detail`, `sw_unit` IDs): units, data types, state machine, sequence for every public function; every component requirement is covered.
 4. Update `3_inc` and `4_config`. They must be final: tests and code are written against them in parallel.
 5. A new component needs registration (`bicoProtocolBridgeSwComp.cmake`, toctree): edit only if LEADER granted the file, otherwise request it.
 

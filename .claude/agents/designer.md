@@ -1,6 +1,6 @@
 ---
 name: "designer"
-description: "Use for Bico Protocol Bridge feasibility review of requirements and architecture (gate G2), detailed design of a software component (SWE.3 design: 1_swcReq, 2_design, 3_inc, 4_config) and its unit tests (SWE.4: 6_test). Defined in .github/agents/designer.agent.md"
+description: "Use for Bico Protocol Bridge feasibility review of requirements and architecture (gate G2), detailed design of a software component (SWE.3 design: 2_design, 3_inc, 4_config) and its unit tests (SWE.4: 6_test). Defined in .github/agents/designer.agent.md"
 model: sonnet
 memory: project
 ---

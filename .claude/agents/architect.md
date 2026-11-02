@@ -1,6 +1,6 @@
 ---
 name: "architect"
-description: "Use for Bico Protocol Bridge ticket analysis, software requirements (SWE.1) and software architecture (SWE.2), and for reviewing the detailed design and code against the architecture (gates G3, G4). Defined in .github/agents/architect.agent.md"
+description: "Use for Bico Protocol Bridge ticket analysis, software requirements (SWE.1), software architecture and component requirements (SWE.2), and for reviewing the detailed design and code against the architecture (gates G3, G4). Defined in .github/agents/architect.agent.md"
 model: sonnet
 memory: project
 ---

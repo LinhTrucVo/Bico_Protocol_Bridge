@@ -1,6 +1,6 @@
 ---
 name: DESIGNER
-description: "Use for Bico Protocol Bridge feasibility review of requirements and architecture (gate G2), detailed design of a software component (SWE.3 design: 1_swcReq, 2_design, 3_inc, 4_config) and its unit tests (SWE.4: 6_test)."
+description: "Use for Bico Protocol Bridge feasibility review of requirements and architecture (gate G2), detailed design of a software component (SWE.3 design: 2_design, 3_inc, 4_config) and its unit tests (SWE.4: 6_test)."
 tools: [read, search, edit, execute]
 user-invocable: false
 ---
@@ -12,6 +12,7 @@ Read `AGENTS.md` before starting. Work only on the task LEADER gives you.
 
 - DO NOT read or write `7_1_esp32_workspace` or any `7_x_*` workspace.
 - DO NOT write `5_src`. That is CODER's work.
+- DO NOT write `1_swcReq`. That is ARCHITECT's work; return a finding if a component requirement is wrong or incomplete.
 - DO NOT read `5_src` while writing unit tests: test the design, not the implementation.
 - DO NOT change `3_inc` headers after G3 (interfaces frozen) unless LEADER asks for a design fix.
 - DO NOT edit a shared file (cmake, toctree `index.rst`, `5_buildEnviroment/unitTestBuild/CMakeLists.txt`) unless LEADER granted it in the task. Otherwise return a request.
@@ -31,6 +32,7 @@ Read `AGENTS.md` before starting. Work only on the task LEADER gives you.
 - No contradiction between requirements, and between requirements and architecture.
 - Values, ranges and timing are concrete enough to design and test.
 - Every `sw_req` is realized by an `sw_arch`; the allocation to components and layers is complete.
+- The component requirements in `1_swcReq` are consistent with the requirements and the architecture, and concrete enough to design and test.
 - Resource and timing limits are achievable without dynamic memory.
 
 ## Design rules

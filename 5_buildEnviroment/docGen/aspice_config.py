@@ -135,8 +135,8 @@ needs_schema_validation_enabled = True
 # SWDD   --refines--> SWARCH
 # SWUNIT --implements--> SWDD
 #
-# SWUT --verifies--> SWUNIT
-# SWIT --verifies--> SWARCH or SWUNIT
+# SWUT --verifies--> SWDD
+# SWIT --verifies--> SWARCH
 # SWQT --verifies--> SWREQ
 #
 # Reverse link fields are generated automatically:
@@ -183,7 +183,7 @@ needs_links = {
         "incoming": "verified by",
         "outgoing": "verifies",
         "target_types": [
-            "sw_unit",
+            "sw_detail",
             "sw_arch",
             "sw_req",
         ],
@@ -266,10 +266,10 @@ needs_warnings = {
     # SWE.4 - Software Unit Verification
     # --------------------------------------------------------
 
-    # Every software unit must have at least one unit-test
+    # Every detailed-design item must have at least one unit-test
     # verification link.
-    "swe4_unit_without_unit_verification": (
-        'type == "sw_unit" and not verifies_back'
+    "swe4_design_without_unit_verification": (
+        'type == "sw_detail" and not verifies_back'
     ),
 
     # Every unit-test item must link to a verification target.
