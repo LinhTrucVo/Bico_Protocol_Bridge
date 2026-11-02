@@ -5,3 +5,4 @@
 sphinx==8.2.3
 sphinxcontrib-plantuml==0.30
 sphinx_rtd_theme==3.0.2
+sphinx-needs==5.1.0
