@@ -118,15 +118,16 @@ Test names: `TEST_F(<Comp>Test, <Function>_<Condition>_<ExpectedResult>)`.
 ```rst
 .. sw_unit_test:: GpioDriver ConfigurePin tests
    :id: SWUT_GPIODRIVER_CONFIGUREPIN
-   :verifies: SWUNIT_GPIODRIVER
+   :verifies: SWDD_GPIODRIVER_CONFIGUREPIN
    :verification_result: passed
 ```
 
 - Written in `6_test/gtest/index.rst` (create it and add it to the component `index.rst` toctree).
+- `:verifies:` links to the `sw_detail` (detailed design) items the tests check, not to the `sw_unit`.
 - `:verification_result:` is one of `not_run`, `passed`, `failed`, `blocked`, `not_applicable`.
 
 ## Done criteria
 
-- Every `sw_unit` is verified by at least one `sw_unit_test`.
+- Every `sw_detail` is verified by at least one `sw_unit_test`.
 - `5_buildEnviroment/unitTestBuild/unitTestBuild.sh` passes all tests. Line and branch coverage of the changed unit in `_build/unitTestBuild` are at least 90 % and are reported.
 - `5_buildEnviroment/docGen/docGen.sh` builds without new warnings.

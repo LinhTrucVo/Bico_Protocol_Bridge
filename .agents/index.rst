@@ -4,8 +4,8 @@ Agent Workflow
 .. What is this document:
 .. How a ticket is processed by the AI agent team, from the change request to the integrated software.
 
-A ticket is processed by five custom agents defined in ``.github/agents/``. Each agent follows the
-project rules in ``AGENTS.md`` and the step instructions in ``.agents/instruction/``.
+A ticket is processed by five custom agents defined in ``.github/agents/``, ``.claude/agents``,... or any other agent directories. 
+Each agent follows the project rules in ``AGENTS.md`` and the step instructions in ``.agents/instruction/``.
 Agents work only above the HAL and never read or write a hardware workspace (``7_x_*``).
 
 Acronyms and terms
@@ -18,7 +18,7 @@ Acronyms and terms
    * - Term
      - Meaning
    * - ASPICE
-     - Automotive SPICE (Software Process Improvement and Capability dEtermination), version 4.0. Process standard followed by this project.
+     - Automotive SPICE (Software Process Improvement and Capability determination), version 4.0. Process standard followed by this project.
    * - SWE.1 ... SWE.6
      - ASPICE software engineering process steps: SWE.1 Software Requirements Analysis, SWE.2 Software Architectural Design,
        SWE.3 Software Detailed Design and Unit Construction, SWE.4 Software Unit Verification,
@@ -197,7 +197,7 @@ Traceability
    * - SWE.4
      - ``sw_unit_test``
      - ``SWUT_``
-     - ``verifies`` -> ``sw_unit``
+     - ``verifies`` -> ``sw_detail``
      - ``4_unit_verification/instructions.md``
    * - SWE.5
      - ``sw_integration_test``

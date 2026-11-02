@@ -28,16 +28,16 @@ The tools that build the work products are in `5_buildEnviroment`.
 | `7_x_*_workspace/` | Hardware workspaces (out of scope) | Separate agent |
 | `_build/` | Generated output (never edit) | Build scripts |
 
-## Skills
+## Instructions
 
-Read the skill of the step before starting it. Traceability uses the Sphinx-Needs types and links defined in `5_buildEnviroment/docGen/aspice_config.py`.
+Read the instruction of the step before starting it. Traceability uses the Sphinx-Needs types and links defined in `5_buildEnviroment/docGen/aspice_config.py`.
 
-| Step | Skill | Input | Output | Need type | Link |
+| Step | Instruction | Input | Output | Need type | Link |
 |---|---|---|---|---|---|
 | SWE.1 | `.agents/instruction/1_requirement_analyzer/instructions.md` | `0_ticket` | `1_requirement` | `sw_req` | - |
 | SWE.2 | `.agents/instruction/2_architecture_design/instructions.md` | `1_requirement` | `2_architecture` | `sw_arch` | `realizes` -> `sw_req` |
 | SWE.3 | `.agents/instruction/3_detailed_design_unit_construction/instructions.md` | `1_requirement`, `2_architecture` | `3_1_swComp/<comp>/1_swcReq..5_src` | `sw_detail`, `sw_unit` | `refines` -> `sw_arch`, `implements` -> `sw_detail` |
-| SWE.4 | `.agents/instruction/4_unit_verification/instructions.md` | `3_1_swComp/<comp>` | `3_1_swComp/<comp>/6_test/gtest` | `sw_unit_test` | `verifies` -> `sw_unit` |
+| SWE.4 | `.agents/instruction/4_unit_verification/instructions.md` | `3_1_swComp/<comp>` | `3_1_swComp/<comp>/6_test/gtest` | `sw_unit_test` | `verifies` -> `sw_detail` |
 | SWE.5 | `.agents/instruction/5_integration_test/instructions.md` | `2_architecture`, `3_1_swComp/<comp>/2_design` | `4_1_integrationTest` | `sw_integration_test` | `verifies` -> `sw_arch` |
 | SWE.6 | `.agents/instruction/6_qualification_test/instructions.md` | `1_requirement` | `4_2_qualificationTest` | `sw_qualification_test` | `verifies` -> `sw_req` |
 
