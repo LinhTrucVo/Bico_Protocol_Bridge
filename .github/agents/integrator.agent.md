@@ -32,7 +32,7 @@ Always from the repository root.
    | OS | Documentation | Unit and integration tests |
    |---|---|---|
    | Linux | `bash 5_buildEnviroment/docGen/docGen.sh` | `bash 5_buildEnviroment/unitTestBuild/unitTestBuild.sh` |
-   | Windows | `wsl bash 5_buildEnviroment/docGen/docGen.sh` | `wsl bash 5_buildEnviroment/unitTestBuild/unitTestBuild.sh` |
+   | Windows | `wsl bash -c 'dos2unix 5_buildEnviroment/docGen/docGen.sh && 5_buildEnviroment/docGen/docGen.sh'` | `wsl bash -c 'dos2unix 5_buildEnviroment/unitTestBuild/unitTestBuild.sh && 5_buildEnviroment/unitTestBuild/unitTestBuild.sh'` |
 
 3. If Docker or WSL is not available, report `BLOCKED` with the error; do not try to install anything.
 4. Docker reuses the containers `Bico_Protocol_Bridge_docGen` and `Bico_Protocol_Bridge_unittestBuild`. If a build script changed, tell LEADER they must be removed (`docker rm <name>`); do not remove them yourself.
