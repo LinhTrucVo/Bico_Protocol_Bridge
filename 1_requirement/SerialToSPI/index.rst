@@ -1,5 +1,5 @@
-Serial To SPI Architecture
-##########################
+Serial To SPI
+#############
 
 .. What is Feature:
 .. Characteristics or capabilities that a product offers to users
@@ -7,13 +7,8 @@ Serial To SPI Architecture
 .. Answers: "What's special about it? What do users gain?"
 .. Example: 108MP camera, 120Hz display, 65W fast charging, IP68 water resistance
 
-With Serial to SPI Architecture, users can seamlessly convert serial data into SPI format, 
+With Serial to SPI, users can seamlessly convert serial data into SPI format, 
 from that the user can interface with SPI-based devices using simple serial communication protocols.
-
-Supported functions include:
-- SPI Parameter configuration (can save in non-volatile storage, from that user does not need to reconfigure after power cycle).
-- Data transmission from Serial to SPI.
-- Data reception from SPI to Serial.
 
 User benefits
 ****************
@@ -25,7 +20,13 @@ This simplifies prototyping and development, saving time and effort.
 Use case
 *****************
 When a user wants to connect a serial device (like a microcontroller or sensor) to an SPI peripheral (like an SPI-based display or memory chip),
-the user can use the Serial to SPI Architecture to facilitate communication between the two devices easily without programming complexity.
+the user can use the Serial
+
+Supported functions include:
+- SPI Parameter configuration: Clock speed, Mode (0, 1, 2, 3), and Bit order, Controller mode (Master/Slave), Chip Select polarity, Full/Half Duplex
+- Configuration persistence in non-volatile storage (users do not need to reconfigure after power cycle).
+- Data transmission from Serial to SPI.
+- Data reception from SPI to Serial. to SPI Architecture to facilitate communication between the two devices easily without programming complexity.
 ..  uml:: useCase.puml
 
 Verification criteria
