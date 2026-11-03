@@ -5,7 +5,7 @@ description: Use when components in 3_1_swComp are new or changed and their inte
 
 # SWE.5 Software Integration and Integration Test
 
-Read `AGENTS.md` first. The fake rules are those of SWE.4 (`.agents/instruction/4_unit_verification/instructions.md`).
+Read `AGENTS.md` first. The fake rules are those of SWE.4 (`.agents/instruction/aspice_swe4_unit_verificationion/instructions.md`).
 
 ## Scope
 

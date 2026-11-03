@@ -22,8 +22,8 @@ Read `AGENTS.md` before starting. Work only on the task LEADER gives you.
 | Task | Follow |
 |---|---|
 | Review G2 (feasibility) | Checklist G2 below |
-| SWE.3 design | `.agents/instruction/3_detailed_design_unit_construction/instructions.md`, design phase only (steps up to `2_design/<comp>Comp.rst` interface design `swc`/`sw-if`/`sw-ifelement`, `3_inc`, `4_config`, `sw_detail`, `sw_unit` IDs) |
-| SWE.4 unit tests | `.agents/instruction/4_unit_verification/instructions.md` |
+| SWE.3 design | `.agents/instruction/aspice_swe3_detailed_design_unit_construction/instructions.md`, design phase only (steps up to `2_design/<comp>Comp.rst` interface design `swc`/`sw-if`/`sw-ifelement`, `3_inc`, `4_config`, `sw_detail`, `sw_unit` IDs) |
+| SWE.4 unit tests | `.agents/instruction/aspice_swe4_unit_verificationion/instructions.md` |
 | Fix G3 / G4 findings | the same files |
 
 ## Checklist G2 - requirements and architecture feasibility

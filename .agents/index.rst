@@ -183,32 +183,32 @@ Traceability
      - ``sw_req``
      - ``SWREQ_``
      - \-
-     - ``1_requirement_writing/instructions.md``
+     - ``aspice_swe1_requirement_writing/instructions.md``
    * - SWE.2
      - ``sw_arch``, ``swc_req``
      - ``SWARCH_``, ``SWCREQ_``
      - ``realizes`` -> ``sw_req``; ``derives`` -> ``sw_req``
-     - ``2_architecture_design/instructions.md``
+     - ``aspice_swe2_architecture_design/instructions.md``
    * - SWE.3
      - ``sw_detail``, ``sw_unit``, ``swc``, ``sw-if``, ``sw-ifelement``
      - ``SWDD_``, ``SWUNIT_``, ``SWC_``, ``SWIF_``, ``SWIFE_``
      - ``refines`` -> ``sw_arch``, ``realizes`` -> ``swc_req``, ``implements`` -> ``sw_detail``, ``sw-ifelement``
-     - ``3_detailed_design_unit_construction/instructions.md``
+     - ``aspice_swe3_detailed_design_unit_construction/instructions.md``
    * - SWE.4
      - ``sw_unit_test``
      - ``SWUT_``
      - ``verifies`` -> ``sw_detail``, ``sw-ifelement``
-     - ``4_unit_verification/instructions.md``
+     - ``aspice_swe4_unit_verificationion/instructions.md``
    * - SWE.5
      - ``sw_integration_test``
      - ``SWIT_``
      - ``verifies`` -> ``sw_arch``
-     - ``5_integration_test/instructions.md``
+     - ``aspice_swe5_integration_test/instructions.md``
    * - SWE.6
      - ``sw_qualification_test``
      - ``SWQT_``
      - ``verifies`` -> ``sw_req``
-     - ``6_qualification_test/instructions.md`` (blocked)
+     - ``aspice_swe6_qualification_test/instructions.md`` (blocked)
 
 How to start
 ************

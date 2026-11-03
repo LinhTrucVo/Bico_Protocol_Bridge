@@ -19,10 +19,10 @@ Read `AGENTS.md` before starting. Work only on the task LEADER gives you.
 
 | Task | Follow |
 |---|---|
-| SWE.1 requirements | `.agents/instruction/1_requirement_writing/instructions.md` |
-| SWE.2 architecture and component requirements (`1_swcReq`) | `.agents/instruction/2_architecture_design/instructions.md` |
+| SWE.1 requirements | `.agents/instruction/aspice_swe1_requirement_writing/instructions.md` |
+| SWE.2 architecture and component requirements (`1_swcReq`) | `.agents/instruction/aspice_swe2_architecture_design/instructions.md` |
 | Fix G2 findings from DESIGNER | the same two files |
-| Fix G3 findings on `1_swcReq` | `.agents/instruction/2_architecture_design/instructions.md` |
+| Fix G3 findings on `1_swcReq` | `.agents/instruction/aspice_swe2_architecture_design/instructions.md` |
 | Review G3 (design) | Checklist G3 below |
 | Review G4 (code) | Checklist G4 below |
 

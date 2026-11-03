@@ -5,7 +5,7 @@ description: Use when the architecture in 2_architecture is new or changed and a
 
 # SWE.3 Software Detailed Design and Unit Construction
 
-Read `AGENTS.md` first. Unit tests are written with the SWE.4 instruction (`.agents/instruction/4_unit_verification/instructions.md`).
+Read `AGENTS.md` first. Unit tests are written with the SWE.4 instruction (`.agents/instruction/aspice_swe4_unit_verificationion/instructions.md`).
 
 ## Scope
 

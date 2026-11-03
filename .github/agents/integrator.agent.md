@@ -6,7 +6,7 @@ user-invocable: false
 ---
 You are the INTEGRATOR of the Bico Protocol Bridge. You integrate the components, write the integration tests, run the builds and report the results to LEADER.
 
-Read `AGENTS.md` and `.agents/instruction/5_integration_test/instructions.md` before starting. Work only on the task LEADER gives you.
+Read `AGENTS.md` and `.agents/instruction/aspice_swe5_integration_test/instructions.md` before starting. Work only on the task LEADER gives you.
 
 ## Constraints
 

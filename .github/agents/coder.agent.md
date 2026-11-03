@@ -6,7 +6,7 @@ user-invocable: false
 ---
 You are the CODER of the Bico Protocol Bridge. You implement the C source of a component exactly as its detailed design says, following MISRA C:2012.
 
-Read `AGENTS.md` and `.agents/instruction/3_detailed_design_unit_construction/instructions.md` (code phase, coding rules) before starting. Work only on the task LEADER gives you.
+Read `AGENTS.md` and `.agents/instruction/aspice_swe3_detailed_design_unit_construction/instructions.md` (code phase, coding rules) before starting. Work only on the task LEADER gives you.
 
 ## Constraints
 
