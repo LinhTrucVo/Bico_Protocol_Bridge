@@ -12,6 +12,7 @@ needs_types = [
     {
         "directive": "sw_req",
         "title": "Software Requirement",
+        "description": "Defines what the software shall do to satisfy user and system requirements. Describes the expected software capabilities, features, and constraints from the software's perspective.",
         "prefix": "SWREQ_",
         "color": "#BFD8D2",
         "style": "node",
@@ -19,6 +20,7 @@ needs_types = [
     {
         "directive": "swc_req",
         "title": "Software Component Requirement",
+        "description": "Defines the detailed functional and non-functional requirements allocated to individual software components identified in the software architecture. Specifies what each software component shall do to fulfill its allocated responsibilities.",
         "prefix": "SWCREQ_",
         "color": "#D6EAF8",
         "style": "node",
@@ -26,6 +28,7 @@ needs_types = [
     {
         "directive": "sw_arch",
         "title": "Software Architecture",
+        "description": "Describes the high-level structure and organization of the software. Identifies software components, their responsibilities, relationships, interactions, and architectural interfaces.",
         "prefix": "SWARCH_",
         "color": "#D6EAF8",
         "style": "node",
@@ -33,6 +36,7 @@ needs_types = [
     {
         "directive": "sw_detail",
         "title": "Software Detailed Design",
+        "description": "Refines the software architecture and realizes software component requirements into implementable design specifications. Defines detailed component behavior, algorithms, interfaces, data types, data structures, constraints, boundaries, limits, and valid values.",
         "prefix": "SWDD_",
         "color": "#E8DAEF",
         "style": "node",
@@ -40,6 +44,7 @@ needs_types = [
     {
         "directive": "swc",
         "title": "Software Component",
+        "description": "Represents an architectural software component and its implementation. Implements the detailed design as buildable and executable software code, fulfilling the responsibilities and requirements allocated to the component.",
         "prefix": "SWC_",
         "color": "#E8DAEF",
         "style": "node",
@@ -47,6 +52,7 @@ needs_types = [
     {
         "directive": "sw-if",
         "title": "Software Interface",
+        "description": "Defines a logical connection and interaction point between software components or between the software and external entities. Groups a set of related interface elements into a reusable interface contract, which may be represented by a file, class, or other software artifact.",
         "prefix": "SWIF_",
         "color": "#E8DAEF",
         "style": "node",
@@ -54,6 +60,7 @@ needs_types = [
     {
         "directive": "sw-ifelement",
         "title": "Software Interface Element",
+        "description": "Defines an individual element of a software interface, such as a function, method, parameter, signal, data structure, or data type. Specifies the individual interaction or data exchange capability provided by the interface.",
         "prefix": "SWIFE_",
         "color": "#E8DAEF",
         "style": "node",
@@ -61,6 +68,7 @@ needs_types = [
     {
         "directive": "sw_unit",
         "title": "Software Unit",
+        "description": "Represents the smallest independently verifiable software element resulting from detailed design and implementation. Typically corresponds to a function, method, class, or other implementation-level element.",
         "prefix": "SWUNIT_",
         "color": "#D5F5E3",
         "style": "node",
@@ -68,6 +76,7 @@ needs_types = [
     {
         "directive": "sw_unit_test",
         "title": "Software Unit Verification",
+        "description": "Defines verification activities and test cases that verify individual software units against their detailed design specifications. Checks correctness of implementation, including behavior, boundary conditions, and relevant error handling.",
         "prefix": "SWUT_",
         "color": "#FCF3CF",
         "style": "node",
@@ -75,6 +84,7 @@ needs_types = [
     {
         "directive": "sw_integration_test",
         "title": "Software Integration Verification",
+        "description": "Defines verification activities and test cases that verify the interaction and integration of software components against the software architecture. Checks interfaces, communication, data exchange, and interaction behavior between integrated components.",
         "prefix": "SWIT_",
         "color": "#FADBD8",
         "style": "node",
@@ -82,6 +92,7 @@ needs_types = [
     {
         "directive": "sw_qualification_test",
         "title": "Software Qualification Test",
+        "description": "Defines validation activities and test cases that verify the integrated software against software requirements. Confirms that implemented software features behave as expected and satisfy the specified functional and non-functional requirements.",
         "prefix": "SWQT_",
         "color": "#F5CBA7",
         "style": "node",
