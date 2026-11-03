@@ -1,5 +1,5 @@
 ---
-name: update-agent-workflow
+name: update_agent_workflow
 description: "Use when the user asks to change, update, add or remove anything in the Bico Protocol Bridge agent workflow: AGENTS.md, .agents/instruction/*, .agents/index.rst or its puml diagrams, gates, roles, traceability (Sphinx-Needs types and links), or the agents in .github/agents and .claude/agents. Propagates the change to every related file so the workflow stays consistent."
 ---
 
@@ -19,7 +19,7 @@ The files in `.agents/instruction/` are called **instruction** (never "skill"). 
 | Changed | Also update |
 |---|---|
 | `.agents/instruction/<step>/instructions.md` (inputs, outputs, need type, link, ID, done criteria) | Instruction table in `AGENTS.md`; Traceability table in `.agents/index.rst`; `.agents/sweTraceability.puml`; `5_buildEnviroment/docGen/aspice_config.py` (`needs_links`, `needs_warnings`, comment block); other instructions that reference it; agent files that cite it |
-| SWE.3 interface design needs (`swc`, `sw-if`, `sw-ifelement`) | `.agents/instruction/3_detailed_design_unit_construction/instructions.md`; `.agents/instruction/4_unit_verification/instructions.md`; each component's `2_design/<comp>Comp.rst`; `AGENTS.md`; `.agents/index.rst`; ARCHITECT, DESIGNER and CODER agent files |
+| SWE.3 interface design needs (`swc`, `sw-if`, `sw-ifelement`) | `.agents/instruction/aspice_swe3_detailed_design_unit_construction/instructions.md`; `.agents/instruction/aspice_swe4_unit_verificationion/instructions.md`; each component's `2_design/<comp>Comp.rst`; `AGENTS.md`; `.agents/index.rst`; ARCHITECT, DESIGNER and CODER agent files |
 | SWE.2 component requirement need (`swc_req`), derivation and design realization links | SWE.2/SWE.3/SWE.4 instructions; `aspice_config.py`; `AGENTS.md`; `.agents/index.rst`; `.agents/sweTraceability.puml`; ARCHITECT, DESIGNER and LEADER agent files |
 | `AGENTS.md` (scope rules, repository map, conventions, team table, verification) | `.agents/index.rst` (terms, Agent team, Rules); `Constraints` and `Tasks` of the agent files; `README.md` and `5_buildEnviroment/README.md` if they repeat it |
 | Gates, roles, who writes or reviews what | `.agents/index.rst` (Agent team, Gates, Delegated task); `agentTeam.puml`, `workflowGates.puml`, `taskSequence.puml`; `AGENTS.md` team table; `.github/agents/leader.agent.md` and the agent files of the roles involved |
