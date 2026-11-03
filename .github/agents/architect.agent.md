@@ -29,6 +29,8 @@ Read `AGENTS.md` before starting. Work only on the task LEADER gives you.
 ## Checklist G3 - design against architecture
 
 - Every changed `sw_arch` is refined by at least one `sw_detail` (`:refines:`).
+- Every allocated `sw_req` is decomposed into one or more `swc_req` needs using `:derives:`; every `swc_req` is derived from at least one `sw_req`.
+- Each `swc_req` states a concrete, verifiable component behavior and is allocated to the component's `sw_arch`.
 - Every requirement in `1_swcReq` is covered by the design.
 - Component boundaries, provided and used interfaces match `2_architecture/fucntionView/<layer>/<comp>/index.rst`, and the `swc`, `sw-if`, `sw-ifelement` items in `2_design/<comp>Comp.rst` (`:refines:` its `sw_arch`) and `3_inc/<comp>.h` agree.
 - Layer rule: a component includes only `3_inc` headers of the layer directly below; layer1 drivers reach hardware only through their own `3_inc/<drv>Porting.h`.

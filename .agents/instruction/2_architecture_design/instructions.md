@@ -22,7 +22,7 @@ Read `AGENTS.md` first.
 - `2_architecture/fucntionView/<layer>/<comp>/` with `index.rst`, `staticView.puml`, `informationFlow.puml`, `dynamicBehaviour.puml`
 - `2_architecture/deploymentView/` only when the port boundary or build integration changes
 - A new component is added to the toctree in `2_architecture/fucntionView/index.rst`
-- `3_1_swComp/<layer>/<comp>/1_swcReq/<comp>Req.rst`: component requirements (interface, constraints, error behaviour). For a new component create only the `1_swcReq/` folder; DESIGNER creates the rest of the component
+- `3_1_swComp/<layer>/<comp>/1_swcReq/<comp>Req.rst`: component requirements as `swc_req` needs. For a new component create only the `1_swcReq/` folder; DESIGNER creates the rest of the component
 
 ## Steps
 
@@ -30,7 +30,7 @@ Read `AGENTS.md` first.
 2. The architechture following arc42. Respect the layers: `layer3Application` -> `layer2Service` -> `layer1Driver` -> `<Drv>Port_*`. A layer calls only the layer directly below.
 3. For each affected component, update `index.rst` with: Description, Static view, Information flow, Dynamic behaviour, Timing behaviour, Resource consumption, and the interfaces it provides and uses.
 4. For a layer1 driver, name the HAL operations it needs (e.g. GPIO: init/configure, read, write, toggle) as port interface, using standard C types only.
-5. After the architecture of a component is complete, write its component requirements in `1_swcReq/<comp>Req.rst` from the `sw_req` needs and the component `sw_arch`: provided and used interface, constraints, error behaviour and error codes. Each requirement is concrete and verifiable, and does not name a microcontroller, SDK or vendor API.
+5. After the architecture of a component is complete, write its component requirements in `1_swcReq/<comp>Req.rst` as `swc_req` needs derived from the `sw_req` needs allocated to the component. Each `swc_req` specifies exactly what that component shall do, including relevant interfaces, constraints, ranges, and error behaviour; it is concrete, verifiable, and does not name a microcontroller, SDK or vendor API.
 
 ## Traceability
 
@@ -38,13 +38,22 @@ Read `AGENTS.md` first.
 .. sw_arch:: GPIO driver
    :id: SWARCH_GPIODRIVER
    :realizes: SWREQ_DIGITAL_001, SWREQ_DIGITAL_002
+
+.. swc_req:: GPIO driver configures a pin
+   :id: SWCREQ_GPIODRIVER_001
+   :derives: SWREQ_DIGITAL_001
+
+   The GPIO Driver shall configure a pin using a supported mode and pull setting.
 ```
 
 - One `sw_arch` per component, `:id:` is `SWARCH_<COMP>`.
 - Every `sw_arch` has `:realizes:` to at least one `sw_req`.
+- `swc_req` IDs are `SWCREQ_<COMP>_<NNN>`; each `swc_req` has `:derives:` to at least one parent `sw_req`.
+- Each component-level `swc_req` is allocated to the component's `sw_arch` and fully specifies that component's externally observable behaviour.
 
 ## Done criteria
 
 - Every new or changed `sw_req` is realized by at least one `sw_arch`.
-- Every component with a new or changed `sw_arch` has up-to-date component requirements in `1_swcReq`.
+- Every allocated `sw_req` is decomposed into one or more `swc_req` needs, and every `swc_req` derives from a `sw_req`.
+- Every component with a new or changed `sw_arch` has up-to-date `swc_req` needs in `1_swcReq`.
 - `5_buildEnviroment/docGen/docGen.sh` builds without errors and without the warnings `swe1_requirement_without_architecture` and `swe2_architecture_without_requirement`. `swe2_architecture_without_detailed_design` is expected until SWE.3 is done.

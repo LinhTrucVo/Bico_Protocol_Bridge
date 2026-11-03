@@ -35,7 +35,7 @@ Acronyms and terms
    * - BPB
      - Bico Protocol Bridge. Prefix ``BPB_`` of every macro and enum value.
    * - Need, need ID
-     - Traceable item of Sphinx-Needs (``sw_req``, ``sw_arch``, ...) with a unique ID (``SWREQ_...``). See `Traceability`_.
+    - Traceable item of Sphinx-Needs (``sw_req``, ``swc_req``, ``sw_arch``, ...) with a unique ID (``SWREQ_...``, ``SWCREQ_...``). See `Traceability`_.
    * - Shared file
      - File edited by more than one step: ``3_1_swComp/bicoProtocolBridgeSwComp.cmake``,
        ``5_buildEnviroment/unitTestBuild/CMakeLists.txt`` and the toctree ``index.rst`` files.
@@ -111,13 +111,13 @@ Gates
    * - G2
      - Architecture feasible
      - DESIGNER
-     - Requirements are implementable above the HAL, not contradictory, concrete; every ``sw_req`` is realized by an ``sw_arch``; component requirements in ``1_swcReq`` are consistent and concrete.
+    - Requirements are implementable above the HAL, not contradictory, concrete; every ``sw_req`` is realized by an ``sw_arch`` and allocated to one or more derived ``swc_req`` needs; component requirements in ``1_swcReq`` are consistent and concrete.
        After 2 rounds without agreement, LEADER asks the user.
      - ``G2 <id>: architecture``
    * - G3
      - Interfaces frozen
      - ARCHITECT
-     - Design follows the architecture and the layer rule; every ``sw_arch`` is refined by an ``sw_detail``;
+    - Design follows the architecture and the layer rule; every ``sw_arch`` is refined by an ``sw_detail`` and every ``swc_req`` is realized by an ``sw_detail``;
        ``3_inc`` and ``4_config`` are final. A changed ``*Porting.h`` is reported to the user (no stop).
      - ``G3 <id>: interfaces frozen``
    * - G4
@@ -185,14 +185,14 @@ Traceability
      - \-
      - ``1_requirement_writing/instructions.md``
    * - SWE.2
-     - ``sw_arch``
-     - ``SWARCH_``
-     - ``realizes`` -> ``sw_req``
+     - ``sw_arch``, ``swc_req``
+     - ``SWARCH_``, ``SWCREQ_``
+     - ``realizes`` -> ``sw_req``; ``derives`` -> ``sw_req``
      - ``2_architecture_design/instructions.md``
    * - SWE.3
      - ``sw_detail``, ``sw_unit``, ``swc``, ``sw-if``, ``sw-ifelement``
      - ``SWDD_``, ``SWUNIT_``, ``SWC_``, ``SWIF_``, ``SWIFE_``
-     - ``refines`` -> ``sw_arch``, ``implements`` -> ``sw_detail``, ``sw-ifelement``
+     - ``refines`` -> ``sw_arch``, ``realizes`` -> ``swc_req``, ``implements`` -> ``sw_detail``, ``sw-ifelement``
      - ``3_detailed_design_unit_construction/instructions.md``
    * - SWE.4
      - ``sw_unit_test``

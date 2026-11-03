@@ -17,6 +17,13 @@ needs_types = [
         "style": "node",
     },
     {
+        "directive": "swc_req",
+        "title": "Software Component Requirement",
+        "prefix": "SWCREQ_",
+        "color": "#D6EAF8",
+        "style": "node",
+    },
+    {
         "directive": "sw_arch",
         "title": "Software Architecture",
         "prefix": "SWARCH_",
@@ -174,6 +181,8 @@ needs_schema_validation_enabled = True
 # Relationship direction:
 #
 # SWARCH --realizes--> SWREQ
+# SWCREQ --derives--> SWREQ
+# SWDD   --realizes--> SWCREQ
 # SWDD   --refines--> SWARCH
 # SWC    --refines--> SWARCH
 # SWUNIT --implements--> SWDD or SWIFE
@@ -186,7 +195,7 @@ needs_schema_validation_enabled = True
 # SWQT --verifies--> SWREQ
 #
 # Reverse link fields are generated automatically:
-# realizes_back, refines_back, implements_back, verifies_back.
+# realizes_back, derives_back, refines_back, implements_back, verifies_back.
 #
 # target_types restricts the target of a link.
 # It does not restrict the source type using that link.
@@ -197,10 +206,22 @@ needs_links = {
         "outgoing": "realizes",
         "target_types": [
             "sw_req",
+            "swc_req",
         ],
         "style_start": "-",
         "style_end": "->",
         "style": "#1F77B4",
+    },
+
+    "derives": {
+        "incoming": "derived by",
+        "outgoing": "derives",
+        "target_types": [
+            "sw_req",
+        ],
+        "style_start": "-",
+        "style_end": "->",
+        "style": "#17A589",
     },
 
     "refines": {
@@ -274,6 +295,12 @@ needs_warnings = {
         'type == "sw_req" and not verifies_back'
     ),
 
+    # Every allocated system requirement must be decomposed into
+    # at least one software-component requirement.
+    "swe2_requirement_without_component_requirement": (
+        'type == "sw_req" and not derives_back'
+    ),
+
     # --------------------------------------------------------
     # SWE.2 - Software Architectural Design
     # --------------------------------------------------------
@@ -281,6 +308,16 @@ needs_warnings = {
     # Every architecture element must realize a requirement.
     "swe2_architecture_without_requirement": (
         'type == "sw_arch" and not realizes'
+    ),
+
+    # Every component requirement must derive from a system requirement.
+    "swe2_component_requirement_without_requirement": (
+        'type == "swc_req" and not derives'
+    ),
+
+    # Every component requirement must be realized by detailed design.
+    "swe2_component_requirement_without_design": (
+        'type == "swc_req" and not realizes_back'
     ),
 
     # Every architecture element must be refined by
@@ -297,6 +334,11 @@ needs_warnings = {
     # element.
     "swe3_design_without_architecture": (
         'type == "sw_detail" and not refines'
+    ),
+
+    # Every detailed-design item must realize a component requirement.
+    "swe3_design_without_component_requirement": (
+        'type == "sw_detail" and not realizes'
     ),
 
     # Every detailed-design item must be implemented by

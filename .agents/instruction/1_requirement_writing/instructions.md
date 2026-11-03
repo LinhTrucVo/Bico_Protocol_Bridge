@@ -1,6 +1,6 @@
 ---
 name: swe1-requirement-analysis
-description: Use when the user asks to turn a ticket in 0_ticket into new or changed software requirements in 1_requirement (ASPICE SWE.1).
+description: Use when the user asks to turn a ticket in 0_ticket into new or changed software requirements in 1_requirement (ASPICE SWE.1). The main purpose of this process is to turn the vague request from user to a clear requirement for the features. Clarify to get the clear and measurable income and outcome. Propose better approaches and features to user.
 ---
 
 # SWE.1 Software Requirements Analysis

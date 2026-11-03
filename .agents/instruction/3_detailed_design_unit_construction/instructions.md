@@ -18,7 +18,7 @@ Read `AGENTS.md` first. Unit tests are written with the SWE.4 instruction (`.age
 
 - `1_requirement/<Feature>/index.rst` (`sw_req`)
 - `2_architecture/fucntionView/<layer>/<comp>/` (`sw_arch`)
-- `3_1_swComp/<layer>/<comp>/1_swcReq/<comp>Req.rst` (component requirements written by SWE.2; read-only here)
+- `3_1_swComp/<layer>/<comp>/1_swcReq/<comp>Req.rst` (`swc_req` needs written by SWE.2; read-only here)
 - Existing `3_1_swComp/<layer>/<comp>/`
 
 ## Outputs
@@ -57,7 +57,7 @@ A new component also creates `1_swcReq/` (if SWE.2 has not), `6_test/gtest/{fake
 
 ## Interface design (`swc`, `sw-if`, `sw-ifelement`)
 
-The DESIGNER defines the public interface of each component from the architecture (`sw_arch` provided and used interfaces) and the component requirements, and chooses the best form. The result is written directly below the static-structure UML in `2_design/<comp>Comp.rst` and is the source for `3_inc/<comp>.h`.
+The DESIGNER defines the public interface and detailed design from the architecture (`sw_arch`) and the component requirements (`swc_req`), and chooses the best form. Each design item realizes the component requirement(s) it implements. The result is written directly below the static-structure UML in `2_design/<comp>Comp.rst` and is the source for `3_inc/<comp>.h`.
 
 - `swc`: the component. `:provides:` public header and what it offers, `:requires:` headers of the layer below (layer1: its own `<drv>Porting.h`), `:refines:` its `sw_arch`.
 - `sw-if`: the public interface (the header that declares the functions), one per component.
@@ -81,7 +81,7 @@ The step has two phases. The design phase ends with gate G3: `3_inc` and `4_conf
 
 1. Find the changed `sw_arch` items: `git diff -U1000 <base> -- 2_architecture` (`<base>` given by LEADER), and the components that refine them.
 2. Read `1_swcReq/<comp>Req.rst`. Do not change it; if a component requirement is wrong or incomplete, return a finding for ARCHITECT.
-3. Write the interface design directly below the static-structure UML in `2_design/<comp>Comp.rst` (`swc`, `sw-if`, `sw-ifelement`, see Interface design) and update `2_design` (`sw_detail`, `sw_unit` IDs): units, data types, state machine, sequence for every public function; every component requirement is covered.
+3. Write the interface design directly below the static-structure UML in `2_design/<comp>Comp.rst` (`swc`, `sw-if`, `sw-ifelement`, see Interface design) and update `2_design` (`sw_detail`, `sw_unit` IDs): units, data types, state machine, sequence for every public function. Each `sw_detail` refines its `sw_arch` and realizes the `swc_req` it implements; together, the design items cover every component requirement.
 4. Update `3_inc` and `4_config` from the interface design. They must be final: tests and code are written against them in parallel.
 5. A new component needs registration (`bicoProtocolBridgeSwComp.cmake`, toctree): edit only if LEADER granted the file, otherwise request it.
 
@@ -118,9 +118,16 @@ The step has two phases. The design phase ends with gate G3: `3_inc` and `4_conf
 
         **Restrictions:** The pin must be configured as output.
 
+.. swc_req:: GPIO driver configures a pin
+    :id: SWCREQ_GPIODRIVER_001
+    :derives: SWREQ_DIGITAL_001
+
+    The GPIO Driver shall configure a pin using a supported mode and pull setting.
+
 .. sw_detail:: GPIO driver pin configuration
    :id: SWDD_GPIODRIVER_CONFIGUREPIN
    :refines: SWARCH_GPIODRIVER
+    :realizes: SWCREQ_GPIODRIVER_001
 
 .. sw_unit:: gpioDriverUnit
    :id: SWUNIT_GPIODRIVER
@@ -128,12 +135,14 @@ The step has two phases. The design phase ends with gate G3: `3_inc` and `4_conf
 ```
 
 - `swc` ID `SWC_<COMP>`, `sw-if` ID `SWIF_<COMP>`, `sw-ifelement` ID `SWIFE_<COMP>_<FUNCTION>` (function name without `Unit_` prefix and `()`, upper case). Every one has an explicit `:id:`.
-- `sw_detail` IDs: `SWDD_<COMP>_<ITEM>`, each with `:refines:` to a `sw_arch`.
+- `swc_req` IDs are `SWCREQ_<COMP>_<NNN>` and each has `:derives:` to one or more `sw_req` needs.
+- `sw_detail` IDs: `SWDD_<COMP>_<ITEM>`, each with `:refines:` to a `sw_arch` and `:realizes:` to one or more `swc_req` needs.
 - `sw_unit` IDs: `SWUNIT_<COMP>`, one per `5_src/<comp>Unit.c`, with `:implements:` to its `sw_detail` and `sw-ifelement` items.
+- `sw_unit` links to design only; it does not link directly to `swc_req` or `sw_req`.
 
 ## Done criteria
 
-- Every changed `sw_arch` is refined by at least one `sw_detail` or `swc`, every `sw_detail` is implemented by a `sw_unit`.
+- Every changed `sw_arch` is refined by at least one `sw_detail` or `swc`; every `swc_req` is realized by at least one `sw_detail`; every `sw_detail` is implemented by a `sw_unit`.
 - Every public function in `3_inc/<comp>.h` has a `sw-ifelement` with type, range and valid values of every argument, return values and restrictions; the signatures are identical.
 - No vendor header in `3_1_swComp`: `grep -rE "esp_|driver/|Arduino.h|freertos/|stm32" 3_1_swComp --include=*.[ch]` returns nothing.
 - `5_buildEnviroment/docGen/docGen.sh` builds without new warnings.

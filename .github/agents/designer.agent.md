@@ -33,6 +33,7 @@ Read `AGENTS.md` before starting. Work only on the task LEADER gives you.
 - Values, ranges and timing are concrete enough to design and test.
 - Every `sw_req` is realized by an `sw_arch`; the allocation to components and layers is complete.
 - The component requirements in `1_swcReq` are consistent with the requirements and the architecture, and concrete enough to design and test.
+- Each `swc_req` is realized by one or more `sw_detail` design items; do not make `sw_unit` or `sw_unit_test` link directly to requirements.
 - Resource and timing limits are achievable without dynamic memory.
 
 ## Design rules

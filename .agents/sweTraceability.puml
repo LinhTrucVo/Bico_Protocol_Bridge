@@ -4,6 +4,7 @@ title ASPICE SWE traceability (Sphinx-Needs)
 left to right direction
 
 rectangle "sw_req\nSWREQ_\n(SWE.1)" as REQ
+rectangle "swc_req\nSWCREQ_\n(SWE.2)" as CREQ
 rectangle "sw_arch\nSWARCH_\n(SWE.2)" as ARCH
 rectangle "sw_detail\nSWDD_\n(SWE.3)" as DD
 rectangle "swc / sw-if / sw-ifelement\nSWC_ / SWIF_ / SWIFE_\n(SWE.3 interface design)" as IFD
@@ -14,6 +15,8 @@ rectangle "sw_integration_test\nSWIT_\n(SWE.5)" as IT
 rectangle "sw_unit_test\nSWUT_\n(SWE.4)" as UT
 
 ARCH --> REQ : realizes
+CREQ --> REQ : derives
+DD --> CREQ : realizes
 DD --> ARCH : refines
 IFD --> ARCH : refines (swc)
 UNIT --> DD : implements

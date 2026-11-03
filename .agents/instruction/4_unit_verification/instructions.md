@@ -106,7 +106,7 @@ The shared helper is `5_buildEnviroment/unitTestBuild/halFake/bpbHalFake.h` (lib
 
 For every public function of the unit, cover:
 
-- Normal behaviour for each requirement in `1_swcReq`.
+- Normal behaviour for each `swc_req` in `1_swcReq`, through the `sw_detail` design item(s) that realize it.
 - Input classes and boundary values derived from the types, ranges and restrictions in each argument's `sw-ifelement`, using the methods below.
 - Invalid input (NULL pointer, out-of-range values, wrong state such as call before `Init`).
 - Every error return of a dependency or the HAL (fake returns failure) and the resulting status.
@@ -163,10 +163,11 @@ Test names: `TEST_F(<Comp>Test, <Function>_<Condition>_<ExpectedResult>)`.
 
 - Written in `6_test/gtest/index.rst` (create it and add it to the component `index.rst` toctree).
 - `:verifies:` links to the `sw_detail` (detailed design) and `sw-ifelement` (interface design) items the tests check, not to the `sw_unit`.
+- Tests do not link directly to `swc_req` or `sw_req`; verifying the design items that realize a `swc_req` verifies that component requirement.
 - `:verification_result:` is one of `not_run`, `passed`, `failed`, `blocked`, `not_applicable`.
 
 ## Done criteria
 
-- Every `sw_detail` and every `sw-ifelement` is verified by at least one `sw_unit_test`.
+- Every `sw_detail` and every `sw-ifelement` is verified by at least one `sw_unit_test`; each `swc_req` is covered through its realized design item(s).
 - `5_buildEnviroment/unitTestBuild/unitTestBuild.sh` passes all tests. Line and branch coverage of the changed unit in `_build/unitTestBuild` are at least 90 % and are reported.
 - `5_buildEnviroment/docGen/docGen.sh` builds without new warnings.
