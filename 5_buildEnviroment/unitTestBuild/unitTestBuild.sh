@@ -1,5 +1,18 @@
 logging_prefix="[unitTestBuild] "
 
+clean=0
+if [ "$#" -eq 1 ] && [ "$1" = "--clean" ]; then
+    clean=1
+elif [ "$#" -ne 0 ]; then
+    echo "Usage: $0 [--clean]" >&2
+    exit 2
+fi
+
+if [ "$clean" -eq 1 ] && docker container inspect Bico_Protocol_Bridge_unittestBuild > /dev/null 2>&1; then
+    echo "${logging_prefix}Remove existing container Bico_Protocol_Bridge_unittestBuild"
+    docker rm -f Bico_Protocol_Bridge_unittestBuild || exit $?
+fi
+
 echo "${logging_prefix}Clone bico_gtest_docker submodule"
 git submodule update --init ./5_buildEnviroment/unitTestBuild/bico_gtest_docker
 

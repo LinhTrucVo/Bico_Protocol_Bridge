@@ -74,7 +74,7 @@ Agent team
      - Design (G3), code (G4) against the architecture
    * - DESIGNER
      - SWE.3 design, SWE.4
-     - ``<comp>/2_design``, ``3_inc``, ``4_config``, ``6_test``
+    - ``<comp>/2_design/<comp>Comp.rst`` (``swc``, ``sw-if``, ``sw-ifelement``), other ``2_design`` files, ``3_inc``, ``4_config``, ``6_test``
      - Requirements, architecture and component requirements feasibility (G2)
    * - CODER
      - SWE.3 code
@@ -183,21 +183,21 @@ Traceability
      - ``sw_req``
      - ``SWREQ_``
      - \-
-     - ``1_requirement_analyzer/instructions.md``
+     - ``1_requirement_writing/instructions.md``
    * - SWE.2
      - ``sw_arch``
      - ``SWARCH_``
      - ``realizes`` -> ``sw_req``
      - ``2_architecture_design/instructions.md``
    * - SWE.3
-     - ``sw_detail``, ``sw_unit``
-     - ``SWDD_``, ``SWUNIT_``
-     - ``refines`` -> ``sw_arch``, ``implements`` -> ``sw_detail``
+     - ``sw_detail``, ``sw_unit``, ``swc``, ``sw-if``, ``sw-ifelement``
+     - ``SWDD_``, ``SWUNIT_``, ``SWC_``, ``SWIF_``, ``SWIFE_``
+     - ``refines`` -> ``sw_arch``, ``implements`` -> ``sw_detail``, ``sw-ifelement``
      - ``3_detailed_design_unit_construction/instructions.md``
    * - SWE.4
      - ``sw_unit_test``
      - ``SWUT_``
-     - ``verifies`` -> ``sw_detail``
+     - ``verifies`` -> ``sw_detail``, ``sw-ifelement``
      - ``4_unit_verification/instructions.md``
    * - SWE.5
      - ``sw_integration_test``

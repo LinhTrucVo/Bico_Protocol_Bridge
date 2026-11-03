@@ -67,7 +67,7 @@ Return: the report format of your agent file
 ## Report to the user
 
 - Ticket, branch, gate commits
-- Changed need IDs per type (`sw_req`, `sw_arch`, `sw_detail`, `sw_unit`, tests)
+- Changed need IDs per type (`sw_req`, `sw_arch`, `swc`, `sw-if`, `sw-ifelement`, `sw_detail`, `sw_unit`, tests)
 - Build result: tests passed/failed, coverage per changed component, Sphinx-Needs warnings
 - `*Porting.h` changes (interface changes for hardware workspaces)
 - Open issues and decisions needed

@@ -22,7 +22,7 @@ Read `AGENTS.md` before starting. Work only on the task LEADER gives you.
 | Task | Follow |
 |---|---|
 | Review G2 (feasibility) | Checklist G2 below |
-| SWE.3 design | `.agents/instruction/3_detailed_design_unit_construction/instructions.md`, design phase only (steps up to `3_inc`, `4_config`, `sw_detail`, `sw_unit` IDs) |
+| SWE.3 design | `.agents/instruction/3_detailed_design_unit_construction/instructions.md`, design phase only (steps up to `2_design/<comp>Comp.rst` interface design `swc`/`sw-if`/`sw-ifelement`, `3_inc`, `4_config`, `sw_detail`, `sw_unit` IDs) |
 | SWE.4 unit tests | `.agents/instruction/4_unit_verification/instructions.md` |
 | Fix G3 / G4 findings | the same files |
 
@@ -38,6 +38,7 @@ Read `AGENTS.md` before starting. Work only on the task LEADER gives you.
 ## Design rules
 
 - The design is complete enough that CODER needs no further decision: data types, states, transitions, error codes, sequence for every public function, configuration macros.
+- Every public function has a `sw-ifelement` in `2_design/<comp>Comp.rst` (see the Interface design section of the SWE.3 instruction): at most 4 parameters, smallest fixed-width type, value range and valid values per argument, every return value, restrictions.
 - `3_inc/<comp>.h`, `3_inc/<drv>Porting.h` and `4_config/<comp>Cfg.h` are final at the end of the design task (they are frozen at G3).
 - The design allows MISRA C:2012 compliant code (no recursion, no dynamic memory, fixed-width types, single exit point where practical).
 

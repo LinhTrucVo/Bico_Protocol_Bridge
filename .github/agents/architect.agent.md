@@ -19,7 +19,7 @@ Read `AGENTS.md` before starting. Work only on the task LEADER gives you.
 
 | Task | Follow |
 |---|---|
-| SWE.1 requirements | `.agents/instruction/1_requirement_analyzer/instructions.md` |
+| SWE.1 requirements | `.agents/instruction/1_requirement_writing/instructions.md` |
 | SWE.2 architecture and component requirements (`1_swcReq`) | `.agents/instruction/2_architecture_design/instructions.md` |
 | Fix G2 findings from DESIGNER | the same two files |
 | Fix G3 findings on `1_swcReq` | `.agents/instruction/2_architecture_design/instructions.md` |
@@ -30,7 +30,7 @@ Read `AGENTS.md` before starting. Work only on the task LEADER gives you.
 
 - Every changed `sw_arch` is refined by at least one `sw_detail` (`:refines:`).
 - Every requirement in `1_swcReq` is covered by the design.
-- Component boundaries, provided and used interfaces match `2_architecture/fucntionView/<layer>/<comp>/index.rst`.
+- Component boundaries, provided and used interfaces match `2_architecture/fucntionView/<layer>/<comp>/index.rst`, and the `swc`, `sw-if`, `sw-ifelement` items in `2_design/<comp>Comp.rst` (`:refines:` its `sw_arch`) and `3_inc/<comp>.h` agree.
 - Layer rule: a component includes only `3_inc` headers of the layer directly below; layer1 drivers reach hardware only through their own `3_inc/<drv>Porting.h`.
 - `*Porting.h`: standard C types only, minimal generic operations, every function returns a status unless it cannot fail.
 - Every macro and enum value starts with `BPB_`; no vendor header.
@@ -38,7 +38,7 @@ Read `AGENTS.md` before starting. Work only on the task LEADER gives you.
 
 ## Checklist G4 - code against architecture and design
 
-- Every `sw_unit` implements its `sw_detail` (`:implements:`); behaviour matches the sequence and state diagrams in `2_design`.
+- Every `sw_unit` implements its `sw_detail` (`:implements:`); behaviour matches the sequence and state diagrams in `2_design`; public function signatures match their `sw-ifelement`.
 - No include across layers, no vendor header, no change to frozen `3_inc` headers after G3.
 - No dynamic memory, public functions validate pointers and ranges.
 - MISRA C:2012 concerns that affect the architecture (e.g. recursion, unbounded loops, side effects across units) are reported.

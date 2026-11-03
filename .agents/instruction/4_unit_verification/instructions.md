@@ -15,7 +15,7 @@ Read `AGENTS.md` first.
 
 ## Inputs
 
-- `3_1_swComp/<layer>/<comp>/1_swcReq`, `2_design` (`sw_detail`, `sw_unit` IDs), `3_inc`, `4_config`, frozen at gate G3
+- `3_1_swComp/<layer>/<comp>/1_swcReq`, `2_design/<comp>Comp.rst` (`swc`, `sw-if`, `sw-ifelement`: argument types, ranges, return values, restrictions), other `2_design` files (`sw_detail`, `sw_unit` IDs), `3_inc`, `4_config`, frozen at gate G3
 - Do not read `5_src`: tests are written from the design, in parallel with the code, and must not copy its behaviour
 
 ## Outputs
@@ -107,9 +107,48 @@ The shared helper is `5_buildEnviroment/unitTestBuild/halFake/bpbHalFake.h` (lib
 For every public function of the unit, cover:
 
 - Normal behaviour for each requirement in `1_swcReq`.
-- Boundary values (first/last pin, min/max length, zero).
+- Input classes and boundary values derived from the types, ranges and restrictions in each argument's `sw-ifelement`, using the methods below.
 - Invalid input (NULL pointer, out-of-range values, wrong state such as call before `Init`).
 - Every error return of a dependency or the HAL (fake returns failure) and the resulting status.
+
+### Common unit testing methods
+
+Apply the following methods where relevant to the documented interface and detailed design. Derive expected results from the design, not from `5_src`. Only construct inputs that can be represented by the argument type and exercised without undefined behaviour in the host test.
+
+1. **Equivalence Partitioning**
+
+   Divide the input domain into equivalence classes expected to be processed in the same way. Select representative values from each valid and invalid class to reduce redundant test cases.
+
+   Example: for an input accepted from 1 through 100, cover values below 1, values from 1 through 100, and values above 100.
+
+2. **Boundary Value Analysis**
+
+   Test values at and around the edges of input ranges, where defects commonly occur. Take each argument's limits from its `sw-ifelement`; cover the minimum, the maximum, their nearest in-range neighbours and one value outside each limit where representable. Include relevant zero-length and first/last pin cases.
+
+   Example: for an input accepted from 1 through 100, test 0, 1, 2, 99, 100 and 101.
+
+3. **Decision Table Testing**
+
+   Represent combinations of conditions and their expected actions in a table. Test each relevant feasible combination when behaviour depends on several input conditions, including rejected requests and expected dependency calls or absence of calls.
+
+   Example: a request is accepted only when the caller is authenticated and the system is in the required operating mode:
+
+   | Authenticated | Required mode | Expected action |
+   |---|---|---|
+   | No | No | Reject |
+   | No | Yes | Reject |
+   | Yes | No | Reject |
+   | Yes | Yes | Accept |
+
+4. **State Transition Testing**
+
+   Verify valid transitions, invalid transitions and relevant state-dependent behaviour in response to events or inputs. Establish the initial state, apply the event, and check the resulting state through observable behaviour, return values and dependency calls.
+
+   Example: for a diagnostic access state machine, test `Locked -> Unlocked` after successful authentication, `Locked -> Locked` after failed authentication, and `Unlocked -> Locked` after a security timeout. Simulate time and dependency results with fakes rather than real delays.
+
+5. **Error Guessing**
+
+   Use experience, domain knowledge and likely failure modes to identify additional cases beyond the formal techniques. Consider NULL or otherwise invalid pointers where safely testable, empty or unexpectedly large buffers, invalid enumerated values, repeated requests, unexpected call order, timeouts, interrupted operations and resource exhaustion. Use fakes to inject dependency failures; do not dereference arbitrary invalid pointers or pass buffers smaller than the size claimed by the test.
 
 Test names: `TEST_F(<Comp>Test, <Function>_<Condition>_<ExpectedResult>)`.
 
@@ -118,16 +157,16 @@ Test names: `TEST_F(<Comp>Test, <Function>_<Condition>_<ExpectedResult>)`.
 ```rst
 .. sw_unit_test:: GpioDriver ConfigurePin tests
    :id: SWUT_GPIODRIVER_CONFIGUREPIN
-   :verifies: SWDD_GPIODRIVER_CONFIGUREPIN
+   :verifies: SWDD_GPIODRIVER_CONFIGUREPIN, SWIFE_GPIODRIVER_CONFIGUREPIN
    :verification_result: passed
 ```
 
 - Written in `6_test/gtest/index.rst` (create it and add it to the component `index.rst` toctree).
-- `:verifies:` links to the `sw_detail` (detailed design) items the tests check, not to the `sw_unit`.
+- `:verifies:` links to the `sw_detail` (detailed design) and `sw-ifelement` (interface design) items the tests check, not to the `sw_unit`.
 - `:verification_result:` is one of `not_run`, `passed`, `failed`, `blocked`, `not_applicable`.
 
 ## Done criteria
 
-- Every `sw_detail` is verified by at least one `sw_unit_test`.
+- Every `sw_detail` and every `sw-ifelement` is verified by at least one `sw_unit_test`.
 - `5_buildEnviroment/unitTestBuild/unitTestBuild.sh` passes all tests. Line and branch coverage of the changed unit in `_build/unitTestBuild` are at least 90 % and are reported.
 - `5_buildEnviroment/docGen/docGen.sh` builds without new warnings.

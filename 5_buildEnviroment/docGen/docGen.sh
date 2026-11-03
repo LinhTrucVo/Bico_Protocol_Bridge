@@ -1,5 +1,18 @@
 logging_prefix="[docGen] "
 
+clean=0
+if [ "$#" -eq 1 ] && [ "$1" = "--clean" ]; then
+    clean=1
+elif [ "$#" -ne 0 ]; then
+    echo "Usage: $0 [--clean]" >&2
+    exit 2
+fi
+
+if [ "$clean" -eq 1 ] && docker container inspect Bico_Protocol_Bridge_docGen > /dev/null 2>&1; then
+    echo "${logging_prefix}Remove existing container Bico_Protocol_Bridge_docGen"
+    docker rm -f Bico_Protocol_Bridge_docGen || exit $?
+fi
+
 echo "${logging_prefix}Clone bico_rst_docker submodule"
 git submodule update --init ./5_buildEnviroment/docGen/bico_rst_docker
 

@@ -2,6 +2,7 @@
 
 Run from the repository root on Linux (or WSL) with Docker. CI runs the same scripts (`.github/workflows/ci.yml`).
 Each script initialises its submodule, builds the Docker image once and reuses the container.
+Append `--clean` to either command to remove its existing container before the script recreates it. On Windows, for example, run `wsl bash 5_buildEnviroment/docGen/docGen.sh --clean`.
 
 | Purpose | Command | Output |
 |---|---|---|
@@ -16,4 +17,4 @@ Each script initialises its submodule, builds the Docker image once and reuses t
 | `unitTestBuild/halFake/` | Shared HAL fake helper (`bpbHalFake.h`) for JSON based HAL fakes |
 | `unitTestBuild/bico_gtest_docker` | Submodule: test Docker image and coverage script (read-only) |
 
-Docker caches the containers `Bico_Protocol_Bridge_docGen` and `Bico_Protocol_Bridge_unittestBuild`. Remove them (`docker rm <name>`) after changing a script.
+Docker caches the containers `Bico_Protocol_Bridge_docGen` and `Bico_Protocol_Bridge_unittestBuild`; use `--clean` when you need a fresh container configuration.

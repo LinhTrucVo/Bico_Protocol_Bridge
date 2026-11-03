@@ -31,6 +31,27 @@ needs_types = [
         "style": "node",
     },
     {
+        "directive": "swc",
+        "title": "Software Component",
+        "prefix": "SWC_",
+        "color": "#E8DAEF",
+        "style": "node",
+    },
+    {
+        "directive": "sw-if",
+        "title": "Software Interface",
+        "prefix": "SWIF_",
+        "color": "#E8DAEF",
+        "style": "node",
+    },
+    {
+        "directive": "sw-ifelement",
+        "title": "Software Interface Element",
+        "prefix": "SWIFE_",
+        "color": "#E8DAEF",
+        "style": "node",
+    },
+    {
         "directive": "sw_unit",
         "title": "Software Unit",
         "prefix": "SWUNIT_",
@@ -77,6 +98,27 @@ needs_types = [
 #   :priority: High       -> invalid
 
 needs_fields = {
+    "provides": {
+        "description": "Interface header and function summary a component provides (swc).",
+        "schema": {
+            "type": "string",
+        },
+    },
+
+    "requires": {
+        "description": "Interface headers a component uses from the layer below (swc).",
+        "schema": {
+            "type": "string",
+        },
+    },
+
+    "arguments": {
+        "description": "Return type and parameters as '<name>: <C type>;' list (sw-ifelement).",
+        "schema": {
+            "type": "string",
+        },
+    },
+
     "priority": {
         "description": "Project-defined priority.",
         "schema": {
@@ -133,9 +175,13 @@ needs_schema_validation_enabled = True
 #
 # SWARCH --realizes--> SWREQ
 # SWDD   --refines--> SWARCH
-# SWUNIT --implements--> SWDD
+# SWC    --refines--> SWARCH
+# SWUNIT --implements--> SWDD or SWIFE
 #
-# SWUT --verifies--> SWDD
+# SWC (swc), SWIF (sw-if) and SWIFE (sw-ifelement) are the interface part of the
+# detailed design (SWE.3): component, its public interface, one element per function.
+#
+# SWUT --verifies--> SWDD or SWIFE
 # SWIT --verifies--> SWARCH
 # SWQT --verifies--> SWREQ
 #
@@ -173,6 +219,7 @@ needs_links = {
         "outgoing": "implements",
         "target_types": [
             "sw_detail",
+            "sw-ifelement",
         ],
         "style_start": "-",
         "style_end": "->",
@@ -184,6 +231,7 @@ needs_links = {
         "outgoing": "verifies",
         "target_types": [
             "sw_detail",
+            "sw-ifelement",
             "sw_arch",
             "sw_req",
         ],
@@ -306,3 +354,27 @@ needs_id_required = True
 
 # Export needs data to JSON during the build.
 needs_build_json = True
+
+
+# ============================================================
+# 6. SPHINX-NEEDS 5.x COMPATIBILITY
+# ============================================================
+#
+# The docGen image pins sphinx_needs 5.1.0. It ignores needs_fields and
+# needs_links, so the old option names are derived from the definitions above.
+
+from importlib.metadata import version as _package_version
+
+if int(_package_version("sphinx-needs").split(".")[0]) < 6:
+    needs_extra_options = list(needs_fields)
+    needs_extra_links = [
+        {
+            "option": name,
+            "incoming": link["incoming"],
+            "outgoing": link["outgoing"],
+            "style_start": link["style_start"],
+            "style_end": link["style_end"],
+            "style": link["style"],
+        }
+        for name, link in needs_links.items()
+    ]

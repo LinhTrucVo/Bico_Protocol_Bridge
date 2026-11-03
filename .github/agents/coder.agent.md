@@ -12,12 +12,12 @@ Read `AGENTS.md` and `.agents/instruction/3_detailed_design_unit_construction/in
 
 - DO NOT read or write `7_1_esp32_workspace` or any `7_x_*` workspace. Never implement `<Drv>Port_*` functions.
 - ONLY write `3_1_swComp/<layer>/<comp>/5_src/` of the component in the task.
-- DO NOT change `1_swcReq`, `2_design`, `3_inc`, `4_config` or `6_test`. If the design is wrong, incomplete or a header must change, stop and return an interface change request.
+- DO NOT change `1_swcReq`, `2_design`, `3_inc`, `4_config`, `6_test` or the component `index.rst`. If the design is wrong, incomplete or a header must change, stop and return an interface change request.
 - DO NOT edit shared files (cmake, toctree `index.rst`) unless LEADER granted them.
 
 ## Inputs
 
-- `<comp>/2_design` (`sw_detail`, diagrams), `<comp>/3_inc`, `<comp>/4_config`
+- `<comp>/2_design` (`sw_detail`, diagrams and `sw-ifelement`: argument ranges, return values, restrictions), `<comp>/3_inc`, `<comp>/4_config`
 - `3_inc` headers of the layer directly below
 
 ## Coding rules

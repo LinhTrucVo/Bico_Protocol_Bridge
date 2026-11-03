@@ -19,11 +19,12 @@ The files in `.agents/instruction/` are called **instruction** (never "skill"). 
 | Changed | Also update |
 |---|---|
 | `.agents/instruction/<step>/instructions.md` (inputs, outputs, need type, link, ID, done criteria) | Instruction table in `AGENTS.md`; Traceability table in `.agents/index.rst`; `.agents/sweTraceability.puml`; `5_buildEnviroment/docGen/aspice_config.py` (`needs_links`, `needs_warnings`, comment block); other instructions that reference it; agent files that cite it |
+| SWE.3 interface design needs (`swc`, `sw-if`, `sw-ifelement`) | `.agents/instruction/3_detailed_design_unit_construction/instructions.md`; `.agents/instruction/4_unit_verification/instructions.md`; each component's `2_design/<comp>Comp.rst`; `AGENTS.md`; `.agents/index.rst`; ARCHITECT, DESIGNER and CODER agent files |
 | `AGENTS.md` (scope rules, repository map, conventions, team table, verification) | `.agents/index.rst` (terms, Agent team, Rules); `Constraints` and `Tasks` of the agent files; `README.md` and `5_buildEnviroment/README.md` if they repeat it |
 | Gates, roles, who writes or reviews what | `.agents/index.rst` (Agent team, Gates, Delegated task); `agentTeam.puml`, `workflowGates.puml`, `taskSequence.puml`; `AGENTS.md` team table; `.github/agents/leader.agent.md` and the agent files of the roles involved |
 | Agent definition in `.github/agents/<name>.agent.md` (description, tools, constraints, checklist, report format) | `.claude/agents/<name>.md`: `description` identical, body still points to the `.github` file; any other agent directory (for example `.cursor`, `.gemini`) |
 | Skill in `.agents/skills/<name>/SKILL.md` (name, description) | `.claude/skills/<name>/SKILL.md` and `.github/skills/<name>/SKILL.md` wrappers: same `name` and `description`, body points to the `.agents/skills` file |
-| Need types, IDs, links | `aspice_config.py`; instruction of the step; `.agents/index.rst`; `sweTraceability.puml`; `AGENTS.md`; templates in `0_ticket/ticket_template.rst` |
+| Need types, IDs, links | `aspice_config.py` (keep the section that derives `needs_extra_options` and `needs_extra_links` for the pinned sphinx_needs 5.1.0); instruction of the step; `.agents/index.rst`; `sweTraceability.puml`; `AGENTS.md`; templates in `0_ticket/ticket_template.rst` |
 | Build or verification commands, coverage limit | `AGENTS.md` Verification; `.agents/index.rst` (G4, G5, Builds); `integrator.agent.md`; `.github/workflows/ci.yml`; `5_buildEnviroment/README.md` |
 
 ## Steps

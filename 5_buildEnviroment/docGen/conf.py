@@ -21,6 +21,6 @@ extensions = [
 plantuml = 'plantuml'
 
 templates_path = ['_templates']
-exclude_patterns = []
+exclude_patterns = ['7_1_esp32_workspace']
 
 html_theme = 'sphinx_rtd_theme'

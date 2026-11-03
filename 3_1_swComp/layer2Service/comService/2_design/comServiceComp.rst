@@ -13,8 +13,12 @@ Static structure
 
 ..  uml:: comServiceStaticStructure.puml
 
+Public interfaces
+#################################
 
 #################################
+
+
 Dynamic behaviour
 #################################
 

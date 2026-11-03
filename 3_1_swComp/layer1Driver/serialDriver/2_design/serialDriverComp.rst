@@ -23,7 +23,204 @@ The Serial Driver consists of:
 - **SerialDriver_Config_t** – Configuration structure for baudrate, parity, stop bits, and data bits.
 - **Vendor UART HAL** – External hardware abstraction provided by the MCU vendor (e.g., STM32 HAL).
 
+Public interfaces
 #################################
+
+..  sw-if:: serialDriverUnit.h
+    :id: SWIF_SERIALDRIVER
+
+    Public interface of serialDriverUnit.
+
+    ..  sw-ifelement:: SerialDriverUnit_Init()
+        :id: SWIFE_SERIALDRIVER_INIT
+        :arguments:     return: SerialDriver_Status_t;    pConfig: const SerialDriver_Config_t*;
+
+        Initializes the UART peripheral with the provided configuration structure.
+
+        **Arguments:**
+
+        - **pConfig**: Pointer to serial driver configuration structure (baudrate, parity, stopBits, dataBits).
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer.
+
+        **Restrictions:** Must be called before any other serial driver function.
+
+    ..  sw-ifelement:: SerialDriverUnit_Configure()
+        :id: SWIFE_SERIALDRIVER_CONFIGURE
+        :arguments:     return: SerialDriver_Status_t;    baudrate: SerialDriver_Baudrate_t;    parity: SerialDriver_Parity_t;    stopBits: SerialDriver_StopBits_t;    dataBits: SerialDriver_DataBits_t;
+
+        Reconfigures the serial port parameters at runtime.
+
+        **Arguments:**
+
+        - **baudrate**: Desired baud rate.
+        - **parity**: Parity mode (BPB_SERIAL_PARITY_NONE, BPB_SERIAL_PARITY_EVEN, BPB_SERIAL_PARITY_ODD).
+        - **stopBits**: Stop bit count (BPB_SERIAL_STOPBITS_1, BPB_SERIAL_STOPBITS_2).
+        - **dataBits**: Word length (BPB_SERIAL_DATABITS_7, BPB_SERIAL_DATABITS_8, BPB_SERIAL_DATABITS_9).
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for unsupported parameter values.
+
+        **Restrictions:** None.
+
+    ..  sw-ifelement:: SerialDriverUnit_Send()
+        :id: SWIFE_SERIALDRIVER_SEND
+        :arguments:     return: SerialDriver_Status_t;    pData: const uint8_t*;    length: uint16_t;
+
+        Transmits data using the default timeout.
+
+        **Arguments:**
+
+        - **pData**: Pointer to the data buffer to transmit.
+        - **length**: Number of bytes to transmit.
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_SERIAL_STATUS_TIMEOUT on timeout.
+
+        **Restrictions:** None.
+
+    ..  sw-ifelement:: SerialDriverUnit_SendWithTimeout()
+        :id: SWIFE_SERIALDRIVER_SENDWITHTIMEOUT
+        :arguments:     return: SerialDriver_Status_t;    pData: const uint8_t*;    length: uint16_t;    timeoutMs: uint32_t;
+
+        Transmits data with an explicit timeout.
+
+        **Arguments:**
+
+        - **pData**: Pointer to the data buffer to transmit.
+        - **length**: Number of bytes to transmit.
+        - **timeoutMs**: Maximum time in milliseconds to wait for completion.
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer or zero length, BPB_SERIAL_STATUS_TIMEOUT if the operation exceeded the timeout.
+
+        **Restrictions:** None.
+
+    ..  sw-ifelement:: SerialDriverUnit_Receive()
+        :id: SWIFE_SERIALDRIVER_RECEIVE
+        :arguments:     return: SerialDriver_Status_t;    pData: uint8_t*;    maxLength: uint16_t;    pReceivedLength: uint16_t*;
+
+        Receives data using the default timeout.
+
+        **Arguments:**
+
+        - **pData**: Pointer to the buffer for received data.
+        - **maxLength**: Maximum number of bytes the buffer can hold.
+        - **pReceivedLength**: Pointer to store the actual number of bytes received.
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for NULL pointers or zero maxLength, BPB_SERIAL_STATUS_TIMEOUT on timeout.
+
+        **Restrictions:** None.
+
+    ..  sw-ifelement:: SerialDriverUnit_ReceiveWithTimeout()
+        :id: SWIFE_SERIALDRIVER_RECEIVEWITHTIMEOUT
+        :arguments:     return: SerialDriver_Status_t;    pData: uint8_t*;    maxLength: uint16_t;    pReceivedLength: uint16_t*;    timeoutMs: uint32_t;
+
+        Receives data with an explicit timeout.
+
+        **Arguments:**
+
+        - **pData**: Pointer to the buffer for received data.
+        - **maxLength**: Maximum number of bytes the buffer can hold.
+        - **pReceivedLength**: Pointer to store the actual number of bytes received.
+        - **timeoutMs**: Maximum time in milliseconds to wait for data.
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for NULL pointers or zero maxLength, BPB_SERIAL_STATUS_TIMEOUT if the operation exceeded the timeout.
+
+        **Restrictions:** None.
+
+    ..  sw-ifelement:: SerialDriverUnit_GetAvailable()
+        :id: SWIFE_SERIALDRIVER_GETAVAILABLE
+        :arguments:     return: SerialDriver_Status_t;    pAvailable: uint16_t*;
+
+        Returns the number of bytes available in the receive buffer.
+
+        **Arguments:**
+
+        - **pAvailable**: Pointer to store the count of available bytes.
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer.
+
+        **Restrictions:** None.
+
+    ..  sw-ifelement:: SerialDriverUnit_FlushRx()
+        :id: SWIFE_SERIALDRIVER_FLUSHRX
+        :arguments:     return: SerialDriver_Status_t;
+
+        Discards all data currently in the receive buffer.
+
+        **Arguments:** None.
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success.
+
+        **Restrictions:** None.
+
+    ..  sw-ifelement:: SerialDriverUnit_FlushTx()
+        :id: SWIFE_SERIALDRIVER_FLUSHTX
+        :arguments:     return: SerialDriver_Status_t;
+
+        Discards all data currently pending in the transmit buffer.
+
+        **Arguments:** None.
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success.
+
+        **Restrictions:** None.
+
+    ..  sw-ifelement:: SerialDriverUnit_RegisterRxCallback()
+        :id: SWIFE_SERIALDRIVER_REGISTERRXCALLBACK
+        :arguments:     return: SerialDriver_Status_t;    callback: SerialDriver_RxCallback_t;
+
+        Registers a callback invoked when received data is available.
+
+        **Arguments:**
+
+        - **callback**: Function pointer to the RX callback. Pass NULL to deregister.
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success.
+
+        **Restrictions:** Callback is invoked from interrupt context and must be short and non-blocking.
+
+    ..  sw-ifelement:: SerialDriverUnit_RegisterTxCallback()
+        :id: SWIFE_SERIALDRIVER_REGISTERTXCALLBACK
+        :arguments:     return: SerialDriver_Status_t;    callback: SerialDriver_TxCallback_t;
+
+        Registers a callback invoked when a transmit operation completes.
+
+        **Arguments:**
+
+        - **callback**: Function pointer to the TX callback. Pass NULL to deregister.
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success.
+
+        **Restrictions:** Callback is invoked from interrupt context and must be short and non-blocking.
+
+    ..  sw-ifelement:: SerialDriverUnit_GetStatus()
+        :id: SWIFE_SERIALDRIVER_GETSTATUS
+        :arguments:     return: SerialDriver_Status_t;    pStatus: SerialDriver_Status_t*;
+
+        Returns the current status of the serial driver.
+
+        **Arguments:**
+
+        - **pStatus**: Pointer to store the current driver status code.
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success, SERIAL_STATUS_INVALID_PARAM for a NULL pointer.
+
+        **Restrictions:** None.
+
+    ..  sw-ifelement:: SerialDriverUnit_DeInit()
+        :id: SWIFE_SERIALDRIVER_DEINIT
+        :arguments:     return: SerialDriver_Status_t;
+
+        De-initializes the UART peripheral and releases resources.
+
+        **Arguments:** None.
+
+        **Return values:** BPB_SERIAL_STATUS_OK on success.
+
+        **Restrictions:** None.
+
+#################################
+
+
 Dynamic behaviour
 #################################
 

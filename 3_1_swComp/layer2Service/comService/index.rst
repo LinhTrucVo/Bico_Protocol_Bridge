@@ -23,8 +23,6 @@ Component
 =========
 
 ..  swc:: comService
+    :id: SWC_COMSERVICE
     :provides: comService.h – buffered communication API (init, run, read, write, data availability).
     :requires: serialDriver.h – raw serial byte transfer.
-
-Public interfaces
-=================
