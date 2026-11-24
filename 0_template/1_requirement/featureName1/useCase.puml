@@ -1,0 +1,15 @@
+@startuml Feature1_UseCase
+
+actor User
+participant "System" as System
+participant "External Entity" as External
+
+User -> System: <Request 1>
+System --> User: <Response 1>
+
+User -> System: <Request 2>
+System -> External: <Interaction>
+External --> System: <Result>
+System --> User: <Response 2>
+
+@enduml

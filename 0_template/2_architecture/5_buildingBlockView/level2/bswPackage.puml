@@ -1,0 +1,20 @@
+@startuml bswPackage
+skinparam componentStyle rectangle
+left to right direction
+
+package "BSW (basic software)" as BSW #LightBlue {
+  package "Service" as SRV #White {
+    component "Com service" as COMS
+    component "Config service" as CFGS
+    component "IO service" as IOS
+    component "Storage service" as STOS
+    component "Crypto service" as CRYS
+    component "Diagnostic service" as DIAS
+  }
+  package "Driver" as DRV #White {
+    component "Com driver" as COMD
+    component "Storage driver" as STOD
+    component "IO driver" as IOD
+  }
+}
+@enduml

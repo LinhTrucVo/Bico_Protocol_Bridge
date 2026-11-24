@@ -1,0 +1,23 @@
+@startuml applicationControllerInterface
+skinparam classAttributeIconSize 0
+hide circle
+hide empty members
+
+class "Application controller" as CTRL <<component>> #LightGreen {
+  .. provides ..
+  +ApplicationController_start()
+  +ApplicationController_stop()
+  +ApplicationController_getState()
+  .. requires ..
+  -ComService_sendMessage(id, data)
+  -ConfigService_setParameter(id, value)
+  -ConfigService_getParameter(id)
+  -IoService_setOutput(channel, level)
+}
+
+legend right
+  |= Section |= Meaning |
+  | provides (+) | Interface offered by the component |
+  | requires (-) | Interface the component needs from another component |
+endlegend
+@enduml

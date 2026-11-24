@@ -1,0 +1,34 @@
+@startuml errorComTimeout
+autonumber
+skinparam sequenceMessageAlign center
+
+box "ASW" #LightGreen
+  participant "Application controller" as CTRL
+end box
+
+box "BSW" #LightBlue
+  participant "Com service" as COMS
+  participant "Com driver" as COMD
+end box
+
+box "HAL" #LightSalmon
+  participant "Hardware-specific\nimplementation 1" as HW1
+end box
+
+CTRL -> COMS : ComService_sendMessage(id, data)
+COMS -> COMD : ComDriver_canSend(id, data)
+COMD -> HW1 : HwImplementation1_canTransmit(id, data)
+
+COMS -> COMD : ComDriver_getCanStatus()
+COMD -> HW1 : HwImplementation1_getCanStatus()
+HW1 --> COMD : TIMEOUT
+COMD --> COMS : TIMEOUT
+
+alt retry count < <max retries>
+  COMS -> COMD : ComDriver_canSend(id, data)
+  note right of COMS : retry after <t> ms
+else retry count reached
+  COMS --> CTRL : error: communication timeout
+  CTRL -> CTRL : enter error state
+end
+@enduml

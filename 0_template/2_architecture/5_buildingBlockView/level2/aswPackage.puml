@@ -1,0 +1,10 @@
+@startuml aswPackage
+skinparam componentStyle rectangle
+left to right direction
+
+package "ASW (application software)" as ASW #LightGreen {
+  component "Application controller" as CTRL
+  component "App 1" as APP1
+  component "App 2" as APP2
+}
+@enduml

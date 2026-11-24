@@ -1,0 +1,1 @@
+.. This about the template to be used in the project

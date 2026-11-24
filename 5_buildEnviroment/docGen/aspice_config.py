@@ -18,14 +18,6 @@ needs_types = [
         "style": "node",
     },
     {
-        "directive": "swc_req",
-        "title": "Software Component Requirement",
-        "description": "Defines the detailed functional and non-functional requirements allocated to individual software components identified in the software architecture. Specifies what each software component shall do to fulfill its allocated responsibilities.",
-        "prefix": "SWCREQ_",
-        "color": "#D6EAF8",
-        "style": "node",
-    },
-    {
         "directive": "sw_arch",
         "title": "Software Architecture",
         "description": "Describes the high-level structure and organization of the software. Identifies software components, their responsibilities, relationships, interactions, and architectural interfaces.",
@@ -34,18 +26,26 @@ needs_types = [
         "style": "node",
     },
     {
-        "directive": "sw_detail",
-        "title": "Software Detailed Design",
-        "description": "Refines the software architecture and realizes software component requirements into implementable design specifications. Defines detailed component behavior, algorithms, interfaces, data types, data structures, constraints, boundaries, limits, and valid values.",
-        "prefix": "SWDD_",
-        "color": "#E8DAEF",
-        "style": "node",
-    },
-    {
         "directive": "swc",
         "title": "Software Component",
         "description": "Represents an architectural software component and its implementation. Implements the detailed design as buildable and executable software code, fulfilling the responsibilities and requirements allocated to the component.",
         "prefix": "SWC_",
+        "color": "#E8DAEF",
+        "style": "node",
+    },
+    {
+        "directive": "swc_req",
+        "title": "Software Component Requirement",
+        "description": "Defines the detailed functional and non-functional requirements allocated to individual software components identified in the software architecture. Specifies what each software component shall do to fulfill its allocated responsibilities.",
+        "prefix": "SWCREQ_",
+        "color": "#D6EAF8",
+        "style": "node",
+    },
+    {
+        "directive": "sw_detail",
+        "title": "Software Detailed Design",
+        "description": "Refines the software architecture and realizes software component requirements into implementable detail design. Defines detailed component behavior, algorithms, data structures, interfaces, data types, constraints, boundaries, limits, and valid values.",
+        "prefix": "SWDD_",
         "color": "#E8DAEF",
         "style": "node",
     },
@@ -68,7 +68,7 @@ needs_types = [
     {
         "directive": "sw_unit",
         "title": "Software Unit",
-        "description": "Represents the smallest independently verifiable software element resulting from detailed design and implementation. Typically corresponds to a function, method, class, or other implementation-level element.",
+        "description": "Represents the smallest independently verifiable software element resulting from detailed design and implementation. Typically corresponds to a file, class, function or other implementation-level element.",
         "prefix": "SWUNIT_",
         "color": "#D5F5E3",
         "style": "node",
@@ -124,7 +124,7 @@ needs_fields = {
     },
 
     "requires": {
-        "description": "Interface headers a component uses from the layer below (swc).",
+        "description": "Interface headers a component uses from other the swc.",
         "schema": {
             "type": "string",
         },
@@ -174,6 +174,13 @@ needs_fields = {
                 "blocked",
                 "not_applicable",
             ],
+        },
+    },
+
+    "verification_criteria": {
+        "description": "Measurable pass condition a verification activity checks against.",
+        "schema": {
+            "type": "string",
         },
     },
 }

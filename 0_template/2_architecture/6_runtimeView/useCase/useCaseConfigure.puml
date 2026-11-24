@@ -1,0 +1,34 @@
+@startuml useCaseConfigure
+autonumber
+skinparam sequenceMessageAlign center
+
+actor "External Entity" as EXT
+
+box "ASW" #LightGreen
+  participant "Application controller" as CTRL
+end box
+
+box "BSW" #LightBlue
+  participant "Config service" as CFGS
+  participant "Storage service" as STOS
+  participant "Storage driver" as STOD
+end box
+
+box "HAL" #LightSalmon
+  participant "Hardware-specific\nimplementation 1" as HW1
+end box
+
+EXT -> CTRL : <configure request>
+
+CTRL -> CFGS : ConfigService_setParameter(id, value)
+CFGS -> CFGS : <validate value>
+CFGS -> STOS : StorageService_writeData(key, data)
+STOS -> STOD : StorageDriver_flashWrite(address, data)
+STOD -> HW1 : HwImplementation1_flashWrite(address, data)
+HW1 --> STOD : status
+STOD --> STOS : status
+STOS --> CFGS : status
+CFGS --> CTRL : status
+
+CTRL --> EXT : <configure response>
+@enduml

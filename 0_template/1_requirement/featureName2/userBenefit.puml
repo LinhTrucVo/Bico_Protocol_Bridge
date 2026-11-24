@@ -1,0 +1,28 @@
+@startuml Feature2_UserBenefit
+
+!define BENEFIT #90EE90
+!define FEATURE #87CEEB
+!define USER #FFB6C1
+
+rectangle "Feature Name 2" as Feature FEATURE {
+    rectangle "Function 1" as Function1
+    rectangle "Function 2" as Function2
+}
+
+actor User USER
+
+rectangle "Benefit 1" as Benefit1 BENEFIT
+rectangle "Benefit 2" as Benefit2 BENEFIT
+rectangle "Benefit 3" as Benefit3 BENEFIT
+
+User --> Feature: Uses provided commands
+
+Function1 --> Benefit1: <how it helps>
+Function2 --> Benefit2: <how it helps>
+Function2 --> Benefit3: <how it helps>
+
+Benefit1 --> User: <gain>
+Benefit2 --> User: <gain>
+Benefit3 --> User: <gain>
+
+@enduml

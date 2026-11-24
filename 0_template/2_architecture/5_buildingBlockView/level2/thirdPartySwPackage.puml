@@ -1,0 +1,15 @@
+@startuml thirdPartySwPackage
+skinparam componentStyle rectangle
+left to right direction
+
+package "3rd-party SW" as TP #LightYellow {
+  package "Proprietary source" as PROP #LightGrey{
+    component "Vendor SDK / driver package" as VSDK
+    component "Licensed middleware" as LMW
+    component "Customer-specific library" as CSL
+  }
+  package "Open source" as OSS #LightGrey{
+    component "zlib\n(license: zlib)" as OSL1
+  }
+}
+@enduml

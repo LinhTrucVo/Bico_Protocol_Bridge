@@ -1,0 +1,37 @@
+@startuml useCasePerformAction
+autonumber
+skinparam sequenceMessageAlign center
+
+actor "External Entity" as EXT
+
+box "ASW" #LightGreen
+  participant "Application controller" as CTRL
+end box
+
+box "BSW" #LightBlue
+  participant "Config service" as CFGS
+  participant "IO service" as IOS
+  participant "IO driver" as IOD
+end box
+
+box "HAL" #LightSalmon
+  participant "Hardware-specific\nimplementation 2" as HW2
+end box
+
+EXT -> CTRL : <set output command (channel, level)>
+
+CTRL -> CFGS : ConfigService_getParameter(id)
+CFGS --> CTRL : channel configuration
+note right of CFGS : RAM copy, loaded from storage at startup
+
+CTRL -> CTRL : <check channel is configured as output>
+
+CTRL -> IOS : IoService_setOutput(channel, level)
+IOS -> IOD : IoDriver_writePin(pin, level)
+IOD -> HW2 : HwImplementation2_writePin(pin, level)
+HW2 --> IOD : status
+IOD --> IOS : status
+IOS --> CTRL : status
+
+CTRL --> EXT : <command response>
+@enduml

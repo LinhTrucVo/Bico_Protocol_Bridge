@@ -1,0 +1,19 @@
+@startuml featureName1
+skinparam componentStyle rectangle
+left to right direction
+
+rectangle "Feature: Feature Name 1" as FEAT #White
+
+usecase "Function 1:\nconfigure parameters" as F1
+usecase "Function 2:\nperform action" as F2
+
+component "Config service" as CFGS #LightBlue
+component "IO service" as IOS #LightBlue
+
+FEAT --> F1 : has
+FEAT --> F2 : has
+
+F1 --> CFGS : use
+F2 --> CFGS : use
+F2 --> IOS : use
+@enduml

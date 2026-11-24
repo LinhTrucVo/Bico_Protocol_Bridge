@@ -1,0 +1,22 @@
+@startuml externalInteraction
+autonumber
+skinparam sequenceMessageAlign center
+
+actor "External Entity" as EXT
+participant "System" as SYS
+
+== Request / response ==
+EXT -> SYS : <request>
+activate SYS
+SYS --> EXT : <response>
+deactivate SYS
+note right of SYS : response within <t> ms
+
+== Event sent by the system ==
+SYS -> EXT : <event notification>
+note right of SYS : sent when <condition>
+
+== Invalid request ==
+EXT -> SYS : <invalid request>
+SYS --> EXT : <negative response, error code>
+@enduml

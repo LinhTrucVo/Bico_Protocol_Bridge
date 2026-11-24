@@ -1,0 +1,25 @@
+@startuml halPackage
+skinparam componentStyle rectangle
+skinparam legendFontSize 18
+left to right direction
+
+interface "GPIO HAL API\n(GpioPort_*)" as GPIOHAL
+interface "SPI HAL API\n(SpiMasterPort_*)" as SPIHAL
+
+package "HAL (hardware abstraction layer)" as HWL #LightSalmon {
+  component "ESP32 GPIO implementation" as GPIOESP
+  component "STM32 GPIO implementation" as GPIOSTM
+  component "ESP32 SPI implementation" as SPIESP
+  component "STM32 SPI implementation" as SPISTM
+}
+
+GPIOESP ..|> GPIOHAL
+GPIOSTM ..|> GPIOHAL
+SPIESP ..|> SPIHAL
+SPISTM ..|> SPIHAL
+
+legend right
+  |= Arrow |= Meaning |
+  | dashed, hollow triangle | Implements the HAL API (realization) |
+endlegend
+@enduml

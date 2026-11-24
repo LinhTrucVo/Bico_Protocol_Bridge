@@ -1,0 +1,44 @@
+@startuml overallSystemArchitecture
+skinparam componentStyle rectangle
+skinparam packageStyle folder
+left to right direction
+
+package "ASW (application software)" as ASW #LightGreen {
+  component "Application" as APP
+}
+
+package "BSW (basic software)" as BSW #LightBlue {
+  component "Service" as SRV
+  component "Driver" as DRV
+}
+
+interface "HAL API" as HAL
+
+package "HAL (hardware abstraction layer)" as HWL #LightSalmon {
+  component "Hardware-specific implementation" as IMPL
+}
+
+package "3rd-party SW" as TP #LightYellow {
+  component "Proprietary source" as PROP 
+  component "Open source component" as OSS
+}
+
+APP --> SRV
+SRV --> DRV
+DRV --> HAL
+IMPL ..|> HAL
+SRV ..> PROP
+DRV ..> OSS
+
+legend right
+  |= Color |= Block |
+  |<#LightGreen> | ASW (application software) |
+  |<#LightBlue> | BSW (basic software) |
+  |<#LightSalmon> | HAL (hardware abstraction layer) |
+  |<#LightYellow> | 3rd-party SW |
+  |= Arrow |= Meaning |
+  | --> | calls (solid, direct call to layer below) |
+  | ..> | uses (dashed, dependency) |
+  | dashed, hollow triangle | implements (realization of HAL API) |
+endlegend
+@enduml

@@ -1,0 +1,18 @@
+@startuml featureName2
+skinparam componentStyle rectangle
+left to right direction
+
+rectangle "Feature: Feature Name 2" as FEAT #White
+
+usecase "Function 1:\nprotect data" as F1
+usecase "Function 2:\nreport event" as F2
+
+component "Crypto service" as CRYS #LightBlue
+component "Diagnostic service" as DIAS #LightBlue
+
+FEAT --> F1 : has
+FEAT --> F2 : has
+
+F1 --> CRYS : use
+F2 --> DIAS : use
+@enduml

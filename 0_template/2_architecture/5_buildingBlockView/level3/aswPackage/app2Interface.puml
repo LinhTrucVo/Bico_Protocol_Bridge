@@ -1,0 +1,20 @@
+@startuml app2Interface
+skinparam classAttributeIconSize 0
+hide circle
+hide empty members
+
+class "App 2" as APP2 <<component>> #LightGreen {
+  .. provides ..
+  +App2_execute(request)
+  +App2_getResult()
+  .. requires ..
+  -StorageService_readData(key)
+  -StorageService_writeData(key, data)
+}
+
+legend right
+  |= Section |= Meaning |
+  | provides (+) | Interface offered by the component |
+  | requires (-) | Interface the component needs from another component |
+endlegend
+@enduml

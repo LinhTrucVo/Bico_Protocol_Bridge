@@ -1,0 +1,28 @@
+@startuml startupShutdown
+hide empty description
+
+[*] --> Off
+
+Off --> Init : power on
+Init : initialize HAL, drivers, services, applications
+Init : config service loads the parameters from storage
+Init --> Running : ApplicationController_start()
+Init --> Error : initialization failed
+
+Running : process requests
+Running --> Shutdown : ApplicationController_stop()
+Running --> Error : unrecoverable error
+
+Error : report error, outputs in safe state
+Error --> Shutdown : ApplicationController_stop()
+
+Shutdown : store data, stop applications, services, drivers
+Shutdown --> Off : done
+
+Off --> [*]
+
+note right of Running
+  ApplicationController_getState()
+  returns the current state
+end note
+@enduml
